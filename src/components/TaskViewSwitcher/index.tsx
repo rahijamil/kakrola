@@ -1,7 +1,6 @@
 import React, {
   useState,
   useMemo,
-  useEffect,
   Dispatch,
   SetStateAction,
 } from "react";
@@ -14,6 +13,7 @@ import { ViewTypes } from "@/types/viewTypes";
 
 interface TaskViewSwitcherProps {
   tasks: Task[];
+  sections?: SectionType[];
   view: ViewTypes["view"];
   onTaskUpdate: (updatedTask: Task) => void;
   showShareOption?: boolean;
@@ -23,23 +23,18 @@ interface TaskViewSwitcherProps {
 const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
   tasks,
   view,
+  sections,
   onTaskUpdate,
   showShareOption,
   setShowShareOption,
 }) => {
   const [showAddTask, setShowAddTask] = useState<number | null>(null);
-  const { sections, activeProject } = useTaskProjectDataProvider();
-  const [activeProjectSections, setActiveProjectSections] = useState<
-    SectionType[]
-  >([]);
-  const [unGroupedTasks, setUnGroupedTasks] = useState<Task[]>([]);
+  const { activeProject } = useTaskProjectDataProvider();
 
-  const [showUngroupedAddTask, setShowUngroupedAddTask] =
-    useState<boolean>(false);
-  const [showUngroupedAddSection, setShowUngroupedAddSection] =
-    useState<boolean>(false);
+  const [showUngroupedAddTask, setShowUngroupedAddTask] = useState<boolean>(false);
+  const [showUngroupedAddSection, setShowUngroupedAddSection] = useState<boolean>(false);
 
-  const { groupedTasks, unSectionedTasks } = useMemo(() => {
+  const { groupedTasks, unGroupedTasks } = useMemo(() => {
     const grouped: Record<number, Task[]> = {};
     const ungrouped: Task[] = [];
 
@@ -56,25 +51,15 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
         }
       });
 
-    return { groupedTasks: grouped, unSectionedTasks: ungrouped };
+    return { groupedTasks: grouped, unGroupedTasks: ungrouped };
   }, [tasks, activeProject?.id]);
 
-  // Update the state outside of useMemo
-  useEffect(() => {
-    setUnGroupedTasks(unSectionedTasks);
-  }, [unGroupedTasks]);
-
-  useEffect(() => {
-    setActiveProjectSections(
-      sections.filter((s) => s.project.id == activeProject?.id)
-    );
-  }, [activeProject?.id, sections]);
 
   switch (view) {
     case "List":
       return (
         <ListView
-          activeProjectSections={activeProjectSections}
+          activeProjectSections={sections}
           groupedTasks={groupedTasks}
           unGroupedTasks={unGroupedTasks}
           onTaskUpdate={onTaskUpdate}
@@ -91,7 +76,7 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
     case "Board":
       return (
         <BoardView
-          activeProjectSections={activeProjectSections}
+          sections={sections || []}
           groupedTasks={groupedTasks}
           unGroupedTasks={unGroupedTasks}
           onTaskUpdate={onTaskUpdate}

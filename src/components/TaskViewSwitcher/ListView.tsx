@@ -14,11 +14,12 @@ import { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import SectionAddTask from "./SectionAddTask";
 import { CopyPlusIcon, MoreHorizontal } from "lucide-react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 
 interface ListViewProps {
   groupedTasks: Record<string, Task[]>;
   unGroupedTasks: Task[];
-  activeProjectSections: SectionType[];
+  activeProjectSections?: SectionType[];
   onTaskUpdate: (updatedTask: Task) => void;
   showAddTask: number | null;
   setShowAddTask: Dispatch<SetStateAction<number | null>>;
@@ -48,7 +49,8 @@ const ListView: React.FC<ListViewProps> = ({
     useState<SectionType | null>(null);
   const [newSectionName, setNewSectionName] = useState("");
   const [showAddSection, setShowAddSection] = useState<number | null>(null);
-  const { sections, setSections, activeProject } = useTaskProjectDataProvider();
+  const { sections, setSections, activeProject, setTasks } =
+    useTaskProjectDataProvider();
 
   const [openSections, setOpenSections] = useState<Record<number, boolean>>({});
 
@@ -132,31 +134,45 @@ const ListView: React.FC<ListViewProps> = ({
         </div>
 
         {isOpen && (
-          <div className="pl-8">
-            <ul>
-              {(groupedTasks[section.id] || []).map((task) => (
-                <li
-                  key={task.id}
-                  className="border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer"
-                >
-                  <TaskItem
-                    task={task}
-                    onCheckClick={() =>
-                      onTaskUpdate({ ...task, isCompleted: !task.isCompleted })
-                    }
-                    showShareOption={showShareOption}
-                    setShowShareOption={setShowShareOption}
-                  />
-                </li>
-              ))}
-            </ul>
+          <Droppable key={section.id} droppableId={section.id.toString()}>
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className="pl-8"
+              >
+                <ul>
+                  {(groupedTasks[section.id] || []).map((task, index) => (
+                    <li
+                      key={task.id}
+                      className="border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer"
+                    >
+                      <TaskItem
+                        task={task}
+                        onCheckClick={() =>
+                          onTaskUpdate({
+                            ...task,
+                            isCompleted: !task.isCompleted,
+                          })
+                        }
+                        showShareOption={showShareOption}
+                        setShowShareOption={setShowShareOption}
+                        index={index}
+                      />
+                    </li>
+                  ))}
 
-            <SectionAddTask
-              section={section}
-              showAddTask={showAddTask}
-              setShowAddTask={setShowAddTask}
-            />
-          </div>
+                  {provided.placeholder}
+                </ul>
+
+                <SectionAddTask
+                  section={section}
+                  showAddTask={showAddTask}
+                  setShowAddTask={setShowAddTask}
+                />
+              </div>
+            )}
+          </Droppable>
         )}
       </div>
     );
@@ -205,19 +221,82 @@ const ListView: React.FC<ListViewProps> = ({
     }
   };
 
+  const onDragEnd = (result: DropResult) => {
+    const { source, destination, type } = result;
+
+    if (!destination) {
+      return;
+    }
+
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    ) {
+      return;
+    }
+
+    if (type === "section") {
+      const newSections = Array.from(sections);
+      const [reorderedSection] = newSections.splice(source.index, 1);
+      newSections.splice(destination.index, 0, reorderedSection);
+      setSections(newSections);
+    } else if (type === "task") {
+      const sourceSection = source.droppableId;
+      const destinationSection = destination.droppableId;
+
+      if (sourceSection === destinationSection) {
+        const newTasks = Array.from(groupedTasks[sourceSection]);
+        const [reorderedTask] = newTasks.splice(source.index, 1);
+        newTasks.splice(destination.index, 0, reorderedTask);
+
+        const newGroupedTasks = {
+          ...groupedTasks,
+          [sourceSection]: newTasks,
+        };
+
+        setTasks(Object.values(newGroupedTasks).flat());
+      } else {
+        const sourceTasks = Array.from(groupedTasks[sourceSection]);
+        const destinationTasks = Array.from(groupedTasks[destinationSection]);
+        const [movedTask] = sourceTasks.splice(source.index, 1);
+
+        const updatedTask = {
+          ...movedTask,
+          section: {
+            id: parseInt(destinationSection),
+            name:
+              sections.find((s) => s.id.toString() === destinationSection)
+                ?.name || "",
+            project: movedTask.project!,
+          },
+        };
+
+        destinationTasks.splice(destination.index, 0, updatedTask);
+
+        const newGroupedTasks = {
+          ...groupedTasks,
+          [sourceSection]: sourceTasks,
+          [destinationSection]: destinationTasks,
+        };
+
+        setTasks(Object.values(newGroupedTasks).flat());
+      }
+    }
+  };
+
   return (
-    <div
-      className={`space-y-2 ${
-        unGroupedTasks.length > 0 &&
-        Object.keys(groupedTasks).length > 0 &&
-        "h-full"
-      }`}
-    >
-      <div className="space-y-1">
-        <div>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <div
+        className={`space-y-2 ${
+          unGroupedTasks.length > 0 &&
+          Object.keys(groupedTasks).length > 0 &&
+          "h-full"
+        }`}
+      >
+        <div className="space-y-1">
           <div className="pl-8">
             <ul>
-              {unGroupedTasks.map((task) => (
+              {unGroupedTasks.map((task, index) => (
                 <li
                   key={task.id}
                   className="border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer"
@@ -232,6 +311,7 @@ const ListView: React.FC<ListViewProps> = ({
                     }
                     showShareOption={showShareOption}
                     setShowShareOption={setShowShareOption}
+                    index={index}
                   />
                 </li>
               ))}
@@ -242,65 +322,12 @@ const ListView: React.FC<ListViewProps> = ({
               setShowUngroupedAddTask={setShowUngroupedAddTask}
             />
           </div>
-        </div>
-
-        <div>
-          {!showUngroupedAddSection && (
-            <div
-              className="flex items-center gap-2 pl-7 opacity-0 hover:opacity-100 cursor-pointer transition"
-              onClick={() => setShowUngroupedAddSection(true)}
-            >
-              <div className="flex-1 bg-gray-400 h-[1px]"></div>
-              <div className="font-bold text-gray-600 text-sm">Add section</div>
-              <div className="flex-1 bg-gray-500 h-[1px]"></div>
-            </div>
-          )}
-
-          {showUngroupedAddSection && (
-            <form
-              className="space-y-2 pl-7 mt-3"
-              onSubmit={(ev) => handleAddSection(ev, null)}
-            >
-              <input
-                type="text"
-                value={newSectionName}
-                onChange={(e) => setNewSectionName(e.target.value)}
-                placeholder="Name this section"
-                className="border border-gray-200 focus:outline-none focus:border-gray-400 w-full rounded px-2 py-1 font-semibold"
-                autoFocus
-              />
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="submit"
-                  className="px-2 py-[6px] text-xs text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-600 disabled:cursor-not-allowed transition disabled:opacity-50"
-                  disabled={!newSectionName.trim()}
-                >
-                  Add section
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setShowUngroupedAddSection(false)}
-                  className="px-3 py-[6px] text-xs text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-md"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          )}
-        </div>
-      </div>
-
-      {activeProjectSections.map((section, index) => (
-        <div className="space-y-1">
-          <ListViewSection key={section.id} section={section} />
 
           <div>
-            {!showAddSection && (
+            {!showUngroupedAddSection && (
               <div
                 className="flex items-center gap-2 pl-7 opacity-0 hover:opacity-100 cursor-pointer transition"
-                onClick={() => setShowAddSection(section.id)}
+                onClick={() => setShowUngroupedAddSection(true)}
               >
                 <div className="flex-1 bg-gray-400 h-[1px]"></div>
                 <div className="font-bold text-gray-600 text-sm">
@@ -310,10 +337,10 @@ const ListView: React.FC<ListViewProps> = ({
               </div>
             )}
 
-            {showAddSection == section.id && (
+            {showUngroupedAddSection && (
               <form
-                className="space-y-2 pl-7"
-                onSubmit={(ev) => handleAddSection(ev, index + 1)}
+                className="space-y-2 pl-7 mt-3"
+                onSubmit={(ev) => handleAddSection(ev, null)}
               >
                 <input
                   type="text"
@@ -335,7 +362,7 @@ const ListView: React.FC<ListViewProps> = ({
 
                   <button
                     type="button"
-                    onClick={() => setShowAddSection(null)}
+                    onClick={() => setShowUngroupedAddSection(false)}
                     className="px-3 py-[6px] text-xs text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-md"
                   >
                     Cancel
@@ -345,8 +372,63 @@ const ListView: React.FC<ListViewProps> = ({
             )}
           </div>
         </div>
-      ))}
-    </div>
+
+        {activeProjectSections?.map((section, index) => (
+          <div className="space-y-1">
+            <ListViewSection key={section.id} section={section} />
+
+            <div>
+              {!showAddSection && (
+                <div
+                  className="flex items-center gap-2 pl-7 opacity-0 hover:opacity-100 cursor-pointer transition"
+                  onClick={() => setShowAddSection(section.id)}
+                >
+                  <div className="flex-1 bg-gray-400 h-[1px]"></div>
+                  <div className="font-bold text-gray-600 text-sm">
+                    Add section
+                  </div>
+                  <div className="flex-1 bg-gray-500 h-[1px]"></div>
+                </div>
+              )}
+
+              {showAddSection == section.id && (
+                <form
+                  className="space-y-2 pl-7"
+                  onSubmit={(ev) => handleAddSection(ev, index + 1)}
+                >
+                  <input
+                    type="text"
+                    value={newSectionName}
+                    onChange={(e) => setNewSectionName(e.target.value)}
+                    placeholder="Name this section"
+                    className="border border-gray-200 focus:outline-none focus:border-gray-400 w-full rounded px-2 py-1 font-semibold"
+                    autoFocus
+                  />
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="submit"
+                      className="px-2 py-[6px] text-xs text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-600 disabled:cursor-not-allowed transition disabled:opacity-50"
+                      disabled={!newSectionName.trim()}
+                    >
+                      Add section
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowAddSection(null)}
+                      className="px-3 py-[6px] text-xs text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-md"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </DragDropContext>
   );
 };
 

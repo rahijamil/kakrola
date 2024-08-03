@@ -11,6 +11,10 @@
   }
   .sidebar_project_item:hover .sidebar_project_item_options,
   .taskitem_group:hover .taskitem_group_hover {
-    opacity: 1;
+    @apply opacity-100;
+  }
+
+  .dragging {
+    @apply opacity-50;
   }
 }

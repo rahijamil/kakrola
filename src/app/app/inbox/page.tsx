@@ -1,70 +1,66 @@
 "use client";
-import React, { useState } from "react";
-import { Task } from "@/types/project";
-import AddTaskTextButton from "@/components/AddTaskTextButton";
-import AddTask from "@/components/AddTask";
+import React, { useEffect, useState } from "react";
+import { SectionType, Task } from "@/types/project";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import LayoutWrapper from "../../../components/LayoutWrapper";
 import Image from "next/image";
 import TaskViewSwitcher from "@/components/TaskViewSwitcher";
 import { ViewTypes } from "@/types/viewTypes";
 
-const Home = () => {
-  const [showAddTask, setShowAddTask] = useState(false);
-  const { tasks, setTasks } = useTaskProjectDataProvider();
+const InboxPage = () => {
+  const { tasks, sections, setTasks } = useTaskProjectDataProvider();
   const [view, setView] = useState<ViewTypes["view"]>("List");
+  const [inboxTasks, setInboxTasks] = useState<Task[]>([]);
+  const [inboxSections, setInboxSections] = useState<SectionType[]>([]);
 
   const handleTaskUpdate = (updatedTask: Task) => {
     setTasks(tasks.map((t) => (t.id === updatedTask.id ? updatedTask : t)));
   };
 
+  useEffect(() => {
+    setInboxTasks(tasks.filter((task) => task.isInbox));
+  }, [tasks]);
+
+  useEffect(() => {
+    setInboxSections(
+      sections.filter((section) =>
+        inboxTasks.map((t) => t.section?.id).includes(section.id)
+      )
+    );
+  }, [inboxTasks, sections]);
+
   return (
     <LayoutWrapper headline="Inbox" setView={setView} view={view}>
-      {tasks.length > 0 ? (
-        <>
-          <TaskViewSwitcher
-            tasks={tasks}
-            view={view}
-            onTaskUpdate={handleTaskUpdate}
+      <TaskViewSwitcher
+        tasks={inboxTasks}
+        sections={inboxSections}
+        view={view}
+        onTaskUpdate={handleTaskUpdate}
+      />
+
+      {tasks.filter((task) => task.isInbox).length == 0 && view == "List" && (
+        <div className="flex items-center justify-center flex-col gap-1 h-[30vh] select-none">
+          <Image
+            src="/inbox.png"
+            width={220}
+            height={200}
+            alt="Today"
+            className="rounded-full object-cover"
+            draggable={false}
           />
 
-          <div className="my-6">
-            {!showAddTask && (
-              <AddTaskTextButton handleAddTask={() => setShowAddTask(true)} />
-            )}
-
-            {showAddTask && <AddTask onClose={() => setShowAddTask(false)} />}
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="mb-6">
-            {!showAddTask && (
-              <AddTaskTextButton handleAddTask={() => setShowAddTask(true)} />
-            )}
-          </div>
-
-          {showAddTask && <AddTask onClose={() => setShowAddTask(false)} />}
-          <div className="flex items-center justify-center flex-col gap-4 h-[50vh] select-none">
-            <Image
-              src="/today.png"
-              width={200}
-              height={200}
-              alt="Today"
-              className="rounded-full object-cover"
-              draggable={false}
-            />
-            <h3 className="font-bold text-xl">
-              What do you need to get done today?
+          <div className="text-center space-y-1 w-72">
+            <h3 className="font-medium text-base">
+              Your peace of mind is priceless
             </h3>
-            <p className="text-sm font-thin">
+            <p className="text-sm text-gray-600">
               By default, tasks added here will be due today.
             </p>
           </div>
-        </>
+        </div>
       )}
     </LayoutWrapper>
   );
 };
 
-export default Home;
+export default InboxPage;

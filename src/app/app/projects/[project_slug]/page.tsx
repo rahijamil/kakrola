@@ -2,7 +2,7 @@
 import LayoutWrapper from "@/components/LayoutWrapper";
 import TaskViewSwitcher from "@/components/TaskViewSwitcher";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { Task } from "@/types/project";
+import { SectionType, Task } from "@/types/project";
 import { ViewTypes } from "@/types/viewTypes";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -12,11 +12,12 @@ const ProjectDetails = ({
 }: {
   params: { project_slug: string };
 }) => {
-  const { tasks, projects, setActiveProject, setTasks } =
+  const { tasks, sections, projects, setActiveProject, setTasks } =
     useTaskProjectDataProvider();
 
-  const [view, setView] = useState<ViewTypes["view"]>("List");
+  const [view, setView] = useState<ViewTypes["view"]>("Board");
   const [projectTasks, setProjectTasks] = useState<Task[]>([]);
+  const [projectSections, setProjectSections] = useState<SectionType[]>([]);
   const [showShareOption, setShowShareOption] = useState<boolean>(false);
 
   const handleTaskUpdate = (updatedTask: Task) => {
@@ -24,7 +25,6 @@ const ProjectDetails = ({
       const newTasks = prevTasks.map((t) =>
         t.id === updatedTask.id ? updatedTask : t
       );
-      setProjectTasks(newTasks.filter((t) => t.project?.slug === project_slug));
       return newTasks;
     });
   };
@@ -36,7 +36,15 @@ const ProjectDetails = ({
     if (currentProject) {
       setProjectTasks(tasks.filter((t) => t.project?.id === currentProject.id));
     }
-  }, [project_slug, projects, tasks, setActiveProject]);
+
+    setProjectSections(
+      sections.filter((section) => section.project.id == currentProject?.id)
+    );
+
+    return () => {
+      setActiveProject(null);
+    };
+  }, [project_slug, projects, tasks, setActiveProject, sections]);
 
   return (
     <LayoutWrapper
@@ -49,14 +57,15 @@ const ProjectDetails = ({
     >
       <TaskViewSwitcher
         tasks={projectTasks}
+        sections={projectSections}
         view={view}
         onTaskUpdate={handleTaskUpdate}
         showShareOption={showShareOption}
         setShowShareOption={setShowShareOption}
       />
 
-      {tasks.length == 0 && (
-        <div className="flex items-center justify-center flex-col gap-4 h-[50vh] select-none">
+      {projectTasks.length == 0 && view == "List" && (
+        <div className="flex items-center justify-center flex-col gap-1 h-[30vh] select-none">
           <Image
             src="/project.png"
             width={220}
@@ -65,10 +74,16 @@ const ProjectDetails = ({
             className="rounded-full object-cover"
             draggable={false}
           />
-          <h3 className="font-bold text-xl">Start small (or dream big)...</h3>
-          <p className="text-sm font-thin">
-            Add your tasks or find a template to get started with your project.
-          </p>
+
+          <div className="text-center space-y-1 w-72">
+            <h3 className="font-medium text-base">
+              Start small (or dream big)...
+            </h3>
+            <p className="text-sm text-gray-600">
+              Add your tasks or find a template to get started with your
+              project.
+            </p>
+          </div>
         </div>
       )}
     </LayoutWrapper>
