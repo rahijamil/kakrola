@@ -1,9 +1,10 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { Button } from "./LandingPageButton";
+import { Button } from "@/components/ui/button";
 import { MenuIcon, XIcon } from "lucide-react";
+import EktaLogo from "./EktaLogo";
 
-const LandingPageHeader = () => {
+const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
 
@@ -34,38 +35,34 @@ const LandingPageHeader = () => {
           <div className="flex justify-between items-center h-16 gap-8">
             <div className="flex items-center gap-4">
               <Link href="/" className="flex items-center space-x-2">
-                <div className="w-9 h-9 rounded-md bg-gradient-to-b from-indigo-500 to-indigo-700 flex items-center justify-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-7 w-7 text-white"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                  </svg>
-                </div>
-
-                <span className="text-2xl font-bold text-indigo-600">Ekta</span>
+                <EktaLogo size="sm" isTitle />
               </Link>
 
-              <div className="hidden md:flex items-center">
-                {menuItems.map((item) => (
-                  <Link
-                    key={item.id}
-                    href={item.path}
-                    className="text-sm font-medium text-gray-700 hover:bg-gray-100 transition px-4 py-2 rounded-md"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
+              {!forAuth && (
+                <div className="hidden md:flex items-center">
+                  {menuItems.map((item) => (
+                    <Link
+                      key={item.id}
+                      href={item.path}
+                      className="text-sm font-medium text-gray-700 hover:bg-gray-100 transition px-4 py-2 rounded-md"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
 
-            <div className="gap-4 ml-4 flex items-center">
-              <Button variant="ghost">Log in</Button>
-              <Button>Start free trial</Button>
-            </div>
+            {!forAuth && (
+              <div className="gap-4 ml-4 flex items-center">
+                <Link href="/auth/login">
+                  <Button variant="ghost">Log in</Button>
+                </Link>
+                <Link href="/signup">
+                  <Button>Start free trial</Button>
+                </Link>
+              </div>
+            )}
 
             <div className="md:hidden">
               <button

@@ -8,11 +8,11 @@ import {
   LayoutDashboardIcon,
   ClipboardListIcon,
 } from "lucide-react";
-import { Button } from "./LandingPageButton";
 import Link from "next/link";
 import LandingPageHeader from "./LandingPageHeader";
 import LandingPageFooter from "./LandingPageFooter";
 import { ChevronDoubleRightIcon } from "@heroicons/react/24/outline";
+import { Button } from "@/components/ui/button";
 
 const LandingPage = () => {
   const features = [

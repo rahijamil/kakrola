@@ -1,4 +1,4 @@
-import { Button } from "@/app/LandingPageButton";
+import { Button } from "@/components/ui/button";
 import React, { ReactNode } from "react";
 
 const ConfirmAlert = ({
@@ -16,7 +16,7 @@ const ConfirmAlert = ({
 }) => {
   return (
     <div
-      className="fixed top-0 bottom-0 left-0 right-0 bg-black/50 flex items-start pt-40 justify-center z-30"
+      className="fixed top-0 bottom-0 left-0 right-0 bg-black/20 flex items-start pt-40 justify-center z-30"
       onClick={onCancel}
     >
       <div

@@ -11,10 +11,10 @@ const LandingPageFooter = () => {
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
             <div className="flex items-center space-x-2">
-              <div className="w-9 h-9 rounded-md bg-gradient-to-rfrom-indigo-500to-purple-500 bg-indigo-600 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-md bg-gradient-to-b from-indigo-500 to-indigo-700 flex items-center justify-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-white"
+                  className="h-7 w-7 text-white"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                   aria-hidden="true"

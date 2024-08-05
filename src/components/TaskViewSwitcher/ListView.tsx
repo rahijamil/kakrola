@@ -50,6 +50,7 @@ const ListView: React.FC<ListViewProps> = ({
 }) => {
   const [showSectionMoreOptions, setShowSectionMoreOptions] =
     useState<SectionType | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
   const { sections, setSections, activeProject, setTasks } =
     useTaskProjectDataProvider();
 
@@ -91,8 +92,6 @@ const ListView: React.FC<ListViewProps> = ({
     const { tasks, setTasks, sections, setSections } =
       useTaskProjectDataProvider();
 
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
-
     const handleSectionDelete = () => {
       if (section) {
         const updatedTasks = tasks.filter((t) => t.section?.id !== section.id);
@@ -105,6 +104,8 @@ const ListView: React.FC<ListViewProps> = ({
         const updatedTasks = tasks.filter((t) => t.section !== null);
         setTasks(updatedTasks);
       }
+
+      setShowDeleteConfirm(false);
     };
 
     return (

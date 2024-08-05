@@ -7,7 +7,7 @@
     @apply scroll-smooth;
   }
   body {
-    font-size: 14px;
+    @apply bg-gradient-to-b from-indigo-50 to-white text-sm;
   }
   .wrapper {
     @apply w-full max-w-7xl mx-auto;

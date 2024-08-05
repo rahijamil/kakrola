@@ -7,6 +7,7 @@ import SectionMoreOptions from "./SectionMoreOptions";
 import AddNewSectionBoardView from "./AddNewSectionBoardView";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
+import ConfirmAlert from "../AlertBox/ConfirmAlert";
 
 const BoardView: React.FC<{
   sections: SectionType[];
@@ -38,7 +39,7 @@ const BoardView: React.FC<{
   const [showSectionMoreOptions, setShowSectionMoreOptions] = useState<
     string | null
   >(null);
-  const { setTasks } = useTaskProjectDataProvider();
+  const { setTasks, tasks, setSections } = useTaskProjectDataProvider();
 
   const columns = useMemo(() => {
     const columnsObj: Record<
@@ -142,6 +143,24 @@ const BoardView: React.FC<{
     });
   };
 
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
+
+  const handleSectionDelete = (section: { id: number } | null) => {
+    if (section) {
+      const updatedTasks = tasks.filter((t) => t.section?.id !== section.id);
+      setTasks(updatedTasks);
+
+      const updatedSections = sections.filter((s) => s.id !== section.id);
+
+      setSections(updatedSections);
+    } else {
+      const updatedTasks = tasks.filter((t) => t.section !== null);
+      setTasks(updatedTasks);
+    }
+
+    setShowDeleteConfirm(false);
+  };
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex overflow-x-auto space-x-2 p-8 pt-0 h-full">
@@ -172,6 +191,23 @@ const BoardView: React.FC<{
                     <SectionMoreOptions
                       onClose={() => setShowSectionMoreOptions(null)}
                       column={column.id !== "ungrouped" ? column : null}
+                      setShowDeleteConfirm={setShowDeleteConfirm}
+                    />
+                  )}
+
+                  {showDeleteConfirm && (
+                    <ConfirmAlert
+                      title="Delete section?"
+                      description={`This will permanently delete "${column.title}" and all of its tasks. This can't be undone.`}
+                      submitBtnText="Delete"
+                      onCancel={() => setShowDeleteConfirm(false)}
+                      onSubmit={() =>
+                        handleSectionDelete(
+                          column.id == "ungrouped"
+                            ? null
+                            : { id: parseInt(column.id) }
+                        )
+                      }
                     />
                   )}
                 </div>
