@@ -14,10 +14,7 @@ import {
   XMarkIcon,
   PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
-import {
-  CheckIcon,
-  EllipsisHorizontalIcon,
-} from "@heroicons/react/24/solid";
+import { CheckIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/solid";
 import { AtSignIcon } from "lucide-react";
 import Priorities from "./Priorities";
 
@@ -25,10 +22,12 @@ const AddTaskForm = ({
   onClose,
   isSmall,
   section,
+  taskIdForSubTask,
 }: {
   onClose: () => void;
   isSmall?: boolean;
   section?: SectionType;
+  taskIdForSubTask?: number;
 }) => {
   const { projects, setTasks, tasks, activeProject } =
     useTaskProjectDataProvider();
@@ -43,6 +42,7 @@ const AddTaskForm = ({
     dueDate: new Date(),
     isInbox: activeProject ? false : true,
     isCompleted: false,
+    subTasks: []
   });
 
   const [showDueDate, setShowDueDate] = useState<boolean>(false);
@@ -54,7 +54,24 @@ const AddTaskForm = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setTasks([...tasks, { ...taskData, id: tasks.length + 1 }]);
+
+    if (taskIdForSubTask) {
+      setTasks((prevTasks) =>
+        prevTasks.map((t) =>
+          t.id == taskIdForSubTask
+            ? {
+                ...t,
+                subTasks: [
+                  ...t.subTasks,
+                  { ...taskData, id: t.subTasks.length + 1 },
+                ],
+              }
+            : t
+        )
+      );
+    } else {
+      setTasks([...tasks, { ...taskData, id: tasks.length + 1 }]);
+    }
 
     setTaskData({
       id: 0,
@@ -66,6 +83,7 @@ const AddTaskForm = ({
       dueDate: new Date(),
       isInbox: activeProject ? false : true,
       isCompleted: false,
+      subTasks: []
     });
   };
 
@@ -146,7 +164,7 @@ const AddTaskForm = ({
                     <input
                       type="text"
                       placeholder="Type a project name"
-                      className="w-full p-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full p-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
 
@@ -311,7 +329,7 @@ const AddTaskForm = ({
                   <input
                     type="text"
                     placeholder="Type a project name"
-                    className="w-full p-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
 
@@ -384,7 +402,7 @@ const AddTaskForm = ({
           </button>
           <button
             type="submit"
-            className="px-3 py-[6px] text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-600 disabled:cursor-not-allowed transition disabled:opacity-50"
+            className="px-3 py-[6px] text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-600 disabled:cursor-not-allowed transition disabled:opacity-50"
             disabled={!taskData.title.trim()}
           >
             {isSmall ? <PaperAirplaneIcon className="w-5 h-5" /> : "Add task"}

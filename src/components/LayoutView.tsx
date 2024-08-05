@@ -52,7 +52,7 @@ const LayoutView = ({
   hideCalendarView,
 }: {
   view: ViewTypes["view"];
-  setView: Dispatch<SetStateAction<ViewTypes["view"]>>;
+  setView: (v: ViewTypes["view"]) => void;
   showHelper?: boolean;
   hideCalendarView?: boolean;
 }) => {

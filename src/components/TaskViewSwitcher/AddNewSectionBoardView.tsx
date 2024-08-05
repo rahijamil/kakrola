@@ -5,15 +5,17 @@ import React, { FormEvent, useState } from "react";
 const AddNewSectionBoardView = ({
   sections,
   setShowUngroupedAddSection,
+  showUngroupedAddSection,
   columnId,
   columns,
   index,
 }: {
   sections: SectionType[];
   setShowUngroupedAddSection: React.Dispatch<React.SetStateAction<boolean>>;
-  columnId: string;
-  columns: { id: string; title: string; tasks: Task[] }[];
-  index: number;
+  showUngroupedAddSection?: boolean;
+  columnId?: string;
+  columns?: { id: string; title: string; tasks: Task[] }[];
+  index?: number;
 }) => {
   const [showAddSection, setShowAddSection] = useState<string | null>(null);
   const [mouseOnAddSection, setMouseOnAddSection] = useState<boolean>(false);
@@ -32,6 +34,7 @@ const AddNewSectionBoardView = ({
         name: newSectionName.trim(),
         id: sections.length + 1,
         project: activeProject,
+        isCollapsed: false,
       };
 
       setSections((prevSections) => {
@@ -54,13 +57,17 @@ const AddNewSectionBoardView = ({
 
   return (
     <div>
-      {showAddSection !== columnId && (
+      {(columnId ? showAddSection !== columnId : !showUngroupedAddSection) && (
         <>
-          {columns.length - 1 == index ? (
+          {(columns ? columns.length - 1 == index : true) ? (
             <div className="bg-gray-100 p-3 py-2 rounded-lg min-w-[300px] h-fit ml-5">
               <button
                 className="text-gray-500 hover:text-gray-700 flex items-center gap-1 w-full group py-1 whitespace-nowrap"
-                onClick={() => setShowAddSection(columnId)}
+                onClick={() =>
+                  columnId
+                    ? setShowAddSection(columnId)
+                    : setShowUngroupedAddSection(true)
+                }
                 onMouseOver={() => setMouseOnAddSection(true)}
                 onMouseOut={() => setMouseOnAddSection(false)}
               >
@@ -96,8 +103,12 @@ const AddNewSectionBoardView = ({
           ) : (
             <div className="relative w-3 h-full group cursor-pointer">
               <div
-                className="absolute -left-[36px] flex-col items-center gap-2 hidden group-hover:flex cursor-pointer transition whitespace-nowrap h-full"
-                onClick={() => setShowAddSection(columnId)}
+                className="absolute -left-[1px] flex-col items-center gap-2 hidden group-hover:flex cursor-pointer transition whitespace-nowrap h-full w-3"
+                onClick={() =>
+                  columnId
+                    ? setShowAddSection(columnId)
+                    : setShowUngroupedAddSection(true)
+                }
               >
                 <div className="flex-1 bg-gray-400 w-[1px]"></div>
                 <div className="font-bold text-gray-600 text-sm">
@@ -110,10 +121,10 @@ const AddNewSectionBoardView = ({
         </>
       )}
 
-      {showAddSection == columnId && (
+      {(columnId ? showAddSection === columnId : showUngroupedAddSection) && (
         <form
           className="space-y-2 min-w-[300px] mx-5"
-          onSubmit={(ev) => handleAddSection(ev, index + 1)}
+          onSubmit={(ev) => handleAddSection(ev, index ? index + 1 : null)}
         >
           <input
             type="text"
@@ -127,7 +138,7 @@ const AddNewSectionBoardView = ({
           <div className="flex items-center gap-2">
             <button
               type="submit"
-              className="px-2 py-[6px] text-xs text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-600 disabled:cursor-not-allowed transition disabled:opacity-50"
+              className="px-2 py-[6px] text-xs text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-600 disabled:cursor-not-allowed transition disabled:opacity-50"
               disabled={!newSectionName.trim()}
             >
               Add section
@@ -135,7 +146,10 @@ const AddNewSectionBoardView = ({
 
             <button
               type="button"
-              onClick={() => setShowAddSection(null)}
+              onClick={() => {
+                setShowAddSection(null);
+                setShowUngroupedAddSection(false);
+              }}
               className="px-3 py-[6px] text-xs text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-md"
             >
               Cancel

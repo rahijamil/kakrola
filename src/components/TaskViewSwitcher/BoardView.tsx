@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { SectionType, Task } from "@/types/project";
 import TaskItem from "./TaskItem";
 import SectionAddTask from "./SectionAddTask";
@@ -6,12 +6,7 @@ import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 import SectionMoreOptions from "./SectionMoreOptions";
 import AddNewSectionBoardView from "./AddNewSectionBoardView";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from "react-beautiful-dnd";
+import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 
 const BoardView: React.FC<{
   sections: SectionType[];
@@ -43,7 +38,7 @@ const BoardView: React.FC<{
   const [showSectionMoreOptions, setShowSectionMoreOptions] = useState<
     string | null
   >(null);
-  const { tasks, setTasks } = useTaskProjectDataProvider();
+  const { setTasks } = useTaskProjectDataProvider();
 
   const columns = useMemo(() => {
     const columnsObj: Record<
@@ -68,13 +63,20 @@ const BoardView: React.FC<{
       ),
     };
 
-    const orderedColumns = [
-      columnsObj.ungrouped,
-      ...sections.map((section) => columnsObj[section.id]),
-    ];
+    const orderedColumns =
+      unGroupedTasks.length > 0
+        ? [
+            columnsObj.ungrouped,
+            ...sections.map((section) => columnsObj[section.id]),
+          ]
+        : [...sections.map((section) => columnsObj[section.id])];
 
     return orderedColumns;
   }, [sections, groupedTasks, unGroupedTasks]);
+
+  useEffect(() => {
+    setShowUngroupedAddSection(columns.length < 1);
+  }, [columns.length, setShowUngroupedAddSection]);
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
@@ -92,15 +94,18 @@ const BoardView: React.FC<{
 
     // Find the source and destination columns
     const sourceColumn = columns.find((col) => col.id === source.droppableId);
-    const destColumn = columns.find((col) => col.id === destination.droppableId);
+    const destColumn = columns.find(
+      (col) => col.id === destination.droppableId
+    );
 
     if (!sourceColumn || !destColumn) return;
 
     // Create new arrays for the updated tasks
     const newSourceTasks = Array.from(sourceColumn.tasks);
-    const newDestTasks = source.droppableId === destination.droppableId
-      ? newSourceTasks
-      : Array.from(destColumn.tasks);
+    const newDestTasks =
+      source.droppableId === destination.droppableId
+        ? newSourceTasks
+        : Array.from(destColumn.tasks);
 
     // Remove the task from the source array
     const [movedTask] = newSourceTasks.splice(source.index, 1);
@@ -109,16 +114,17 @@ const BoardView: React.FC<{
     newDestTasks.splice(destination.index, 0, movedTask);
 
     // Update the task's section if it was moved to a different column
-    const updatedMovedTask = {
+    const updatedMovedTask: Task = {
       ...movedTask,
-      section: destination.droppableId === "ungrouped"
-        ? null
-        : { id: parseInt(destination.droppableId) },
+      section:
+        destination.droppableId !== "ungrouped" && movedTask.section
+          ? { ...movedTask.section, id: parseInt(destination.droppableId) }
+          : null,
     };
 
     // Update the tasks state
     setTasks((prevTasks) => {
-      const updatedTasks = prevTasks.map((task) =>
+      const updatedTasks: Task[] = prevTasks.map((task) =>
         task.id === updatedMovedTask.id ? updatedMovedTask : task
       );
 
@@ -127,10 +133,11 @@ const BoardView: React.FC<{
         if (a.section?.id !== b.section?.id) {
           return 0; // Different sections, maintain original order
         }
-        const columnTasks = a.section
-          ? newDestTasks
-          : newSourceTasks;
-        return columnTasks.findIndex((t) => t.id === a.id) - columnTasks.findIndex((t) => t.id === b.id);
+        const columnTasks = a.section ? newDestTasks : newSourceTasks;
+        return (
+          columnTasks.findIndex((t) => t.id === a.id) -
+          columnTasks.findIndex((t) => t.id === b.id)
+        );
       });
     });
   };
@@ -164,6 +171,7 @@ const BoardView: React.FC<{
                   {showSectionMoreOptions == column.id && (
                     <SectionMoreOptions
                       onClose={() => setShowSectionMoreOptions(null)}
+                      column={column.id !== "ungrouped" ? column : null}
                     />
                   )}
                 </div>
@@ -220,6 +228,16 @@ const BoardView: React.FC<{
             />
           </React.Fragment>
         ))}
+
+        <div>
+          {columns.length == 0 && (
+            <AddNewSectionBoardView
+              sections={sections}
+              setShowUngroupedAddSection={setShowUngroupedAddSection}
+              showUngroupedAddSection={showUngroupedAddSection}
+            />
+          )}
+        </div>
       </div>
     </DragDropContext>
   );

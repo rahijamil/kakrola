@@ -33,8 +33,8 @@ const InboxPage = () => {
     <LayoutWrapper headline="Inbox" setView={setView} view={view}>
       <TaskViewSwitcher
         tasks={inboxTasks}
-        sections={inboxSections}
         view={view}
+        sections={inboxSections}
         onTaskUpdate={handleTaskUpdate}
       />
 

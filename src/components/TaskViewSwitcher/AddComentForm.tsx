@@ -56,7 +56,7 @@ const AddComentForm = ({ onCancelClick }: { onCancelClick?: () => void }) => {
           )}
           <button
             type="button"
-            className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 text-xs font-semibold"
+            className="px-4 py-2 text-white bg-indigo-600 rounded hover:bg-indigo-700 text-xs font-semibold"
           >
             Comment
           </button>

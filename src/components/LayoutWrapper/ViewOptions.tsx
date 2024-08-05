@@ -20,7 +20,7 @@ const ViewOptions = ({
 }: {
   onClose: () => void;
   view?: ViewTypes["view"];
-  setView: Dispatch<SetStateAction<ViewTypes["view"]>>;
+  setView: (value: ViewTypes["view"]) => void;
   hideCalendarView?: boolean;
 }) => {
   const [showCompletedTasks, setShowCompletedTasks] = useState(false);
@@ -48,7 +48,7 @@ const ViewOptions = ({
 
             <ToggleSwitch
               enabled={showCompletedTasks}
-              setEnabled={setShowCompletedTasks}
+              setEnabled={(value) => setShowCompletedTasks(value)}
             />
           </div>
         </div>

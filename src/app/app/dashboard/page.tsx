@@ -104,8 +104,8 @@ const DashboardPage = () => {
         <div className="bg-white p-6 rounded-lg shadow-sm">
           <h2 className="text-xl font-semibold mb-4">Task Statistics</h2>
           <div className="grid grid-cols-2 gap-4 text-center">
-            <div className="bg-blue-100 p-4 rounded-lg">
-              <p className="text-2xl font-bold text-blue-600">{tasks.length}</p>
+            <div className="bg-indigo-100 p-4 rounded-lg">
+              <p className="text-2xl font-bold text-indigo-600">{tasks.length}</p>
               <p className="text-gray-600">Total Tasks</p>
             </div>
             <div className="bg-green-100 p-4 rounded-lg">

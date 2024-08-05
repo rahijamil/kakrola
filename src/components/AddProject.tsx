@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from "react";
-import { Dialog, DialogHeader, DialogTitle, Input } from "./ui";
+import { Dialog, DialogHeader, DialogTitle, Input, ToggleSwitch } from "./ui";
 import { ProjectType } from "@/types/project";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
@@ -15,9 +15,9 @@ const AddProject = ({ onClose }: { onClose: () => void }) => {
     slug: "",
     icon: null,
     color: "gray",
+    isFavorite: false,
+    view: "List",
   });
-
-  const [view, setView] = useState<ViewTypes["view"]>("List");
 
   const handleAddProject = (ev: FormEvent) => {
     ev.preventDefault();
@@ -28,7 +28,7 @@ const AddProject = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <Dialog>
+    <Dialog size="xs">
       <>
         <DialogHeader>
           <DialogTitle>Add project</DialogTitle>
@@ -46,7 +46,7 @@ const AddProject = ({ onClose }: { onClose: () => void }) => {
                 setProjectData({
                   ...projectData,
                   name: e.target.value,
-                  slug: e.target.value.toLowerCase(),
+                  slug: e.target.value.replace(/\s+/g, "-").toLowerCase(),
                 })
               }
               required
@@ -71,11 +71,32 @@ const AddProject = ({ onClose }: { onClose: () => void }) => {
                 setProjectData({ ...projectData, color: e.target.value })
               }
               required
-            />
-            <div>Add to favorites</div> */}
+            /> */}
+
+            <div>
+              <button
+                className="flex items-center space-x-2"
+                type="button"
+                onClick={() =>
+                  setProjectData((prev) => ({
+                    ...prev,
+                    isFavorite: !prev.isFavorite,
+                  }))
+                }
+              >
+                <ToggleSwitch
+                  enabled={projectData.isFavorite}
+                  setEnabled={(value) =>
+                    setProjectData((prev) => ({ ...prev, isFavorite: value }))
+                  }
+                />
+
+                <span className="">Add to favorites</span>
+              </button>
+            </div>
 
             <div className="space-y-2 pt-3">
-              <LayoutView view={view} setView={setView} />
+              <LayoutView view={projectData.view} setView={(value) => setProjectData({ ...projectData, view: value })} />
               <p className="text-gray-500 text-xs">
                 Layout is synced between teammates in shared projects. Learn
                 more.
@@ -93,7 +114,7 @@ const AddProject = ({ onClose }: { onClose: () => void }) => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 text-xs font-semibold"
+              className="px-4 py-2 text-white bg-indigo-600 rounded hover:bg-indigo-700 text-xs font-semibold"
             >
               Add
             </button>

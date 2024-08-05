@@ -6,9 +6,22 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { CopyPlusIcon } from "lucide-react";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
+import { Task } from "@/types/project";
 
-const SectionMoreOptions = ({ onClose }: { onClose: () => void }) => {
+const SectionMoreOptions = ({
+  onClose,
+  column,
+  setShowDeleteConfirm,
+}: {
+  onClose: () => void;
+  column: {
+    id: string;
+    title: string;
+    tasks?: Task[];
+  } | null;
+  setShowDeleteConfirm: Dispatch<SetStateAction<boolean>>;
+}) => {
   return (
     <>
       <div className="absolute bg-white drop-shadow-md rounded-md border border-gray-200 top-full left-1/2 -translate-x-1/2 z-20 w-72 py-1">
@@ -31,7 +44,13 @@ const SectionMoreOptions = ({ onClose }: { onClose: () => void }) => {
           <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
             <ArchiveBoxArrowDownIcon className="w-4 h-4 mr-4" /> Archive
           </button>
-          <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition flex items-center">
+          <button
+            onClick={() => {
+              setShowDeleteConfirm(true);
+              onClose();
+            }}
+            className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition flex items-center"
+          >
             <TrashIcon className="w-4 h-4 mr-4" /> Delete
           </button>
         </div>

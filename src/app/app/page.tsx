@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Task } from "@/types/project";
 import LayoutWrapper from "../../components/LayoutWrapper";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
@@ -12,7 +12,17 @@ const Home = () => {
   const [view, setView] = useState<ViewTypes["view"]>("List");
 
   const [todayTasks, setTodayTasks] = useState<Task[]>([]);
-  
+
+  useEffect(() => {
+    setTodayTasks(
+      tasks.filter(
+        (t) =>
+          new Date(t.dueDate).getDate() == new Date().getDate() &&
+          new Date(t.dueDate).getMonth() == new Date().getMonth() &&
+          new Date(t.dueDate).getFullYear() == new Date().getFullYear()
+      )
+    );
+  }, [tasks]);
 
   const handleTaskUpdate = (updatedTask: Task) => {
     setTasks(tasks.map((t) => (t.id === updatedTask.id ? updatedTask : t)));
@@ -26,7 +36,7 @@ const Home = () => {
       hideCalendarView
     >
       <TaskViewSwitcher
-        tasks={[]}
+        tasks={todayTasks}
         view={view}
         onTaskUpdate={handleTaskUpdate}
       />

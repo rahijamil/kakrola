@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { ViewTypes } from "./viewTypes";
 
 export interface ProjectType {
   id: number;
@@ -6,12 +7,15 @@ export interface ProjectType {
   slug: string;
   icon: ReactNode;
   color: string;
+  isFavorite: boolean;
+  view: ViewTypes["view"];
 }
 
 export interface SectionType {
   id: number;
   name: string;
   project: ProjectType;
+  isCollapsed: boolean;
 }
 
 export interface Task {
@@ -25,4 +29,20 @@ export interface Task {
   dueDate: Date;
   reminderTime?: Date;
   isCompleted: boolean;
+  subTasks: Task[];
+}
+
+export interface UserType {
+  id: number;
+  name: string;
+  email: string;
+  username: string;
+  roles: [];
+  created_at: Date;
+}
+
+export interface CommentType {
+  id: number;
+  text: string;
+  author: UserType;
 }

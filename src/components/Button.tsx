@@ -1,8 +1,20 @@
 import React, { ReactNode } from "react";
 
-const Button = ({ children, type }: { children: ReactNode, type: "button" | "submit" }) => {
+const Button = ({
+  children,
+  type = "button",
+  onClick,
+}: {
+  children: ReactNode;
+  type?: "button" | "submit";
+  onClick?: () => void;
+}) => {
   return (
-    <button type={type} className="px-4 py-1 text-sm text-white bg-blue-600 rounded-full hover:bg-blue-700 transition">
+    <button
+      type={type}
+      onClick={onClick}
+      className="px-4 py-1 text-sm text-white bg-indigo-600 rounded-full hover:bg-indigo-700 transition"
+    >
       {children}
     </button>
   );

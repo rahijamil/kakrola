@@ -8,6 +8,8 @@ import TaskItemModal from "./TaskItemModal";
 import { Dispatch, SetStateAction, useState } from "react";
 import TaskItemMoreDropdown from "./TaskItemMoreDropdown";
 import { Draggable } from "react-beautiful-dnd";
+import ConfirmAlert from "../AlertBox/ConfirmAlert";
+import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 const TaskItem = ({
   task,
   onCheckClick,
@@ -23,6 +25,15 @@ const TaskItem = ({
 }) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showMoreDropdown, setShowMoreDropdown] = useState<boolean>(false);
+
+  const { tasks, setTasks } = useTaskProjectDataProvider();
+
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
+
+  const handleSectionDelete = () => {
+    const updatedTasks = tasks.filter((t) => t.id !== task.id);
+    setTasks(updatedTasks);
+  };
 
   return (
     <Draggable draggableId={task.id.toString()} index={index}>
@@ -48,7 +59,7 @@ const TaskItem = ({
                 <div
                   className={`border w-5 h-5 rounded-full flex items-center justify-center ${
                     task.isCompleted
-                      ? "bg-blue-600 border-blue-600"
+                      ? "bg-indigo-600 border-indigo-600"
                       : "border-gray-400"
                   }`}
                 >
@@ -89,6 +100,7 @@ const TaskItem = ({
                 {showMoreDropdown && (
                   <TaskItemMoreDropdown
                     onClose={() => setShowMoreDropdown(false)}
+                    setShowDeleteConfirm={setShowDeleteConfirm}
                   />
                 )}
               </div>
@@ -111,6 +123,16 @@ const TaskItem = ({
               task={task}
               onClose={() => setShowModal(false)}
               onCheckClick={onCheckClick}
+            />
+          )}
+
+          {showDeleteConfirm && (
+            <ConfirmAlert
+              title="Delete section?"
+              description={`This will permanently delete "${task.title}". This can't be undone.`}
+              submitBtnText="Delete"
+              onCancel={() => setShowDeleteConfirm(false)}
+              onSubmit={handleSectionDelete}
             />
           )}
         </div>

@@ -10,7 +10,7 @@ import { Task } from "@/types/project";
 const priorities = [
   { value: "P1", label: "Priority 1", color: "text-red-500" },
   { value: "P2", label: "Priority 2", color: "text-orange-500" },
-  { value: "P3", label: "Priority 3", color: "text-blue-500" },
+  { value: "P3", label: "Priority 3", color: "text-indigo-500" },
   { value: "Priority", label: "Priority 4", color: "text-gray-500" },
 ];
 

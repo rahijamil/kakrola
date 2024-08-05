@@ -4,25 +4,31 @@ import React, { Dispatch, forwardRef, ReactNode, SetStateAction } from "react";
 interface DialogProps {
   children: ReactNode;
   onClose?: () => void;
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg";
+  position?: "top" | "center";
 }
 
 export const Dialog: React.FC<DialogProps> = ({
   children,
   onClose,
   size = "sm",
+  position = "center",
 }) => {
   if (!open) return null;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
+      className={`fixed inset-0 z-50 cursor-default flex justify-center ${size == "sm" ? "bg-transparent" : " bg-black bg-opacity-40"} ${
+        position == "center" ? "items-center" : "items-start pt-40"
+      }`}
       onClick={onClose}
     >
       <div
-        className={`bg-white rounded-lg overflow-hidden shadow-xl w-full flex flex-col ${
-          size === "sm"
-            ? "max-w-sm"
+        className={`bg-white rounded-lg shadow-xl w-full flex flex-col ${
+          size === "xs"
+            ? "max-w-md"
+            : size === "sm"
+            ? "max-w-lg p-2"
             : size === "md"
             ? "max-w-2xl h-[93%]"
             : "max-w-3xl h-[93%]"
@@ -115,7 +121,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = "", ...props }, ref) => (
     <button
-      className={`px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${className}`}
+      className={`px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${className}`}
       ref={ref}
       {...props}
     />
@@ -139,7 +145,7 @@ export const Select: React.FC<SelectProps> = ({
       <select
         onChange={(e) => onValueChange(e.target.value)}
         defaultValue={defaultValue}
-        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none"
       >
         {children}
       </select>
@@ -202,14 +208,18 @@ export const ToggleSwitch = ({
   setEnabled,
 }: {
   enabled: boolean;
-  setEnabled: Dispatch<SetStateAction<boolean>>;
+  setEnabled: (value: boolean) => void;
 }) => {
   return (
     <button
-      onClick={() => setEnabled(!enabled)}
+      type="button"
+      onClick={(ev) => {
+        ev.stopPropagation();
+        setEnabled(!enabled);
+      }}
       className={`${
-        enabled ? "bg-blue-600" : "bg-gray-200"
-      } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+        enabled ? "bg-indigo-600" : "bg-gray-200"
+      } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
     >
       <span className="sr-only">Enable feature</span>
       <span

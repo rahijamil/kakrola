@@ -1,15 +1,22 @@
+import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ViewTypes } from "@/types/viewTypes";
 import { LinkIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { CopyPlusIcon, AlarmClockIcon } from "lucide-react";
-import React from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
+import ConfirmAlert from "../AlertBox/ConfirmAlert";
+import { Task } from "@/types/project";
 
 const TaskItemMoreDropdown = ({
   onClose,
   view = "Board",
+  setShowDeleteConfirm,
 }: {
   onClose: () => void;
   view?: ViewTypes["view"];
+  setShowDeleteConfirm: Dispatch<SetStateAction<boolean>>
 }) => {
+
+
   return (
     <>
       <div
@@ -58,7 +65,13 @@ const TaskItemMoreDropdown = ({
 
         <div className="h-[1px] bg-gray-100 my-1"></div>
         <div>
-          <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition flex items-center">
+          <button
+            onClick={() => {
+              setShowDeleteConfirm(true);
+              onClose();
+            }}
+            className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition flex items-center"
+          >
             <TrashIcon className="w-4 h-4 mr-4" /> Delete
           </button>
         </div>

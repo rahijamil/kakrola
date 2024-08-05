@@ -1,22 +1,12 @@
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType } from "@/types/project";
 import {
-  ArchiveBoxArrowDownIcon,
-  ArrowDownIcon,
-  ArrowDownTrayIcon,
-  ArrowUpIcon,
-  ArrowUpTrayIcon,
   EllipsisHorizontalIcon,
   HashtagIcon,
-  HeartIcon,
-  LinkIcon,
-  PencilIcon,
-  TrashIcon,
-  UserPlusIcon,
 } from "@heroicons/react/24/outline";
-import { CopyPlusIcon, LogsIcon } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
+import SidebarProjectMoreOptions from "./SidebarProjectMoreOptions";
 
 const ProjectItem = ({
   project,
@@ -35,22 +25,6 @@ const ProjectItem = ({
   const moreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setShowProjectMoreDropdown(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  useEffect(() => {
     const timeout = setTimeout(() => {
       if (showProjectMoreDropdown && moreRef.current && dropdownRef.current) {
         const moreRect = moreRef.current.getBoundingClientRect();
@@ -66,7 +40,7 @@ const ProjectItem = ({
   }, [showProjectMoreDropdown]);
 
   return (
-    <li className="relative">
+    <li>
       <div
         ref={moreRef}
         className={`relative sidebar_project_item p-[1px] flex-1 flex items-center justify-between rounded-md transition-colors text-gray-700 ${
@@ -108,77 +82,12 @@ const ProjectItem = ({
       </div>
 
       {showProjectMoreDropdown && (
-        <>
-          <div
-            ref={dropdownRef}
-            className="fixed z-[100] w-60 bg-white rounded-md shadow-lg py-1"
-            style={{
-              top: `${dropdownPosition.top}px`,
-              left: `${dropdownPosition.left}px`,
-            }}
-          >
-            <div>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-                <ArrowUpIcon className="w-4 h-4 mr-2" /> Add project above
-              </button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-                <ArrowDownIcon className="w-4 h-4 mr-2" /> Add project bellow
-              </button>
-            </div>
-            <div className="h-[1px] bg-gray-100 my-1"></div>
-            <div>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-                <PencilIcon className="w-4 h-4 mr-2" /> Edit
-              </button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-                <HeartIcon className="w-4 h-4 mr-2" /> Add to favorites
-              </button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-                <CopyPlusIcon className="w-4 h-4 mr-2" /> Duplicate
-              </button>
-            </div>
-            <div className="h-[1px] bg-gray-100 my-1"></div>
-            <div>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-                <UserPlusIcon className="w-4 h-4 mr-2" /> Share
-              </button>
-            </div>
-            <div className="h-[1px] bg-gray-100 my-1"></div>
-            <div>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-                <LinkIcon className="w-4 h-4 mr-2" /> Copy project link
-              </button>
-            </div>
-            <div className="h-[1px] bg-gray-100 my-1"></div>
-            <div>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-                <ArrowDownTrayIcon className="w-4 h-4 mr-2" /> Import from CSV
-              </button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-                <ArrowUpTrayIcon className="w-4 h-4 mr-2" /> Export as CSV
-              </button>
-            </div>
-            <div className="h-[1px] bg-gray-100 my-1"></div>
-            <div>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-                <LogsIcon className="w-4 h-4 mr-2" /> Activity log
-              </button>
-            </div>
-            <div className="h-[1px] bg-gray-100 my-1"></div>
-            <div>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-                <ArchiveBoxArrowDownIcon className="w-4 h-4 mr-2" /> Archive
-              </button>
-              <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition flex items-center">
-                <TrashIcon className="w-4 h-4 mr-2" /> Delete
-              </button>
-            </div>
-          </div>
-          <div
-            className="fixed top-0 left-0 bottom-0 right-0 z-10"
-            onClick={() => setShowProjectMoreDropdown(false)}
-          ></div>
-        </>
+        <SidebarProjectMoreOptions
+          onClose={() => setShowProjectMoreDropdown(false)}
+          project={project}
+          dropdownPosition={dropdownPosition}
+          dropdownRef={dropdownRef}
+        />
       )}
     </li>
   );

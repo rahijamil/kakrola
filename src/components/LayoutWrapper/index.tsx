@@ -11,26 +11,28 @@ import CommentOrActivityModal from "./CommentOrActivityModal";
 import ActiveProjectMoreOptions from "./ActiveProjectMoreOptions";
 import ViewOptions from "./ViewOptions";
 import ShareOption from "./ShareOption";
+import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import DocsSidebar from "../DocsSidebar";
 import { ViewTypes } from "@/types/viewTypes";
 
 const LayoutWrapper = ({
   children,
   headline,
-  view,
-  setView,
   isProject,
   showShareOption,
   setShowShareOption,
-  hideCalendarView
+  hideCalendarView,
+  view,
+  setView,
 }: {
   children: React.ReactNode;
   headline: string;
-  view?: ViewTypes["view"];
-  setView?: Dispatch<SetStateAction<ViewTypes["view"]>>;
   isProject?: boolean;
+  view: ViewTypes["view"];
+  setView: (value: ViewTypes["view"]) => void;
   showShareOption?: boolean;
   setShowShareOption?: Dispatch<SetStateAction<boolean>>;
-  hideCalendarView?: boolean
+  hideCalendarView?: boolean;
 }) => {
   const [editTitle, setEditTitle] = useState<boolean>(false);
   const [showViewOptions, setShowViewOptions] = useState<boolean>(false);
@@ -39,102 +41,105 @@ const LayoutWrapper = ({
     "comment" | "activity" | null
   >(null);
 
+  const { activeProject, setProjects } = useTaskProjectDataProvider();
+
+  const [projectTitle, setProjectTitle] = useState<string>(
+    activeProject?.name || headline
+  );
+
   return (
     <div className="flex h-screen bg-white">
       <Sidebar />
+      {headline == "Docs" && <DocsSidebar />}
 
       <main className="flex-1 overflow-auto flex flex-col">
-        {setView && (
-          <div className="flex items-center justify-between p-4">
-            {!["Today", "Inbox"].includes(headline) && <div>My Projects /</div>}
+        <div className="flex items-center justify-between p-4">
+          {!["Today", "Inbox"].includes(headline) && <div>My Projects /</div>}
 
-            <div className="flex-1 flex items-center justify-end">
-              <ul className="flex items-center relative">
-                {typeof setShowShareOption === "function" &&
-                  headline !== "Today" && (
-                    <li>
-                      <button
-                        className={`${
-                          showShareOption ? "bg-gray-100" : "hover:bg-gray-100"
-                        }  transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
-                        onClick={() => setShowShareOption(true)}
-                      >
-                        <UserPlusIcon className="w-6 h-6 text-gray-500" />
-                        Share
-                      </button>
+          <div className="flex-1 flex items-center justify-end">
+            <ul className="flex items-center relative">
+              {typeof setShowShareOption === "function" &&
+                headline !== "Today" && (
+                  <li>
+                    <button
+                      className={`${
+                        showShareOption ? "bg-gray-100" : "hover:bg-gray-100"
+                      }  transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
+                      onClick={() => setShowShareOption(true)}
+                    >
+                      <UserPlusIcon className="w-6 h-6 text-gray-500" />
+                      Share
+                    </button>
 
-                      {showShareOption && (
-                        <ShareOption
-                          onClose={() => setShowShareOption(false)}
-                        />
-                      )}
-                    </li>
-                  )}
-                <li>
-                  <button
-                    className={`${
-                      showViewOptions ? "bg-gray-100" : "hover:bg-gray-100"
-                    }  transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
-                    onClick={() => setShowViewOptions(true)}
-                  >
-                    <AdjustmentsHorizontalIcon className="w-6 h-6 text-gray-500" />
-                    View
-                  </button>
-
-                  {showViewOptions && (
-                    <ViewOptions
-                      onClose={() => setShowViewOptions(false)}
-                      view={view}
-                      setView={setView}
-                      hideCalendarView={hideCalendarView}
-                    />
-                  )}
-                </li>
-
-                {headline !== "Today" && (
-                  <>
-                    <li>
-                      <button
-                        className={`${
-                          showCommentOrActivity
-                            ? "bg-gray-100"
-                            : "hover:bg-gray-100"
-                        } transition p-1 rounded-md cursor-pointer`}
-                        onClick={() => setShowCommentOrActivity("comment")}
-                      >
-                        <ChatBubbleLeftIcon className="w-6 h-6 text-gray-500" />
-                      </button>
-
-                      {showCommentOrActivity && (
-                        <CommentOrActivityModal
-                          onClose={() => setShowCommentOrActivity(null)}
-                          showCommentOrActivity={showCommentOrActivity}
-                          setShowCommentOrActivity={setShowCommentOrActivity}
-                        />
-                      )}
-                    </li>
-                    <li>
-                      <button
-                        className={`${
-                          showMoreOptions ? "bg-gray-100" : "hover:bg-gray-100"
-                        } transition p-1 rounded-md cursor-pointer`}
-                        onClick={() => setShowMoreOptions(true)}
-                      >
-                        <EllipsisHorizontalIcon className="w-6 h-6 text-gray-500" />
-                      </button>
-
-                      {showMoreOptions && (
-                        <ActiveProjectMoreOptions
-                          onClose={() => setShowMoreOptions(false)}
-                        />
-                      )}
-                    </li>
-                  </>
+                    {showShareOption && (
+                      <ShareOption onClose={() => setShowShareOption(false)} />
+                    )}
+                  </li>
                 )}
-              </ul>
-            </div>
+              <li>
+                <button
+                  className={`${
+                    showViewOptions ? "bg-gray-100" : "hover:bg-gray-100"
+                  }  transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
+                  onClick={() => setShowViewOptions(true)}
+                >
+                  <AdjustmentsHorizontalIcon className="w-6 h-6 text-gray-500" />
+                  View
+                </button>
+
+                {showViewOptions && (
+                  <ViewOptions
+                    onClose={() => setShowViewOptions(false)}
+                    hideCalendarView={hideCalendarView}
+                    view={view}
+                    setView={setView}
+                  />
+                )}
+              </li>
+
+              {headline !== "Today" && (
+                <>
+                  <li>
+                    <button
+                      className={`${
+                        showCommentOrActivity
+                          ? "bg-gray-100"
+                          : "hover:bg-gray-100"
+                      } transition p-1 rounded-md cursor-pointer`}
+                      onClick={() => setShowCommentOrActivity("comment")}
+                    >
+                      <ChatBubbleLeftIcon className="w-6 h-6 text-gray-500" />
+                    </button>
+
+                    {showCommentOrActivity && (
+                      <CommentOrActivityModal
+                        onClose={() => setShowCommentOrActivity(null)}
+                        showCommentOrActivity={showCommentOrActivity}
+                        setShowCommentOrActivity={setShowCommentOrActivity}
+                      />
+                    )}
+                  </li>
+                  <li>
+                    <button
+                      className={`${
+                        showMoreOptions ? "bg-gray-100" : "hover:bg-gray-100"
+                      } transition p-1 rounded-md cursor-pointer`}
+                      onClick={() => setShowMoreOptions(true)}
+                    >
+                      <EllipsisHorizontalIcon className="w-6 h-6 text-gray-500" />
+                    </button>
+
+                    {showMoreOptions && (
+                      <ActiveProjectMoreOptions
+                        onClose={() => setShowMoreOptions(false)}
+                      />
+                    )}
+                  </li>
+                </>
+              )}
+            </ul>
           </div>
-        )}
+        </div>
 
         <div
           className={`flex-1 ${
@@ -153,9 +158,23 @@ const LayoutWrapper = ({
                     <input
                       type="text"
                       className={`text-2xl font-bold border border-gray-400 outline-none capitalize w-full rounded-md p-1`}
-                      value={headline}
+                      value={projectTitle}
                       onBlur={() => setEditTitle(false)}
                       autoFocus
+                      onChange={(ev) => setProjectTitle(ev.target.value)}
+                      onKeyDown={(ev) => {
+                        if (ev.key == "Enter" && activeProject) {
+                          setProjects((prevProjects) =>
+                            prevProjects.map((p) =>
+                              p.id == activeProject.id
+                                ? { ...p, name: projectTitle }
+                                : p
+                            )
+                          );
+
+                          setEditTitle(false);
+                        }
+                      }}
                     />
                   ) : (
                     <h1
@@ -164,7 +183,7 @@ const LayoutWrapper = ({
                       }`}
                       onClick={() => setEditTitle(true)}
                     >
-                      {headline}
+                      {activeProject?.name}
                     </h1>
                   )}
                 </>

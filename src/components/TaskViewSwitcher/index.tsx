@@ -1,9 +1,4 @@
-import React, {
-  useState,
-  useMemo,
-  Dispatch,
-  SetStateAction,
-} from "react";
+import React, { useState, useMemo, Dispatch, SetStateAction } from "react";
 import { SectionType, Task } from "@/types/project";
 import ListView from "./ListView";
 import BoardView from "./BoardView";
@@ -31,8 +26,10 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
   const [showAddTask, setShowAddTask] = useState<number | null>(null);
   const { activeProject } = useTaskProjectDataProvider();
 
-  const [showUngroupedAddTask, setShowUngroupedAddTask] = useState<boolean>(false);
-  const [showUngroupedAddSection, setShowUngroupedAddSection] = useState<boolean>(false);
+  const [showUngroupedAddTask, setShowUngroupedAddTask] =
+    useState<boolean>(false);
+  const [showUngroupedAddSection, setShowUngroupedAddSection] =
+    useState<boolean>(false);
 
   const { groupedTasks, unGroupedTasks } = useMemo(() => {
     const grouped: Record<number, Task[]> = {};
@@ -53,7 +50,6 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
 
     return { groupedTasks: grouped, unGroupedTasks: ungrouped };
   }, [tasks, activeProject?.id]);
-
 
   switch (view) {
     case "List":

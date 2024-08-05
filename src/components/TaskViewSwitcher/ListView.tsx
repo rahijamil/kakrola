@@ -10,11 +10,14 @@ import {
 } from "@heroicons/react/24/outline";
 import TaskItem from "./TaskItem";
 import { SectionType, Task } from "@/types/project";
-import { Dispatch, FormEvent, SetStateAction, useState } from "react";
+import { Dispatch, FormEvent, SetStateAction, useMemo, useState } from "react";
 import SectionAddTask from "./SectionAddTask";
 import { CopyPlusIcon, MoreHorizontal } from "lucide-react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
+import AddNewSectionListView from "./AddNewSectionListView";
+import SectionMoreOptions from "./SectionMoreOptions";
+import ConfirmAlert from "../AlertBox/ConfirmAlert";
 
 interface ListViewProps {
   groupedTasks: Record<string, Task[]>;
@@ -47,22 +50,69 @@ const ListView: React.FC<ListViewProps> = ({
 }) => {
   const [showSectionMoreOptions, setShowSectionMoreOptions] =
     useState<SectionType | null>(null);
-  const [newSectionName, setNewSectionName] = useState("");
-  const [showAddSection, setShowAddSection] = useState<number | null>(null);
   const { sections, setSections, activeProject, setTasks } =
     useTaskProjectDataProvider();
 
-  const [openSections, setOpenSections] = useState<Record<number, boolean>>({});
+  const [newSectionName, setNewSectionName] = useState("");
+  const [showAddSection, setShowAddSection] = useState<number | null>(null);
+
+  const rows = useMemo(() => {
+    const columnsObj: Record<
+      string,
+      { id: string; title: string; tasks: Task[] }
+    > = {
+      ungrouped: {
+        id: "ungrouped",
+        title: "(No section)",
+        tasks: unGroupedTasks,
+      },
+      ...sections.reduce(
+        (acc, section) => ({
+          ...acc,
+          [section.id]: {
+            id: section.id.toString(),
+            title: section.name,
+            tasks: groupedTasks[section.id] || [],
+          },
+        }),
+        {}
+      ),
+    };
+
+    const orderedColumns = [
+      columnsObj.ungrouped,
+      ...sections.map((section) => columnsObj[section.id]),
+    ];
+
+    return orderedColumns;
+  }, [sections, groupedTasks, unGroupedTasks]);
 
   const ListViewSection = ({ section }: { section: SectionType }) => {
-    const isOpen = openSections[section.id];
+    const { tasks, setTasks, sections, setSections } =
+      useTaskProjectDataProvider();
+
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
+
+    const handleSectionDelete = () => {
+      if (section) {
+        const updatedTasks = tasks.filter((t) => t.section?.id !== section.id);
+        setTasks(updatedTasks);
+
+        const updatedSections = sections.filter((s) => s.id !== section.id);
+
+        setSections(updatedSections);
+      } else {
+        const updatedTasks = tasks.filter((t) => t.section !== null);
+        setTasks(updatedTasks);
+      }
+    };
 
     return (
       <div>
         <div className="flex items-center gap-1 py-2">
           <button
             className={`p-1 hover:bg-gray-100 transition rounded-md ${
-              isOpen && "rotate-90"
+              !section.isCollapsed && "rotate-90"
             }`}
             onClick={() => toggleSection(section.id)}
           >
@@ -93,47 +143,30 @@ const ListView: React.FC<ListViewProps> = ({
               </button>
 
               {showSectionMoreOptions?.id == section.id && (
-                <>
-                  <div className="absolute bg-white drop-shadow-md rounded-md border border-gray-200 top-full right-0 z-20 w-72 py-1">
-                    <div>
-                      <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-                        <PencilIcon className="w-4 h-4 mr-4" /> Edit
-                      </button>
-                      <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-                        <ArrowRightCircleIcon className="w-5 h-5 mr-4" /> Move
-                        to...
-                      </button>
-                      <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-                        <CopyPlusIcon className="w-4 h-4 mr-4" /> Duplicate
-                      </button>
-                      <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-                        <LinkIcon className="w-4 h-4 mr-4" /> Copy link to
-                        section
-                      </button>
-                    </div>
-                    <div className="h-[1px] bg-gray-100 my-1"></div>
-                    <div>
-                      <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-                        <ArchiveBoxArrowDownIcon className="w-4 h-4 mr-4" />{" "}
-                        Archive
-                      </button>
-                      <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition flex items-center">
-                        <TrashIcon className="w-4 h-4 mr-4" /> Delete
-                      </button>
-                    </div>
-                  </div>
+                <SectionMoreOptions
+                  onClose={() => setShowSectionMoreOptions(null)}
+                  column={{
+                    id: section.id.toString(),
+                    title: section.name,
+                  }}
+                  setShowDeleteConfirm={setShowDeleteConfirm}
+                />
+              )}
 
-                  <div
-                    className="fixed top-0 left-0 bottom-0 right-0 z-10"
-                    onClick={() => setShowSectionMoreOptions(null)}
-                  ></div>
-                </>
+              {showDeleteConfirm && (
+                <ConfirmAlert
+                  title="Delete section?"
+                  description={`This will permanently delete "${section.name}" and all of its tasks. This can't be undone.`}
+                  submitBtnText="Delete"
+                  onCancel={() => setShowDeleteConfirm(false)}
+                  onSubmit={handleSectionDelete}
+                />
               )}
             </div>
           </div>
         </div>
 
-        {isOpen && (
+        {!section.isCollapsed && (
           <Droppable key={section.id} droppableId={section.id.toString()}>
             {(provided, snapshot) => (
               <div
@@ -179,46 +212,11 @@ const ListView: React.FC<ListViewProps> = ({
   };
 
   const toggleSection = (sectionId: number) => {
-    setOpenSections((prev) => ({
-      ...prev,
-      [sectionId]: !prev[sectionId],
-    }));
-  };
-
-  const handleAddSection = (
-    ev: FormEvent<HTMLFormElement>,
-    positionIndex: number | null
-  ) => {
-    ev.preventDefault();
-
-    if (activeProject && newSectionName.trim()) {
-      const newSection: SectionType = {
-        name: newSectionName.trim(),
-        id: sections.length + 1,
-        project: activeProject,
-      };
-
-      setSections((prevSections) => {
-        if (positionIndex !== null) {
-          // Insert the new section at the specified position
-          const updatedSections = [...prevSections];
-          updatedSections.splice(positionIndex, 0, newSection);
-          return updatedSections;
-        } else {
-          // Add the new section at the beginning
-          return [newSection, ...prevSections];
-        }
-      });
-
-      setOpenSections((prevOpenSections) => ({
-        ...prevOpenSections,
-        [newSection.id]: true,
-      }));
-
-      setNewSectionName("");
-      setShowAddSection(null);
-      setShowUngroupedAddSection(false);
-    }
+    setSections((prevSections) =>
+      prevSections.map((s) =>
+        s.id == sectionId ? { ...s, isCollapsed: !s.isCollapsed } : s
+      )
+    );
   };
 
   const onDragEnd = (result: DropResult) => {
@@ -260,9 +258,10 @@ const ListView: React.FC<ListViewProps> = ({
         const destinationTasks = Array.from(groupedTasks[destinationSection]);
         const [movedTask] = sourceTasks.splice(source.index, 1);
 
-        const updatedTask = {
+        const updatedTask: Task = {
           ...movedTask,
           section: {
+            ...movedTask.section!,
             id: parseInt(destinationSection),
             name:
               sections.find((s) => s.id.toString() === destinationSection)
@@ -284,6 +283,38 @@ const ListView: React.FC<ListViewProps> = ({
     }
   };
 
+  const handleAddSection = (
+    ev: FormEvent<HTMLFormElement>,
+    positionIndex: number | null
+  ) => {
+    ev.preventDefault();
+
+    if (activeProject && newSectionName.trim()) {
+      const newSection: SectionType = {
+        name: newSectionName.trim(),
+        id: sections.length + 1,
+        project: activeProject,
+        isCollapsed: false,
+      };
+
+      setSections((prevSections) => {
+        if (positionIndex !== null) {
+          // Insert the new section at the specified position
+          const updatedSections = [...prevSections];
+          updatedSections.splice(positionIndex, 0, newSection);
+          return updatedSections;
+        } else {
+          // Add the new section at the beginning
+          return [newSection, ...prevSections];
+        }
+      });
+
+      setNewSectionName("");
+      setShowAddSection(null);
+      setShowUngroupedAddSection(false);
+    }
+  };
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div
@@ -295,27 +326,31 @@ const ListView: React.FC<ListViewProps> = ({
       >
         <div className="space-y-1">
           <div className="pl-8">
-            <ul>
-              {unGroupedTasks.map((task, index) => (
-                <li
-                  key={task.id}
-                  className="border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer"
-                >
-                  <TaskItem
-                    task={task}
-                    onCheckClick={() =>
-                      onTaskUpdate({
-                        ...task,
-                        isCompleted: !task.isCompleted,
-                      })
-                    }
-                    showShareOption={showShareOption}
-                    setShowShareOption={setShowShareOption}
-                    index={index}
-                  />
-                </li>
-              ))}
-            </ul>
+            <Droppable droppableId="ungrouped">
+              {(provided) => (
+                <ul {...provided.droppableProps} ref={provided.innerRef}>
+                  {unGroupedTasks.map((task, index) => (
+                    <li
+                      key={task.id}
+                      className="border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer"
+                    >
+                      <TaskItem
+                        task={task}
+                        onCheckClick={() =>
+                          onTaskUpdate({
+                            ...task,
+                            isCompleted: !task.isCompleted,
+                          })
+                        }
+                        showShareOption={showShareOption}
+                        setShowShareOption={setShowShareOption}
+                        index={index}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Droppable>
 
             <SectionAddTask
               showUngroupedAddTask={showUngroupedAddTask}
@@ -354,7 +389,7 @@ const ListView: React.FC<ListViewProps> = ({
                 <div className="flex items-center gap-2">
                   <button
                     type="submit"
-                    className="px-2 py-[6px] text-xs text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-600 disabled:cursor-not-allowed transition disabled:opacity-50"
+                    className="px-2 py-[6px] text-xs text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-600 disabled:cursor-not-allowed transition disabled:opacity-50"
                     disabled={!newSectionName.trim()}
                   >
                     Add section
@@ -374,57 +409,19 @@ const ListView: React.FC<ListViewProps> = ({
         </div>
 
         {activeProjectSections?.map((section, index) => (
-          <div className="space-y-1">
+          <div className="space-y-1" key={section.id}>
             <ListViewSection key={section.id} section={section} />
 
-            <div>
-              {!showAddSection && (
-                <div
-                  className="flex items-center gap-2 pl-7 opacity-0 hover:opacity-100 cursor-pointer transition"
-                  onClick={() => setShowAddSection(section.id)}
-                >
-                  <div className="flex-1 bg-gray-400 h-[1px]"></div>
-                  <div className="font-bold text-gray-600 text-sm">
-                    Add section
-                  </div>
-                  <div className="flex-1 bg-gray-500 h-[1px]"></div>
-                </div>
-              )}
-
-              {showAddSection == section.id && (
-                <form
-                  className="space-y-2 pl-7"
-                  onSubmit={(ev) => handleAddSection(ev, index + 1)}
-                >
-                  <input
-                    type="text"
-                    value={newSectionName}
-                    onChange={(e) => setNewSectionName(e.target.value)}
-                    placeholder="Name this section"
-                    className="border border-gray-200 focus:outline-none focus:border-gray-400 w-full rounded px-2 py-1 font-semibold"
-                    autoFocus
-                  />
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="submit"
-                      className="px-2 py-[6px] text-xs text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-600 disabled:cursor-not-allowed transition disabled:opacity-50"
-                      disabled={!newSectionName.trim()}
-                    >
-                      Add section
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setShowAddSection(null)}
-                      className="px-3 py-[6px] text-xs text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-md"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              )}
-            </div>
+            <AddNewSectionListView
+              section={section}
+              index={index}
+              setShowUngroupedAddSection={setShowUngroupedAddSection}
+              newSectionName={newSectionName}
+              setNewSectionName={setNewSectionName}
+              handleAddSection={handleAddSection}
+              setShowAddSection={setShowAddSection}
+              showAddSection={showAddSection}
+            />
           </div>
         ))}
       </div>
