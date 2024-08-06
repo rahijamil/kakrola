@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Dialog, Input, Textarea } from "../ui";
-import { SectionType, Task } from "@/types/project";
+import { SectionType, TaskType } from "@/types/project";
 import {
   Bars3BottomLeftIcon,
   CheckIcon,
@@ -27,7 +27,7 @@ const TaskItemModal = ({
   section,
   onCheckClick,
 }: {
-  task: Task;
+  task: TaskType;
   onClose: () => void;
   section?: SectionType;
   onCheckClick: () => void;
@@ -35,8 +35,8 @@ const TaskItemModal = ({
   const [contentEditable, setContentEditable] = useState<boolean>(false);
   const [showCommentForm, setShowCommentForm] = useState<boolean>(false);
   const [showAddSubtask, setShowAddSubtask] = useState<boolean>(false);
-  const { setTasks } = useTaskProjectDataProvider();
-  const [taskData, setTaskData] = useState<Task>(task);
+  const { setTasks, projects, sections, tasks } = useTaskProjectDataProvider();
+  const [taskData, setTaskData] = useState<TaskType>(task);
 
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
@@ -56,7 +56,7 @@ const TaskItemModal = ({
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2">
               <HashtagIcon className="w-4 h-4" />
-              {taskData.project?.name}
+              {projects.find((p) => p.id == taskData.projectId)?.name}
             </div>
             <div>/</div>
             <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ const TaskItemModal = ({
                   d="M19.5 20a.5.5 0 0 1 0 1h-15a.5.5 0 0 1 0-1h15zM18 6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h12zm0 1H6a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zm-6 2a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 12 9zm7.5-6a.5.5 0 0 1 0 1h-15a.5.5 0 0 1 0-1h15z"
                 ></path>
               </svg>
-              {taskData.section?.name}
+              {sections.find((s) => s.id == taskData.sectionId)?.name}
             </div>
           </div>
 
@@ -194,17 +194,19 @@ const TaskItemModal = ({
               </div>
 
               <ul className="mt-6">
-                {task.subTasks.map((subTask, index) => (
-                  <li>
-                    <TaskItem
-                      task={subTask}
-                      onCheckClick={() => {}}
-                      showShareOption={false}
-                      setShowShareOption={(v) => {}}
-                      index={index}
-                    />
-                  </li>
-                ))}
+                {tasks
+                  .filter((t) => t.parentTaskId == task.id)
+                  .map((subTask, index) => (
+                    <li>
+                      <TaskItem
+                        task={subTask}
+                        onCheckClick={() => {}}
+                        showShareOption={false}
+                        setShowShareOption={(v) => {}}
+                        index={index}
+                      />
+                    </li>
+                  ))}
               </ul>
 
               <div className="my-4 bg-gray-100 h-[1px]" />
@@ -239,11 +241,11 @@ const TaskItemModal = ({
                   <div className="flex items-center gap-2 text-xs">
                     <div className="flex items-center gap-2">
                       <HashtagIcon className="w-3 h-3" />
-                      {taskData.project?.name}
+                      {projects.find((p) => p.id == taskData.projectId)?.name}
                     </div>
                     <div>/</div>
                     <div className="flex items-center gap-2">
-                      {taskData.section?.name}
+                      {sections.find((s) => s.id == taskData.sectionId)?.name}
                     </div>
                   </div>
 

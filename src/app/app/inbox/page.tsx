@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { SectionType, Task } from "@/types/project";
+import { SectionType, TaskType } from "@/types/project";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import LayoutWrapper from "../../../components/LayoutWrapper";
 import Image from "next/image";
@@ -10,10 +10,10 @@ import { ViewTypes } from "@/types/viewTypes";
 const InboxPage = () => {
   const { tasks, sections, setTasks } = useTaskProjectDataProvider();
   const [view, setView] = useState<ViewTypes["view"]>("List");
-  const [inboxTasks, setInboxTasks] = useState<Task[]>([]);
+  const [inboxTasks, setInboxTasks] = useState<TaskType[]>([]);
   const [inboxSections, setInboxSections] = useState<SectionType[]>([]);
 
-  const handleTaskUpdate = (updatedTask: Task) => {
+  const handleTaskUpdate = (updatedTask: TaskType) => {
     setTasks(tasks.map((t) => (t.id === updatedTask.id ? updatedTask : t)));
   };
 
@@ -24,7 +24,7 @@ const InboxPage = () => {
   useEffect(() => {
     setInboxSections(
       sections.filter((section) =>
-        inboxTasks.map((t) => t.section?.id).includes(section.id)
+        inboxTasks.map((t) => t.sectionId).includes(section.id)
       )
     );
   }, [inboxTasks, sections]);

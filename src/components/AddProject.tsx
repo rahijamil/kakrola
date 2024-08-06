@@ -4,7 +4,6 @@ import { ProjectType } from "@/types/project";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import LayoutView from "./LayoutView";
-import { ViewTypes } from "@/types/viewTypes";
 
 const AddProject = ({ onClose }: { onClose: () => void }) => {
   const { setProjects } = useTaskProjectDataProvider();
@@ -13,7 +12,7 @@ const AddProject = ({ onClose }: { onClose: () => void }) => {
     id: 0,
     name: "",
     slug: "",
-    icon: null,
+    icon: "",
     color: "gray",
     isFavorite: false,
     view: "List",

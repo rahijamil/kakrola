@@ -7,7 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { CopyPlusIcon } from "lucide-react";
 import React, { Dispatch, SetStateAction } from "react";
-import { Task } from "@/types/project";
+import { TaskType } from "@/types/project";
 
 const SectionMoreOptions = ({
   onClose,
@@ -18,7 +18,7 @@ const SectionMoreOptions = ({
   column: {
     id: string;
     title: string;
-    tasks?: Task[];
+    tasks?: TaskType[];
   } | null;
   setShowDeleteConfirm: Dispatch<SetStateAction<boolean>>;
 }) => {

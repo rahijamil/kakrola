@@ -1,5 +1,5 @@
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { SectionType, Task } from "@/types/project";
+import { SectionType, TaskType } from "@/types/project";
 import React, { FormEvent, useState } from "react";
 
 const AddNewSectionBoardView = ({
@@ -14,7 +14,7 @@ const AddNewSectionBoardView = ({
   setShowUngroupedAddSection: React.Dispatch<React.SetStateAction<boolean>>;
   showUngroupedAddSection?: boolean;
   columnId?: string;
-  columns?: { id: string; title: string; tasks: Task[] }[];
+  columns?: { id: string; title: string; tasks: TaskType[] }[];
   index?: number;
 }) => {
   const [showAddSection, setShowAddSection] = useState<string | null>(null);
@@ -33,8 +33,9 @@ const AddNewSectionBoardView = ({
       const newSection: SectionType = {
         name: newSectionName.trim(),
         id: sections.length + 1,
-        project: activeProject,
+        projectId: activeProject.id,
         isCollapsed: false,
+        order: positionIndex !== null ? positionIndex : sections.length + 1,
       };
 
       setSections((prevSections) => {

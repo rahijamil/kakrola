@@ -3,7 +3,7 @@ import EktaLogo from "@/app/EktaLogo";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import TaskViewSwitcher from "@/components/TaskViewSwitcher";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { ProjectType, SectionType, Task } from "@/types/project";
+import { ProjectType, SectionType, TaskType } from "@/types/project";
 import { ViewTypes } from "@/types/viewTypes";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -23,11 +23,11 @@ const ProjectDetails = ({
     setTasks,
   } = useTaskProjectDataProvider();
 
-  const [projectTasks, setProjectTasks] = useState<Task[]>([]);
+  const [projectTasks, setProjectTasks] = useState<TaskType[]>([]);
   const [projectSections, setProjectSections] = useState<SectionType[]>([]);
   const [showShareOption, setShowShareOption] = useState<boolean>(false);
 
-  const handleTaskUpdate = (updatedTask: Task) => {
+  const handleTaskUpdate = (updatedTask: TaskType) => {
     setTasks((prevTasks) => {
       const newTasks = prevTasks.map((t) =>
         t.id === updatedTask.id ? updatedTask : t
@@ -41,11 +41,11 @@ const ProjectDetails = ({
       projects.find((p) => p.slug === project_slug) || null;
     setActiveProject(currentProject);
     if (currentProject) {
-      setProjectTasks(tasks.filter((t) => t.project?.id === currentProject.id));
+      setProjectTasks(tasks.filter((t) => t.projectId === currentProject.id));
     }
 
     setProjectSections(
-      sections.filter((section) => section.project.id == currentProject?.id)
+      sections.filter((section) => section.projectId == currentProject?.id)
     );
 
     return () => {

@@ -30,12 +30,12 @@ const ActiveProjectMoreOptions = ({ onClose }: { onClose: () => void }) => {
 
   const handleProjectDelete = () => {
     const updatedTasks = tasks.filter(
-      (t) => t.project?.id !== activeProject?.id
+      (t) => t.projectId !== activeProject?.id
     );
     setTasks(updatedTasks);
 
     const updatedSections = sections.filter(
-      (s) => s.project.id !== activeProject?.id
+      (s) => s.projectId !== activeProject?.id
     );
     setSections(updatedSections);
 

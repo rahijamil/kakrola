@@ -49,7 +49,7 @@ const SidebarProjectMoreOptions = ({
     const updatedTasks = tasks.filter((t) => t.project?.id !== project.id);
     setTasks(updatedTasks);
 
-    const updatedSections = sections.filter((s) => s.project.id !== project.id);
+    const updatedSections = sections.filter((s) => s.projectId !== project.id);
     setSections(updatedSections);
 
     const updatedProjects = projects.filter((proj) => proj.id !== project.id);

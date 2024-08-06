@@ -1,6 +1,7 @@
 "use client";
 import { ProjectType, SectionType } from "@/types/project";
-import { Task } from "@/types/project";
+import { TaskType } from "@/types/project";
+import { createClient } from "@/utils/supabase/client";
 import React, {
   createContext,
   Dispatch,
@@ -10,10 +11,11 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useAuthProvider } from "./AuthContext";
 
 const TaskProjectDataContext = createContext<{
-  tasks: Task[];
-  setTasks: Dispatch<SetStateAction<Task[]>>;
+  tasks: TaskType[];
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
   projects: ProjectType[];
   setProjects: Dispatch<SetStateAction<ProjectType[]>>;
   sections: SectionType[];
@@ -32,7 +34,9 @@ const TaskProjectDataContext = createContext<{
 });
 
 const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const supabase = createClient();
+  const { profile } = useAuthProvider();
+  const [tasks, setTasks] = useState<TaskType[]>([]);
   const [projects, setProjects] = useState<ProjectType[]>([]);
   const [sections, setSections] = useState<SectionType[]>([]);
   const [activeProject, setActiveProject] = useState<ProjectType | null>(null);

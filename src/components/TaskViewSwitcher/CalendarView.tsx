@@ -1,14 +1,14 @@
 import React from "react";
 import { format, isSameDay } from "date-fns";
 import TaskItem from "./TaskItem";
-import { Task } from "@/types/project";
+import { TaskType } from "@/types/project";
 
 const CalendarView = ({
   tasks,
   onTaskUpdate,
 }: {
-  tasks: Task[];
-  onTaskUpdate: (updatedTask: Task) => void;
+  tasks: TaskType[];
+  onTaskUpdate: (updatedTask: TaskType) => void;
 }) => {
   const today = new Date();
   const weekDays = [...Array(7)].map((_, i) => {

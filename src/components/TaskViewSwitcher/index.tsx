@@ -1,5 +1,5 @@
 import React, { useState, useMemo, Dispatch, SetStateAction } from "react";
-import { SectionType, Task } from "@/types/project";
+import { SectionType, TaskType } from "@/types/project";
 import ListView from "./ListView";
 import BoardView from "./BoardView";
 import CalendarView from "./CalendarView";
@@ -7,10 +7,10 @@ import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ViewTypes } from "@/types/viewTypes";
 
 interface TaskViewSwitcherProps {
-  tasks: Task[];
+  tasks: TaskType[];
   sections?: SectionType[];
   view: ViewTypes["view"];
-  onTaskUpdate: (updatedTask: Task) => void;
+  onTaskUpdate: (updatedTask: TaskType) => void;
   showShareOption?: boolean;
   setShowShareOption?: Dispatch<SetStateAction<boolean>>;
 }
@@ -32,17 +32,17 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
     useState<boolean>(false);
 
   const { groupedTasks, unGroupedTasks } = useMemo(() => {
-    const grouped: Record<number, Task[]> = {};
-    const ungrouped: Task[] = [];
+    const grouped: Record<number, TaskType[]> = {};
+    const ungrouped: TaskType[] = [];
 
     tasks
-      .filter((task) => task.project?.id === activeProject?.id)
+      .filter((task) => task.projectId === activeProject?.id)
       .forEach((task) => {
-        if (task.section) {
-          if (!grouped[task.section.id]) {
-            grouped[task.section.id] = [];
+        if (task.sectionId) {
+          if (!grouped[task.sectionId]) {
+            grouped[task.sectionId] = [];
           }
-          grouped[task.section.id].push(task);
+          grouped[task.sectionId].push(task);
         } else {
           ungrouped.push(task);
         }

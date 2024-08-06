@@ -6,7 +6,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 import { FlagIcon as FlagIconSolid } from "@heroicons/react/24/solid";
-import { Task } from "@/types/project";
+import { TaskType } from "@/types/project";
 const priorities = [
   { value: "P1", label: "Priority 1", color: "text-red-500" },
   { value: "P2", label: "Priority 2", color: "text-orange-500" },
@@ -43,8 +43,8 @@ const Priorities = ({
   isSmall,
   forTaskItemModal,
 }: {
-  taskData: Task;
-  setTaskData: Dispatch<SetStateAction<Task>>;
+  taskData: TaskType;
+  setTaskData: Dispatch<SetStateAction<TaskType>>;
   isSmall?: boolean;
   forTaskItemModal?: boolean;
 }) => {
@@ -100,7 +100,7 @@ const Priorities = ({
                   onClick={() => {
                     setTaskData({
                       ...taskData,
-                      priority: priority.value as Task["priority"],
+                      priority: priority.value as TaskType["priority"],
                     });
                     setShowPriority(false);
                   }}

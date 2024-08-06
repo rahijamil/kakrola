@@ -58,7 +58,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
                 <Link href="/auth/login">
                   <Button variant="ghost">Log in</Button>
                 </Link>
-                <Link href="/signup">
+                <Link href="/auth/signup">
                   <Button>Start free trial</Button>
                 </Link>
               </div>

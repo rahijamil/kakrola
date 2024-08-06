@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Input } from "../ui";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { SectionType, Task } from "@/types/project";
+import { SectionType, TaskType } from "@/types/project";
 import {
   ChevronDownIcon,
   HashtagIcon,
@@ -32,17 +32,22 @@ const AddTaskForm = ({
   const { projects, setTasks, tasks, activeProject } =
     useTaskProjectDataProvider();
 
-  const [taskData, setTaskData] = useState<Task>({
+  const [taskData, setTaskData] = useState<TaskType>({
     id: 0,
     title: "",
     description: "",
     priority: "Priority",
-    project: activeProject || null,
-    section: section || null,
-    dueDate: new Date(),
+    projectId: activeProject?.id || null,
+    sectionId: section?.id || null,
+    parentTaskId: 0 || null,
+    createdById: "",
+    assignedToId: "",
+    dueDate: new Date().toString(),
+    reminderTime: null,
     isInbox: activeProject ? false : true,
     isCompleted: false,
-    subTasks: []
+    order: 0,
+    completedAt: null,
   });
 
   const [showDueDate, setShowDueDate] = useState<boolean>(false);
@@ -78,12 +83,17 @@ const AddTaskForm = ({
       title: "",
       description: "",
       priority: "Priority",
-      project: activeProject || null,
-      section: section || null,
-      dueDate: new Date(),
+      projectId: activeProject?.id || null,
+      sectionId: section?.id || null,
+      parentTaskId: 0 || null,
+      createdById: "",
+      assignedToId: "",
+      dueDate: new Date().toString(),
+      reminderTime: null,
       isInbox: activeProject ? false : true,
       isCompleted: false,
-      subTasks: []
+      order: 0,
+      completedAt: null,
     });
   };
 
@@ -93,7 +103,7 @@ const AddTaskForm = ({
         <div>
           <Input
             type="text"
-            placeholder="Task name"
+            placeholder="TaskType name"
             className="font-semibold"
             value={taskData.title}
             onChange={(e) =>
@@ -129,11 +139,11 @@ const AddTaskForm = ({
                   <input
                     type="date"
                     className="p-2 border border-gray-300 rounded"
-                    value={taskData.dueDate.toISOString().split("T")[0]}
+                    // value={}
                     onChange={(e) =>
                       setTaskData({
                         ...taskData,
-                        dueDate: new Date(e.target.value),
+                        dueDate: new Date(e.target.value).toString(),
                       })
                     }
                   />
@@ -178,7 +188,7 @@ const AddTaskForm = ({
                         onClick={() => {
                           setTaskData({
                             ...taskData,
-                            project: project,
+                            projectId: project.id,
                             isInbox: false,
                           });
                           setShowProjects(false);
@@ -186,7 +196,7 @@ const AddTaskForm = ({
                       >
                         <HashtagIcon className="w-4 h-4 mr-2" />
                         {project.name}
-                        {taskData.project?.id === project.id && (
+                        {taskData.projectId === project.id && (
                           <CheckIcon className="w-4 h-4 ml-auto" />
                         )}
                       </li>
@@ -316,7 +326,9 @@ const AddTaskForm = ({
                 <HashtagIcon className="w-4 h-4" />
               )}
               <span className="font-bold text-xs truncate">
-                {taskData.project ? taskData.project.name : "Inbox"}
+                {taskData.projectId
+                  ? projects.find((p) => p.id === taskData.projectId)?.name
+                  : "Inbox"}
               </span>
             </button>
             <ChevronDownIcon className="w-4 h-4" />
@@ -338,7 +350,7 @@ const AddTaskForm = ({
                   onClick={() => {
                     setTaskData({
                       ...taskData,
-                      project: null,
+                      projectId: null,
                       isInbox: true,
                     });
                     setShowProjects(false);
@@ -367,7 +379,7 @@ const AddTaskForm = ({
                         onClick={() => {
                           setTaskData({
                             ...taskData,
-                            project: project,
+                            projectId: project.id,
                             isInbox: false,
                           });
                           setShowProjects(false);
@@ -375,7 +387,7 @@ const AddTaskForm = ({
                       >
                         <HashtagIcon className="w-4 h-4 mr-2" />
                         {project.name}
-                        {taskData.project?.id === project.id && (
+                        {taskData.projectId === project.id && (
                           <CheckIcon className="w-4 h-4 ml-auto" />
                         )}
                       </li>

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { SectionType, Task } from "@/types/project";
+import { SectionType, TaskType } from "@/types/project";
 import TaskItem from "./TaskItem";
 import SectionAddTask from "./SectionAddTask";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
@@ -11,9 +11,9 @@ import ConfirmAlert from "../AlertBox/ConfirmAlert";
 
 const BoardView: React.FC<{
   sections: SectionType[];
-  groupedTasks: Record<string, Task[]>;
-  unGroupedTasks: Task[];
-  onTaskUpdate: (updatedTask: Task) => void;
+  groupedTasks: Record<string, TaskType[]>;
+  unGroupedTasks: TaskType[];
+  onTaskUpdate: (updatedTask: TaskType) => void;
   showAddTask: number | null;
   setShowAddTask: React.Dispatch<React.SetStateAction<number | null>>;
   showUngroupedAddTask: boolean;
@@ -44,7 +44,7 @@ const BoardView: React.FC<{
   const columns = useMemo(() => {
     const columnsObj: Record<
       string,
-      { id: string; title: string; tasks: Task[] }
+      { id: string; title: string; tasks: TaskType[] }
     > = {
       ungrouped: {
         id: "ungrouped",
@@ -115,26 +115,26 @@ const BoardView: React.FC<{
     newDestTasks.splice(destination.index, 0, movedTask);
 
     // Update the task's section if it was moved to a different column
-    const updatedMovedTask: Task = {
+    const updatedMovedTask: TaskType = {
       ...movedTask,
-      section:
-        destination.droppableId !== "ungrouped" && movedTask.section
-          ? { ...movedTask.section, id: parseInt(destination.droppableId) }
+      sectionId:
+        destination.droppableId !== "ungrouped" && movedTask.sectionId
+          ? movedTask.sectionId
           : null,
     };
 
     // Update the tasks state
     setTasks((prevTasks) => {
-      const updatedTasks: Task[] = prevTasks.map((task) =>
+      const updatedTasks: TaskType[] = prevTasks.map((task) =>
         task.id === updatedMovedTask.id ? updatedMovedTask : task
       );
 
       // Reorder tasks within the same section or between sections
       return updatedTasks.sort((a, b) => {
-        if (a.section?.id !== b.section?.id) {
+        if (a.sectionId !== b.sectionId) {
           return 0; // Different sections, maintain original order
         }
-        const columnTasks = a.section ? newDestTasks : newSourceTasks;
+        const columnTasks = a.sectionId ? newDestTasks : newSourceTasks;
         return (
           columnTasks.findIndex((t) => t.id === a.id) -
           columnTasks.findIndex((t) => t.id === b.id)
@@ -147,14 +147,14 @@ const BoardView: React.FC<{
 
   const handleSectionDelete = (section: { id: number } | null) => {
     if (section) {
-      const updatedTasks = tasks.filter((t) => t.section?.id !== section.id);
+      const updatedTasks = tasks.filter((t) => t.sectionId !== section.id);
       setTasks(updatedTasks);
 
       const updatedSections = sections.filter((s) => s.id !== section.id);
 
       setSections(updatedSections);
     } else {
-      const updatedTasks = tasks.filter((t) => t.section !== null);
+      const updatedTasks = tasks.filter((t) => t.sectionId !== null);
       setTasks(updatedTasks);
     }
 

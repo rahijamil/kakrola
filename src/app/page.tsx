@@ -7,12 +7,14 @@ import {
   LightbulbIcon,
   LayoutDashboardIcon,
   ClipboardListIcon,
+  StarIcon,
 } from "lucide-react";
 import Link from "next/link";
 import LandingPageHeader from "./LandingPageHeader";
 import LandingPageFooter from "./LandingPageFooter";
 import { ChevronDoubleRightIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 const LandingPage = () => {
   const features = [
@@ -45,45 +47,118 @@ const LandingPage = () => {
     { name: "Team Collaboration", icon: UsersIcon },
   ];
 
+  const pricing = [
+    {
+      name: "Starter",
+      price: "$9",
+      features: [
+        "Up to 5 team members",
+        "Basic task management",
+        "5GB storage",
+        "Email support",
+      ],
+    },
+    {
+      name: "Pro",
+      price: "$29",
+      features: [
+        "Up to 50 team members",
+        "Advanced task management",
+        "50GB storage",
+        "Priority support",
+      ],
+    },
+    {
+      name: "Enterprise",
+      price: "Custom",
+      features: [
+        "Unlimited team members",
+        "Custom integrations",
+        "Unlimited storage",
+        "24/7 dedicated support",
+      ],
+    },
+  ];
+
+  const testimonials = [
+    {
+      name: "Sarah Thompson",
+      role: "Project Manager",
+      company: "TechCorp",
+      quote:
+        "Ekta has revolutionized how we manage projects. It's intuitive, powerful, and has greatly improved our team's productivity.",
+    },
+    {
+      name: "Michael Chen",
+      role: "CEO",
+      company: "StartupX",
+      quote:
+        "As a fast-growing startup, we needed a tool that could scale with us. Ekta has been the perfect solution for our team collaboration needs.",
+    },
+    {
+      name: "Emily Rodriguez",
+      role: "Marketing Director",
+      company: "CreativeWorks",
+      quote:
+        "The templates in Ekta have saved us countless hours. It's like having a productivity expert guiding us through our workflows.",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
-      {/* Header */}
+    <div className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-indigo-50">
       <LandingPageHeader />
 
-      <main className="pt-16">
+      <main>
         {/* Hero Section */}
-        <section className="relative overflow-hidden py-20">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center">
-              <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+        <section className="py-20 sm:py-32">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
+            <div className="text-center relative z-10">
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="text-5xl font-extrabold text-gray-900 sm:text-6xl md:text-7xl"
+              >
                 <span className="block">Unify Your Work with</span>
-                <span className="block text-indigo-600">Ekta</span>
-              </h1>
-              <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                <span className="block text-indigo-600 mt-2">Ekta</span>
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="mt-6 max-w-md mx-auto text-xl text-gray-500 sm:text-2xl md:mt-8 md:max-w-3xl"
+              >
                 Experience seamless task management, note-taking, and team
                 collaboration. Organize, plan, and achieve more together.
-              </p>
-              <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
-                <Button size="lg" className="w-full sm:w-auto group">
-                  Start for free
-                  <div className="group-hover:translate-x-2 transition-transform duration-300">
-                    <ChevronDoubleRightIcon className="w-6 h-6" />
-                  </div>
-                </Button>
-              </div>
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="mt-8 max-w-md mx-auto sm:flex sm:justify-center md:mt-12"
+              >
+                <Link
+                  href="/auth/signup"
+                  className="group transition-all duration-300 ease-in-out transform hover:scale-105"
+                >
+                  <Button size="lg">
+                    Start for free
+                    <ChevronDoubleRightIcon className="ml-2 w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
+                  </Button>
+                </Link>
+              </motion.div>
             </div>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-r from-indigo-200 to-purple-200 opacity-20 transform skew-y-6 sm:skew-y-3 -z-10"></div>
         </section>
 
         {/* Features Section */}
-        <section className="py-20 bg-white" id="features">
-          <div className="max-w-7xl mx-auto">
+        <section className="py-20 sm:py-32 bg-white" id="features">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="lg:text-center">
               <h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
                 Features
               </h2>
-              <p className="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl">
+              <p className="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl lg:text-5xl">
                 Everything you need to stay organized
               </p>
               <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
@@ -94,8 +169,14 @@ const LandingPage = () => {
 
             <div className="mt-16">
               <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
-                {features.map((feature) => (
-                  <div key={feature.name} className="relative">
+                {features.map((feature, index) => (
+                  <motion.div
+                    key={feature.name}
+                    className="relative p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out"
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
                     <dt>
                       <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
                         <feature.icon className="h-6 w-6" aria-hidden="true" />
@@ -107,90 +188,87 @@ const LandingPage = () => {
                     <dd className="mt-2 ml-16 text-base text-gray-500">
                       {feature.description}
                     </dd>
-                  </div>
+                  </motion.div>
                 ))}
               </dl>
             </div>
           </div>
         </section>
 
-        {/* Parallax Scrolling Demo */}
-        <section
-          className="relative h-96 bg-fixed bg-center bg-cover"
-          style={{
-            backgroundImage:
-              "url('https://img.freepik.com/free-photo/abstract-colorful-splash-3d-background-generative-ai-background_60438-2493.jpg?t=st=1722706213~exp=1722709813~hmac=04b08f9092df7388e0a23b898105e6acf765a77e0f68dc7a06b103df52071281&w=2000')",
-          }}
-        >
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="text-center text-white">
-              <h2 className="text-4xl font-bold mb-4">
-                Start using Ekta today.
-              </h2>
-              <Button size="lg" variant="secondary">
-                Start for free
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* Templates Section */}
-        <section
-          className="bg-gradient-to-b from-gray-50 to-white py-20"
-          id="templates"
-        >
-          <div className="max-w-7xl mx-auto">
-            <div className="lg:text-center">
+        {/* Interactive Demo Section */}
+        <section className="relative py-20 sm:py-32 bg-gray-50 overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="lg:text-center mb-12">
               <h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
-                Templates
+                Interactive Demo
               </h2>
-              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                Ready-to-use Templates
-              </p>
-              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-                Get started quickly with our pre-built templates for various use
-                cases
+              <p className="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl lg:text-5xl">
+                Experience Ekta in Action
               </p>
             </div>
+            <div className="relative">
+              <motion.div
+                className="bg-white rounded-lg shadow-2xl overflow-hidden"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+              >
+                {/* Add your interactive demo component here */}
+                <div className="aspect-w-16 aspect-h-9">
+                  <img
+                    src="https://tailwindui.com/img/component-images/project-app-screenshot.png"
+                    alt="Ekta Demo"
+                    className="object-cover"
+                  />
+                </div>
+              </motion.div>
 
-            <div className="mt-10">
-              <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                {templates.map((template) => (
-                  <div key={template.name} className="pt-6">
-                    <div className="flow-root bg-white rounded-lg px-6 pb-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                      <div className="-mt-6">
-                        <div>
-                          <span className="inline-flex items-center justify-center p-3 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-md shadow-lg">
-                            <template.icon
-                              className="h-6 w-6 text-white"
-                              aria-hidden="true"
-                            />
-                          </span>
-                        </div>
-                        <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">
-                          {template.name}
-                        </h3>
-                        <p className="mt-5 text-base text-gray-500">
-                          Get started quickly with our{" "}
-                          {template.name.toLowerCase()} template.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {/* Decorative elements */}
+              <svg
+                className="absolute top-full right-0 transform translate-x-1/3 -translate-y-1/4 lg:translate-x-1/2 xl:-translate-y-1/2"
+                width="404"
+                height="404"
+                fill="none"
+                viewBox="0 0 404 404"
+                aria-hidden="true"
+              >
+                <defs>
+                  <pattern
+                    id="85737c0e-0916-41d7-917f-596dc7edfa27"
+                    x="0"
+                    y="0"
+                    width="20"
+                    height="20"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <rect
+                      x="0"
+                      y="0"
+                      width="4"
+                      height="4"
+                      className="text-gray-200"
+                      fill="currentColor"
+                    />
+                  </pattern>
+                </defs>
+                <rect
+                  width="404"
+                  height="404"
+                  fill="url(#85737c0e-0916-41d7-917f-596dc7edfa27)"
+                />
+              </svg>
             </div>
           </div>
         </section>
 
         {/* For Teams Section */}
-        <section className="bg-white py-20" id="for-teams">
-          <div className="max-w-7xl mx-auto">
-            <div className="lg:text-center">
+        <section className="bg-white py-20 sm:py-32" id="for-teams">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="lg:text-center mb-12">
               <h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
                 For Teams
               </h2>
-              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
                 Empower Your Team with Ekta
               </p>
               <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
@@ -199,20 +277,45 @@ const LandingPage = () => {
               </p>
             </div>
 
-            <div className="mt-10">
-              <div className="flex flex-col md:flex-row items-center justify-between">
-                <div className="md:w-1/2 bg-gradient-to-r from-indigo-50 to-purple-100 rounded-lg shadow-lg overflow-hidden aspect-video">
-                  <img
-                    src="/team_collaboratioin.png"
-                    alt="Team collaboration"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="md:w-1/2 mt-8 md:mt-0 md:ml-8">
-                  <h3 className="text-2xl font-bold text-gray-900">
+            <div className="mt-16">
+              <div className="flex flex-col lg:flex-row items-center justify-between">
+                <motion.div
+                  className="lg:w-1/2 bg-gradient-to-r from-indigo-50 to-purple-100 rounded-lg shadow-lg overflow-hidden"
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8 }}
+                  viewport={{ once: true }}
+                >
+                  <svg
+                    className="w-full h-full"
+                    viewBox="0 0 400 300"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    {/* Add an SVG illustration representing team collaboration */}
+                    {/* This is a placeholder, replace with a more detailed SVG */}
+                    <rect width="400" height="300" fill="#f3f4f6" />
+                    <circle cx="200" cy="150" r="100" fill="#818cf8" />
+                    <rect
+                      x="150"
+                      y="100"
+                      width="100"
+                      height="100"
+                      fill="#4f46e5"
+                    />
+                    <polygon points="200,50 250,150 150,150" fill="#7c3aed" />
+                  </svg>
+                </motion.div>
+                <motion.div
+                  className="lg:w-1/2 mt-8 lg:mt-0 lg:ml-12"
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                  viewport={{ once: true }}
+                >
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6">
                     Seamless Collaboration
                   </h3>
-                  <ul className="mt-4 space-y-4">
+                  <ul className="space-y-4">
                     {[
                       "Real-time updates and notifications",
                       "Shared workspaces and project boards",
@@ -225,20 +328,20 @@ const LandingPage = () => {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </motion.div>
               </div>
             </div>
           </div>
         </section>
 
         {/* Pricing Section */}
-        <section className="bg-gray-50 py-20" id="pricing">
-          <div className="max-w-7xl mx-auto">
+        <section className="bg-gray-50 py-20 sm:py-32" id="pricing">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="lg:text-center">
               <h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
                 Pricing
               </h2>
-              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
                 Choose the Perfect Plan for Your Team
               </p>
               <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
@@ -246,42 +349,15 @@ const LandingPage = () => {
               </p>
             </div>
 
-            <div className="mt-12 space-y-4 sm:mt-16 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6 lg:max-w-4xl lg:mx-auto xl:max-w-none xl:grid-cols-3">
-              {[
-                {
-                  name: "Starter",
-                  price: "$9",
-                  features: [
-                    "Up to 5 team members",
-                    "Basic task management",
-                    "5GB storage",
-                    "Email support",
-                  ],
-                },
-                {
-                  name: "Pro",
-                  price: "$29",
-                  features: [
-                    "Up to 50 team members",
-                    "Advanced task management",
-                    "50GB storage",
-                    "Priority support",
-                  ],
-                },
-                {
-                  name: "Enterprise",
-                  price: "Custom",
-                  features: [
-                    "Unlimited team members",
-                    "Custom integrations",
-                    "Unlimited storage",
-                    "24/7 dedicated support",
-                  ],
-                },
-              ].map((plan) => (
-                <div
+            <div className="mt-16 space-y-4 sm:mt-20 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6 lg:max-w-4xl lg:mx-auto xl:max-w-none xl:grid-cols-3">
+              {pricing.map((plan, index) => (
+                <motion.div
                   key={plan.name}
-                  className="bg-white rounded-lg shadow-lg overflow-hidden"
+                  className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200"
+                  whileHover={{ y: -5 }}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
                   <div className="px-6 py-8">
                     <h3 className="text-2xl font-semibold text-gray-900">
@@ -304,74 +380,51 @@ const LandingPage = () => {
                       ))}
                     </ul>
                   </div>
-                  <div className="px-6 py-8 bg-gray-50">
-                    <Button
-                      variant={plan.name === "Pro" ? "default" : "outline"}
-                      className="w-full"
-                    >
-                      {plan.name === "Enterprise"
-                        ? "Contact Sales"
-                        : "Get started"}
-                    </Button>
-                  </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
         </section>
 
         {/* Testimonials Section */}
-        <section className="bg-white py-20">
-          <div className="max-w-7xl mx-auto">
+        <section className="bg-white py-20 sm:py-32">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="lg:text-center mb-12">
               <h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
                 Testimonials
               </h2>
-              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
                 What Our Customers Say
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                {
-                  name: "Sarah Thompson",
-                  role: "Project Manager",
-                  company: "TechCorp",
-                  quote:
-                    "Ekta has revolutionized how we manage projects. It's intuitive, powerful, and has greatly improved our team's productivity.",
-                },
-                {
-                  name: "Michael Chen",
-                  role: "CEO",
-                  company: "StartupX",
-                  quote:
-                    "As a fast-growing startup, we needed a tool that could scale with us. Ekta has been the perfect solution for our team collaboration needs.",
-                },
-                {
-                  name: "Emily Rodriguez",
-                  role: "Marketing Director",
-                  company: "CreativeWorks",
-                  quote:
-                    "The templates in Ekta have saved us countless hours. It's like having a productivity expert guiding us through our workflows.",
-                },
-              ].map((testimonial) => (
-                <div
+            <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {testimonials.map((testimonial, index) => (
+                <motion.div
                   key={testimonial.name}
-                  className="bg-gray-50 rounded-lg p-6 shadow-md"
+                  className="bg-gray-50 rounded-lg p-8 shadow-md hover:shadow-lg transition-shadow duration-300"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
                 >
-                  <p className="text-gray-600 italic mb-4">
+                  <div className="flex items-center mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <StarIcon key={i} className="h-5 w-5 text-yellow-400" />
+                    ))}
+                  </div>
+                  <p className="text-gray-600 italic mb-6">
                     "{testimonial.quote}"
                   </p>
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <img
-                        className="h-10 w-10 rounded-full"
-                        src="https://www.w3schools.com/howto/img_avatar.png"
-                        alt=""
+                        className="h-12 w-12 rounded-full object-cover"
+                        src={`https://i.pravatar.cc/150?img=${index + 1}`}
+                        alt={testimonial.name}
                       />
                     </div>
-                    <div className="ml-3">
-                      <p className="text-sm font-medium text-gray-900">
+                    <div className="ml-4">
+                      <p className="text-lg font-medium text-gray-900">
                         {testimonial.name}
                       </p>
                       <p className="text-sm text-gray-500">
@@ -379,31 +432,50 @@ const LandingPage = () => {
                       </p>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
         </section>
 
         {/* CTA Section */}
-        <section className="bg-gradient-to-b from-indigo-50 to-indigo-200 py-20">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-3xl font-extrabold sm:text-4xl">
-              <span className="block">Ready to boost your productivity?</span>
-              <span className="block">Start using Ekta today.</span>
-            </h2>
-            <p className="mt-4 text-lg leading-6 text-gray-600">
-              Join thousands of teams who have already transformed their
-              workflow with Ekta.
-            </p>
-            <Button size="lg" variant="secondary" className="mt-8">
-              Start your free trial
-            </Button>
+        <section className="bg-gradient-to-r from-indigo-600 to-purple-600 py-20 sm:py-32">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="lg:flex lg:items-center lg:justify-between">
+              <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                <span className="block">Ready to boost your productivity?</span>
+                <span className="block text-indigo-200">
+                  Start using Ekta today.
+                </span>
+              </h2>
+              <div className="mt-8 flex lg:mt-0 lg:flex-shrink-0">
+                <div className="inline-flex rounded-md shadow">
+                  <Link href="/auth/signup">
+                    <Button
+                      size="lg"
+                      variant="secondary"
+                      className="text-lg px-8 py-4"
+                    >
+                      Start your free trial
+                      <ChevronDoubleRightIcon className="ml-2 w-5 h-5" />
+                    </Button>
+                  </Link>
+                </div>
+                <div className="ml-3 inline-flex rounded-md shadow">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="text-lg px-8 py-4 bg-white text-indigo-600 hover:bg-indigo-50"
+                  >
+                    Learn more
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       </main>
 
-      {/* Footer */}
       <LandingPageFooter />
     </div>
   );

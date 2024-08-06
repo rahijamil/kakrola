@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Task } from "@/types/project";
+import { TaskType } from "@/types/project";
 import LayoutWrapper from "../../components/LayoutWrapper";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import Image from "next/image";
@@ -11,7 +11,7 @@ const Home = () => {
   const { tasks, setTasks } = useTaskProjectDataProvider();
   const [view, setView] = useState<ViewTypes["view"]>("List");
 
-  const [todayTasks, setTodayTasks] = useState<Task[]>([]);
+  const [todayTasks, setTodayTasks] = useState<TaskType[]>([]);
 
   useEffect(() => {
     setTodayTasks(
@@ -24,7 +24,7 @@ const Home = () => {
     );
   }, [tasks]);
 
-  const handleTaskUpdate = (updatedTask: Task) => {
+  const handleTaskUpdate = (updatedTask: TaskType) => {
     setTasks(tasks.map((t) => (t.id === updatedTask.id ? updatedTask : t)));
   };
 

@@ -4,7 +4,7 @@ import { LinkIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { CopyPlusIcon, AlarmClockIcon } from "lucide-react";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
-import { Task } from "@/types/project";
+
 
 const TaskItemMoreDropdown = ({
   onClose,

@@ -1,4 +1,4 @@
-import { Task } from "@/types/project";
+import { TaskType } from "@/types/project";
 import {
   CheckIcon,
   EllipsisHorizontalIcon,
@@ -17,7 +17,7 @@ const TaskItem = ({
   setShowShareOption,
   index,
 }: {
-  task: Task;
+  task: TaskType;
   onCheckClick: () => void;
   showShareOption?: boolean;
   setShowShareOption?: Dispatch<SetStateAction<boolean>>;

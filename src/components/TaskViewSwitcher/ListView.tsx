@@ -9,7 +9,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import TaskItem from "./TaskItem";
-import { SectionType, Task } from "@/types/project";
+import { SectionType, TaskType } from "@/types/project";
 import { Dispatch, FormEvent, SetStateAction, useMemo, useState } from "react";
 import SectionAddTask from "./SectionAddTask";
 import { CopyPlusIcon, MoreHorizontal } from "lucide-react";
@@ -20,10 +20,10 @@ import SectionMoreOptions from "./SectionMoreOptions";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
 
 interface ListViewProps {
-  groupedTasks: Record<string, Task[]>;
-  unGroupedTasks: Task[];
+  groupedTasks: Record<string, TaskType[]>;
+  unGroupedTasks: TaskType[];
   activeProjectSections?: SectionType[];
-  onTaskUpdate: (updatedTask: Task) => void;
+  onTaskUpdate: (updatedTask: TaskType) => void;
   showAddTask: number | null;
   setShowAddTask: Dispatch<SetStateAction<number | null>>;
   showUngroupedAddTask: boolean;
@@ -60,7 +60,7 @@ const ListView: React.FC<ListViewProps> = ({
   const rows = useMemo(() => {
     const columnsObj: Record<
       string,
-      { id: string; title: string; tasks: Task[] }
+      { id: string; title: string; tasks: TaskType[] }
     > = {
       ungrouped: {
         id: "ungrouped",
@@ -94,14 +94,14 @@ const ListView: React.FC<ListViewProps> = ({
 
     const handleSectionDelete = () => {
       if (section) {
-        const updatedTasks = tasks.filter((t) => t.section?.id !== section.id);
+        const updatedTasks = tasks.filter((t) => t.sectionId !== section.id);
         setTasks(updatedTasks);
 
         const updatedSections = sections.filter((s) => s.id !== section.id);
 
         setSections(updatedSections);
       } else {
-        const updatedTasks = tasks.filter((t) => t.section !== null);
+        const updatedTasks = tasks.filter((t) => t.sectionId !== null);
         setTasks(updatedTasks);
       }
 
@@ -259,16 +259,9 @@ const ListView: React.FC<ListViewProps> = ({
         const destinationTasks = Array.from(groupedTasks[destinationSection]);
         const [movedTask] = sourceTasks.splice(source.index, 1);
 
-        const updatedTask: Task = {
+        const updatedTask: TaskType = {
           ...movedTask,
-          section: {
-            ...movedTask.section!,
-            id: parseInt(destinationSection),
-            name:
-              sections.find((s) => s.id.toString() === destinationSection)
-                ?.name || "",
-            project: movedTask.project!,
-          },
+          sectionId: parseInt(destinationSection)
         };
 
         destinationTasks.splice(destination.index, 0, updatedTask);
@@ -294,8 +287,9 @@ const ListView: React.FC<ListViewProps> = ({
       const newSection: SectionType = {
         name: newSectionName.trim(),
         id: sections.length + 1,
-        project: activeProject,
+        projectId: activeProject.id,
         isCollapsed: false,
+        order: positionIndex ? positionIndex : sections.length + 1,
       };
 
       setSections((prevSections) => {

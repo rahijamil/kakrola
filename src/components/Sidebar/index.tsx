@@ -15,13 +15,15 @@ import {
 } from "@heroicons/react/24/outline";
 import AddTaskModal from "../AddTask/AddTaskModal";
 import AddProject from "../AddProject";
-import { Task } from "@/types/project";
+import { TaskType } from "@/types/project";
 import ProjectItem from "../Sidebar/ProjectItem";
 import AddTaskTextButton from "../AddTaskTextButton";
 import ProfileMoreOptions from "./ProfileMoreOptions";
+import { useAuthProvider } from "@/context/AuthContext";
 
 const Sidebar: React.FC = () => {
   const pathname = usePathname();
+  const {profile} = useAuthProvider();
   const { projects, setTasks } = useTaskProjectDataProvider();
 
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
@@ -43,7 +45,7 @@ const Sidebar: React.FC = () => {
     // { id: 4, icon: DocumentIcon, text: "Docs", path: "/app/docs" },
   ];
 
-  const addTask = (newTask: Task) => {
+  const addTask = (newTask: TaskType) => {
     setTasks((prev) => [...prev, { ...newTask, id: prev.length + 1 }]);
     setShowAddTaskModal(false);
   };
@@ -116,7 +118,7 @@ const Sidebar: React.FC = () => {
                   onClick={() => setShowProfileMoreOptions(true)}
                 >
                   <div className="w-6 h-6 bg-black rounded-full"></div>
-                  <span className="font-medium">Rahi</span>
+                  <span className="font-medium">{profile?.username}</span>
                   <ChevronDownIcon className="w-4 h-4" />
                 </button>
 
