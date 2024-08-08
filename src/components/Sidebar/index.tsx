@@ -1,52 +1,57 @@
+"use client";
 import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import {
-  ChartBarIcon,
-  PlusIcon,
-  InboxIcon,
-  MagnifyingGlassIcon,
-  CalendarIcon,
-  ChevronRightIcon,
-  BellIcon,
-  ChevronDownIcon,
-  DocumentIcon,
-} from "@heroicons/react/24/outline";
-import AddTaskModal from "../AddTask/AddTaskModal";
-import AddProject from "../AddProject";
 import { TaskType } from "@/types/project";
-import ProjectItem from "../Sidebar/ProjectItem";
-import AddTaskTextButton from "../AddTaskTextButton";
-import ProfileMoreOptions from "./ProfileMoreOptions";
 import { useAuthProvider } from "@/context/AuthContext";
+import {
+  LucideLayoutTemplate,
+  Plus,
+  Inbox,
+  Search,
+  Calendar,
+  ChevronRight,
+  Bell,
+  ChevronDown,
+  PanelLeft,
+} from "lucide-react";
+import AddTaskTextButton from "@/components/AddTaskTextButton";
+import AddTaskModal from "@/components/AddTask/AddTaskModal";
+import AddProject from "@/components/AddProject";
+import ProjectItem from "@/components/Sidebar/ProjectItem";
+import ProfileMoreOptions from "@/components/Sidebar/ProfileMoreOptions";
+import AddTeam from "../AddTeam";
 
 const Sidebar: React.FC = () => {
   const pathname = usePathname();
-  const {profile} = useAuthProvider();
-  const { projects, setTasks } = useTaskProjectDataProvider();
+  const { profile } = useAuthProvider();
+  const { projects } = useTaskProjectDataProvider();
 
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [showProfileMoreOptions, setShowProfileMoreOptions] = useState(false);
+
+  const [showAddTeam, setShowAddTeam] = useState<boolean>(false);
+
   const [showProjects, setShowProjects] = useState(true);
   const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [afterCollapse, setAfterCollapse] = useState(false);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
-  const [sidebarWidth, setSidebarWidth] = useState(256); // Default width: 64 * 4 = 256px
+  const [sidebarWidth, setSidebarWidth] = useState(220);
   const [sidebarLeft, setSidebarLeft] = useState(0);
 
   const [isResizing, setIsResizing] = useState(false);
 
   const menuItems = [
-    { id: 1, icon: MagnifyingGlassIcon, text: "Search", onClick: () => {} },
-    { id: 2, icon: InboxIcon, text: "Inbox", path: "/app/inbox" },
-    { id: 3, icon: CalendarIcon, text: "Today", path: "/app" },
+    { id: 1, icon: Search, text: "Search", onClick: () => {} },
+    { id: 2, icon: Inbox, text: "Inbox", path: "/app/inbox" },
+    { id: 3, icon: Calendar, text: "Today", path: "/app" },
     // { id: 4, icon: DocumentIcon, text: "Docs", path: "/app/docs" },
   ];
 
   const addTask = (newTask: TaskType) => {
-    setTasks((prev) => [...prev, { ...newTask, id: prev.length + 1 }]);
+    // setTasks((prev) => [...prev, { ...newTask, id: prev.length + 1 }]);
     setShowAddTaskModal(false);
   };
 
@@ -67,7 +72,7 @@ const Sidebar: React.FC = () => {
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       if (!isResizing) return;
-      const newWidth = Math.max(200, Math.min(480, e.clientX));
+      const newWidth = Math.max(220, Math.min(480, e.clientX));
       setSidebarWidth(newWidth);
       if (isCollapsed) {
         setSidebarLeft(-newWidth);
@@ -102,7 +107,7 @@ const Sidebar: React.FC = () => {
     <div className={"flex items-start h-screen"}>
       <div className="flex relative z-10">
         <div
-          className="bg-gray-50 transition-all duration-300 h-screen whitespace-nowrap"
+          className="bg-indigo-50/50 transition-all duration-300 h-screen whitespace-nowrap"
           style={{
             width: `${sidebarWidth}px`,
             marginLeft: `${sidebarLeft}px`,
@@ -112,48 +117,53 @@ const Sidebar: React.FC = () => {
             <div className="p-4 px-2 flex items-center justify-between">
               <div className="relative">
                 <button
-                  className={`flex items-center gap-2 p-1 rounded-md transition ${
+                  className={`flex items-center p-1 rounded-md transition overflow-hidden whitespace-nowrap text-ellipsis ${
                     showProfileMoreOptions ? "bg-gray-200" : "hover:bg-gray-200"
-                  }`}
+                  } ${sidebarWidth > 220 ? "gap-2" : "gap-1"}`}
+                  style={{ maxWidth: `${sidebarWidth - 80}px` }}
                   onClick={() => setShowProfileMoreOptions(true)}
                 >
-                  <div className="w-6 h-6 bg-black rounded-full"></div>
-                  <span className="font-medium">{profile?.username}</span>
-                  <ChevronDownIcon className="w-4 h-4" />
+                  <div className="w-6 h-6 min-w-6 min-h-6 bg-black rounded-full"></div>
+                  <span className="font-medium overflow-hidden text-ellipsis whitespace-nowrap transition">
+                    {profile?.full_name || profile?.username}
+                  </span>
+
+                  <ChevronDown strokeWidth={1.5} className="w-4 h-4" />
                 </button>
 
                 {showProfileMoreOptions && (
                   <ProfileMoreOptions
                     onClose={() => setShowProfileMoreOptions(false)}
+                    setShowAddTeam={setShowAddTeam}
                   />
                 )}
               </div>
 
-              <div className="flex items-center gap-2">
-                <button className="text-gray-700 hover:bg-gray-200 rounded-md p-1 transition-colors">
-                  <BellIcon className="w-6 h-6" />
-                </button>
+              <div
+                className={`flex items-center transition ${
+                  sidebarWidth > 220 ? "gap-2" : "gap-1"
+                }`}
+              >
+                <Link
+                  href="/app/notifications"
+                  className={`rounded-md p-1 transition-colors ${
+                    pathname == "/app/notifications"
+                      ? "text-indigo-700 bg-indigo-100"
+                      : "text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  <Bell strokeWidth={1.5} className="w-5 h-5" />
+                </Link>
 
                 <button
                   onClick={toggleSidebar}
-                  className={`text-gray-700 bg-white hover:bg-gray-200 rounded-md p-1 transition-colors ${
-                    afterCollapse ? "absolute top-4 left-4" : ""
+                  className={`text-gray-700 hover:bg-gray-200 rounded-md p-1 transition-colors ${
+                    afterCollapse
+                      ? "absolute top-4 left-4 bg-white"
+                      : "bg-transparent"
                   }`}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      fill="currentColor"
-                      fill-rule="evenodd"
-                      d="M19 4.001H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-12a2 2 0 0 0-2-2Zm-15 2a1 1 0 0 1 1-1h4v14H5a1 1 0 0 1-1-1v-12Zm6 13h9a1 1 0 0 0 1-1v-12a1 1 0 0 0-1-1h-9v14Z"
-                      clip-rule="evenodd"
-                    ></path>
-                  </svg>
+                  <PanelLeft strokeWidth={1.5} width={20} />
                 </button>
               </div>
             </div>
@@ -173,25 +183,25 @@ const Sidebar: React.FC = () => {
                     {item.path ? (
                       <Link
                         href={item.path}
-                        className={`flex items-center px-2 py-2 rounded-md transition-colors text-gray-700 ${
+                        className={`flex items-center px-2 py-2 rounded-md transition-colors ${
                           item.path === pathname
-                            ? "bg-gray-300"
-                            : "hover:bg-gray-200"
+                            ? "bg-indigo-100 text-indigo-700"
+                            : "hover:bg-gray-200 text-gray-700"
                         }`}
                       >
-                        <item.icon className="w-5 h-5 mr-3" />
+                        <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3" />
                         {item.text}
                       </Link>
                     ) : (
                       <button
-                        className={`flex items-center px-2 py-2 rounded-md transition-colors text-gray-700 w-full ${
+                        className={`flex items-center px-2 py-2 rounded-md transition-colors w-full ${
                           item.path === pathname
-                            ? "bg-gray-300"
-                            : "hover:bg-gray-200"
+                            ? "bg-indigo-100 text-indigo-700"
+                            : "hover:bg-gray-200 text-gray-700"
                         }`}
                         onClick={item.onClick}
                       >
-                        <item.icon className="w-5 h-5 mr-3" />
+                        <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3" />
                         {item.text}
                       </button>
                     )}
@@ -199,7 +209,7 @@ const Sidebar: React.FC = () => {
                 ))}
               </ul>
 
-              {projects.filter((p) => p.isFavorite).length > 0 && (
+              {projects.filter((p) => p.is_favorite).length > 0 && (
                 <div className="mt-4 px-2">
                   <div className="w-full flex items-center justify-between p-1 text-gray-700 hover:bg-gray-200 rounded-md transition-colors">
                     <span className="font-medium">Favorites</span>
@@ -211,7 +221,8 @@ const Sidebar: React.FC = () => {
                           setShowFavoritesProjects(!showFavoritesProjects)
                         }
                       >
-                        <ChevronRightIcon
+                        <ChevronRight
+                          strokeWidth={1.5}
                           className={`w-[18px] h-[18px] transition-transform transform ${
                             showFavoritesProjects ? "rotate-90" : ""
                           }`}
@@ -223,7 +234,7 @@ const Sidebar: React.FC = () => {
                   {showFavoritesProjects && (
                     <ul className="mt-1 ml-2 space-y-1">
                       {projects
-                        .filter((project) => project.isFavorite)
+                        .filter((project) => project.is_favorite)
                         .map((project) => (
                           <ProjectItem
                             key={project.id}
@@ -238,14 +249,15 @@ const Sidebar: React.FC = () => {
 
               <div className="mt-4 px-2">
                 <div className="w-full flex items-center justify-between p-1 text-gray-700 hover:bg-gray-200 rounded-md transition-colors">
-                  <span className="font-medium">Projects</span>
+                  <span className="font-medium">My Projects</span>
 
                   <div className="opacity-0 group-hover:opacity-100 transition flex items-center">
                     <button
                       className="p-1 hover:bg-gray-100 rounded-md transition"
                       onClick={() => setShowAddProjectModal(true)}
                     >
-                      <PlusIcon
+                      <Plus
+                        strokeWidth={1.5}
                         className={`w-[18px] h-[18px] transition-transform`}
                       />
                     </button>
@@ -253,7 +265,8 @@ const Sidebar: React.FC = () => {
                       className="p-1 hover:bg-gray-100 rounded-md transition"
                       onClick={() => setShowProjects(!showProjects)}
                     >
-                      <ChevronRightIcon
+                      <ChevronRight
+                        strokeWidth={1.5}
                         className={`w-[18px] h-[18px] transition-transform transform ${
                           showProjects ? "rotate-90" : ""
                         }`}
@@ -278,8 +291,11 @@ const Sidebar: React.FC = () => {
 
             <div className="p-4 border-t border-gray-200">
               <button className="flex items-center text-gray-700 hover:text-indigo-600 transition-colors">
-                <ChartBarIcon className="w-5 h-5 mr-2" />
-                <span>Productivity</span>
+                <LucideLayoutTemplate
+                  strokeWidth={1.5}
+                  className="w-5 h-5 mr-2 text-gray-700"
+                />
+                <span>Browse templates</span>
               </button>
             </div>
           </aside>
@@ -305,6 +321,8 @@ const Sidebar: React.FC = () => {
           <AddProject onClose={() => setShowAddProjectModal(false)} />
         </div>
       )}
+
+      {showAddTeam && <AddTeam onClose={() => setShowAddTeam(false)} />}
     </div>
   );
 };

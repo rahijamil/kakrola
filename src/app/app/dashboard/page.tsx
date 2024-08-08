@@ -51,7 +51,7 @@ const DashboardPage = () => {
   ];
 
   const overdueTasks = tasks.filter(
-    (task) => new Date(task.dueDate) < new Date()
+    (task) => new Date(task.due_date) < new Date()
   ).length;
 
   return (

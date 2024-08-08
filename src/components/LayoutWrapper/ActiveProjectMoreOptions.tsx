@@ -17,10 +17,10 @@ const ActiveProjectMoreOptions = ({ onClose }: { onClose: () => void }) => {
   const {
     tasks,
     projects,
-    setProjects,
-    setTasks,
+    // setProjects,
+    // setTasks,
     sections,
-    setSections,
+    // setSections,
     activeProject,
   } = useTaskProjectDataProvider();
 
@@ -30,12 +30,12 @@ const ActiveProjectMoreOptions = ({ onClose }: { onClose: () => void }) => {
 
   const handleProjectDelete = () => {
     const updatedTasks = tasks.filter(
-      (t) => t.projectId !== activeProject?.id
+      (t) => t.project_id !== activeProject?.id
     );
     setTasks(updatedTasks);
 
     const updatedSections = sections.filter(
-      (s) => s.projectId !== activeProject?.id
+      (s) => s.project_id !== activeProject?.id
     );
     setSections(updatedSections);
 
@@ -50,7 +50,7 @@ const ActiveProjectMoreOptions = ({ onClose }: { onClose: () => void }) => {
   const handleFavorite = () => {
     const updatedProjects = projects.map((p) => {
       if (p.id === activeProject?.id) {
-        return { ...p, isFavorite: !p.isFavorite };
+        return { ...p, isFavorite: !p.is_favorite };
       }
       return p;
     });
@@ -68,12 +68,12 @@ const ActiveProjectMoreOptions = ({ onClose }: { onClose: () => void }) => {
             onClick={handleFavorite}
             className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
           >
-            {activeProject?.isFavorite ? (
+            {activeProject?.is_favorite ? (
               <HeartOffIcon className="w-4 h-4 mr-4" />
             ) : (
               <HeartIcon className="w-4 h-4 mr-4" />
             )}{" "}
-            {activeProject?.isFavorite
+            {activeProject?.is_favorite
               ? "Remove from favorites"
               : "Add to favorites"}
           </button>

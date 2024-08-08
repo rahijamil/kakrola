@@ -14,8 +14,8 @@ import {
 import { CopyPlusIcon, HeartOffIcon, LogsIcon } from "lucide-react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType } from "@/types/project";
-import ConfirmAlert from "../AlertBox/ConfirmAlert";
 import { useRouter } from "next/navigation";
+import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
 
 const SidebarProjectMoreOptions = ({
   onClose,
@@ -34,10 +34,10 @@ const SidebarProjectMoreOptions = ({
   const {
     tasks,
     projects,
-    setProjects,
-    setTasks,
+    // setProjects,
+    // setTasks,
     sections,
-    setSections,
+    // setSections,
     activeProject,
   } = useTaskProjectDataProvider();
 
@@ -46,10 +46,10 @@ const SidebarProjectMoreOptions = ({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
 
   const handleProjectDelete = () => {
-    const updatedTasks = tasks.filter((t) => t.project?.id !== project.id);
+    const updatedTasks = tasks.filter((t) => t.project_id !== project.id);
     setTasks(updatedTasks);
 
-    const updatedSections = sections.filter((s) => s.projectId !== project.id);
+    const updatedSections = sections.filter((s) => s.project_id !== project.id);
     setSections(updatedSections);
 
     const updatedProjects = projects.filter((proj) => proj.id !== project.id);
@@ -63,7 +63,7 @@ const SidebarProjectMoreOptions = ({
   const handleFavorite = () => {
     const updatedProjects = projects.map((p) => {
       if (p.id === activeProject?.id) {
-        return { ...p, isFavorite: !p.isFavorite };
+        return { ...p, isFavorite: !p.is_favorite };
       }
       return p;
     });
@@ -97,12 +97,12 @@ const SidebarProjectMoreOptions = ({
             onClick={handleFavorite}
             className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
           >
-            {activeProject?.isFavorite ? (
+            {project.is_favorite ? (
               <HeartOffIcon className="w-4 h-4 mr-4" />
             ) : (
               <HeartIcon className="w-4 h-4 mr-4" />
             )}{" "}
-            {activeProject?.isFavorite
+            {activeProject?.is_favorite
               ? "Remove from favorites"
               : "Add to favorites"}
           </button>

@@ -5,12 +5,14 @@ const cn = (...classes: (string | undefined)[]) => {
   return classes.filter(Boolean).join(' ');
 };
 
-// Simplified type for button variants
-type ButtonVariant = 'default' | 'outline' | 'ghost' | 'secondary' | 'danger' | 'gray';
+// Simplified types for button variants and colors
+type ButtonVariant = 'default' | 'outline' | 'ghost' | 'secondary' | 'gray';
+type ButtonColor = 'indigo' | 'red';
 type ButtonSize = 'default' | 'xs' | 'sm' | 'lg' | 'icon';
 
 const getButtonClasses = (
   variant: ButtonVariant = 'default',
+  color: ButtonColor = 'indigo',
   size: ButtonSize = 'default',
   fullWidth: boolean = false,
   className?: string
@@ -18,12 +20,26 @@ const getButtonClasses = (
   const baseClasses = 'inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
 
   const variantClasses = {
-    default: 'text-white bg-gradient-to-r from-indigo-600 to-indigo-500 hover:to-indigo-600',
-    outline: 'border border-indigo-600 text-indigo-600 hover:bg-indigo-50',
-    ghost: 'text-indigo-600 hover:bg-indigo-50',
-    secondary: 'bg-white text-indigo-600 hover:bg-gray-100',
-    gray: 'bg-gradient-to-r from-gray-300 to-gray-200 text-gray-600 hover:to-gray-300',
-    danger: 'text-white bg-gradient-to-r from-red-700 to-red-600 hover:to-red-700'
+    default: {
+      indigo: 'text-white bg-gradient-to-r from-indigo-600 to-indigo-500 hover:to-indigo-600',
+      red: 'text-white bg-gradient-to-r from-red-700 to-red-600 hover:to-red-700',
+    },
+    outline: {
+      indigo: 'border border-indigo-600 text-indigo-600 hover:bg-indigo-50',
+      red: 'border border-red-600 text-red-600 hover:bg-red-50',
+    },
+    ghost: {
+      indigo: 'text-indigo-600 hover:bg-indigo-50',
+      red: 'text-red-600 hover:bg-red-50',
+    },
+    secondary: {
+      indigo: 'bg-white text-indigo-600 hover:bg-gray-100',
+      red: 'bg-white text-red-600 hover:bg-gray-100',
+    },
+    gray: {
+      indigo: 'bg-gradient-to-r from-gray-300 to-gray-200 text-gray-600 hover:to-gray-300',
+      red: 'bg-gradient-to-r from-gray-300 to-gray-200 text-gray-600 hover:to-gray-300',
+    },
   };
 
   const sizeClasses = {
@@ -36,7 +52,7 @@ const getButtonClasses = (
 
   return cn(
     baseClasses,
-    variantClasses[variant],
+    variantClasses[variant][color],
     sizeClasses[size],
     fullWidth ? 'w-full' : '',
     className
@@ -45,15 +61,16 @@ const getButtonClasses = (
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
+  color?: ButtonColor;
   size?: ButtonSize;
   fullWidth?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = 'default', size = 'default', fullWidth = false, ...props }, ref) => {
+  ({ className, variant = 'default', color = 'indigo', size = 'default', fullWidth = false, ...props }, ref) => {
     return (
       <button
-        className={getButtonClasses(variant, size, fullWidth, className)}
+        className={getButtonClasses(variant, color, size, fullWidth, className)}
         ref={ref}
         {...props}
       />

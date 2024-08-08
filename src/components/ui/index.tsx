@@ -1,3 +1,4 @@
+"use client";
 import React, { Dispatch, forwardRef, ReactNode, SetStateAction } from "react";
 
 // Dialog Component
@@ -14,13 +15,11 @@ export const Dialog: React.FC<DialogProps> = ({
   size = "sm",
   position = "center",
 }) => {
-  if (!open) return null;
-
   return (
     <div
-      className={`fixed inset-0 z-50 cursor-default flex justify-center ${size == "sm" ? "bg-transparent" : " bg-black bg-opacity-40"} ${
-        position == "center" ? "items-center" : "items-start pt-40"
-      }`}
+      className={`fixed inset-0 z-50 cursor-default flex justify-center ${
+        size == "sm" ? "bg-transparent" : " bg-black bg-opacity-40"
+      } ${position == "center" ? "items-center" : "items-start pt-40"}`}
       onClick={onClose}
     >
       <div
@@ -31,6 +30,8 @@ export const Dialog: React.FC<DialogProps> = ({
             ? "max-w-lg p-2"
             : size === "md"
             ? "max-w-2xl h-[93%]"
+            : size === "lg"
+            ? "max-w-5xl h-[93%]"
             : "max-w-3xl h-[93%]"
         }`}
         onClick={(ev) => ev.stopPropagation()}
@@ -202,31 +203,3 @@ interface SelectValueProps {
 export const SelectValue: React.FC<SelectValueProps> = ({ placeholder }) => (
   <span className="text-gray-500">{placeholder}</span>
 );
-
-export const ToggleSwitch = ({
-  enabled,
-  setEnabled,
-}: {
-  enabled: boolean;
-  setEnabled: (value: boolean) => void;
-}) => {
-  return (
-    <button
-      type="button"
-      onClick={(ev) => {
-        ev.stopPropagation();
-        setEnabled(!enabled);
-      }}
-      className={`${
-        enabled ? "bg-indigo-600" : "bg-gray-200"
-      } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
-    >
-      <span className="sr-only">Enable feature</span>
-      <span
-        className={`${
-          enabled ? "translate-x-6" : "translate-x-1"
-        } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
-      />
-    </button>
-  );
-};

@@ -2,7 +2,7 @@ import { ViewTypes } from "./viewTypes";
 
 // Project types
 export interface ProjectType {
-  id: number;
+  id?: number;
   team_id: number | null;
   profile_id: string; // UUID
   name: string;
@@ -10,25 +10,26 @@ export interface ProjectType {
   icon_url: string; // Store as string in DB, convert to ReactNode in frontend
   is_favorite: boolean;
   view: ViewTypes["view"];
-  updated_at?: Date;
-  created_at?: Date;
+  updated_at: string;
+  created_at?: string;
 }
 
 // Section types
 export interface SectionType {
   id: number;
-  project_id: number;
+  project_id: number | null;
   profile_id: string;
   name: string;
   order: number;
   is_collapsed: boolean;
-  updated_at?: Date;
-  created_at?: Date;
+  is_inbox: boolean;
+  updated_at: string;
+  created_at?: string;
 }
 
 // Task types
 export interface TaskType {
-  id: number;
+  id?: number;
   project_id: number | null;
   section_id: number | null;
   parent_task_id: number | null; // For subtasks
@@ -43,6 +44,6 @@ export interface TaskType {
   is_completed: boolean;
   completed_at: string | null;
   order: number;
-  created_at?: Date;
-  updated_at?: Date;
+  updated_at?: string;
+  created_at?: string;
 }

@@ -2,6 +2,8 @@
 import EktaLogo from "@/app/EktaLogo";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import TaskViewSwitcher from "@/components/TaskViewSwitcher";
+import Spinner from "@/components/ui/Spinner";
+import { useAuthProvider } from "@/context/AuthContext";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import { ViewTypes } from "@/types/viewTypes";
@@ -13,72 +15,104 @@ const ProjectDetails = ({
 }: {
   params: { project_slug: string };
 }) => {
-  const {
-    tasks,
-    sections,
-    projects,
-    setProjects,
-    setActiveProject,
-    activeProject,
-    setTasks,
-  } = useTaskProjectDataProvider();
+  const { setActiveProject, supabase } =
+    useTaskProjectDataProvider();
+  const { profile } = useAuthProvider();
 
-  const [projectTasks, setProjectTasks] = useState<TaskType[]>([]);
+  const [currentProject, setCurrentProject] = useState<ProjectType | null>(
+    null
+  );
   const [projectSections, setProjectSections] = useState<SectionType[]>([]);
+  const [projectTasks, setProjectTasks] = useState<TaskType[]>([]);
   const [showShareOption, setShowShareOption] = useState<boolean>(false);
 
   const handleTaskUpdate = (updatedTask: TaskType) => {
-    setTasks((prevTasks) => {
-      const newTasks = prevTasks.map((t) =>
-        t.id === updatedTask.id ? updatedTask : t
-      );
-      return newTasks;
-    });
+    // setTasks((prevTasks) => {
+    //   const newTasks = prevTasks.map((t) =>
+    //     t.id === updatedTask.id ? updatedTask : t
+    //   );
+    //   return newTasks;
+    // });
   };
 
   useEffect(() => {
-    const currentProject =
-      projects.find((p) => p.slug === project_slug) || null;
-    setActiveProject(currentProject);
-    if (currentProject) {
-      setProjectTasks(tasks.filter((t) => t.projectId === currentProject.id));
-    }
+    const fetchProject = async () => {
+      const { data: projectData, error: projectError } = await supabase
+        .from("projects")
+        .select("*")
+        .eq("slug", project_slug)
+        .eq("profile_id", profile?.id)
+        .single();
 
-    setProjectSections(
-      sections.filter((section) => section.projectId == currentProject?.id)
-    );
+      if (!projectError) {
+        setCurrentProject(projectData);
+      }
+    };
+
+    fetchProject();
+  }, [project_slug]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data: sectionData, error: sectionError } = await supabase
+          .from("sections")
+          .select("*")
+          .eq("project_id", currentProject?.id);
+
+        if (!sectionError) {
+          setProjectSections(sectionData || []);
+        }
+
+        const { data: taskData, error: taskError } = await supabase
+          .from("tasks")
+          .select("*")
+          .eq("project_id", currentProject?.id);
+
+        if (!taskError) {
+          setProjectTasks(taskData || []);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
 
     return () => {
       setActiveProject(null);
     };
-  }, [project_slug, projects, tasks, setActiveProject, sections]);
+  }, [supabase, currentProject?.id]);
 
-  if (activeProject) {
+  const updateProjectView = async (view: ViewTypes["view"]) => {
+    await supabase
+      .from("projects")
+      .update({ view })
+      .eq("id", currentProject?.id);
+  };
+
+  if (currentProject?.id) {
     return (
       <LayoutWrapper
-        headline={activeProject.name}
-        view={activeProject.view}
-        setView={(value) =>
-          setProjects((prev) =>
-            prev.map((p) =>
-              p.id == activeProject.id ? { ...p, view: value } : p
-            )
-          )
-        }
+        headline={currentProject.name}
+        view={currentProject.view}
+        setView={(value) => updateProjectView(value)}
         isProject
         showShareOption={showShareOption}
         setShowShareOption={setShowShareOption}
       >
         <TaskViewSwitcher
+          project={currentProject}
           tasks={projectTasks}
           sections={projectSections}
-          view={activeProject.view}
+          setSections={setProjectSections}
+          view={currentProject.view}
           onTaskUpdate={handleTaskUpdate}
           showShareOption={showShareOption}
           setShowShareOption={setShowShareOption}
         />
 
-        {projectTasks.length == 0 && activeProject.view == "List" && (
+        {projectTasks.length == 0 && currentProject.view == "List" && (
           <div className="flex items-center justify-center flex-col gap-1 h-[30vh] select-none">
             <Image
               src="/project.png"
@@ -104,10 +138,10 @@ const ProjectDetails = ({
     );
   } else {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center border w-full h-screen">
         <div className="flex flex-col gap-8 items-center justify-center">
           <EktaLogo size="lg" />
-          <div className="w-6 h-6 rounded-full border-2 border-indigo-100 border-t-indigo-600 animate-spin"></div>
+          <Spinner />
         </div>
       </div>
     );

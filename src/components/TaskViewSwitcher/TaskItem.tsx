@@ -1,4 +1,4 @@
-import { TaskType } from "@/types/project";
+import { ProjectType, TaskType } from "@/types/project";
 import {
   CheckIcon,
   EllipsisHorizontalIcon,
@@ -9,40 +9,42 @@ import { Dispatch, SetStateAction, useState } from "react";
 import TaskItemMoreDropdown from "./TaskItemMoreDropdown";
 import { Draggable } from "react-beautiful-dnd";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { Workflow } from "lucide-react";
 const TaskItem = ({
   task,
+  subTasks,
   onCheckClick,
   showShareOption,
   setShowShareOption,
   index,
+  project,
 }: {
   task: TaskType;
+  subTasks: TaskType[];
   onCheckClick: () => void;
   showShareOption?: boolean;
   setShowShareOption?: Dispatch<SetStateAction<boolean>>;
   index: number;
+  project: ProjectType | null;
 }) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showMoreDropdown, setShowMoreDropdown] = useState<boolean>(false);
 
-  const { tasks, setTasks } = useTaskProjectDataProvider();
-
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
 
   const handleSectionDelete = () => {
-    const updatedTasks = tasks.filter((t) => t.id !== task.id);
-    setTasks(updatedTasks);
+    // const updatedTasks = tasks.filter((t) => t.id !== task.id);
+    // setTasks(updatedTasks);
   };
 
   return (
-    <Draggable draggableId={task.id.toString()} index={index}>
+    <Draggable draggableId={task.id?.toString()!} index={index}>
       {(provided) => (
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className="rounded shadow-sm hover:shadow-md transition w-full"
+          className="transition w-full"
         >
           <div
             className="flex items-start justify-between gap-2 taskitem_group bg-white p-2 w-full rounded-md"
@@ -58,25 +60,34 @@ const TaskItem = ({
               >
                 <div
                   className={`border w-5 h-5 rounded-full flex items-center justify-center ${
-                    task.isCompleted
+                    task.is_completed
                       ? "bg-indigo-600 border-indigo-600"
                       : "border-gray-400"
                   }`}
                 >
                   <CheckIcon
                     className={`w-3 h-3 transition text-white ${
-                      !task.isCompleted && "opacity-0 group-hover:opacity-100"
+                      !task.is_completed && "opacity-0 group-hover:opacity-100"
                     }`}
                   />
                 </div>
               </div>
-              <span
-                className={`${
-                  task.isCompleted ? "line-through text-gray-500" : ""
-                } line-clamp-3`}
-              >
-                {task.title}
-              </span>
+              <div>
+                <span
+                  className={`${
+                    task.is_completed ? "line-through text-gray-500" : ""
+                  } line-clamp-3`}
+                >
+                  {task.title}
+                </span>
+
+                {subTasks.length > 0 ? (
+                  <div className="flex items-center gap-[2px] text-gray-500">
+                    <Workflow className="w-3 h-3" />
+                    <span className="text-xs">0/{subTasks.length}</span>
+                  </div>
+                ) : null}
+              </div>
             </div>
 
             <div
@@ -121,8 +132,10 @@ const TaskItem = ({
           {showModal && (
             <TaskItemModal
               task={task}
+              subTasks={subTasks}
               onClose={() => setShowModal(false)}
               onCheckClick={onCheckClick}
+              project={project}
             />
           )}
 

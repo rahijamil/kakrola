@@ -1,12 +1,12 @@
 import React, { ReactNode, useState } from "react";
 import { motion } from "framer-motion";
-import { AtSymbolIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PasswordInput from "@/components/ui/PasswordInput";
 import EktaLogo from "@/app/EktaLogo";
 import Link from "next/link";
 import Spinner from "./ui/Spinner";
+import { AtSign } from "lucide-react";
 
 interface AuthFormProps {
   type: "signup" | "login" | "forgotPassword";
@@ -66,7 +66,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
         {
           regex: /[!@#$%^&*(),.?":{}|<>]/,
           message:
-            'Include at least one special character (!@#$%^&*(),.?":{}|<>)',
+            'Include at least one special character !@#$%^&*(),.?":{}|<>',
         },
       ];
 
@@ -166,7 +166,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
                   Email address
                 </label>
                 <div className="relative">
-                  <AtSymbolIcon className="h-5 w-5 text-gray-400 absolute top-3 left-3" />
+                  <AtSign strokeWidth={1.5} className="h-5 w-5 text-gray-400 absolute top-3 left-3" />
                   <Input
                     id="email-address"
                     name="email"

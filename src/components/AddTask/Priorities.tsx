@@ -1,12 +1,8 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  FlagIcon,
-} from "@heroicons/react/24/outline";
 
-import { FlagIcon as FlagIconSolid } from "@heroicons/react/24/solid";
 import { TaskType } from "@/types/project";
+import { Check, ChevronDown, Flag } from "lucide-react";
+import { Flag as FlagSolid } from "lucide-solid";
 const priorities = [
   { value: "P1", label: "Priority 1", color: "text-red-500" },
   { value: "P2", label: "Priority 2", color: "text-orange-500" },
@@ -20,15 +16,16 @@ const PriorityIcon = ({ priority }: { priority: string }) => {
     case "P2":
     case "P3":
       return (
-        <FlagIconSolid
-          className={`w-4 h-4 ${
-            priorities.find((p) => p.value === priority)?.color
-          }`}
+        <Flag
+          strokeWidth={1.5}
+          size={16}
+          color={priorities.find((p) => p.value === priority)?.color}
         />
       );
     default:
       return (
-        <FlagIcon
+        <Flag
+          strokeWidth={1.5}
           className={`w-4 h-4 ${
             priorities.find((p) => p.value === priority)?.color
           }`}
@@ -64,7 +61,10 @@ const Priorities = ({
             </span>
           </div>
 
-          <ChevronDownIcon className="w-4 h-4 opacity-0 group-hover:opacity-100 transition" />
+          <ChevronDown
+            strokeWidth={1.5}
+            className="w-4 h-4 opacity-0 group-hover:opacity-100 transition"
+          />
         </div>
       ) : (
         <div
@@ -108,7 +108,7 @@ const Priorities = ({
                   <PriorityIcon priority={priority.value} />
                   <span className="ml-2">{priority.label}</span>
                   {taskData.priority === priority.value && (
-                    <CheckIcon className="w-4 h-4 ml-auto" />
+                    <Check strokeWidth={1.5} className="w-4 h-4 ml-auto" />
                   )}
                 </li>
               ))}

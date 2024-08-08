@@ -24,7 +24,7 @@ export async function login({
   }
 
   revalidatePath("/", "layout");
-  redirect("/account");
+  redirect("/app");
 }
 
 export async function signup({
@@ -46,7 +46,7 @@ export async function signup({
   }
 
   revalidatePath("/", "layout");
-  redirect("/account");
+  redirect("/app");
 }
 
 export async function forgotPassword(email: string) {

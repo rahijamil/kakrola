@@ -1,9 +1,7 @@
 // Role and Permission structures
 enum RoleType {
-  OWNER = "OWNER",
   ADMIN = "ADMIN",
   MEMBER = "MEMBER",
-  GUEST = "GUEST",
 }
 
 enum Permission {
@@ -23,4 +21,23 @@ interface Role {
   id: number;
   name: RoleType;
   permissions: Permission[];
+}
+
+// Team type
+export interface TeamType {
+  id: number;
+  name: string;
+  avatar_url: string | null;
+  profile_id: string;
+  updated_at: Date;
+  created_at: Date;
+}
+
+// Team member type
+export interface TeamMemberType {
+  id: number;
+  team_id: number;
+  profileId: string; // UUID
+  role: Role;
+  joinedAt: Date;
 }

@@ -2,6 +2,7 @@
 import { ProjectType, SectionType } from "@/types/project";
 import { TaskType } from "@/types/project";
 import { createClient } from "@/utils/supabase/client";
+import { SupabaseClient } from "@supabase/supabase-js";
 import React, {
   createContext,
   Dispatch,
@@ -14,21 +15,23 @@ import React, {
 import { useAuthProvider } from "./AuthContext";
 
 const TaskProjectDataContext = createContext<{
-  tasks: TaskType[];
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  supabase: SupabaseClient<any, "public", any>;
+  // tasks: TaskType[];
+  // setTasks: Dispatch<SetStateAction<TaskType[]>>;
   projects: ProjectType[];
-  setProjects: Dispatch<SetStateAction<ProjectType[]>>;
-  sections: SectionType[];
-  setSections: Dispatch<SetStateAction<SectionType[]>>;
+  // setProjects: Dispatch<SetStateAction<ProjectType[]>>;
+  // sections: SectionType[];
+  // setSections: Dispatch<SetStateAction<SectionType[]>>;
   activeProject: ProjectType | null;
   setActiveProject: Dispatch<SetStateAction<ProjectType | null>>;
 }>({
-  tasks: [],
-  setTasks: (value) => value,
+  supabase: createClient(),
+  // tasks: [],
+  // setTasks: (value) => value,
   projects: [],
-  setProjects: (value) => value,
-  sections: [],
-  setSections: (value) => value,
+  // setProjects: (value) => value,
+  // sections: [],
+  // setSections: (value) => value,
   activeProject: null,
   setActiveProject: (value) => value,
 });
@@ -36,43 +39,58 @@ const TaskProjectDataContext = createContext<{
 const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
   const supabase = createClient();
   const { profile } = useAuthProvider();
-  const [tasks, setTasks] = useState<TaskType[]>([]);
+  // const [tasks, setTasks] = useState<TaskType[]>([]);
   const [projects, setProjects] = useState<ProjectType[]>([]);
-  const [sections, setSections] = useState<SectionType[]>([]);
+  // const [sections, setSections] = useState<SectionType[]>([]);
   const [activeProject, setActiveProject] = useState<ProjectType | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Load data from local storage
-    const storedTasks = localStorage.getItem("tasks");
-    const storedProjects = localStorage.getItem("projects");
-    const storedSections = localStorage.getItem("sections");
+    const fetchData = async () => {
+      try {
+        const { data: projectData, error: projectError } = await supabase
+          .from("projects")
+          .select("*")
+          .eq("profile_id", profile?.id);
 
-    if (storedTasks) setTasks(JSON.parse(storedTasks));
-    if (storedProjects) setProjects(JSON.parse(storedProjects));
-    if (storedSections) setSections(JSON.parse(storedSections));
+        if (!projectError) {
+          setProjects(projectData || []);
+        }
 
-    setIsLoaded(true);
-  }, []);
+        // const { data: sectionData, error: sectionError } = await supabase
+        //   .from("sections")
+        //   .select("*")
+        //   .eq("profile_id", profile?.id);
 
-  useEffect(() => {
-    // Save data to local storage only after initial load
-    if (isLoaded) {
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-      localStorage.setItem("projects", JSON.stringify(projects));
-      localStorage.setItem("sections", JSON.stringify(sections));
-    }
-  }, [tasks, projects, sections, isLoaded]);
+        // if (!sectionError) {
+        //   setSections(sectionData || []);
+        // }
+
+        // const { data: taskData, error: taskError } = await supabase
+        //   .from("tasks")
+        //   .select("*")
+        //   .eq("profile_id", profile?.id);
+
+        // if (!taskError) {
+        //   setTasks(taskData || []);
+        // }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [supabase, profile?.id]);
 
   return (
     <TaskProjectDataContext.Provider
       value={{
-        tasks,
-        setTasks,
+        supabase,
+        // tasks,
+        // setTasks,
         projects,
-        setProjects,
-        sections,
-        setSections,
+        // setProjects,
+        // sections,
+        // setSections,
         activeProject,
         setActiveProject,
       }}

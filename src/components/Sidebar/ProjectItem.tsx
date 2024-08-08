@@ -1,5 +1,5 @@
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { ProjectType } from "@/types/project";
+import { ProjectType, TaskType } from "@/types/project";
 import {
   EllipsisHorizontalIcon,
   HashtagIcon,
@@ -7,6 +7,7 @@ import {
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import SidebarProjectMoreOptions from "./SidebarProjectMoreOptions";
+import { supabaseBrowser } from "@/utils/supabase/client";
 
 const ProjectItem = ({
   project,
@@ -15,7 +16,7 @@ const ProjectItem = ({
   project: ProjectType;
   pathname: string;
 }) => {
-  const { tasks } = useTaskProjectDataProvider();
+  const [tasks, setTasks] = useState<TaskType[]>([]);
   const [showProjectMoreDropdown, setShowProjectMoreDropdown] =
     useState<boolean>(false);
 
@@ -39,14 +40,29 @@ const ProjectItem = ({
     return () => clearTimeout(timeout);
   }, [showProjectMoreDropdown]);
 
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const { data: tasksData, error: tasksError } = await supabaseBrowser
+        .from("tasks")
+        .select("*")
+        .eq("project_id", project.id);
+
+      if (!tasksError) {
+        setTasks(tasksData || []);
+      }
+    };
+
+    fetchTasks();
+  }, [project.id]);
+
   return (
     <li>
       <div
         ref={moreRef}
-        className={`relative sidebar_project_item p-[1px] flex-1 flex items-center justify-between rounded-md transition-colors text-gray-700 ${
+        className={`relative sidebar_project_item p-[1px] flex-1 flex items-center justify-between rounded-md transition-colors ${
           pathname === `/app/projects/${project.slug}`
-            ? "bg-gray-300"
-            : "hover:bg-gray-200"
+            ? "bg-indigo-100 text-indigo-700"
+            : "hover:bg-gray-200 text-gray-700"
         }`}
       >
         <Link href={`/app/projects/${project.slug}`} className="p-[1px] w-full">
@@ -61,7 +77,7 @@ const ProjectItem = ({
         <div className="absolute right-0 top-1/2 -translate-y-1/2">
           <div className="relative w-7 h-7 flex items-center justify-center">
             <p>
-              {tasks.filter((task) => task.project?.id == project.id).length}
+              {tasks.filter((task) => task.project_id == project.id).length}
             </p>
 
             <div

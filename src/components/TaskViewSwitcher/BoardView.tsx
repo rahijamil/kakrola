@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { SectionType, TaskType } from "@/types/project";
+import { ProjectType, SectionType, TaskType } from "@/types/project";
 import TaskItem from "./TaskItem";
 import SectionAddTask from "./SectionAddTask";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
@@ -8,6 +8,7 @@ import AddNewSectionBoardView from "./AddNewSectionBoardView";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
+import { supabaseBrowser } from "@/utils/supabase/client";
 
 const BoardView: React.FC<{
   sections: SectionType[];
@@ -22,6 +23,7 @@ const BoardView: React.FC<{
   setShowUngroupedAddSection: React.Dispatch<React.SetStateAction<boolean>>;
   showShareOption?: boolean;
   setShowShareOption?: React.Dispatch<React.SetStateAction<boolean>>;
+  project: ProjectType | null;
 }> = ({
   sections,
   groupedTasks,
@@ -35,11 +37,11 @@ const BoardView: React.FC<{
   setShowUngroupedAddSection,
   showShareOption,
   setShowShareOption,
+  project,
 }) => {
   const [showSectionMoreOptions, setShowSectionMoreOptions] = useState<
     string | null
   >(null);
-  const { setTasks, tasks, setSections } = useTaskProjectDataProvider();
 
   const columns = useMemo(() => {
     const columnsObj: Record<
@@ -79,7 +81,7 @@ const BoardView: React.FC<{
     setShowUngroupedAddSection(columns.length < 1);
   }, [columns.length, setShowUngroupedAddSection]);
 
-  const onDragEnd = (result: DropResult) => {
+  const onDragEnd = async (result: DropResult) => {
     const { source, destination } = result;
 
     // If there's no destination, we don't need to do anything
@@ -117,45 +119,61 @@ const BoardView: React.FC<{
     // Update the task's section if it was moved to a different column
     const updatedMovedTask: TaskType = {
       ...movedTask,
-      sectionId:
-        destination.droppableId !== "ungrouped" && movedTask.sectionId
-          ? movedTask.sectionId
+      section_id:
+        destination.droppableId !== "ungrouped" && movedTask.section_id
+          ? movedTask.section_id
           : null,
     };
 
     // Update the tasks state
-    setTasks((prevTasks) => {
-      const updatedTasks: TaskType[] = prevTasks.map((task) =>
-        task.id === updatedMovedTask.id ? updatedMovedTask : task
-      );
+    // setTasks((prevTasks) => {
+    //   const updatedTasks: TaskType[] = prevTasks.map((task) =>
+    //     task.id === updatedMovedTask.id ? updatedMovedTask : task
+    //   );
 
-      // Reorder tasks within the same section or between sections
-      return updatedTasks.sort((a, b) => {
-        if (a.sectionId !== b.sectionId) {
-          return 0; // Different sections, maintain original order
-        }
-        const columnTasks = a.sectionId ? newDestTasks : newSourceTasks;
-        return (
-          columnTasks.findIndex((t) => t.id === a.id) -
-          columnTasks.findIndex((t) => t.id === b.id)
-        );
-      });
-    });
+    //   // Reorder tasks within the same section or between sections
+    //   return updatedTasks.sort((a, b) => {
+    //     if (a.section_id !== b.section_id) {
+    //       return 0; // Different sections, maintain original order
+    //     }
+    //     const columnTasks = a.section_id ? newDestTasks : newSourceTasks;
+    //     return (
+    //       columnTasks.findIndex((t) => t.id === a.id) -
+    //       columnTasks.findIndex((t) => t.id === b.id)
+    //     );
+    //   });
+    // });
   };
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
 
-  const handleSectionDelete = (section: { id: number } | null) => {
+  const handleSectionDelete = async (section: { id: number } | null) => {
     if (section) {
-      const updatedTasks = tasks.filter((t) => t.sectionId !== section.id);
-      setTasks(updatedTasks);
+      const { error } = await supabaseBrowser
+        .from("tasks")
+        .delete()
+        .eq("section_id", section.id);
+      if (error) {
+        console.error(error);
+        return;
+      }
 
-      const updatedSections = sections.filter((s) => s.id !== section.id);
-
-      setSections(updatedSections);
+      const { error: sectionError } = await supabaseBrowser
+        .from("sections")
+        .delete()
+        .eq("id", section.id);
+      if (sectionError) {
+        console.error(sectionError);
+      }
     } else {
-      const updatedTasks = tasks.filter((t) => t.sectionId !== null);
-      setTasks(updatedTasks);
+      const { error } = await supabaseBrowser
+        .from("tasks")
+        .delete()
+        .eq("section_id", null);
+      if (error) {
+        console.error(error);
+        return;
+      }
     }
 
     setShowDeleteConfirm(false);
@@ -221,19 +239,23 @@ const BoardView: React.FC<{
                     className="min-h-[100px] space-y-2"
                   >
                     {column.tasks.map((task, taskIndex) => (
-                      <TaskItem
-                        key={task.id}
-                        task={task}
-                        onCheckClick={() =>
-                          onTaskUpdate({
-                            ...task,
-                            isCompleted: !task.isCompleted,
-                          })
-                        }
-                        setShowShareOption={setShowShareOption}
-                        showShareOption={showShareOption}
-                        index={taskIndex}
-                      />
+                      <div className="rounded shadow-sm hover:shadow-md">
+                        <TaskItem
+                          key={task.id}
+                          task={task}
+                          // section={column}
+                          onCheckClick={() =>
+                            onTaskUpdate({
+                              ...task,
+                              is_completed: !task.is_completed,
+                            })
+                          }
+                          setShowShareOption={setShowShareOption}
+                          showShareOption={showShareOption}
+                          index={taskIndex}
+                          project={project}
+                        />
+                      </div>
                     ))}
 
                     {provided.placeholder}
@@ -252,6 +274,7 @@ const BoardView: React.FC<{
                 isSmall
                 showUngroupedAddTask={showUngroupedAddTask}
                 setShowUngroupedAddTask={setShowUngroupedAddTask}
+                project={project}
               />
             </div>
 
@@ -261,6 +284,7 @@ const BoardView: React.FC<{
               columnId={column.id}
               columns={columns}
               index={columnIndex}
+              project={project}
             />
           </React.Fragment>
         ))}
@@ -271,6 +295,7 @@ const BoardView: React.FC<{
               sections={sections}
               setShowUngroupedAddSection={setShowUngroupedAddSection}
               showUngroupedAddSection={showUngroupedAddSection}
+              project={project}
             />
           )}
         </div>

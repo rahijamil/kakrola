@@ -1,89 +1,130 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Dialog, Input, Textarea } from "../ui";
-import { SectionType, TaskType } from "@/types/project";
-import {
-  Bars3BottomLeftIcon,
-  CheckIcon,
-  ChevronDownIcon,
-  EllipsisHorizontalIcon,
-  FaceSmileIcon,
-  HashtagIcon,
-  LockClosedIcon,
-  MicrophoneIcon,
-  PaperClipIcon,
-  PlusIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { ProjectType, SectionType, TaskType } from "@/types/project";
 
 import AddTaskForm from "../AddTask/AddTaskForm";
 import Priorities from "../AddTask/Priorities";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import AddComentForm from "./AddComentForm";
 import TaskItem from "./TaskItem";
+import { supabaseBrowser } from "@/utils/supabase/client";
+import {
+  Check,
+  ChevronDown,
+  Ellipsis,
+  Hash,
+  Inbox,
+  LockKeyhole,
+  Paperclip,
+  Plus,
+  Text,
+  X,
+} from "lucide-react";
 
 const TaskItemModal = ({
   task,
+  subTasks,
   onClose,
-  section,
   onCheckClick,
+  project,
 }: {
   task: TaskType;
+  subTasks: TaskType[];
   onClose: () => void;
-  section?: SectionType;
   onCheckClick: () => void;
+  project: ProjectType | null;
 }) => {
   const [contentEditable, setContentEditable] = useState<boolean>(false);
   const [showCommentForm, setShowCommentForm] = useState<boolean>(false);
   const [showAddSubtask, setShowAddSubtask] = useState<boolean>(false);
-  const { setTasks, projects, sections, tasks } = useTaskProjectDataProvider();
+  const { projects } = useTaskProjectDataProvider();
   const [taskData, setTaskData] = useState<TaskType>(task);
+  const [section, setSection] = useState<SectionType | null>(null);
 
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleSaveTitleDesc = () => {
-    setTasks((prevTasks) => [
-      ...prevTasks.map((t) =>
-        t.id == taskData.id ? { ...taskData, isCompleted: t.isCompleted } : t
-      ),
-    ]);
+  const handleSaveTitleDesc = async () => {
+    const { error } = await supabaseBrowser
+      .from("tasks")
+      .update({ title: taskData.title, description: taskData.description })
+      .eq("id", task.id);
+
     setContentEditable(false);
   };
+
+  useEffect(() => {
+    const fetchSectionAndSubTasks = async () => {
+      if (task.section_id) {
+        const { data, error } = await supabaseBrowser
+          .from("sections")
+          .select("*")
+          .eq("id", task.section_id)
+          .single();
+
+        if (error) {
+          console.error(error);
+        } else {
+          setSection(data);
+        }
+      }
+
+      // const { data, error } = await supabaseBrowser
+      //   .from("tasks")
+      //   .select("*")
+      //   .eq("parent_task_id", task.id);
+
+      // if (error) {
+      //   console.error(error);
+      // } else {
+      //   setSubTasks(data);
+      // }
+    };
+
+    fetchSectionAndSubTasks();
+  }, [task]);
 
   return (
     <Dialog onClose={onClose} size="lg">
       <div className="h-[94%]">
         <div className="p-2 px-4 flex items-center justify-between border-b border-gray-200">
-          <div className="flex items-center gap-2">
+          {task.is_inbox ? (
             <div className="flex items-center gap-2">
-              <HashtagIcon className="w-4 h-4" />
-              {projects.find((p) => p.id == taskData.projectId)?.name}
+              <Inbox className="w-4 h-4" />
+              Inbox
             </div>
-            <div>/</div>
+          ) : (
             <div className="flex items-center gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="currentColor"
-                  d="M19.5 20a.5.5 0 0 1 0 1h-15a.5.5 0 0 1 0-1h15zM18 6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h12zm0 1H6a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zm-6 2a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 12 9zm7.5-6a.5.5 0 0 1 0 1h-15a.5.5 0 0 1 0-1h15z"
-                ></path>
-              </svg>
-              {sections.find((s) => s.id == taskData.sectionId)?.name}
+              <div className="flex items-center gap-2">
+                <Hash strokeWidth={1.5} className="w-4 h-4" />
+                {projects.find((p) => p.id == taskData.project_id)?.name}
+              </div>
+              <div>/</div>
+              <div className="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M19.5 20a.5.5 0 0 1 0 1h-15a.5.5 0 0 1 0-1h15zM18 6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h12zm0 1H6a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zm-6 2a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 12 9zm7.5-6a.5.5 0 0 1 0 1h-15a.5.5 0 0 1 0-1h15z"
+                  ></path>
+                </svg>
+                {section?.name}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="flex items-center gap-2">
             <button className="p-1 hover:bg-gray-100 transition rounded-md">
-              <EllipsisHorizontalIcon className="w-6 h-6" />
+              <Ellipsis strokeWidth={1.5} className="w-6 h-6" />
             </button>
             <button
               className="p-1 hover:bg-gray-100 transition rounded-md"
               onClick={onClose}
             >
-              <XMarkIcon className="w-6 h-6" />
+              <X strokeWidth={1.5} className="w-6 h-6" />
             </button>
           </div>
         </div>
@@ -93,14 +134,15 @@ const TaskItemModal = ({
             <div
               onClick={onCheckClick}
               className={`border w-5 h-5 rounded-full flex items-center justify-center mt-1 cursor-pointer group ${
-                task.isCompleted
+                task.is_completed
                   ? "bg-indigo-600 border-indigo-600"
                   : "border-gray-400"
               }`}
             >
-              <CheckIcon
+              <Check
+                strokeWidth={1.5}
                 className={`w-3 h-3 transition ${
-                  task.isCompleted
+                  task.is_completed
                     ? "text-white"
                     : "text-gray-700 opacity-0 group-hover:opacity-100"
                 }`}
@@ -116,7 +158,7 @@ const TaskItemModal = ({
                 >
                   <Input
                     className={`${
-                      taskData.isCompleted ? "line-through text-gray-500" : ""
+                      taskData.is_completed ? "line-through text-gray-500" : ""
                     } text-lg font-bold w-full p-2 pb-[10px]`}
                     value={taskData.title}
                     onClick={() => setContentEditable(true)}
@@ -135,7 +177,10 @@ const TaskItemModal = ({
                       descriptionRef.current?.focus();
                     }}
                   >
-                    <Bars3BottomLeftIcon className="w-4 h-4 mt-[2px] text-gray-400" />
+                    <Text
+                      strokeWidth={1.5}
+                      className="w-4 h-4 mt-[2px] text-gray-400"
+                    />
                     <Textarea
                       placeholder={"Description"}
                       className="resize-none"
@@ -178,7 +223,7 @@ const TaskItemModal = ({
                     className="text-xs hover:bg-gray-100 transition rounded-md flex items-center gap-2 px-2 py-[6px] text-gray-600"
                     onClick={() => setShowAddSubtask(true)}
                   >
-                    <PlusIcon className="w-4 h-4" />
+                    <Plus strokeWidth={1.5} className="w-4 h-4" />
 
                     <span className="text-xs font-semibold">Add sub-task</span>
                   </button>
@@ -187,26 +232,27 @@ const TaskItemModal = ({
                   <div className="rounded-lg border border-gray-200 focus-within:border-gray-400 bg-white">
                     <AddTaskForm
                       onClose={() => setShowAddSubtask(false)}
-                      taskIdForSubTask={task.id}
+                      parentTaskIdForSubTask={task.id}
+                      project={project}
                     />
                   </div>
                 )}
               </div>
 
               <ul className="mt-6">
-                {tasks
-                  .filter((t) => t.parentTaskId == task.id)
-                  .map((subTask, index) => (
-                    <li>
-                      <TaskItem
-                        task={subTask}
-                        onCheckClick={() => {}}
-                        showShareOption={false}
-                        setShowShareOption={(v) => {}}
-                        index={index}
-                      />
-                    </li>
-                  ))}
+                {subTasks.map((subTask, index) => (
+                  <li>
+                    <TaskItem
+                      task={subTask}
+                      onCheckClick={() => {}}
+                      showShareOption={false}
+                      setShowShareOption={(v) => {}}
+                      index={index}
+                      project={project}
+                      subTasks={subTasks}
+                    />
+                  </li>
+                ))}
               </ul>
 
               <div className="my-4 bg-gray-100 h-[1px]" />
@@ -220,7 +266,10 @@ const TaskItemModal = ({
                     onClick={() => setShowCommentForm(true)}
                   >
                     <p className="">Comment</p>
-                    <PaperClipIcon className="w-4 h-4 text-gray-700" />
+                    <Paperclip
+                      strokeWidth={1.5}
+                      className="w-4 h-4 text-gray-700"
+                    />
                   </div>
                 </div>
               )}
@@ -238,18 +287,31 @@ const TaskItemModal = ({
                 <p className="font-semibold text-xs pl-2">Project</p>
 
                 <div className="flex items-center justify-between hover:bg-gray-200 rounded-md cursor-pointer transition p-[6px] px-2 group">
-                  <div className="flex items-center gap-2 text-xs">
-                    <div className="flex items-center gap-2">
-                      <HashtagIcon className="w-3 h-3" />
-                      {projects.find((p) => p.id == taskData.projectId)?.name}
+                  {task.is_inbox ? (
+                    <div className="flex items-center gap-2 text-xs">
+                      <Inbox strokeWidth={1.5} className="w-3 h-3" />
+                      Inbox
                     </div>
-                    <div>/</div>
-                    <div className="flex items-center gap-2">
-                      {sections.find((s) => s.id == taskData.sectionId)?.name}
+                  ) : (
+                    <div className="flex items-center gap-2 text-xs">
+                      <div className="flex items-center gap-2">
+                        <Hash strokeWidth={1.5} className="w-3 h-3" />
+                        {
+                          projects.find((p) => p.id == taskData.project_id)
+                            ?.name
+                        }
+                      </div>
+                      <div>/</div>
+                      <div className="flex items-center gap-2">
+                        {section?.name}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
-                  <ChevronDownIcon className="w-4 h-4 opacity-0 group-hover:opacity-100 transition" />
+                  <ChevronDown
+                    strokeWidth={1.5}
+                    className="w-4 h-4 opacity-0 group-hover:opacity-100 transition"
+                  />
                 </div>
               </div>
               <div className="h-[1px] bg-gray-200 m-2"></div>
@@ -258,7 +320,7 @@ const TaskItemModal = ({
               <div className="space-y-2">
                 <div className="flex items-center justify-between hover:bg-gray-200 rounded-md cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Assignee</p>
-                  <PlusIcon className="w-4 h-4" />
+                  <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
               </div>
               <div className="h-[1px] bg-gray-200 m-2"></div>
@@ -267,7 +329,7 @@ const TaskItemModal = ({
               <div className="space-y-2">
                 <div className="flex items-center justify-between hover:bg-gray-200 rounded-md cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Due date</p>
-                  <PlusIcon className="w-4 h-4" />
+                  <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
               </div>
               <div className="h-[1px] bg-gray-200 m-2"></div>
@@ -288,7 +350,7 @@ const TaskItemModal = ({
               <div className="space-y-2">
                 <div className="flex items-center justify-between hover:bg-gray-200 rounded-md cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Labels</p>
-                  <PlusIcon className="w-4 h-4" />
+                  <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
               </div>
               <div className="h-[1px] bg-gray-200 m-2"></div>
@@ -297,7 +359,7 @@ const TaskItemModal = ({
               <div className="space-y-2">
                 <div className="flex items-center justify-between hover:bg-gray-200 rounded-md cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Reminders</p>
-                  <PlusIcon className="w-4 h-4" />
+                  <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
               </div>
               <div className="h-[1px] bg-gray-200 m-2"></div>
@@ -311,7 +373,7 @@ const TaskItemModal = ({
                       Upgrade
                     </span>
                   </p>
-                  <LockClosedIcon className="w-4 h-4" />
+                  <LockKeyhole strokeWidth={1.5} className="w-4 h-4" />
                 </div>
               </div>
               <div className="h-[1px] bg-gray-200 m-2"></div>

@@ -1,5 +1,5 @@
+import { Plus } from "lucide-react";
 import React from "react";
-import { PlusIcon } from "@heroicons/react/24/solid";
 
 const AddTaskTextButton = ({
   handleAddTask,
@@ -12,7 +12,7 @@ const AddTaskTextButton = ({
       onClick={handleAddTask}
     >
       <div className="w-5 h-5 bg-indigo-600 rounded-full">
-        <PlusIcon className="w-5 h-5 text-white" />
+        <Plus className="w-5 h-5 text-white" strokeWidth={1.5} />
       </div>
       Add Task
     </button>

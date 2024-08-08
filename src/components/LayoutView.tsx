@@ -1,7 +1,7 @@
 import { ViewTypes } from "@/types/viewTypes";
-import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import { CircleHelp } from "lucide-react";
 import Image from "next/image";
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 
 const views: {
   id: number;
@@ -61,7 +61,7 @@ const LayoutView = ({
       <div className="flex items-center justify-between gap-8 font-bold mb-3">
         <h5>View</h5>
         {showHelper && (
-          <QuestionMarkCircleIcon className="w-5 h-5 text-gray-500" />
+          <CircleHelp strokeWidth={1.5} className="w-5 h-5 text-gray-500" />
         )}
       </div>
 

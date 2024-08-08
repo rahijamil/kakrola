@@ -25,7 +25,7 @@ const CalendarView = ({
           <p className="text-sm text-gray-500">{format(day, "d")}</p>
           <ul className="mt-2 space-y-1">
             {tasks
-              .filter((task) => isSameDay(new Date(task.dueDate), day))
+              .filter((task) => isSameDay(new Date(task.due_date), day))
               .map((task) => (
                 <li key={task.id} className="text-sm">
                   <TaskItem

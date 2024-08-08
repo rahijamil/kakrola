@@ -8,11 +8,11 @@ import {
   LayoutDashboardIcon,
   ClipboardListIcon,
   StarIcon,
+  ChevronsRight,
 } from "lucide-react";
 import Link from "next/link";
 import LandingPageHeader from "./LandingPageHeader";
 import LandingPageFooter from "./LandingPageFooter";
-import { ChevronDoubleRightIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
@@ -143,7 +143,7 @@ const LandingPage = () => {
                 >
                   <Button size="lg">
                     Start for free
-                    <ChevronDoubleRightIcon className="ml-2 w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
+                    <ChevronsRight className="ml-2 w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
                   </Button>
                 </Link>
               </motion.div>
@@ -179,7 +179,7 @@ const LandingPage = () => {
                   >
                     <dt>
                       <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-                        <feature.icon className="h-6 w-6" aria-hidden="true" />
+                        <feature.icon className="h-6 w-6" aria-hidden="true"  strokeWidth={1.5} />
                       </div>
                       <p className="ml-16 text-lg leading-6 font-medium text-gray-900">
                         {feature.name}
@@ -372,7 +372,7 @@ const LandingPage = () => {
                     <ul className="mt-6 space-y-4">
                       {plan.features.map((feature) => (
                         <li key={feature} className="flex items-start">
-                          <CheckCircleIcon className="flex-shrink-0 h-6 w-6 text-green-500" />
+                          <CheckCircleIcon className="flex-shrink-0 h-6 w-6 text-green-500" strokeWidth={1.5} />
                           <p className="ml-3 text-base text-gray-700">
                             {feature}
                           </p>
@@ -457,7 +457,7 @@ const LandingPage = () => {
                       className="text-lg px-8 py-4"
                     >
                       Start your free trial
-                      <ChevronDoubleRightIcon className="ml-2 w-5 h-5" />
+                      <ChevronsRight className="ml-2 w-5 h-5" />
                     </Button>
                   </Link>
                 </div>

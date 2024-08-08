@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from "react";
 import AddTask from "../AddTask";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { SectionType } from "@/types/project";
+import { ProjectType, SectionType } from "@/types/project";
 
 const SectionAddTask = ({
   showAddTask,
@@ -10,6 +10,7 @@ const SectionAddTask = ({
   showUngroupedAddTask,
   setShowUngroupedAddTask,
   isSmall,
+  project
 }: {
   showAddTask?: number | null;
   setShowAddTask?: Dispatch<SetStateAction<number | null>>;
@@ -17,6 +18,7 @@ const SectionAddTask = ({
   showUngroupedAddTask?: boolean;
   setShowUngroupedAddTask?: Dispatch<SetStateAction<boolean>>;
   isSmall?: boolean;
+  project: ProjectType | null;
 }) => {
   const isAddTaskVisible = section
     ? showAddTask !== section.id
@@ -51,6 +53,7 @@ const SectionAddTask = ({
             }
             isSmall={isSmall}
             section={section}
+            project={project}
           />
         </div>
       )}

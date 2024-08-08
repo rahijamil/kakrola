@@ -1,6 +1,8 @@
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { SectionType, TaskType } from "@/types/project";
+import { useAuthProvider } from "@/context/AuthContext";
+import { ProjectType, SectionType, TaskType } from "@/types/project";
+import { supabaseBrowser } from "@/utils/supabase/client";
 import React, { FormEvent, useState } from "react";
+import Spinner from "../ui/Spinner";
 
 const AddNewSectionBoardView = ({
   sections,
@@ -9,6 +11,7 @@ const AddNewSectionBoardView = ({
   columnId,
   columns,
   index,
+  project,
 }: {
   sections: SectionType[];
   setShowUngroupedAddSection: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,43 +19,69 @@ const AddNewSectionBoardView = ({
   columnId?: string;
   columns?: { id: string; title: string; tasks: TaskType[] }[];
   index?: number;
+  project: ProjectType | null;
 }) => {
   const [showAddSection, setShowAddSection] = useState<string | null>(null);
   const [mouseOnAddSection, setMouseOnAddSection] = useState<boolean>(false);
   const [newSectionName, setNewSectionName] = useState<string>("");
 
-  const { activeProject, setSections } = useTaskProjectDataProvider();
+  const { profile } = useAuthProvider();
 
-  const handleAddSection = (
+  const [loading, setLoading] = useState(false);
+
+  const handleAddSection = async (
     ev: FormEvent<HTMLFormElement>,
-    positionIndex: number | null
+    order: number | null
   ) => {
     ev.preventDefault();
 
-    if (activeProject && newSectionName.trim()) {
-      const newSection: SectionType = {
-        name: newSectionName.trim(),
-        id: sections.length + 1,
-        projectId: activeProject.id,
-        isCollapsed: false,
-        order: positionIndex !== null ? positionIndex : sections.length + 1,
-      };
+    if (!newSectionName.trim()) {
+      return;
+    }
 
-      setSections((prevSections) => {
-        if (positionIndex !== null) {
-          // Insert the new section at the specified position
-          const updatedSections = [...prevSections];
-          updatedSections.splice(positionIndex, 0, newSection);
-          return updatedSections;
-        } else {
-          // Add the new section at the beginning
-          return [newSection, ...prevSections];
+    setLoading(true);
+
+    try {
+      if (project?.id) {
+        const { error } = await supabaseBrowser.from("sections").insert([
+          {
+            name: newSectionName.trim(),
+            project_id: project.id,
+            profile_id: profile?.id,
+            is_collapsed: false,
+            is_inbox: false,
+            order: 0,
+            updated_at: new Date().toISOString(),
+          },
+        ]);
+
+        if (error) {
+          console.error(error);
         }
-      });
+      } else {
+        const { error } = await supabaseBrowser.from("sections").insert([
+          {
+            name: newSectionName.trim(),
+            project_id: null,
+            profile_id: profile?.id,
+            is_collapsed: false,
+            is_inbox: true,
+            order: 0,
+            updated_at: new Date().toISOString(),
+          },
+        ]);
 
+        if (error) {
+          console.error(error);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
       setNewSectionName("");
       setShowAddSection(null);
       setShowUngroupedAddSection(false);
+      setLoading(false);
     }
   };
 
@@ -140,9 +169,16 @@ const AddNewSectionBoardView = ({
             <button
               type="submit"
               className="px-2 py-[6px] text-xs text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-600 disabled:cursor-not-allowed transition disabled:opacity-50"
-              disabled={!newSectionName.trim()}
+              disabled={!newSectionName.trim() || loading}
             >
-              Add section
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <Spinner color="white" />
+                  Adding...
+                </div>
+              ) : (
+                "Add section"
+              )}
             </button>
 
             <button
@@ -151,7 +187,8 @@ const AddNewSectionBoardView = ({
                 setShowAddSection(null);
                 setShowUngroupedAddSection(false);
               }}
-              className="px-3 py-[6px] text-xs text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-md"
+              className="px-3 py-[6px] text-xs text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-md disabled:opacity-50 disabled:hover:bg-gray-100 disabled:cursor-not-allowed"
+              disabled={loading}
             >
               Cancel
             </button>

@@ -9,8 +9,8 @@ import {
   QuestionMarkCircleIcon,
   TagIcon,
 } from "@heroicons/react/24/outline";
-import { ToggleSwitch } from "../ui";
 import { ViewTypes } from "@/types/viewTypes";
+import { ToggleSwitch } from "../ui/ToggleSwitch";
 
 const ViewOptions = ({
   onClose,
@@ -47,8 +47,8 @@ const ViewOptions = ({
             </div>
 
             <ToggleSwitch
-              enabled={showCompletedTasks}
-              setEnabled={(value) => setShowCompletedTasks(value)}
+              checked={showCompletedTasks}
+              onCheckedChange={(value) => setShowCompletedTasks(value)}
             />
           </div>
         </div>

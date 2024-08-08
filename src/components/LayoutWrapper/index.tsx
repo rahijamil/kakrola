@@ -28,8 +28,8 @@ const LayoutWrapper = ({
   children: React.ReactNode;
   headline: string;
   isProject?: boolean;
-  view: ViewTypes["view"];
-  setView: (value: ViewTypes["view"]) => void;
+  view?: ViewTypes["view"];
+  setView?: (value: ViewTypes["view"]) => void;
   showShareOption?: boolean;
   setShowShareOption?: Dispatch<SetStateAction<boolean>>;
   hideCalendarView?: boolean;
@@ -48,98 +48,101 @@ const LayoutWrapper = ({
   );
 
   return (
-    <div className="flex h-screen bg-white">
-      <Sidebar />
+    <>
       {headline == "Docs" && <DocsSidebar />}
 
       <main className="flex-1 overflow-auto flex flex-col">
-        <div className="flex items-center justify-between p-4">
-          {!["Today", "Inbox"].includes(headline) && <div>My Projects /</div>}
+        {view && setView && (
+          <div className="flex items-center justify-between p-4">
+            {!["Today", "Inbox"].includes(headline) && <div>My Projects /</div>}
 
-          <div className="flex-1 flex items-center justify-end">
-            <ul className="flex items-center relative">
-              {typeof setShowShareOption === "function" &&
-                headline !== "Today" && (
-                  <li>
-                    <button
-                      className={`${
-                        showShareOption ? "bg-gray-100" : "hover:bg-gray-100"
-                      }  transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
-                      onClick={() => setShowShareOption(true)}
-                    >
-                      <UserPlusIcon className="w-6 h-6 text-gray-500" />
-                      Share
-                    </button>
+            <div className="flex-1 flex items-center justify-end">
+              <ul className="flex items-center relative">
+                {typeof setShowShareOption === "function" &&
+                  headline !== "Today" && (
+                    <li>
+                      <button
+                        className={`${
+                          showShareOption ? "bg-gray-100" : "hover:bg-gray-100"
+                        }  transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
+                        onClick={() => setShowShareOption(true)}
+                      >
+                        <UserPlusIcon className="w-6 h-6 text-gray-500" />
+                        Share
+                      </button>
 
-                    {showShareOption && (
-                      <ShareOption onClose={() => setShowShareOption(false)} />
-                    )}
-                  </li>
+                      {showShareOption && (
+                        <ShareOption
+                          onClose={() => setShowShareOption(false)}
+                        />
+                      )}
+                    </li>
+                  )}
+                <li>
+                  <button
+                    className={`${
+                      showViewOptions ? "bg-gray-100" : "hover:bg-gray-100"
+                    }  transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
+                    onClick={() => setShowViewOptions(true)}
+                  >
+                    <AdjustmentsHorizontalIcon className="w-6 h-6 text-gray-500" />
+                    View
+                  </button>
+
+                  {showViewOptions && (
+                    <ViewOptions
+                      onClose={() => setShowViewOptions(false)}
+                      hideCalendarView={hideCalendarView}
+                      view={view}
+                      setView={setView}
+                    />
+                  )}
+                </li>
+
+                {headline !== "Today" && (
+                  <>
+                    <li>
+                      <button
+                        className={`${
+                          showCommentOrActivity
+                            ? "bg-gray-100"
+                            : "hover:bg-gray-100"
+                        } transition p-1 rounded-md cursor-pointer`}
+                        onClick={() => setShowCommentOrActivity("comment")}
+                      >
+                        <ChatBubbleLeftIcon className="w-6 h-6 text-gray-500" />
+                      </button>
+
+                      {showCommentOrActivity && (
+                        <CommentOrActivityModal
+                          onClose={() => setShowCommentOrActivity(null)}
+                          showCommentOrActivity={showCommentOrActivity}
+                          setShowCommentOrActivity={setShowCommentOrActivity}
+                        />
+                      )}
+                    </li>
+                    <li>
+                      <button
+                        className={`${
+                          showMoreOptions ? "bg-gray-100" : "hover:bg-gray-100"
+                        } transition p-1 rounded-md cursor-pointer`}
+                        onClick={() => setShowMoreOptions(true)}
+                      >
+                        <EllipsisHorizontalIcon className="w-6 h-6 text-gray-500" />
+                      </button>
+
+                      {showMoreOptions && (
+                        <ActiveProjectMoreOptions
+                          onClose={() => setShowMoreOptions(false)}
+                        />
+                      )}
+                    </li>
+                  </>
                 )}
-              <li>
-                <button
-                  className={`${
-                    showViewOptions ? "bg-gray-100" : "hover:bg-gray-100"
-                  }  transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
-                  onClick={() => setShowViewOptions(true)}
-                >
-                  <AdjustmentsHorizontalIcon className="w-6 h-6 text-gray-500" />
-                  View
-                </button>
-
-                {showViewOptions && (
-                  <ViewOptions
-                    onClose={() => setShowViewOptions(false)}
-                    hideCalendarView={hideCalendarView}
-                    view={view}
-                    setView={setView}
-                  />
-                )}
-              </li>
-
-              {headline !== "Today" && (
-                <>
-                  <li>
-                    <button
-                      className={`${
-                        showCommentOrActivity
-                          ? "bg-gray-100"
-                          : "hover:bg-gray-100"
-                      } transition p-1 rounded-md cursor-pointer`}
-                      onClick={() => setShowCommentOrActivity("comment")}
-                    >
-                      <ChatBubbleLeftIcon className="w-6 h-6 text-gray-500" />
-                    </button>
-
-                    {showCommentOrActivity && (
-                      <CommentOrActivityModal
-                        onClose={() => setShowCommentOrActivity(null)}
-                        showCommentOrActivity={showCommentOrActivity}
-                        setShowCommentOrActivity={setShowCommentOrActivity}
-                      />
-                    )}
-                  </li>
-                  <li>
-                    <button
-                      className={`${
-                        showMoreOptions ? "bg-gray-100" : "hover:bg-gray-100"
-                      } transition p-1 rounded-md cursor-pointer`}
-                      onClick={() => setShowMoreOptions(true)}
-                    >
-                      <EllipsisHorizontalIcon className="w-6 h-6 text-gray-500" />
-                    </button>
-
-                    {showMoreOptions && (
-                      <ActiveProjectMoreOptions
-                        onClose={() => setShowMoreOptions(false)}
-                      />
-                    )}
-                  </li>
-                </>
-              )}
-            </ul>
+              </ul>
+            </div>
           </div>
-        </div>
+        )}
 
         <div
           className={`flex-1 ${
@@ -202,7 +205,7 @@ const LayoutWrapper = ({
           </div>
         </div>
       </main>
-    </div>
+    </>
   );
 };
 

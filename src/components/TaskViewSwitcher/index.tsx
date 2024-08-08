@@ -1,14 +1,15 @@
 import React, { useState, useMemo, Dispatch, SetStateAction } from "react";
-import { SectionType, TaskType } from "@/types/project";
+import { ProjectType, SectionType, TaskType } from "@/types/project";
 import ListView from "./ListView";
 import BoardView from "./BoardView";
 import CalendarView from "./CalendarView";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ViewTypes } from "@/types/viewTypes";
 
 interface TaskViewSwitcherProps {
+  project: ProjectType | null;
   tasks: TaskType[];
-  sections?: SectionType[];
+  sections: SectionType[];
+  setSections: Dispatch<SetStateAction<SectionType[]>>;
   view: ViewTypes["view"];
   onTaskUpdate: (updatedTask: TaskType) => void;
   showShareOption?: boolean;
@@ -16,15 +17,16 @@ interface TaskViewSwitcherProps {
 }
 
 const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
+  project,
   tasks,
   view,
   sections,
+  setSections,
   onTaskUpdate,
   showShareOption,
   setShowShareOption,
 }) => {
   const [showAddTask, setShowAddTask] = useState<number | null>(null);
-  const { activeProject } = useTaskProjectDataProvider();
 
   const [showUngroupedAddTask, setShowUngroupedAddTask] =
     useState<boolean>(false);
@@ -36,26 +38,27 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
     const ungrouped: TaskType[] = [];
 
     tasks
-      .filter((task) => task.projectId === activeProject?.id)
+      .filter((task) => (project ? task.project_id === project.id : true))
       .forEach((task) => {
-        if (task.sectionId) {
-          if (!grouped[task.sectionId]) {
-            grouped[task.sectionId] = [];
+        if (task.section_id) {
+          if (!grouped[task.section_id]) {
+            grouped[task.section_id] = [];
           }
-          grouped[task.sectionId].push(task);
+          grouped[task.section_id].push(task);
         } else {
           ungrouped.push(task);
         }
       });
 
     return { groupedTasks: grouped, unGroupedTasks: ungrouped };
-  }, [tasks, activeProject?.id]);
+  }, [tasks, project?.id]);
 
   switch (view) {
     case "List":
       return (
         <ListView
-          activeProjectSections={sections}
+          sections={sections}
+          setSections={setSections}
           groupedTasks={groupedTasks}
           unGroupedTasks={unGroupedTasks}
           onTaskUpdate={onTaskUpdate}
@@ -67,12 +70,13 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
           setShowUngroupedAddTask={setShowUngroupedAddTask}
           showShareOption={showShareOption}
           setShowShareOption={setShowShareOption}
+          project={project}
         />
       );
     case "Board":
       return (
         <BoardView
-          sections={sections || []}
+          sections={sections}
           groupedTasks={groupedTasks}
           unGroupedTasks={unGroupedTasks}
           onTaskUpdate={onTaskUpdate}
@@ -84,6 +88,7 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
           setShowUngroupedAddTask={setShowUngroupedAddTask}
           showShareOption={showShareOption}
           setShowShareOption={setShowShareOption}
+          project={project}
         />
       );
     case "Calendar":
