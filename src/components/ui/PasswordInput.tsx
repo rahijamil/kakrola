@@ -25,13 +25,13 @@ const PasswordInput = ({
         Password
       </label>
       <div className="relative">
-        <LockClosedIcon className="h-5 w-5 text-gray-400 absolute top-3 left-3" />
         <Input
           id="password"
           name="password"
           type={showPassword ? "text" : "password"}
           autoComplete="current-password"
           required
+          Icon={LockClosedIcon}
           className="pl-10 w-full pr-10" // Added pr-10 for spacing
           placeholder="Password"
           value={password}

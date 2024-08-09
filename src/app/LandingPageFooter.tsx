@@ -7,7 +7,7 @@ const LandingPageFooter = () => {
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
-      <div className="max-w-7xl mx-auto py-20">
+      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
             <div className="flex items-center space-x-2">
@@ -22,7 +22,6 @@ const LandingPageFooter = () => {
                   <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                 </svg>
               </div>
-
               <span className="text-2xl font-bold text-indigo-600">Ekta</span>
             </div>
             <p className="text-gray-700 text-base">
@@ -148,7 +147,7 @@ const LandingPageFooter = () => {
           </div>
         </div>
         <div className="mt-12 border-t border-gray-400 pt-8">
-          <p className="text-base text-gray-700 xl:text-center">
+          <p className="text-base text-gray-700 text-center sm:text-left xl:text-center">
             &copy; 2024 Ekta, Inc. All rights reserved.
           </p>
         </div>

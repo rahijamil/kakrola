@@ -7,6 +7,7 @@ import { useAuthProvider } from "@/context/AuthContext";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import { ViewTypes } from "@/types/viewTypes";
+import { supabaseBrowser } from "@/utils/supabase/client";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
@@ -15,8 +16,6 @@ const ProjectDetails = ({
 }: {
   params: { project_slug: string };
 }) => {
-  const { setActiveProject, supabase } =
-    useTaskProjectDataProvider();
   const { profile } = useAuthProvider();
 
   const [currentProject, setCurrentProject] = useState<ProjectType | null>(
@@ -37,7 +36,7 @@ const ProjectDetails = ({
 
   useEffect(() => {
     const fetchProject = async () => {
-      const { data: projectData, error: projectError } = await supabase
+      const { data: projectData, error: projectError } = await supabaseBrowser
         .from("projects")
         .select("*")
         .eq("slug", project_slug)
@@ -55,7 +54,7 @@ const ProjectDetails = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data: sectionData, error: sectionError } = await supabase
+        const { data: sectionData, error: sectionError } = await supabaseBrowser
           .from("sections")
           .select("*")
           .eq("project_id", currentProject?.id);
@@ -64,7 +63,7 @@ const ProjectDetails = ({
           setProjectSections(sectionData || []);
         }
 
-        const { data: taskData, error: taskError } = await supabase
+        const { data: taskData, error: taskError } = await supabaseBrowser
           .from("tasks")
           .select("*")
           .eq("project_id", currentProject?.id);
@@ -78,14 +77,10 @@ const ProjectDetails = ({
     };
 
     fetchData();
-
-    return () => {
-      setActiveProject(null);
-    };
-  }, [supabase, currentProject?.id]);
+  }, [currentProject?.id]);
 
   const updateProjectView = async (view: ViewTypes["view"]) => {
-    await supabase
+    await supabaseBrowser
       .from("projects")
       .update({ view })
       .eq("id", currentProject?.id);
@@ -138,11 +133,8 @@ const ProjectDetails = ({
     );
   } else {
     return (
-      <div className="flex items-center justify-center border w-full h-screen">
-        <div className="flex flex-col gap-8 items-center justify-center">
-          <EktaLogo size="lg" />
-          <Spinner />
-        </div>
+      <div className="flex items-center justify-center w-full h-screen">
+        <Spinner />
       </div>
     );
   }

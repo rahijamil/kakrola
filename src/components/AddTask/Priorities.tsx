@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 
 import { TaskType } from "@/types/project";
 import { Check, ChevronDown, Flag } from "lucide-react";
-import { Flag as FlagSolid } from "lucide-solid";
+import { FlagIcon } from "@heroicons/react/16/solid";
 const priorities = [
   { value: "P1", label: "Priority 1", color: "text-red-500" },
   { value: "P2", label: "Priority 2", color: "text-orange-500" },
@@ -16,10 +16,10 @@ const PriorityIcon = ({ priority }: { priority: string }) => {
     case "P2":
     case "P3":
       return (
-        <Flag
-          strokeWidth={1.5}
-          size={16}
-          color={priorities.find((p) => p.value === priority)?.color}
+        <FlagIcon
+          className={`w-4 h-4 ${
+            priorities.find((p) => p.value === priority)?.color
+          }`}
         />
       );
     default:

@@ -1,5 +1,5 @@
 import { ViewTypes } from "@/types/viewTypes";
-import { CircleHelp } from "lucide-react";
+import { CalendarDays, CircleHelp, SquareKanban } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 
@@ -11,27 +11,19 @@ const views: {
   {
     id: 1,
     name: "List",
-    icon: <Image src="/ListBorderIcon.svg" width={24} height={25} alt="List" />,
+    icon:<SquareKanban size={24} strokeWidth={1.5} className="-rotate-90" />,
   },
   {
     id: 2,
     name: "Board",
-    icon: (
-      <Image
-        src="/ListBorderIcon.svg"
-        width={24}
-        height={25}
-        alt="List"
-        className="rotate-90"
-      />
-    ),
+    icon: <SquareKanban size={24} strokeWidth={1.5} />,
   },
   {
     id: 3,
     name: "Calendar",
     icon: (
       <div className="relative">
-        <Image src="/CalendarIcon.svg" width={24} height={25} alt="List" />
+        <CalendarDays strokeWidth={1.5} size={24} />
 
         <Image
           src="/ProIcon.svg"
@@ -59,7 +51,7 @@ const LayoutView = ({
   return (
     <div>
       <div className="flex items-center justify-between gap-8 font-bold mb-3">
-        <h5>View</h5>
+        <h5 className="font-bold">View</h5>
         {showHelper && (
           <CircleHelp strokeWidth={1.5} className="w-5 h-5 text-gray-500" />
         )}

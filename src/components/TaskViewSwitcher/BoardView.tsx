@@ -238,12 +238,15 @@ const BoardView: React.FC<{
                     {...provided.droppableProps}
                     className="min-h-[100px] space-y-2"
                   >
-                    {column.tasks.map((task, taskIndex) => (
+                    {column.tasks.filter(t => !t.parent_task_id).map((task, taskIndex) => (
                       <div className="rounded shadow-sm hover:shadow-md">
                         <TaskItem
                           key={task.id}
                           task={task}
                           // section={column}
+                          subTasks={column.tasks.filter(
+                            (t) => t.parent_task_id == task.id
+                          )}
                           onCheckClick={() =>
                             onTaskUpdate({
                               ...task,

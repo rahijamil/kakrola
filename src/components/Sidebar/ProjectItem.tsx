@@ -1,4 +1,3 @@
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType, TaskType } from "@/types/project";
 import {
   EllipsisHorizontalIcon,
@@ -8,6 +7,12 @@ import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import SidebarProjectMoreOptions from "./SidebarProjectMoreOptions";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import ConfirmAlert from "../AlertBox/ConfirmAlert";
+import { useRouter } from "next/navigation";
+import CommentOrActivityModal from "../LayoutWrapper/CommentOrActivityModal";
+import ExportCSVModal from "./SidebarProjectMoreOptions/ExportCSVModal";
+import ImportCSVModal from "./SidebarProjectMoreOptions/ImportCSVModal";
+import AddEditProject from "../AddEditProject";
 
 const ProjectItem = ({
   project,
@@ -55,17 +60,50 @@ const ProjectItem = ({
     fetchTasks();
   }, [project.id]);
 
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
+  const [showArchiveConfirm, setShowArchiveConfirm] = useState<boolean>(false);
+  const [showCommentOrActivity, setShowCommentOrActivity] = useState<
+    "comment" | "activity" | null
+  >(null);
+  const [exportAsCSV, setExportAsCSV] = useState<boolean>(false);
+  const [importFromCSV, setImportFromCSV] = useState<boolean>(false);
+  const [projectEdit, setProjectEdit] = useState<boolean>(false);
+
+  const router = useRouter();
+
+  const handleProjectDelete = () => {
+    // const updatedTasks = tasks.filter((t) => t.project_id !== project.id);
+    // setTasks(updatedTasks);
+    // const updatedSections = sections.filter((s) => s.project_id !== project.id);
+    // setSections(updatedSections);
+    // const updatedProjects = projects.filter((proj) => proj.id !== project.id);
+    // setProjects(updatedProjects);
+    // if (activeProject?.id == project.id) {
+    //   router.replace(`/app`);
+    // }
+  };
+
+  const handleArchive = () => {
+    // const updatedProjects = projects.map((p) => {
+    //   if (p.id === project.id) {
+    //     return { ...p, is_archived: !p.is_archived };
+    //   }
+    //   return p;
+    // });
+    // setProjects(updatedProjects);
+  };
+
   return (
     <li>
       <div
         ref={moreRef}
         className={`relative sidebar_project_item p-[1px] flex-1 flex items-center justify-between rounded-md transition-colors ${
-          pathname === `/app/projects/${project.slug}`
+          pathname === `/app/project/${project.slug}`
             ? "bg-indigo-100 text-indigo-700"
             : "hover:bg-gray-200 text-gray-700"
         }`}
       >
-        <Link href={`/app/projects/${project.slug}`} className="p-[1px] w-full">
+        <Link href={`/app/project/${project.slug}`} className="p-[1px] w-full">
           <div className="flex items-center">
             <div className="p-2">
               <HashtagIcon className="w-4 h-4" />
@@ -86,7 +124,7 @@ const ProjectItem = ({
                 setShowProjectMoreDropdown(true);
               }}
               className={`flex items-center justify-center absolute left-0 top-0 right-0 bottom-0 z-10 cursor-pointer ${
-                pathname === `/app/projects/${project.slug}`
+                pathname === `/app/project/${project.slug}`
                   ? "bg-gray-300"
                   : "bg-gray-200"
               } hover:bg-gray-100 rounded-md opacity-0 sidebar_project_item_options w-7 h-7`}
@@ -103,6 +141,66 @@ const ProjectItem = ({
           project={project}
           dropdownPosition={dropdownPosition}
           dropdownRef={dropdownRef}
+          stateActions={{
+            setShowDeleteConfirm,
+            setShowArchiveConfirm,
+            setShowCommentOrActivity,
+            setExportAsCSV,
+            setImportFromCSV,
+            setProjectEdit,
+          }}
+        />
+      )}
+
+      {showDeleteConfirm && (
+        <ConfirmAlert
+          title="Delete project?"
+          description={
+            <>
+              This will permanently delete{" "}
+              <span className="font-semibold">"{project.name}"</span> and all
+              its tasks. This can't be undone.
+            </>
+          }
+          submitBtnText="Delete"
+          onCancel={() => setShowDeleteConfirm(false)}
+          onSubmit={handleProjectDelete}
+        />
+      )}
+
+      {showArchiveConfirm && (
+        <ConfirmAlert
+          title="Archive?"
+          description={
+            <>
+              This will archive{" "}
+              <span className="font-semibold">"{project.name}"</span> and all
+              its tasks.
+            </>
+          }
+          submitBtnText="Archive"
+          onCancel={() => setShowArchiveConfirm(false)}
+          onSubmit={handleArchive}
+        />
+      )}
+
+      {showCommentOrActivity && (
+        <CommentOrActivityModal
+          onClose={() => setShowCommentOrActivity(null)}
+          showCommentOrActivity={showCommentOrActivity}
+          setShowCommentOrActivity={setShowCommentOrActivity}
+        />
+      )}
+
+      {exportAsCSV && <ExportCSVModal onClose={() => setExportAsCSV(false)} />}
+      {importFromCSV && (
+        <ImportCSVModal onClose={() => setImportFromCSV(false)} />
+      )}
+
+      {projectEdit && (
+        <AddEditProject
+          onClose={() => setProjectEdit(false)}
+          projectForEdit={project}
         />
       )}
     </li>

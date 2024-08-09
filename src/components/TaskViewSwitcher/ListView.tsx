@@ -24,7 +24,6 @@ interface ListViewProps {
   unGroupedTasks: TaskType[];
   sections: SectionType[];
   setSections: Dispatch<SetStateAction<SectionType[]>>;
-  onTaskUpdate: (updatedTask: TaskType) => void;
   showAddTask: number | null;
   setShowAddTask: Dispatch<SetStateAction<number | null>>;
   showUngroupedAddTask: boolean;
@@ -41,7 +40,6 @@ const ListView: React.FC<ListViewProps> = ({
   unGroupedTasks,
   sections,
   setSections,
-  onTaskUpdate,
   showAddTask,
   setShowAddTask,
   showUngroupedAddSection,
@@ -188,17 +186,10 @@ const ListView: React.FC<ListViewProps> = ({
                             subTasks={(groupedTasks[section.id] || []).filter(
                               (t) => t.parent_task_id == task.id
                             )}
-                            onCheckClick={() =>
-                              onTaskUpdate({
-                                ...task,
-                                is_completed: !task.is_completed,
-                              })
-                            }
                             showShareOption={showShareOption}
                             setShowShareOption={setShowShareOption}
                             index={index}
                             project={project}
-                     
                           />
                         </li>
 
@@ -221,12 +212,6 @@ const ListView: React.FC<ListViewProps> = ({
                                     ).filter(
                                       (t) => t.parent_task_id == childTask.id
                                     )}
-                                    onCheckClick={() =>
-                                      onTaskUpdate({
-                                        ...childTask,
-                                        is_completed: !childTask.is_completed,
-                                      })
-                                    }
                                     showShareOption={showShareOption}
                                     setShowShareOption={setShowShareOption}
                                     index={childIndex}
@@ -504,12 +489,6 @@ const ListView: React.FC<ListViewProps> = ({
                             subTasks={unGroupedTasks.filter(
                               (t) => t.parent_task_id === task.id
                             )}
-                            onCheckClick={() =>
-                              onTaskUpdate({
-                                ...task,
-                                is_completed: !task.is_completed,
-                              })
-                            }
                             showShareOption={showShareOption}
                             setShowShareOption={setShowShareOption}
                             index={index}
@@ -533,12 +512,6 @@ const ListView: React.FC<ListViewProps> = ({
                                     subTasks={unGroupedTasks.filter(
                                       (t) => t.parent_task_id === childTask.id
                                     )}
-                                    onCheckClick={() =>
-                                      onTaskUpdate({
-                                        ...childTask,
-                                        is_completed: !childTask.is_completed,
-                                      })
-                                    }
                                     showShareOption={showShareOption}
                                     setShowShareOption={setShowShareOption}
                                     index={childIndex}

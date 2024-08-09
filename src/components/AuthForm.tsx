@@ -165,20 +165,19 @@ const AuthForm: React.FC<AuthFormProps> = ({
                 <label htmlFor="email-address" className="sr-only">
                   Email address
                 </label>
-                <div className="relative">
-                  <AtSign strokeWidth={1.5} className="h-5 w-5 text-gray-400 absolute top-3 left-3" />
-                  <Input
-                    id="email-address"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    className="pl-10 w-full"
-                    placeholder="Email address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
+
+                <Input
+                  id="email-address"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  Icon={AtSign}
+                  className="pl-10 w-full"
+                  placeholder="Email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </div>
 
               {type !== "forgotPassword" && (

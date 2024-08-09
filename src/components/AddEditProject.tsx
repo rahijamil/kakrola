@@ -1,7 +1,6 @@
 import React, { FormEvent, useState } from "react";
 import { Dialog, DialogHeader, DialogTitle } from "./ui";
 import { ProjectType } from "@/types/project";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import LayoutView from "./LayoutView";
 import { CircleHelp, SquareGanttChart } from "lucide-react";
 import { ToggleSwitch } from "./ui/ToggleSwitch";
@@ -9,21 +8,31 @@ import { Input } from "./ui/input";
 import { Select } from "./ui/select";
 import { useAuthProvider } from "@/context/AuthContext";
 import Spinner from "./ui/Spinner";
+import { supabaseBrowser } from "@/utils/supabase/client";
 
-const AddProject = ({ onClose }: { onClose: () => void }) => {
-  const { supabase } = useTaskProjectDataProvider();
+const AddEditProject = ({
+  onClose,
+  projectForEdit,
+}: {
+  onClose: () => void;
+  projectForEdit?: ProjectType;
+}) => {
   const { profile } = useAuthProvider();
 
-  const [projectData, setProjectData] = useState<ProjectType>({
-    team_id: null,
-    profile_id: profile?.id || "",
-    name: "",
-    slug: "",
-    icon_url: "",
-    is_favorite: false,
-    view: "List",
-    updated_at: new Date().toISOString(),
-  });
+  const [projectData, setProjectData] = useState<ProjectType>(
+    projectForEdit
+      ? projectForEdit
+      : {
+          team_id: null,
+          profile_id: profile?.id || "",
+          name: "",
+          slug: "",
+          icon_url: "",
+          is_favorite: false,
+          view: "List",
+          updated_at: new Date().toISOString(),
+        }
+  );
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,11 +48,49 @@ const AddProject = ({ onClose }: { onClose: () => void }) => {
     setLoading(true); // Start loading
     setError(null); // Clear previous errors
 
-    const { error } = await supabase.from("projects").insert(projectData);
-    if (error) {
-      setError(error.message); // Set error if any
-      setLoading(false); // Stop loading
-      return;
+    if (projectForEdit?.id) {
+      const data: Partial<ProjectType> = {};
+
+      if (projectData.name !== projectForEdit.name) {
+        data["name"] = projectData.name;
+      }
+
+      if (projectData.icon_url !== projectForEdit.icon_url) {
+        data["icon_url"] = projectData.icon_url;
+      }
+
+      if (projectData.is_favorite !== projectForEdit.is_favorite) {
+        data["is_favorite"] = projectData.is_favorite;
+      }
+
+      if (projectData.view !== projectForEdit.view) {
+        data["view"] = projectData.view;
+      }
+
+      if (Object.keys(data).length === 0) {
+        setLoading(false); // Stop loading
+        onClose(); // Close the dialog
+        return;
+      }
+
+      const { error } = await supabaseBrowser
+        .from("projects")
+        .update(data)
+        .eq("id", projectForEdit.id);
+      if (error) {
+        setError(error.message); // Set error if any
+        setLoading(false); // Stop loading
+        return;
+      }
+    } else {
+      const { error } = await supabaseBrowser
+        .from("projects")
+        .insert(projectData);
+      if (error) {
+        setError(error.message); // Set error if any
+        setLoading(false); // Stop loading
+        return;
+      }
     }
 
     setLoading(false); // Stop loading
@@ -178,4 +225,4 @@ const AddProject = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
-export default AddProject;
+export default AddEditProject;

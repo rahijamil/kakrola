@@ -1,19 +1,14 @@
 import { ProjectType, TaskType } from "@/types/project";
-import {
-  CheckIcon,
-  EllipsisHorizontalIcon,
-  UserIcon,
-} from "@heroicons/react/24/outline";
 import TaskItemModal from "./TaskItemModal";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, MouseEvent, SetStateAction, useState } from "react";
 import TaskItemMoreDropdown from "./TaskItemMoreDropdown";
 import { Draggable } from "react-beautiful-dnd";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
-import { Workflow } from "lucide-react";
+import { Check, Ellipsis, User, Workflow } from "lucide-react";
+import { supabaseBrowser } from "@/utils/supabase/client";
 const TaskItem = ({
   task,
   subTasks,
-  onCheckClick,
   showShareOption,
   setShowShareOption,
   index,
@@ -21,7 +16,6 @@ const TaskItem = ({
 }: {
   task: TaskType;
   subTasks: TaskType[];
-  onCheckClick: () => void;
   showShareOption?: boolean;
   setShowShareOption?: Dispatch<SetStateAction<boolean>>;
   index: number;
@@ -35,6 +29,23 @@ const TaskItem = ({
   const handleSectionDelete = () => {
     // const updatedTasks = tasks.filter((t) => t.id !== task.id);
     // setTasks(updatedTasks);
+  };
+
+  const handleCheckClick = async (
+    ev: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
+  ) => {
+    ev.stopPropagation();
+
+    const { error } = await supabaseBrowser
+      .from("tasks")
+      .update({
+        is_completed: !task.is_completed,
+      })
+      .eq("id", task.id);
+
+    if (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -52,11 +63,8 @@ const TaskItem = ({
           >
             <div className="flex gap-1">
               <div
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  onCheckClick();
-                }}
-                className="p-1 group cursor-pointer"
+                onClick={handleCheckClick}
+                className="p-1 group cursor-pointer h-fit"
               >
                 <div
                   className={`border w-5 h-5 rounded-full flex items-center justify-center ${
@@ -65,9 +73,12 @@ const TaskItem = ({
                       : "border-gray-400"
                   }`}
                 >
-                  <CheckIcon
-                    className={`w-3 h-3 transition text-white ${
-                      !task.is_completed && "opacity-0 group-hover:opacity-100"
+                  <Check
+                    strokeWidth={1.5}
+                    className={`w-3 h-3 transition ${
+                      !task.is_completed
+                        ? "opacity-0 group-hover:opacity-100 text-gray-400"
+                        : "text-white"
                     }`}
                   />
                 </div>
@@ -83,7 +94,7 @@ const TaskItem = ({
 
                 {subTasks.length > 0 ? (
                   <div className="flex items-center gap-[2px] text-gray-500">
-                    <Workflow className="w-3 h-3" />
+                    <Workflow strokeWidth={1.5} className="w-3 h-3" />
                     <span className="text-xs">0/{subTasks.length}</span>
                   </div>
                 ) : null}
@@ -105,7 +116,7 @@ const TaskItem = ({
                     setShowMoreDropdown(true);
                   }}
                 >
-                  <EllipsisHorizontalIcon className="w-5 h-5" />
+                  <Ellipsis strokeWidth={1.5} className="w-5 h-5" />
                 </button>
 
                 {showMoreDropdown && (
@@ -124,7 +135,7 @@ const TaskItem = ({
                     setShowShareOption(true);
                 }}
               >
-                <UserIcon className="w5 h-5" />
+                <User strokeWidth={1.5} className="w5 h-5" />
               </button>
             </div>
           </div>
@@ -134,7 +145,7 @@ const TaskItem = ({
               task={task}
               subTasks={subTasks}
               onClose={() => setShowModal(false)}
-              onCheckClick={onCheckClick}
+              onCheckClick={handleCheckClick}
               project={project}
             />
           )}

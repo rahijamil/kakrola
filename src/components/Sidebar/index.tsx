@@ -18,10 +18,11 @@ import {
 } from "lucide-react";
 import AddTaskTextButton from "@/components/AddTaskTextButton";
 import AddTaskModal from "@/components/AddTask/AddTaskModal";
-import AddProject from "@/components/AddProject";
+import AddProject from "@/components/AddEditProject";
 import ProjectItem from "@/components/Sidebar/ProjectItem";
 import ProfileMoreOptions from "@/components/Sidebar/ProfileMoreOptions";
 import AddTeam from "../AddTeam";
+import Image from "next/image";
 
 const Sidebar: React.FC = () => {
   const pathname = usePathname();
@@ -123,7 +124,17 @@ const Sidebar: React.FC = () => {
                   style={{ maxWidth: `${sidebarWidth - 80}px` }}
                   onClick={() => setShowProfileMoreOptions(true)}
                 >
-                  <div className="w-6 h-6 min-w-6 min-h-6 bg-black rounded-full"></div>
+                  {profile?.avatar_url ? (
+                    <Image
+                      src={profile.avatar_url}
+                      alt={profile.full_name || profile.username}
+                      width={24}
+                      height={24}
+                      className="rounded-full"
+                    />
+                  ) : (
+                    <div className="w-6 h-6 min-w-6 min-h-6 bg-black rounded-full"></div>
+                  )}
                   <span className="font-medium overflow-hidden text-ellipsis whitespace-nowrap transition">
                     {profile?.full_name || profile?.username}
                   </span>
@@ -289,7 +300,7 @@ const Sidebar: React.FC = () => {
               </div>
             </nav>
 
-            <div className="p-4 border-t border-gray-200">
+            {/* <div className="p-4 border-t border-gray-200">
               <button className="flex items-center text-gray-700 hover:text-indigo-600 transition-colors">
                 <LucideLayoutTemplate
                   strokeWidth={1.5}
@@ -297,7 +308,7 @@ const Sidebar: React.FC = () => {
                 />
                 <span>Browse templates</span>
               </button>
-            </div>
+            </div> */}
           </aside>
         </div>
 

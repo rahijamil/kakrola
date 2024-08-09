@@ -7,12 +7,15 @@ import TaskViewSwitcher from "@/components/TaskViewSwitcher";
 import { ViewTypes } from "@/types/viewTypes";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useAuthProvider } from "@/context/AuthContext";
+import Spinner from "@/components/ui/Spinner";
 
 const InboxPage = () => {
   const { profile } = useAuthProvider();
   const [view, setView] = useState<ViewTypes["view"]>("List");
   const [inboxTasks, setInboxTasks] = useState<TaskType[]>([]);
   const [inboxSections, setInboxSections] = useState<SectionType[]>([]);
+
+  const [loading, setLoading] = useState(true);
 
   const handleTaskUpdate = (updatedTask: TaskType) => {
     setInboxTasks((prevTasks) =>
@@ -47,6 +50,8 @@ const InboxPage = () => {
           setInboxSections(sectionData || []);
         }
       }
+
+      setLoading(false);
     };
 
     fetchTasksAndSections();
@@ -64,7 +69,10 @@ const InboxPage = () => {
         },
         (payload) => {
           console.log("Task change received!", payload);
-          if (payload.eventType === "INSERT" && payload.new.profile_id === profile?.id) {
+          if (
+            payload.eventType === "INSERT" &&
+            payload.new.profile_id === profile?.id
+          ) {
             setInboxTasks((prevTasks) => [
               ...prevTasks,
               payload.new as TaskType,
@@ -121,6 +129,14 @@ const InboxPage = () => {
       // supabaseBrowser.removeChannel(sectionsSubscription);
     };
   }, [profile]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen w-full">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <LayoutWrapper headline="Inbox" setView={setView} view={view}>

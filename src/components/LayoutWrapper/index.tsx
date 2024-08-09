@@ -1,11 +1,4 @@
 "use client";
-import Sidebar from "@/components/Sidebar";
-import {
-  AdjustmentsHorizontalIcon,
-  ChatBubbleLeftIcon,
-  EllipsisHorizontalIcon,
-  UserPlusIcon,
-} from "@heroicons/react/24/outline";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import CommentOrActivityModal from "./CommentOrActivityModal";
 import ActiveProjectMoreOptions from "./ActiveProjectMoreOptions";
@@ -14,6 +7,7 @@ import ShareOption from "./ShareOption";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import DocsSidebar from "../DocsSidebar";
 import { ViewTypes } from "@/types/viewTypes";
+import { Ellipsis, MessageSquare, SlidersHorizontal, UserPlus } from "lucide-react";
 
 const LayoutWrapper = ({
   children,
@@ -41,7 +35,7 @@ const LayoutWrapper = ({
     "comment" | "activity" | null
   >(null);
 
-  const { activeProject, setProjects } = useTaskProjectDataProvider();
+  const { activeProject } = useTaskProjectDataProvider();
 
   const [projectTitle, setProjectTitle] = useState<string>(
     activeProject?.name || headline
@@ -67,7 +61,7 @@ const LayoutWrapper = ({
                         }  transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
                         onClick={() => setShowShareOption(true)}
                       >
-                        <UserPlusIcon className="w-6 h-6 text-gray-500" />
+                        <UserPlus strokeWidth={1.5} className="w-5 h-5 text-gray-500" />
                         Share
                       </button>
 
@@ -85,7 +79,7 @@ const LayoutWrapper = ({
                     }  transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
                     onClick={() => setShowViewOptions(true)}
                   >
-                    <AdjustmentsHorizontalIcon className="w-6 h-6 text-gray-500" />
+                    <SlidersHorizontal strokeWidth={1.5} className="w-5 h-5 text-gray-500" />
                     View
                   </button>
 
@@ -110,7 +104,7 @@ const LayoutWrapper = ({
                         } transition p-1 rounded-md cursor-pointer`}
                         onClick={() => setShowCommentOrActivity("comment")}
                       >
-                        <ChatBubbleLeftIcon className="w-6 h-6 text-gray-500" />
+                        <MessageSquare strokeWidth={1.5} className="w-5 h-5 text-gray-500" />
                       </button>
 
                       {showCommentOrActivity && (
@@ -128,7 +122,7 @@ const LayoutWrapper = ({
                         } transition p-1 rounded-md cursor-pointer`}
                         onClick={() => setShowMoreOptions(true)}
                       >
-                        <EllipsisHorizontalIcon className="w-6 h-6 text-gray-500" />
+                        <Ellipsis strokeWidth={1.5} className="w-5 h-5 text-gray-500" />
                       </button>
 
                       {showMoreOptions && (

@@ -20,6 +20,7 @@ import {
 import Priorities from "./Priorities";
 import { useAuthProvider } from "@/context/AuthContext";
 import Spinner from "../ui/Spinner";
+import { supabaseBrowser } from "@/utils/supabase/client";
 
 const AddTaskForm = ({
   onClose,
@@ -34,7 +35,7 @@ const AddTaskForm = ({
   parentTaskIdForSubTask?: number;
   project: ProjectType | null;
 }) => {
-  const { projects, supabase } = useTaskProjectDataProvider();
+  const { projects } = useTaskProjectDataProvider();
   const { profile } = useAuthProvider();
 
   const [taskData, setTaskData] = useState<TaskType>({
@@ -78,7 +79,7 @@ const AddTaskForm = ({
 
     try {
       if (parentTaskIdForSubTask) {
-        const { error } = await supabase.from("tasks").insert([
+        const { error } = await supabaseBrowser.from("tasks").insert([
           {
             ...taskData,
             updated_at: new Date().toISOString(),

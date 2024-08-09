@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { MouseEvent, useEffect, useRef, useState } from "react";
 import { Dialog, Input, Textarea } from "../ui";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 
@@ -31,7 +31,7 @@ const TaskItemModal = ({
   task: TaskType;
   subTasks: TaskType[];
   onClose: () => void;
-  onCheckClick: () => void;
+  onCheckClick: (ev: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => Promise<void>;
   project: ProjectType | null;
 }) => {
   const [contentEditable, setContentEditable] = useState<boolean>(false);
@@ -244,7 +244,6 @@ const TaskItemModal = ({
                   <li>
                     <TaskItem
                       task={subTask}
-                      onCheckClick={() => {}}
                       showShareOption={false}
                       setShowShareOption={(v) => {}}
                       index={index}

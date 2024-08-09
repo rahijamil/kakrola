@@ -23,7 +23,7 @@ export const Dialog: React.FC<DialogProps> = ({
       onClick={onClose}
     >
       <div
-        className={`bg-white rounded-lg shadow-xl w-full flex flex-col ${
+        className={`bg-white rounded-lg shadow-xl w-11/12 flex flex-col ${
           size === "xs"
             ? "max-w-md"
             : size === "sm"

@@ -32,7 +32,7 @@ const ConfirmAlert = ({
           <Button size="xs" variant="gray" onClick={onCancel}>
             Cancel
           </Button>
-          <Button size="xs" color="red" onClick={onSubmit}>
+          <Button size="xs" onClick={onSubmit}>
             {submitBtnText}
           </Button>
         </div>
