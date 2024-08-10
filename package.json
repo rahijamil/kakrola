@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.1.2",
+    "@hello-pangea/dnd": "^16.6.0",
     "@heroicons/react": "^2.1.5",
     "@supabase/ssr": "^0.4.0",
     "date-fns": "^3.6.0",

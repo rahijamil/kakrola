@@ -1,15 +1,11 @@
-import React, { Dispatch, RefObject, SetStateAction, useState } from "react";
+import React, { Dispatch, RefObject, SetStateAction } from "react";
 import {
   ArrowDownIcon,
-  ArrowDownTrayIcon,
   ArrowUpIcon,
-  ArrowUpTrayIcon,
   HeartIcon,
-  LinkIcon,
   PencilIcon,
-  UserPlusIcon,
 } from "@heroicons/react/24/outline";
-import { CopyPlusIcon, HeartOffIcon, LogsIcon } from "lucide-react";
+import { HeartOffIcon } from "lucide-react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType } from "@/types/project";
 import DeleteOption from "./DeleteOption";
@@ -32,6 +28,7 @@ const SidebarProjectMoreOptions = ({
     setExportAsCSV,
     setImportFromCSV,
     setProjectEdit,
+    setAboveBellow,
   },
 }: {
   onClose: () => void;
@@ -41,7 +38,6 @@ const SidebarProjectMoreOptions = ({
     top: number;
     left: number;
   };
-
   stateActions: {
     setShowDeleteConfirm: Dispatch<SetStateAction<boolean>>;
     setShowArchiveConfirm: Dispatch<SetStateAction<boolean>>;
@@ -51,6 +47,7 @@ const SidebarProjectMoreOptions = ({
     setExportAsCSV: Dispatch<SetStateAction<boolean>>;
     setImportFromCSV: Dispatch<SetStateAction<boolean>>;
     setProjectEdit: Dispatch<SetStateAction<boolean>>;
+    setAboveBellow: Dispatch<SetStateAction<"above" | "below" | null>>;
   };
 }) => {
   const { projects, setProjects } = useTaskProjectDataProvider();
@@ -86,11 +83,23 @@ const SidebarProjectMoreOptions = ({
         }}
       >
         <div>
-          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
+          <button
+            onClick={() => {
+              setAboveBellow("above");
+              onClose();
+            }}
+            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
+          >
             <ArrowUpIcon className="w-4 h-4 mr-2" /> Add project above
           </button>
-          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-            <ArrowDownIcon className="w-4 h-4 mr-2" /> Add project bellow
+          <button
+            onClick={() => {
+              setAboveBellow("below");
+              onClose();
+            }}
+            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
+          >
+            <ArrowDownIcon className="w-4 h-4 mr-2" /> Add project below
           </button>
         </div>
         <div className="h-[1px] bg-gray-100 my-1"></div>

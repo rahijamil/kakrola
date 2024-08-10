@@ -51,7 +51,7 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
       });
 
     return { groupedTasks: grouped, unGroupedTasks: ungrouped };
-  }, [tasks, project?.id]);
+  }, [tasks, project]);
 
   switch (view) {
     case "List":
@@ -61,7 +61,6 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
           setSections={setSections}
           groupedTasks={groupedTasks}
           unGroupedTasks={unGroupedTasks}
-          onTaskUpdate={onTaskUpdate}
           showAddTask={showAddTask}
           setShowAddTask={setShowAddTask}
           showUngroupedAddSection={showUngroupedAddSection}
@@ -92,7 +91,7 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
         />
       );
     case "Calendar":
-      return <CalendarView tasks={tasks} onTaskUpdate={onTaskUpdate} />;
+      return <CalendarView />;
     default:
       return <div>Invalid view selected</div>;
   }

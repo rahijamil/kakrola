@@ -15,6 +15,7 @@ import LandingPageHeader from "./LandingPageHeader";
 import LandingPageFooter from "./LandingPageFooter";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const LandingPage = () => {
   const features = [
@@ -214,11 +215,12 @@ const LandingPage = () => {
                 transition={{ duration: 0.8 }}
               >
                 {/* Add your interactive demo component here */}
-                <div className="aspect-w-16 aspect-h-9">
-                  <img
+                <div className="aspect-w-16 aspect-h-9 relative">
+                  <Image
                     src="https://tailwindui.com/img/component-images/project-app-screenshot.png"
                     alt="Ekta Demo"
                     className="object-cover"
+                    fill
                   />
                 </div>
               </motion.div>
@@ -413,13 +415,15 @@ const LandingPage = () => {
                     ))}
                   </div>
                   <p className="text-gray-600 italic mb-6">
-                    "{testimonial.quote}"
+                  &quot;{testimonial.quote}&quot;
                   </p>
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <img
-                        className="h-12 w-12 rounded-full object-cover"
+                      <Image
+                        className="rounded-full object-cover"
                         src={`https://i.pravatar.cc/150?img=${index + 1}`}
+                        width={48}
+                        height={48}
                         alt={testimonial.name}
                       />
                     </div>

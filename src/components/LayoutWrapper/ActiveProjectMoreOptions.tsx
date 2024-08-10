@@ -12,16 +12,20 @@ import { CopyPlusIcon, HeartOffIcon, LogsIcon } from "lucide-react";
 import React, { useState } from "react";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
 import { useRouter } from "next/navigation";
+import { ProjectType } from "@/types/project";
 
-const ActiveProjectMoreOptions = ({ onClose }: { onClose: () => void }) => {
+const ActiveProjectMoreOptions = ({
+  onClose,
+  project,
+}: {
+  onClose: () => void;
+  project: ProjectType;
+}) => {
   const {
-    tasks,
     projects,
     // setProjects,
     // setTasks,
-    sections,
     // setSections,
-    activeProject,
   } = useTaskProjectDataProvider();
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
@@ -29,33 +33,25 @@ const ActiveProjectMoreOptions = ({ onClose }: { onClose: () => void }) => {
   const router = useRouter();
 
   const handleProjectDelete = () => {
-    const updatedTasks = tasks.filter(
-      (t) => t.project_id !== activeProject?.id
-    );
-    setTasks(updatedTasks);
+    // const updatedTasks = tasks.filter(
+    //   (t) => t.project_id !== project?.id
+    // );
+    // setTasks(updatedTasks);
 
-    const updatedSections = sections.filter(
-      (s) => s.project_id !== activeProject?.id
-    );
-    setSections(updatedSections);
+    // const updatedSections = sections.filter(
+    //   (s) => s.project_id !== project?.id
+    // );
+    // setSections(updatedSections);
 
-    const updatedProjects = projects.filter(
-      (proj) => proj.id !== activeProject?.id
-    );
-    setProjects(updatedProjects);
+    // const updatedProjects = projects.filter(
+    //   (proj) => proj.id !== project?.id
+    // );
+    // setProjects(updatedProjects);
 
     router.replace(`/app`);
   };
 
-  const handleFavorite = () => {
-    const updatedProjects = projects.map((p) => {
-      if (p.id === activeProject?.id) {
-        return { ...p, isFavorite: !p.is_favorite };
-      }
-      return p;
-    });
-    setProjects(updatedProjects);
-  };
+  const handleFavorite = () => {};
 
   return (
     <>
@@ -68,12 +64,12 @@ const ActiveProjectMoreOptions = ({ onClose }: { onClose: () => void }) => {
             onClick={handleFavorite}
             className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
           >
-            {activeProject?.is_favorite ? (
+            {project?.is_favorite ? (
               <HeartOffIcon className="w-4 h-4 mr-4" />
             ) : (
               <HeartIcon className="w-4 h-4 mr-4" />
             )}{" "}
-            {activeProject?.is_favorite
+            {project?.is_favorite
               ? "Remove from favorites"
               : "Add to favorites"}
           </button>
@@ -143,8 +139,8 @@ const ActiveProjectMoreOptions = ({ onClose }: { onClose: () => void }) => {
           description={
             <>
               This will permanently delete{" "}
-              <span className="font-semibold">"{activeProject?.name}"</span> and
-              all its tasks. This can't be undone.
+              <span className="font-semibold">&quot;{project?.name}&quot;</span> and
+              all its tasks. This can&apos;t be undone.
             </>
           }
           submitBtnText="Delete"

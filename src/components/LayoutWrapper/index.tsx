@@ -4,15 +4,21 @@ import CommentOrActivityModal from "./CommentOrActivityModal";
 import ActiveProjectMoreOptions from "./ActiveProjectMoreOptions";
 import ViewOptions from "./ViewOptions";
 import ShareOption from "./ShareOption";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import DocsSidebar from "../DocsSidebar";
 import { ViewTypes } from "@/types/viewTypes";
-import { Ellipsis, MessageSquare, SlidersHorizontal, UserPlus } from "lucide-react";
+import {
+  Ellipsis,
+  MessageSquare,
+  SlidersHorizontal,
+  UserPlus,
+} from "lucide-react";
+import { ProjectType } from "@/types/project";
+import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 
 const LayoutWrapper = ({
   children,
   headline,
-  isProject,
+  project,
   showShareOption,
   setShowShareOption,
   hideCalendarView,
@@ -21,7 +27,7 @@ const LayoutWrapper = ({
 }: {
   children: React.ReactNode;
   headline: string;
-  isProject?: boolean;
+  project?: ProjectType;
   view?: ViewTypes["view"];
   setView?: (value: ViewTypes["view"]) => void;
   showShareOption?: boolean;
@@ -35,11 +41,11 @@ const LayoutWrapper = ({
     "comment" | "activity" | null
   >(null);
 
-  const { activeProject } = useTaskProjectDataProvider();
-
   const [projectTitle, setProjectTitle] = useState<string>(
-    activeProject?.name || headline
+    project?.name || headline
   );
+
+  const { setProjects } = useTaskProjectDataProvider();
 
   return (
     <>
@@ -61,7 +67,10 @@ const LayoutWrapper = ({
                         }  transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
                         onClick={() => setShowShareOption(true)}
                       >
-                        <UserPlus strokeWidth={1.5} className="w-5 h-5 text-gray-500" />
+                        <UserPlus
+                          strokeWidth={1.5}
+                          className="w-5 h-5 text-gray-500"
+                        />
                         Share
                       </button>
 
@@ -79,7 +88,10 @@ const LayoutWrapper = ({
                     }  transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
                     onClick={() => setShowViewOptions(true)}
                   >
-                    <SlidersHorizontal strokeWidth={1.5} className="w-5 h-5 text-gray-500" />
+                    <SlidersHorizontal
+                      strokeWidth={1.5}
+                      className="w-5 h-5 text-gray-500"
+                    />
                     View
                   </button>
 
@@ -104,14 +116,18 @@ const LayoutWrapper = ({
                         } transition p-1 rounded-md cursor-pointer`}
                         onClick={() => setShowCommentOrActivity("comment")}
                       >
-                        <MessageSquare strokeWidth={1.5} className="w-5 h-5 text-gray-500" />
+                        <MessageSquare
+                          strokeWidth={1.5}
+                          className="w-5 h-5 text-gray-500"
+                        />
                       </button>
 
-                      {showCommentOrActivity && (
+                      {showCommentOrActivity && project && (
                         <CommentOrActivityModal
                           onClose={() => setShowCommentOrActivity(null)}
                           showCommentOrActivity={showCommentOrActivity}
                           setShowCommentOrActivity={setShowCommentOrActivity}
+                          project={project}
                         />
                       )}
                     </li>
@@ -122,12 +138,16 @@ const LayoutWrapper = ({
                         } transition p-1 rounded-md cursor-pointer`}
                         onClick={() => setShowMoreOptions(true)}
                       >
-                        <Ellipsis strokeWidth={1.5} className="w-5 h-5 text-gray-500" />
+                        <Ellipsis
+                          strokeWidth={1.5}
+                          className="w-5 h-5 text-gray-500"
+                        />
                       </button>
 
-                      {showMoreOptions && (
+                      {showMoreOptions && project && (
                         <ActiveProjectMoreOptions
                           onClose={() => setShowMoreOptions(false)}
+                          project={project}
                         />
                       )}
                     </li>
@@ -149,7 +169,7 @@ const LayoutWrapper = ({
                 !setView && "pt-8"
               }`}
             >
-              {isProject ? (
+              {project ? (
                 <>
                   {editTitle ? (
                     <input
@@ -160,10 +180,10 @@ const LayoutWrapper = ({
                       autoFocus
                       onChange={(ev) => setProjectTitle(ev.target.value)}
                       onKeyDown={(ev) => {
-                        if (ev.key == "Enter" && activeProject) {
+                        if (ev.key == "Enter" && project) {
                           setProjects((prevProjects) =>
                             prevProjects.map((p) =>
-                              p.id == activeProject.id
+                              p.id == project.id
                                 ? { ...p, name: projectTitle }
                                 : p
                             )
@@ -180,7 +200,7 @@ const LayoutWrapper = ({
                       }`}
                       onClick={() => setEditTitle(true)}
                     >
-                      {activeProject?.name}
+                      {project.name}
                     </h1>
                   )}
                 </>

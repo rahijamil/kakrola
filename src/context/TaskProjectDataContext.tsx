@@ -27,12 +27,14 @@ const TaskProjectDataContext = createContext<{
   // sections: [],
 });
 
+const sortProjects = (projects: ProjectType[]): ProjectType[] => {
+  return [...projects].sort((a, b) => a.order - b.order);
+};
+
 const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
   const { profile } = useAuthProvider();
-  // const [tasks, setTasks] = useState<TaskType[]>([]);
   const [projects, setProjects] = useState<ProjectType[]>([]);
-  // const [sections, setSections] = useState<SectionType[]>([]);
-  const [activeProject, setActiveProject] = useState<ProjectType | null>(null);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,26 +45,8 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
           .eq("profile_id", profile?.id);
 
         if (!projectError) {
-          setProjects(projectData || []);
+          setProjects(sortProjects(projectData || []));
         }
-
-        // const { data: sectionData, error: sectionError } = await supabase
-        //   .from("sections")
-        //   .select("*")
-        //   .eq("profile_id", profile?.id);
-
-        // if (!sectionError) {
-        //   setSections(sectionData || []);
-        // }
-
-        // const { data: taskData, error: taskError } = await supabase
-        //   .from("tasks")
-        //   .select("*")
-        //   .eq("profile_id", profile?.id);
-
-        // if (!taskError) {
-        //   setTasks(taskData || []);
-        // }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -73,7 +57,7 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // Subscribe to real-time changes for projects
-    const tasksSubscription = supabaseBrowser
+    const projectsSubscription = supabaseBrowser
       .channel("projects-all-channel")
       .on(
         "postgres_changes",
@@ -88,27 +72,33 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
             payload.eventType === "INSERT" &&
             payload.new.profile_id === profile?.id
           ) {
-            setProjects((prev) => [...prev, payload.new as ProjectType]);
+            setProjects((prev) =>
+              sortProjects([...prev, payload.new as ProjectType])
+            );
           } else if (payload.eventType === "UPDATE") {
             setProjects((prev) =>
-              prev.map((project) =>
-                project.id === payload.new.id
-                  ? (payload.new as ProjectType)
-                  : project
+              sortProjects(
+                prev.map((project) =>
+                  project.id === payload.new.id
+                    ? (payload.new as ProjectType)
+                    : project
+                )
               )
             );
           } else if (payload.eventType === "DELETE") {
             setProjects((prev) =>
-              prev.filter((project) => project.id !== payload.old.id)
+              sortProjects(
+                prev.filter((project) => project.id !== payload.old.id)
+              )
             );
           }
         }
       )
       .subscribe();
 
-      return () => {
-        supabaseBrowser.removeChannel(tasksSubscription);
-      }
+    return () => {
+      supabaseBrowser.removeChannel(projectsSubscription);
+    };
   }, [profile?.id]);
 
   return (

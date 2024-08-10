@@ -29,7 +29,7 @@ const TaskItemMoreDropdown = ({
             <PencilIcon className="w-4 h-4 mr-4" /> Add task above
           </button>
           <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-            <PencilIcon className="w-4 h-4 mr-4" /> Add task bellow
+            <PencilIcon className="w-4 h-4 mr-4" /> Add task below
           </button>
         </div>
         <div className="h-[1px] bg-gray-100 my-1"></div>

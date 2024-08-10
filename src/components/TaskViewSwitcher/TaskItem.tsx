@@ -2,7 +2,7 @@ import { ProjectType, TaskType } from "@/types/project";
 import TaskItemModal from "./TaskItemModal";
 import { Dispatch, MouseEvent, SetStateAction, useState } from "react";
 import TaskItemMoreDropdown from "./TaskItemMoreDropdown";
-import { Draggable } from "react-beautiful-dnd";
+import { Draggable } from "@hello-pangea/dnd";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
 import { Check, Ellipsis, User, Workflow } from "lucide-react";
 import { supabaseBrowser } from "@/utils/supabase/client";

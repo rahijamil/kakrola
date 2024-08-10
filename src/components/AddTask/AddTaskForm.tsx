@@ -93,7 +93,7 @@ const AddTaskForm = ({
           return;
         }
       } else {
-        const { error } = await supabase
+        const { error } = await supabaseBrowser
           .from("tasks")
           .insert([{ ...taskData, updated_at: new Date().toISOString() }]);
 

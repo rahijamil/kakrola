@@ -8,19 +8,22 @@ import React, { useEffect, useRef, useState } from "react";
 import SidebarProjectMoreOptions from "./SidebarProjectMoreOptions";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
-import { useRouter } from "next/navigation";
 import CommentOrActivityModal from "../LayoutWrapper/CommentOrActivityModal";
 import ExportCSVModal from "./SidebarProjectMoreOptions/ExportCSVModal";
 import ImportCSVModal from "./SidebarProjectMoreOptions/ImportCSVModal";
 import AddEditProject from "../AddEditProject";
+import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 
 const ProjectItem = ({
   project,
   pathname,
+  isDragging,
 }: {
   project: ProjectType;
   pathname: string;
+  isDragging?: boolean;
 }) => {
+  const { projects, setProjects } = useTaskProjectDataProvider();
   const [tasks, setTasks] = useState<TaskType[]>([]);
   const [showProjectMoreDropdown, setShowProjectMoreDropdown] =
     useState<boolean>(false);
@@ -68,29 +71,58 @@ const ProjectItem = ({
   const [exportAsCSV, setExportAsCSV] = useState<boolean>(false);
   const [importFromCSV, setImportFromCSV] = useState<boolean>(false);
   const [projectEdit, setProjectEdit] = useState<boolean>(false);
+  const [aboveBellow, setAboveBellow] = useState<"above" | "below" | null>(
+    null
+  );
 
-  const router = useRouter();
+  const handleProjectDelete = async () => {
+    const updatedProjects = projects.filter((proj) => proj.id !== project.id);
+    setProjects(updatedProjects);
 
-  const handleProjectDelete = () => {
-    // const updatedTasks = tasks.filter((t) => t.project_id !== project.id);
-    // setTasks(updatedTasks);
-    // const updatedSections = sections.filter((s) => s.project_id !== project.id);
-    // setSections(updatedSections);
-    // const updatedProjects = projects.filter((proj) => proj.id !== project.id);
-    // setProjects(updatedProjects);
-    // if (activeProject?.id == project.id) {
-    //   router.replace(`/app`);
-    // }
+    // Delete tasks
+    const { error } = await supabaseBrowser
+      .from("tasks")
+      .delete()
+      .eq("project_id", project.id);
+    if (error) {
+      console.error(error);
+    }
+
+    // Delete sections
+    const { error: deleteError } = await supabaseBrowser
+      .from("sections")
+      .delete()
+      .eq("project_id", project.id);
+    if (deleteError) {
+      console.error(deleteError);
+    }
+
+    // Delete project
+    const { error: projectError } = await supabaseBrowser
+      .from("projects")
+      .delete()
+      .eq("id", project.id);
+    if (projectError) {
+      console.error(projectError);
+    }
   };
 
-  const handleArchive = () => {
-    // const updatedProjects = projects.map((p) => {
-    //   if (p.id === project.id) {
-    //     return { ...p, is_archived: !p.is_archived };
-    //   }
-    //   return p;
-    // });
-    // setProjects(updatedProjects);
+  const handleArchive = async () => {
+    const updatedProjects = projects.map((p) => {
+      if (p.id === project.id) {
+        return { ...p, is_archived: true };
+      }
+      return p;
+    });
+    setProjects(updatedProjects);
+
+    const { error } = await supabaseBrowser
+      .from("projects")
+      .update({ is_archived: true })
+      .eq("id", project.id);
+    if (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -98,12 +130,18 @@ const ProjectItem = ({
       <div
         ref={moreRef}
         className={`relative sidebar_project_item p-[1px] flex-1 flex items-center justify-between rounded-md transition-colors ${
-          pathname === `/app/project/${project.slug}`
+          isDragging
+            ? "bg-white shadow-[0_0_8px_1px_rgba(0,0,0,0.2)]"
+            : pathname === `/app/project/${project.slug}`
             ? "bg-indigo-100 text-indigo-700"
             : "hover:bg-gray-200 text-gray-700"
         }`}
       >
-        <Link href={`/app/project/${project.slug}`} className="p-[1px] w-full">
+        <Link
+          href={`/app/project/${project.slug}`}
+          className="p-[1px] w-full"
+          draggable={false}
+        >
           <div className="flex items-center">
             <div className="p-2">
               <HashtagIcon className="w-4 h-4" />
@@ -148,6 +186,7 @@ const ProjectItem = ({
             setExportAsCSV,
             setImportFromCSV,
             setProjectEdit,
+            setAboveBellow,
           }}
         />
       )}
@@ -158,8 +197,8 @@ const ProjectItem = ({
           description={
             <>
               This will permanently delete{" "}
-              <span className="font-semibold">"{project.name}"</span> and all
-              its tasks. This can't be undone.
+              <span className="font-semibold">&quot;{project.name}&quot;</span> and all
+              its tasks. This can&apos;t be undone.
             </>
           }
           submitBtnText="Delete"
@@ -174,7 +213,7 @@ const ProjectItem = ({
           description={
             <>
               This will archive{" "}
-              <span className="font-semibold">"{project.name}"</span> and all
+              <span className="font-semibold">&quot;{project.name}&quot;</span> and all
               its tasks.
             </>
           }
@@ -189,6 +228,7 @@ const ProjectItem = ({
           onClose={() => setShowCommentOrActivity(null)}
           showCommentOrActivity={showCommentOrActivity}
           setShowCommentOrActivity={setShowCommentOrActivity}
+          project={project}
         />
       )}
 
@@ -200,7 +240,15 @@ const ProjectItem = ({
       {projectEdit && (
         <AddEditProject
           onClose={() => setProjectEdit(false)}
-          projectForEdit={project}
+          project={project}
+        />
+      )}
+
+      {aboveBellow && (
+        <AddEditProject
+          onClose={() => setAboveBellow(null)}
+          aboveBellow={aboveBellow}
+          project={project}
         />
       )}
     </li>

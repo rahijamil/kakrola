@@ -4,8 +4,8 @@ import React from "react";
 import AppLayoutWrapper from "./AppLayoutWrapper";
 
 export const metadata: Metadata = {
-  title: "TaskMaster",
-  description: "TaskMaster",
+  title: "Ekta",
+  description: "Ekta",
 };
 
 export default function AppLayout({

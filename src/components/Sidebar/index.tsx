@@ -6,7 +6,6 @@ import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { TaskType } from "@/types/project";
 import { useAuthProvider } from "@/context/AuthContext";
 import {
-  LucideLayoutTemplate,
   Plus,
   Inbox,
   Search,
@@ -23,6 +22,7 @@ import ProjectItem from "@/components/Sidebar/ProjectItem";
 import ProfileMoreOptions from "@/components/Sidebar/ProfileMoreOptions";
 import AddTeam from "../AddTeam";
 import Image from "next/image";
+import MyProjects from "./MyProjects";
 
 const Sidebar: React.FC = () => {
   const pathname = usePathname();
@@ -34,7 +34,6 @@ const Sidebar: React.FC = () => {
 
   const [showAddTeam, setShowAddTeam] = useState<boolean>(false);
 
-  const [showProjects, setShowProjects] = useState(true);
   const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [afterCollapse, setAfterCollapse] = useState(false);
@@ -222,7 +221,7 @@ const Sidebar: React.FC = () => {
 
               {projects.filter((p) => p.is_favorite).length > 0 && (
                 <div className="mt-4 px-2">
-                  <div className="w-full flex items-center justify-between p-1 text-gray-700 hover:bg-gray-200 rounded-md transition-colors">
+                  <div className="w-full flex items-center justify-between p-1 text-gray-700 rounded-md transition-colors">
                     <span className="font-medium">Favorites</span>
 
                     <div className="opacity-0 group-hover:opacity-100 transition flex items-center">
@@ -241,7 +240,7 @@ const Sidebar: React.FC = () => {
                       </button>
                     </div>
                   </div>
-
+                  {/* 
                   {showFavoritesProjects && (
                     <ul className="mt-1 ml-2 space-y-1">
                       {projects
@@ -254,50 +253,11 @@ const Sidebar: React.FC = () => {
                           />
                         ))}
                     </ul>
-                  )}
+                  )} */}
                 </div>
               )}
 
-              <div className="mt-4 px-2">
-                <div className="w-full flex items-center justify-between p-1 text-gray-700 hover:bg-gray-200 rounded-md transition-colors">
-                  <span className="font-medium">My Projects</span>
-
-                  <div className="opacity-0 group-hover:opacity-100 transition flex items-center">
-                    <button
-                      className="p-1 hover:bg-gray-100 rounded-md transition"
-                      onClick={() => setShowAddProjectModal(true)}
-                    >
-                      <Plus
-                        strokeWidth={1.5}
-                        className={`w-[18px] h-[18px] transition-transform`}
-                      />
-                    </button>
-                    <button
-                      className="p-1 hover:bg-gray-100 rounded-md transition"
-                      onClick={() => setShowProjects(!showProjects)}
-                    >
-                      <ChevronRight
-                        strokeWidth={1.5}
-                        className={`w-[18px] h-[18px] transition-transform transform ${
-                          showProjects ? "rotate-90" : ""
-                        }`}
-                      />
-                    </button>
-                  </div>
-                </div>
-
-                {showProjects && (
-                  <ul className="mt-1 ml-2 space-y-1">
-                    {projects.map((project) => (
-                      <ProjectItem
-                        key={project.id}
-                        project={project}
-                        pathname={pathname}
-                      />
-                    ))}
-                  </ul>
-                )}
-              </div>
+              <MyProjects setShowAddProjectModal={setShowAddProjectModal} />
             </nav>
 
             {/* <div className="p-4 border-t border-gray-200">

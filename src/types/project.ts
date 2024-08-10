@@ -2,7 +2,7 @@ import { ViewTypes } from "./viewTypes";
 
 // Project types
 export interface ProjectType {
-  id?: number;
+  id: number;
   team_id: number | null;
   profile_id: string; // UUID
   name: string;
@@ -12,6 +12,8 @@ export interface ProjectType {
   view: ViewTypes["view"];
   updated_at: string;
   created_at?: string;
+  order: number;
+  is_archived: boolean;
 }
 
 // Section types

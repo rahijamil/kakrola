@@ -32,7 +32,7 @@ const Today = () => {
     };
 
     fetchTodayTasks();
-  }, []);
+  }, [profile?.id]);
 
   const handleTaskUpdate = (updatedTask: TaskType) => {
     // setTasks(tasks.map((t) => (t.id === updatedTask.id ? updatedTask : t)));
@@ -51,6 +51,7 @@ const Today = () => {
         view={view}
         onTaskUpdate={handleTaskUpdate}
         project={null}
+        setSections={() => null}
       />
 
       {todayTasks.length == 0 && view == "List" && (

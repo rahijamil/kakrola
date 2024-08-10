@@ -98,6 +98,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
   }
 );
 
+Input.displayName = "Input";
+
 // Textarea Component
 interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -114,6 +116,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   )
 );
 
+Textarea.displayName = "Textarea";
+
 // Button Component
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
@@ -128,6 +132,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     />
   )
 );
+
+Button.displayName = "Button";
 
 // Select Component
 interface SelectProps {

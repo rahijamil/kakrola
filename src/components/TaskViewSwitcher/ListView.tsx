@@ -12,7 +12,7 @@ import {
 import SectionAddTask from "./SectionAddTask";
 import { CopyPlusIcon, MoreHorizontal } from "lucide-react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import AddNewSectionListView from "./AddNewSectionListView";
 import SectionMoreOptions from "./SectionMoreOptions";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
@@ -201,6 +201,7 @@ const ListView: React.FC<ListViewProps> = ({
                               .filter((t) => t.parent_task_id == task.id)
                               .map((childTask, childIndex) => (
                                 <li
+                                key={childTask.id}
                                   className={`border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer ${
                                     childTask.parent_task_id && "ml-8"
                                   }`}

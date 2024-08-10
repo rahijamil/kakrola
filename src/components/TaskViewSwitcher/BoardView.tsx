@@ -6,7 +6,7 @@ import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 import SectionMoreOptions from "./SectionMoreOptions";
 import AddNewSectionBoardView from "./AddNewSectionBoardView";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
 import { supabaseBrowser } from "@/utils/supabase/client";
 
@@ -238,28 +238,24 @@ const BoardView: React.FC<{
                     {...provided.droppableProps}
                     className="min-h-[100px] space-y-2"
                   >
-                    {column.tasks.filter(t => !t.parent_task_id).map((task, taskIndex) => (
-                      <div className="rounded shadow-sm hover:shadow-md">
-                        <TaskItem
-                          key={task.id}
-                          task={task}
-                          // section={column}
-                          subTasks={column.tasks.filter(
-                            (t) => t.parent_task_id == task.id
-                          )}
-                          onCheckClick={() =>
-                            onTaskUpdate({
-                              ...task,
-                              is_completed: !task.is_completed,
-                            })
-                          }
-                          setShowShareOption={setShowShareOption}
-                          showShareOption={showShareOption}
-                          index={taskIndex}
-                          project={project}
-                        />
-                      </div>
-                    ))}
+                    {column.tasks
+                      .filter((t) => !t.parent_task_id)
+                      .map((task, taskIndex) => (
+                        <div key={task.id} className="rounded shadow-sm hover:shadow-md">
+                          <TaskItem
+                            key={task.id}
+                            task={task}
+                            // section={column}
+                            subTasks={column.tasks.filter(
+                              (t) => t.parent_task_id == task.id
+                            )}
+                            setShowShareOption={setShowShareOption}
+                            showShareOption={showShareOption}
+                            index={taskIndex}
+                            project={project}
+                          />
+                        </div>
+                      ))}
 
                     {provided.placeholder}
                   </div>

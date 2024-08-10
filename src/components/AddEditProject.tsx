@@ -1,3 +1,4 @@
+"use client";
 import React, { FormEvent, useState } from "react";
 import { Dialog, DialogHeader, DialogTitle } from "./ui";
 import { ProjectType } from "@/types/project";
@@ -9,19 +10,23 @@ import { Select } from "./ui/select";
 import { useAuthProvider } from "@/context/AuthContext";
 import Spinner from "./ui/Spinner";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 
 const AddEditProject = ({
   onClose,
-  projectForEdit,
+  project,
+  aboveBellow,
 }: {
   onClose: () => void;
-  projectForEdit?: ProjectType;
+  project?: ProjectType;
+  aboveBellow?: "above" | "below" | null;
 }) => {
   const { profile } = useAuthProvider();
+  const { projects, setProjects } = useTaskProjectDataProvider();
 
-  const [projectData, setProjectData] = useState<ProjectType>(
-    projectForEdit
-      ? projectForEdit
+  const [projectData, setProjectData] = useState<Omit<ProjectType, "id">>(
+    project && !aboveBellow
+      ? project
       : {
           team_id: null,
           profile_id: profile?.id || "",
@@ -31,6 +36,8 @@ const AddEditProject = ({
           is_favorite: false,
           view: "List",
           updated_at: new Date().toISOString(),
+          order: Math.max(...projects.map((p) => p.order), 0) + 1,
+          is_archived: false,
         }
   );
 
@@ -45,56 +52,126 @@ const AddEditProject = ({
       return;
     }
 
-    setLoading(true); // Start loading
-    setError(null); // Clear previous errors
+    setLoading(true);
+    setError(null);
 
-    if (projectForEdit?.id) {
+    if (project?.id) {
       const data: Partial<ProjectType> = {};
+      const fields = ["name", "icon_url", "is_favorite", "view"] as const;
 
-      if (projectData.name !== projectForEdit.name) {
-        data["name"] = projectData.name;
-      }
-
-      if (projectData.icon_url !== projectForEdit.icon_url) {
-        data["icon_url"] = projectData.icon_url;
-      }
-
-      if (projectData.is_favorite !== projectForEdit.is_favorite) {
-        data["is_favorite"] = projectData.is_favorite;
-      }
-
-      if (projectData.view !== projectForEdit.view) {
-        data["view"] = projectData.view;
-      }
+      fields.forEach((field) => {
+        if (projectData[field] !== project[field]) {
+          data[field] = projectData[field] as any;
+        }
+      });
 
       if (Object.keys(data).length === 0) {
-        setLoading(false); // Stop loading
-        onClose(); // Close the dialog
+        setLoading(false);
+        onClose();
         return;
       }
 
       const { error } = await supabaseBrowser
         .from("projects")
         .update(data)
-        .eq("id", projectForEdit.id);
+        .eq("id", project.id);
+
       if (error) {
-        setError(error.message); // Set error if any
-        setLoading(false); // Stop loading
+        setError(error.message);
+        setLoading(false);
         return;
       }
+
+      setProjects((projects) => {
+        return projects.map((p) => {
+          if (p.id === project.id) {
+            return {
+              ...p,
+              ...data,
+            };
+          }
+          return p;
+        });
+      });
     } else {
-      const { error } = await supabaseBrowser
+      const { data, error } = await supabaseBrowser
         .from("projects")
-        .insert(projectData);
+        .insert(projectData)
+        .select()
+        .single();
+
       if (error) {
-        setError(error.message); // Set error if any
-        setLoading(false); // Stop loading
+        setError(error.message);
+        setLoading(false);
         return;
       }
+
+      setProjects((projects) => {
+        return [...projects, data];
+      });
     }
 
-    setLoading(false); // Stop loading
-    onClose(); // Close the dialog
+    setLoading(false);
+    onClose();
+  };
+
+  const handleAddProjectAboveBellow = async (
+    ev: FormEvent,
+    position: "above" | "below"
+  ) => {
+    ev.preventDefault();
+
+    if (!projectData.name) {
+      setError("Project name is required.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    if (project) {
+      const currentIndex = projects.findIndex((p) => p.id === project.id);
+
+      const prevOrder =
+        position === "above"
+          ? projects[currentIndex - 1]?.order || project.order - 1
+          : project.order;
+
+      const nextOrder =
+        position === "below"
+          ? projects[currentIndex + 1]?.order || project.order + 1
+          : project.order;
+
+      const newOrder = (prevOrder + nextOrder) / 2;
+
+      // Insert the new project
+      const { data: newProject, error: insertError } = await supabaseBrowser
+        .from("projects")
+        .insert({
+          ...projectData,
+          order: newOrder,
+        })
+        .select()
+        .single();
+
+      if (insertError) {
+        setError(insertError.message);
+        setLoading(false);
+        return;
+      }
+
+      // Update local state without needing to reorder everything
+      const updatedProjects = [
+        ...projects.slice(0, currentIndex + (position === "below" ? 1 : 0)),
+        newProject,
+        ...projects.slice(currentIndex + (position === "below" ? 1 : 0)),
+      ];
+
+      setProjects(updatedProjects);
+    }
+
+    setLoading(false);
+    onClose();
   };
 
   return (
@@ -107,7 +184,15 @@ const AddEditProject = ({
           </button>
         </DialogHeader>
 
-        <form onSubmit={handleAddProject}>
+        <form
+          onSubmit={(ev) => {
+            if (aboveBellow) {
+              handleAddProjectAboveBellow(ev, aboveBellow);
+            } else {
+              handleAddProject(ev);
+            }
+          }}
+        >
           <div className="p-4 pb-8 space-y-4">
             <Input
               type="text"
@@ -116,7 +201,10 @@ const AddEditProject = ({
                 setProjectData({
                   ...projectData,
                   name: e.target.value,
-                  slug: e.target.value.replace(/\s+/g, "-").toLowerCase(),
+                  slug: `${e.target.value
+                    .replace(/\s+/g, "-")
+                    .replace(/[^\w-]+/g, "")
+                    .toLowerCase()}-${Date.now()}`,
                 })
               }
               required

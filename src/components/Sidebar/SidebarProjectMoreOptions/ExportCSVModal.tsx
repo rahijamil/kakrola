@@ -46,7 +46,7 @@ const ExportCSVModal = ({ onClose }: { onClose: () => void }) => {
             <span>Use relative dates</span>
           </div>
 
-          <p className="text-black/60 text-xs">Relative means "Tomorrow" will get turned into "+1 day</p>
+          <p className="text-black/60 text-xs">Relative means &quot;Tomorrow&quot; will get turned into &quot;+1 day&quot;</p>
         </div>
       </div>
     </div>

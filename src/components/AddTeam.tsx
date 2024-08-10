@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { TeamType } from "@/types/team";
+import Image from "next/image";
 
 const AddTeam = ({ onClose }: { onClose: () => void }) => {
   const [teamData, setTeamData] = useState<TeamType>();
@@ -108,7 +109,7 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
 
         {/* Right Section */}
         <div className="md:w-[41%] md:bg-indigo-50/50 pb-4 md:pb-8 p-8 rounded-md flex flex-col gap-4 md:gap-6 items-center">
-          <img src="/team-illustration.png" alt="Team Illustration" />
+          <Image src="/team-illustration.png" alt="Team Illustration" width={400} height={400} />
 
           <div className="md:hidden">
             <h2 className="text-xl font-semibold">Add a team</h2>
@@ -122,7 +123,7 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
 
           <div className="md:px-4">
             <h3 className="text-base font-semibold">
-              A home for your team's work
+              A home for your team&apos;s work
             </h3>
             <ul className="mt-2 text-[13px] text-gray-600 md:space-y-2 grid grid-cols-2 md:grid-cols-1 gap-x-2">
               <li className="flex items-center md:items-start gap-2">

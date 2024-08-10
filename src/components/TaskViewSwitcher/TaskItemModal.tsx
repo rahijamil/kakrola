@@ -241,7 +241,7 @@ const TaskItemModal = ({
 
               <ul className="mt-6">
                 {subTasks.map((subTask, index) => (
-                  <li>
+                  <li key={subTask.id}>
                     <TaskItem
                       task={subTask}
                       showShareOption={false}

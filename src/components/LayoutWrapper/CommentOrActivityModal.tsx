@@ -4,26 +4,28 @@ import { HashtagIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import AddComentForm from "../TaskViewSwitcher/AddComentForm";
 import Image from "next/image";
+import { ProjectType } from "@/types/project";
 
 const CommentOrActivityModal = ({
   onClose,
   showCommentOrActivity,
   setShowCommentOrActivity,
+  project
 }: {
   onClose: () => void;
   showCommentOrActivity: "comment" | "activity" | null;
   setShowCommentOrActivity: Dispatch<
     SetStateAction<"comment" | "activity" | null>
   >;
+  project: ProjectType | null;
 }) => {
-  const { activeProject } = useTaskProjectDataProvider();
 
   return (
     <Dialog onClose={onClose} size="md">
       <div className="p-2 px-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <HashtagIcon className="w-4 h-4" />
-          {activeProject?.name}
+          {project?.name}
         </div>
 
         <button
