@@ -1,9 +1,8 @@
 "use server";
 
+import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-
-import { createClient } from "@/utils/supabase/server";
 
 export async function login({
   email,
@@ -12,9 +11,8 @@ export async function login({
   email: string;
   password: string;
 }) {
-  const supabase = createClient();
-
-  const { error } = await supabase.auth.signInWithPassword({
+  const supabaseServer = createClient();
+  const { error } = await supabaseServer.auth.signInWithPassword({
     email,
     password,
   });
@@ -34,9 +32,8 @@ export async function signup({
   email: string;
   password: string;
 }) {
-  const supabase = createClient();
-
-  const { error } = await supabase.auth.signUp({
+  const supabaseServer = createClient();
+  const { error } = await supabaseServer.auth.signUp({
     email,
     password,
   });
@@ -50,9 +47,8 @@ export async function signup({
 }
 
 export async function forgotPassword(email: string) {
-  const supabase = createClient();
-
-  const { error } = await supabase.auth.resetPasswordForEmail(email);
+  const supabaseServer = createClient();
+  const { error } = await supabaseServer.auth.resetPasswordForEmail(email);
 
   if (error) {
     return { success: false, error: error.message || "Unknown error" };

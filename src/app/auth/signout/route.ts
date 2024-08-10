@@ -1,8 +1,9 @@
-import { supabaseServer } from '@/utils/supabase/server'
+import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { type NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
+  const supabaseServer = createClient();
   // Check if a user's logged in
   const {
     data: { user },
