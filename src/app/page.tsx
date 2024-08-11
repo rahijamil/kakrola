@@ -105,6 +105,8 @@ const LandingPage = () => {
     },
   ];
 
+  http://localhost:3000/#access_token=eyJhbGciOiJIUzI1NiIsImtpZCI6Im15Zi9kQ0VuN2pjSHZhaXkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2NyamFqa2J4cGZubm11ZWFka2ViLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiI3ZTIyNjRlZi1hMDg0LTQyNWYtODJhNy0wZTAxOWQ3ZjM5MWMiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzIzMzcyNzkzLCJpYXQiOjE3MjMzNjkxOTMsImVtYWlsIjoibW9oYW1tYWRyYWhpMDAzQGdhbWlsLmNvbSIsInBob25lIjoiIiwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiZW1haWwiLCJwcm92aWRlcnMiOlsiZW1haWwiXX0sInVzZXJfbWV0YWRhdGEiOnsiZW1haWwiOiJtb2hhbW1hZHJhaGkwMDNAZ2FtaWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInN1YiI6IjdlMjI2NGVmLWEwODQtNDI1Zi04MmE3LTBlMDE5ZDdmMzkxYyJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6Im90cCIsInRpbWVzdGFtcCI6MTcyMzM2OTE5M31dLCJzZXNzaW9uX2lkIjoiMmEzMDE5NmYtOGRjOC00ODJmLWIzYmEtNGZhYmYzNTM1YzRlIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.t7rzE3S1O0vtAMjKn0aXCXb__f83TF_JHLL2knIgbCQ&expires_at=1723372793&expires_in=3600&refresh_token=mCdoqYfayKeJdwd63Cui4Q&token_type=bearer&type=recovery
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-indigo-50">
       <LandingPageHeader />
@@ -217,7 +219,7 @@ const LandingPage = () => {
                 {/* Add your interactive demo component here */}
                 <div className="aspect-w-16 aspect-h-9 relative">
                   <Image
-                    src="https://tailwindui.com/img/component-images/project-app-screenshot.png"
+                    src=""
                     alt="Ekta Demo"
                     className="object-cover"
                     fill
@@ -421,7 +423,8 @@ const LandingPage = () => {
                     <div className="flex-shrink-0">
                       <Image
                         className="rounded-full object-cover"
-                        src={`https://i.pravatar.cc/150?img=${index + 1}`}
+                        // src={`https://i.pravatar.cc/150?img=${index + 1}`}
+                        src=""
                         width={48}
                         height={48}
                         alt={testimonial.name}

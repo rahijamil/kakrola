@@ -175,7 +175,7 @@ const AddEditProject = ({
   };
 
   return (
-    <Dialog size="xs">
+    <Dialog size="xs" onClose={onClose}>
       <>
         <DialogHeader>
           <DialogTitle>Add project</DialogTitle>

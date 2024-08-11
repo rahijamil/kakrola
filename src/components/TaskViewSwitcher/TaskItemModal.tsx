@@ -1,4 +1,4 @@
-import React, { MouseEvent, useEffect, useRef, useState } from "react";
+import React, { Dispatch, MouseEvent, SetStateAction, useEffect, useRef, useState } from "react";
 import { Dialog, Input, Textarea } from "../ui";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 
@@ -11,6 +11,8 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import {
   Check,
   ChevronDown,
+  Circle,
+  CircleCheck,
   Ellipsis,
   Hash,
   Inbox,
@@ -27,12 +29,16 @@ const TaskItemModal = ({
   onClose,
   onCheckClick,
   project,
+  setTasks
 }: {
   task: TaskType;
   subTasks: TaskType[];
   onClose: () => void;
-  onCheckClick: (ev: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => Promise<void>;
+  onCheckClick: (
+    ev: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
+  ) => Promise<void>;
   project: ProjectType | null;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
 }) => {
   const [contentEditable, setContentEditable] = useState<boolean>(false);
   const [showCommentForm, setShowCommentForm] = useState<boolean>(false);
@@ -133,18 +139,22 @@ const TaskItemModal = ({
           <div className="flex gap-1 bg-white p-4 flex-1">
             <div
               onClick={onCheckClick}
-              className={`border w-5 h-5 rounded-full flex items-center justify-center mt-1 cursor-pointer group ${
-                task.is_completed
-                  ? "bg-indigo-600 border-indigo-600"
-                  : "border-gray-400"
-              }`}
+              className="p-1 group cursor-pointer h-fit"
             >
-              <Check
+              <Circle
+                size={22}
                 strokeWidth={1.5}
-                className={`w-3 h-3 transition ${
-                  task.is_completed
-                    ? "text-white"
-                    : "text-gray-700 opacity-0 group-hover:opacity-100"
+                className={`text-gray-400 ${
+                  task.is_completed ? "hidden" : "group-hover:hidden"
+                }`}
+              />
+              <CircleCheck
+                size={22}
+                strokeWidth={1.5}
+                className={`transition text-gray-400 rounded-full ${
+                  !task.is_completed
+                    ? "hidden group-hover:block"
+                    : "bg-gray-400 text-white"
                 }`}
               />
             </div>
@@ -244,6 +254,7 @@ const TaskItemModal = ({
                   <li key={subTask.id}>
                     <TaskItem
                       task={subTask}
+                      setTasks={setTasks}
                       showShareOption={false}
                       setShowShareOption={(v) => {}}
                       index={index}

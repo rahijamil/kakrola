@@ -35,7 +35,8 @@ export async function updateSession(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/app") && user.error) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   } else if (
-    (request.nextUrl.pathname.startsWith("/auth") ||
+    ((request.nextUrl.pathname.startsWith("/auth") &&
+      !request.nextUrl.pathname.startsWith("/auth/update-password")) ||
       request.nextUrl.pathname == "/") &&
     !user.error
   ) {

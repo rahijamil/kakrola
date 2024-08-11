@@ -15,6 +15,7 @@ import {
   Smartphone,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type IconType = React.ForwardRefExoticComponent<
   React.SVGProps<SVGSVGElement> & { title?: string; titleId?: string }
@@ -111,8 +112,12 @@ interface ProfileMoreOptionsProps {
   setShowAddTeam: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({ onClose, setShowAddTeam }) => {
+const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
+  onClose,
+  setShowAddTeam,
+}) => {
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
+  const router = useRouter();
 
   const menuItems: MenuGroup[] = [
     {
@@ -129,49 +134,61 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({ onClose, setSho
     {
       type: "group",
       items: [
-        { icon: LogsIcon, label: "Activity log" },
+        { icon: LogsIcon, label: "Activity log", path: "/app/activity" },
         { icon: Printer, label: "Print" },
-        {
-          icon: BookOpen,
-          label: "Resources",
-          subMenu: [
-            { icon: CircleHelp, label: "Help center" },
-            { icon: Lightbulb, label: "Inspiration" },
-            { icon: KeyboardIcon, label: "Keyboard shortcuts" },
-            { icon: GraduationCap, label: "Getting started guide" },
-            { icon: Smartphone, label: "Download apps" },
-          ],
-        },
+        // {
+        //   icon: BookOpen,
+        //   label: "Resources",
+        //   subMenu: [
+        //     { icon: CircleHelp, label: "Help center" },
+        //     { icon: Lightbulb, label: "Inspiration" },
+        //     { icon: KeyboardIcon, label: "Keyboard shortcuts" },
+        //     { icon: GraduationCap, label: "Getting started guide" },
+        //     { icon: Smartphone, label: "Download apps" },
+        //   ],
+        // },
       ],
     },
-    {
-      type: "group",
-      items: [{ icon: Gift, label: "What's new" }],
-    },
+    // {
+    //   type: "group",
+    //   items: [{ icon: Gift, label: "What's new" }],
+    // },
+    // {
+    //   type: "group",
+    //   items: [
+    //     {
+    //       icon: () => (
+    //         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+    //           <g fill="none" fillRule="evenodd">
+    //             <path
+    //               stroke="#ED9D04"
+    //               fill="#FEBA07"
+    //               fillOpacity=".1"
+    //               strokeLinejoin="bevel"
+    //               d="M8.2 18.6l3.8-2.3 3.8 2.3a.8.8 0 0 0 1-.9l-.9-4.2 3.3-2.8a.8.8 0 0 0-.4-1.3L14.4 9l-1.7-4a.8.8 0 0 0-1.4 0L9.6 9l-4.4.4a.8.8 0 0 0-.4 1.3l3.3 2.8-1 4.2a.8.8 0 0 0 1.1.9z"
+    //             />
+    //           </g>
+    //         </svg>
+    //       ),
+    //       label: "Upgrade to Pro",
+    //     },
+    //   ],
+    // },
     {
       type: "group",
       items: [
         {
-          icon: () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-              <g fill="none" fillRule="evenodd">
-                <path
-                  stroke="#ED9D04"
-                  fill="#FEBA07"
-                  fillOpacity=".1"
-                  strokeLinejoin="bevel"
-                  d="M8.2 18.6l3.8-2.3 3.8 2.3a.8.8 0 0 0 1-.9l-.9-4.2 3.3-2.8a.8.8 0 0 0-.4-1.3L14.4 9l-1.7-4a.8.8 0 0 0-1.4 0L9.6 9l-4.4.4a.8.8 0 0 0-.4 1.3l3.3 2.8-1 4.2a.8.8 0 0 0 1.1.9z"
-                />
-              </g>
-            </svg>
-          ),
-          label: "Upgrade to Pro",
+          icon: LogOut,
+          label: "Log out",
+          onClick: async () => {
+            const response = await fetch("/api/auth/signout", { method: "POST" });
+
+            if (response.ok) {
+              router.push("/auth/login");
+            }
+          },
         },
       ],
-    },
-    {
-      type: "group",
-      items: [{ icon: LogOut, label: "Log out" }],
     },
   ];
 

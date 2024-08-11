@@ -13,8 +13,7 @@ const LoginPage = () => (
       if (!password) {
         throw new Error("Password is required for log in.");
       }
-      const response = await login({ email, password });
-      if (!response.success) throw new Error(response.error);
+      return await login({ email, password });
     }}
     socialButtons={<SocialLogin />}
     additionalFooter={

@@ -4,7 +4,14 @@ import { Dispatch, MouseEvent, SetStateAction, useState } from "react";
 import TaskItemMoreDropdown from "./TaskItemMoreDropdown";
 import { Draggable } from "@hello-pangea/dnd";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
-import { Check, Ellipsis, User, Workflow } from "lucide-react";
+import {
+  Check,
+  Circle,
+  CircleCheck,
+  Ellipsis,
+  User,
+  Workflow,
+} from "lucide-react";
 import { supabaseBrowser } from "@/utils/supabase/client";
 const TaskItem = ({
   task,
@@ -13,6 +20,7 @@ const TaskItem = ({
   setShowShareOption,
   index,
   project,
+  setTasks,
 }: {
   task: TaskType;
   subTasks: TaskType[];
@@ -20,6 +28,7 @@ const TaskItem = ({
   setShowShareOption?: Dispatch<SetStateAction<boolean>>;
   index: number;
   project: ProjectType | null;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
 }) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showMoreDropdown, setShowMoreDropdown] = useState<boolean>(false);
@@ -35,6 +44,17 @@ const TaskItem = ({
     ev: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
   ) => {
     ev.stopPropagation();
+
+    // update local tasks
+    setTasks((prevTasks) => {
+      const updatedTasks = prevTasks.map((t) => {
+        if (t.id === task.id) {
+          return { ...t, is_completed: !t.is_completed };
+        }
+        return t;
+      });
+      return updatedTasks;
+    });
 
     const { error } = await supabaseBrowser
       .from("tasks")
@@ -66,22 +86,20 @@ const TaskItem = ({
                 onClick={handleCheckClick}
                 className="p-1 group cursor-pointer h-fit"
               >
-                <div
-                  className={`border w-5 h-5 rounded-full flex items-center justify-center ${
-                    task.is_completed
-                      ? "bg-indigo-600 border-indigo-600"
-                      : "border-gray-400"
+                <Circle
+                  size={22}
+                  strokeWidth={1.5}
+                  className={`text-gray-400 ${
+                    task.is_completed ? "hidden" : "group-hover:hidden"
                   }`}
-                >
-                  <Check
-                    strokeWidth={1.5}
-                    className={`w-3 h-3 transition ${
-                      !task.is_completed
-                        ? "opacity-0 group-hover:opacity-100 text-gray-400"
-                        : "text-white"
-                    }`}
-                  />
-                </div>
+                />
+                <CircleCheck
+                  size={22}
+                  strokeWidth={1.5}
+                  className={`transition text-gray-400 rounded-full ${
+                    !task.is_completed ? "hidden group-hover:block" : "bg-gray-400 text-white"
+                  }`}
+                />
               </div>
               <div>
                 <span
@@ -144,6 +162,7 @@ const TaskItem = ({
             <TaskItemModal
               task={task}
               subTasks={subTasks}
+              setTasks={setTasks}
               onClose={() => setShowModal(false)}
               onCheckClick={handleCheckClick}
               project={project}

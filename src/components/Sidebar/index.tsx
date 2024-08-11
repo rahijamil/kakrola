@@ -14,6 +14,10 @@ import {
   Bell,
   ChevronDown,
   PanelLeft,
+  CalendarDays,
+  LayoutGrid,
+  CircleCheck,
+  File,
 } from "lucide-react";
 import AddTaskTextButton from "@/components/AddTaskTextButton";
 import AddTaskModal from "@/components/AddTask/AddTaskModal";
@@ -47,7 +51,15 @@ const Sidebar: React.FC = () => {
     { id: 1, icon: Search, text: "Search", onClick: () => {} },
     { id: 2, icon: Inbox, text: "Inbox", path: "/app/inbox" },
     { id: 3, icon: Calendar, text: "Today", path: "/app" },
-    // { id: 4, icon: DocumentIcon, text: "Docs", path: "/app/docs" },
+    { id: 4, icon: CalendarDays, text: "Upcoming", path: "/app/upcoming" },
+    {
+      id: 4,
+      icon: LayoutGrid,
+      text: "Filters & Labels",
+      path: "/app/filters-labels",
+    },
+    { id: 5, icon: CircleCheck, text: "Commpleted", path: "#" },
+    { id: 6, icon: File, text: "Docs", path: "/app/docs" },
   ];
 
   const addTask = (newTask: TaskType) => {
@@ -179,7 +191,7 @@ const Sidebar: React.FC = () => {
             </div>
 
             <nav className="flex-grow overflow-y-auto">
-              <ul className="space-y-1 px-2">
+              <ul className="px-2">
                 <li>
                   <div
                     onClick={() => setShowAddTaskModal(true)}
@@ -193,7 +205,7 @@ const Sidebar: React.FC = () => {
                     {item.path ? (
                       <Link
                         href={item.path}
-                        className={`flex items-center px-2 py-2 rounded-md transition-colors ${
+                        className={`flex items-center p-2 rounded-md transition-colors ${
                           item.path === pathname
                             ? "bg-indigo-100 text-indigo-700"
                             : "hover:bg-gray-200 text-gray-700"
@@ -226,7 +238,7 @@ const Sidebar: React.FC = () => {
 
                     <div className="opacity-0 group-hover:opacity-100 transition flex items-center">
                       <button
-                        className="p-1 hover:bg-gray-100 rounded-md transition"
+                        className="p-1 hover:bg-gray-200 rounded-md transition"
                         onClick={() =>
                           setShowFavoritesProjects(!showFavoritesProjects)
                         }
@@ -240,9 +252,9 @@ const Sidebar: React.FC = () => {
                       </button>
                     </div>
                   </div>
-                  {/* 
+
                   {showFavoritesProjects && (
-                    <ul className="mt-1 ml-2 space-y-1">
+                    <ul className="ml-2">
                       {projects
                         .filter((project) => project.is_favorite)
                         .map((project) => (
@@ -253,11 +265,11 @@ const Sidebar: React.FC = () => {
                           />
                         ))}
                     </ul>
-                  )} */}
+                  )}
                 </div>
               )}
 
-              <MyProjects setShowAddProjectModal={setShowAddProjectModal} />
+              <MyProjects setShowAddProjectModal={setShowAddProjectModal} sidebarWidth={sidebarWidth} />
             </nav>
 
             {/* <div className="p-4 border-t border-gray-200">

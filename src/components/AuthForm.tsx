@@ -7,10 +7,14 @@ import EktaLogo from "@/app/EktaLogo";
 import Link from "next/link";
 import Spinner from "./ui/Spinner";
 import { AtSign } from "lucide-react";
+import { useRouter } from "next/router";
 
 interface AuthFormProps {
-  type: "signup" | "login" | "forgotPassword";
-  onSubmit: (data: { email: string; password?: string }) => Promise<void>;
+  type: "signup" | "login" | "forgotPassword" | "updatePassword";
+  onSubmit: (data: { email: string; password?: string }) => Promise<{
+    success: boolean;
+    error: string;
+  }>;
   socialButtons?: JSX.Element;
   additionalInfo?: JSX.Element;
   additionalFooter?: JSX.Element;
@@ -25,9 +29,12 @@ const AuthForm: React.FC<AuthFormProps> = ({
 }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<ReactNode | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +43,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
     setLoading(true);
 
     // Basic validation
-    if (!email) {
+    if (!email && type !== "updatePassword") {
       setError("Please enter your email address.");
       setLoading(false);
       return;
@@ -44,7 +51,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
     // Validate email format using a simple regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(email) && type !== "updatePassword") {
       setError("Please enter a valid email address.");
       setLoading(false);
       return;
@@ -97,8 +104,28 @@ const AuthForm: React.FC<AuthFormProps> = ({
       }
     }
 
+    if (type === "updatePassword" && password !== confirmPassword) {
+      setError("Passwords do not match.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      await onSubmit({ email, password });
+      const result = await onSubmit({ email, password });
+
+      if (result?.error) {
+        setError(result?.error);
+        setLoading(false);
+        return;
+      }
+
+      if (type === "forgotPassword" && result?.success) {
+        setMessage("Password reset link has been sent to your email.");
+      }
+
+      if(result.success){
+        router.push("/app");
+      }
     } catch (error: any) {
       setError(
         error.message
@@ -126,12 +153,15 @@ const AuthForm: React.FC<AuthFormProps> = ({
                 {type === "signup" && "Join Ekta Today"}
                 {type === "login" && "Welcome back"}
                 {type === "forgotPassword" && "Forgot your password?"}
+                {type === "updatePassword" && "Update your password"}
               </h2>
               <p className="mt-2 text-sm text-gray-600">
                 {type === "signup" &&
                   "Create your Ekta account and start collaborating"}
                 {type === "login" && "Log in to your Ekta account"}
                 {type === "forgotPassword" &&
+                  message !==
+                    "Password reset link has been sent to your email." &&
                   "Enter your email address and we'll send you a link to reset your password."}
               </p>
             </div>
@@ -161,61 +191,82 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
-              <div>
-                <label htmlFor="email-address" className="sr-only">
-                  Email address
-                </label>
+              {type !== "updatePassword" &&
+                message !==
+                  "Password reset link has been sent to your email." && (
+                  <div>
+                    <label htmlFor="email-address" className="sr-only">
+                      Email address
+                    </label>
 
-                <Input
-                  id="email-address"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  Icon={AtSign}
-                  className="pl-10 w-full"
-                  placeholder="Email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
+                    <Input
+                      id="email-address"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      Icon={AtSign}
+                      className="pl-10 w-full"
+                      placeholder="Email address"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                )}
 
               {type !== "forgotPassword" && (
-                <div>
-                  <PasswordInput
-                    password={password}
-                    setPassword={setPassword}
-                  />
+                <>
+                  <div>
+                    <PasswordInput
+                      password={password}
+                      setPassword={setPassword}
+                    />
 
-                  {type == "login" && (
-                    <div className="text-sm text-right">
-                      <Link
-                        href="/auth/forgot-password"
-                        className="font-medium text-indigo-600 hover:text-indigo-500"
-                      >
-                        Forgot your password?
-                      </Link>
-                    </div>
-                  )}
-                </div>
+                    {type == "login" && (
+                      <div className="text-sm text-right">
+                        <Link
+                          href="/auth/forgot-password"
+                          className="font-medium text-indigo-600 hover:text-indigo-500"
+                        >
+                          Forgot your password?
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    {type == "updatePassword" && (
+                      <PasswordInput
+                        password={confirmPassword}
+                        setPassword={setConfirmPassword}
+                        label="Confirm Password"
+                      />
+                    )}
+                  </div>
+                </>
               )}
             </div>
 
-            <div className="flex items-center justify-center">
-              {loading ? (
-                <Spinner />
-              ) : (
+            {message !== "Password reset link has been sent to your email." && (
+              <div className="flex items-center justify-center">
                 <Button
                   type="submit"
                   className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:hover:bg-indigo-600 text-white disabled:cursor-not-allowed"
                   disabled={loading}
                 >
-                  {type === "signup" && "Sign up"}
-                  {type === "login" && "Log in"}
-                  {type === "forgotPassword" && "Send reset link"}
+                  {loading ? (
+                    <Spinner color="white" />
+                  ) : (
+                    <>
+                      {type === "signup" && "Sign up"}
+                      {type === "login" && "Log in"}
+                      {type === "forgotPassword" && "Send reset link"}
+                      {type === "updatePassword" && "Update password"}
+                    </>
+                  )}
                 </Button>
-              )}
-            </div>
+              </div>
+            )}
           </form>
 
           {additionalInfo}

@@ -8,6 +8,7 @@ import { ViewTypes } from "@/types/viewTypes";
 interface TaskViewSwitcherProps {
   project: ProjectType | null;
   tasks: TaskType[];
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
   sections: SectionType[];
   setSections: Dispatch<SetStateAction<SectionType[]>>;
   view: ViewTypes["view"];
@@ -19,6 +20,7 @@ interface TaskViewSwitcherProps {
 const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
   project,
   tasks,
+  setTasks,
   view,
   sections,
   setSections,
@@ -70,6 +72,7 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
           showShareOption={showShareOption}
           setShowShareOption={setShowShareOption}
           project={project}
+          setTasks={setTasks}
         />
       );
     case "Board":
@@ -88,6 +91,7 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
           showShareOption={showShareOption}
           setShowShareOption={setShowShareOption}
           project={project}
+          setTasks={setTasks}
         />
       );
     case "Calendar":

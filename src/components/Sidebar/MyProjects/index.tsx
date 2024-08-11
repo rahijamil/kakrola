@@ -5,12 +5,17 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import ProjectItem from "../ProjectItem";
 import { usePathname } from "next/navigation";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import Image from "next/image";
+import { useAuthProvider } from "@/context/AuthContext";
 
 const MyProjects = ({
   setShowAddProjectModal,
+  sidebarWidth,
 }: {
   setShowAddProjectModal: Dispatch<SetStateAction<boolean>>;
+  sidebarWidth: number;
 }) => {
+  const { profile } = useAuthProvider();
   const { projects, setProjects } = useTaskProjectDataProvider();
   const pathname = usePathname();
   const [showProjects, setShowProjects] = useState(true);
@@ -64,8 +69,41 @@ const MyProjects = ({
 
   return (
     <div className="mt-4 px-2">
-      <div className="w-full flex items-center justify-between p-1 text-gray-700 hover:bg-gray-200 rounded-md transition-colors">
-        <span className="font-medium">My Projects</span>
+      <div
+        className={`w-full flex items-center justify-between p-1 pl-2 text-gray-700 hover:bg-gray-200 rounded-md transition gap-1`}
+      >
+        <div
+          className={`flex items-center ${
+            sidebarWidth > 220 ? "gap-2" : "gap-1"
+          }`}
+        >
+          <div
+            className={`flex items-center ${
+              sidebarWidth > 220 ? "gap-2" : "gap-1"
+            }`}
+            style={{ maxWidth: `${sidebarWidth - 150}px` }}
+          >
+            {profile?.avatar_url ? (
+              <Image
+                src={profile.avatar_url}
+                alt={profile.full_name || profile.username}
+                width={20}
+                height={20}
+                className="rounded-md"
+              />
+            ) : (
+              <div className="w-5 h-5 min-w-5 min-h-5 bg-black rounded-md"></div>
+            )}
+            <span
+              className={`font-medium transition overflow-hidden whitespace-nowrap text-ellipsis`}
+            >
+              My Projects
+            </span>
+          </div>
+          <span className="bg-gray-300 text-gray-700 px-1 py-[1px] rounded-md uppercase text-[11px] whitespace-nowrap font-medium">
+            Used: {projects.length}/{5}
+          </span>
+        </div>
 
         <div className="opacity-0 group-hover:opacity-100 transition flex items-center">
           <button
@@ -97,7 +135,7 @@ const MyProjects = ({
             {(provided) => {
               return (
                 <ul
-                  className="mt-1 ml-2 space-y-1"
+                  className="ml-2"
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                 >

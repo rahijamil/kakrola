@@ -9,9 +9,11 @@ import { Input } from "./input";
 const PasswordInput = ({
   password,
   setPassword,
+  label,
 }: {
   password: string;
   setPassword: (password: string) => void;
+  label?: string;
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -19,21 +21,22 @@ const PasswordInput = ({
     setShowPassword(!showPassword);
   };
 
+  const id = label ? label.replace(/\s+/g, "") : "password";
+
   return (
     <div>
-      <label htmlFor="password" className="sr-only">
-        Password
+      <label htmlFor={id} className="sr-only">
+        {label ? label : "Password"}
       </label>
       <div className="relative">
         <Input
-          id="password"
+          id={id}
           name="password"
           type={showPassword ? "text" : "password"}
-          autoComplete="current-password"
           required
           Icon={LockClosedIcon}
           className="pl-10 w-full pr-10" // Added pr-10 for spacing
-          placeholder="Password"
+          placeholder={label ? label : "Password"}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />

@@ -143,6 +143,7 @@ const InboxPage = () => {
       <TaskViewSwitcher
         project={null}
         tasks={inboxTasks}
+        setTasks={setInboxTasks}
         sections={inboxSections}
         setSections={setInboxSections}
         view={view}

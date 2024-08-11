@@ -33,6 +33,7 @@ interface ListViewProps {
   showShareOption?: boolean;
   setShowShareOption?: Dispatch<SetStateAction<boolean>>;
   project: ProjectType | null;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
 }
 
 const ListView: React.FC<ListViewProps> = ({
@@ -49,6 +50,7 @@ const ListView: React.FC<ListViewProps> = ({
   setShowShareOption,
   showShareOption,
   project,
+  setTasks
 }) => {
   const [showSectionMoreOptions, setShowSectionMoreOptions] =
     useState<SectionType | null>(null);
@@ -183,6 +185,7 @@ const ListView: React.FC<ListViewProps> = ({
                         >
                           <TaskItem
                             task={task}
+                            setTasks={setTasks}
                             subTasks={(groupedTasks[section.id] || []).filter(
                               (t) => t.parent_task_id == task.id
                             )}
@@ -208,6 +211,7 @@ const ListView: React.FC<ListViewProps> = ({
                                 >
                                   <TaskItem
                                     task={childTask}
+                                    setTasks={setTasks}
                                     subTasks={(
                                       groupedTasks[section.id] || []
                                     ).filter(
@@ -487,6 +491,7 @@ const ListView: React.FC<ListViewProps> = ({
                         >
                           <TaskItem
                             task={task}
+                            setTasks={setTasks}
                             subTasks={unGroupedTasks.filter(
                               (t) => t.parent_task_id === task.id
                             )}
@@ -510,6 +515,7 @@ const ListView: React.FC<ListViewProps> = ({
                                 >
                                   <TaskItem
                                     task={childTask}
+                                    setTasks={setTasks}
                                     subTasks={unGroupedTasks.filter(
                                       (t) => t.parent_task_id === childTask.id
                                     )}

@@ -30,7 +30,8 @@ export default function AccountSettingsPage() {
       <section className="space-y-4 max-w-sm">
         <div className="flex items-center space-x-4">
           <Image
-            src="https://i.pravatar.cc/150?img=3" // Replace with your image path
+            // src="https://i.pravatar.cc/150?img=3" // Replace with your image path
+            src="/friends_family.png"
             alt="Profile Picture"
             width={64}
             height={64}

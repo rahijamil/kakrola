@@ -129,17 +129,17 @@ const ProjectItem = ({
     <li>
       <div
         ref={moreRef}
-        className={`relative sidebar_project_item p-[1px] flex-1 flex items-center justify-between rounded-md transition-colors ${
-          isDragging
-            ? "bg-white shadow-[0_0_8px_1px_rgba(0,0,0,0.2)]"
-            : pathname === `/app/project/${project.slug}`
-            ? "bg-indigo-100 text-indigo-700"
-            : "hover:bg-gray-200 text-gray-700"
-        }`}
+        className={`relative sidebar_project_item flex-1 flex items-center justify-between  transition-colors `}
       >
         <Link
           href={`/app/project/${project.slug}`}
-          className="p-[1px] w-full"
+          className={`p-[1px] w-full rounded-md ${
+            isDragging
+              ? "bg-white shadow-[0_0_8px_1px_rgba(0,0,0,0.2)]"
+              : pathname === `/app/project/${project.slug}`
+              ? "bg-indigo-100 text-indigo-700"
+              : "hover:bg-gray-200 text-gray-700"
+          }`}
           draggable={false}
         >
           <div className="flex items-center">
@@ -152,9 +152,12 @@ const ProjectItem = ({
 
         <div className="absolute right-0 top-1/2 -translate-y-1/2">
           <div className="relative w-7 h-7 flex items-center justify-center">
-            <p>
-              {tasks.filter((task) => task.project_id == project.id).length}
-            </p>
+            {tasks.filter((task) => task.project_id == project.id).length >
+              0 && (
+              <p className="text-gray-400">
+                {tasks.filter((task) => task.project_id == project.id).length}
+              </p>
+            )}
 
             <div
               onClick={(ev) => {
@@ -197,8 +200,8 @@ const ProjectItem = ({
           description={
             <>
               This will permanently delete{" "}
-              <span className="font-semibold">&quot;{project.name}&quot;</span> and all
-              its tasks. This can&apos;t be undone.
+              <span className="font-semibold">&quot;{project.name}&quot;</span>{" "}
+              and all its tasks. This can&apos;t be undone.
             </>
           }
           submitBtnText="Delete"
@@ -213,8 +216,8 @@ const ProjectItem = ({
           description={
             <>
               This will archive{" "}
-              <span className="font-semibold">&quot;{project.name}&quot;</span> and all
-              its tasks.
+              <span className="font-semibold">&quot;{project.name}&quot;</span>{" "}
+              and all its tasks.
             </>
           }
           submitBtnText="Archive"

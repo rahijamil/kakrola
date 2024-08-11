@@ -14,8 +14,7 @@ const SignUpPage = () => (
         throw new Error("Password is required for sign up.");
       }
 
-      const response = await signup({ email, password });
-      if (!response.success) throw new Error(response.error);
+      return await signup({ email, password });
     }}
     socialButtons={<SocialLogin />}
     additionalFooter={

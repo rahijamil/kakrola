@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import TaskItem from "./TaskItem";
 import SectionAddTask from "./SectionAddTask";
@@ -24,6 +30,7 @@ const BoardView: React.FC<{
   showShareOption?: boolean;
   setShowShareOption?: React.Dispatch<React.SetStateAction<boolean>>;
   project: ProjectType | null;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
 }> = ({
   sections,
   groupedTasks,
@@ -38,6 +45,7 @@ const BoardView: React.FC<{
   showShareOption,
   setShowShareOption,
   project,
+  setTasks,
 }) => {
   const [showSectionMoreOptions, setShowSectionMoreOptions] = useState<
     string | null
@@ -241,10 +249,14 @@ const BoardView: React.FC<{
                     {column.tasks
                       .filter((t) => !t.parent_task_id)
                       .map((task, taskIndex) => (
-                        <div key={task.id} className="rounded shadow-sm hover:shadow-md">
+                        <div
+                          key={task.id}
+                          className="rounded shadow-sm hover:shadow-md"
+                        >
                           <TaskItem
                             key={task.id}
                             task={task}
+                            setTasks={setTasks}
                             // section={column}
                             subTasks={column.tasks.filter(
                               (t) => t.parent_task_id == task.id

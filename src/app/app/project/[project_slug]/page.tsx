@@ -233,6 +233,7 @@ const ProjectDetails = ({
         <TaskViewSwitcher
           project={currentProject}
           tasks={projectTasks}
+          setTasks={setProjectTasks}
           sections={projectSections}
           setSections={setProjectSections}
           view={currentProject.view}
