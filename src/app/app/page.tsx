@@ -48,6 +48,7 @@ const Today = () => {
       <TaskViewSwitcher
         tasks={todayTasks}
         sections={[]}
+        setTasks={() => null}
         view={view}
         onTaskUpdate={handleTaskUpdate}
         project={null}
