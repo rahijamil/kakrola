@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import AuthForm from "@/components/AuthForm";
 import { forgotPassword } from "@/app/auth/action";

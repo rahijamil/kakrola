@@ -1,3 +1,4 @@
+"use client";
 import React, { ReactNode, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -7,7 +8,7 @@ import EktaLogo from "@/app/EktaLogo";
 import Link from "next/link";
 import Spinner from "./ui/Spinner";
 import { AtSign } from "lucide-react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface AuthFormProps {
   type: "signup" | "login" | "forgotPassword" | "updatePassword";
