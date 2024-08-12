@@ -11,20 +11,20 @@ import React, {
 } from "react";
 import { useAuthProvider } from "./AuthContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import { TeamType, TeamMemberType } from "@/types/team";
 
 const TaskProjectDataContext = createContext<{
-  // tasks: TaskType[];
-  // setTasks: Dispatch<SetStateAction<TaskType[]>>;
   projects: ProjectType[];
   setProjects: Dispatch<SetStateAction<ProjectType[]>>;
-  // sections: SectionType[];
-  // setSections: Dispatch<SetStateAction<SectionType[]>>;
+  teams: TeamType[];
+  setTeams: Dispatch<SetStateAction<TeamType[]>>;
+  teamMemberships: TeamMemberType[];
 }>({
-  // tasks: [],
-  // setTasks: (value) => value,
   projects: [],
   setProjects: (value) => value,
-  // sections: [],
+  teams: [],
+  setTeams: (value) => value,
+  teamMemberships: [],
 });
 
 const sortProjects = (projects: ProjectType[]): ProjectType[] => {
@@ -34,18 +34,50 @@ const sortProjects = (projects: ProjectType[]): ProjectType[] => {
 const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
   const { profile } = useAuthProvider();
   const [projects, setProjects] = useState<ProjectType[]>([]);
-
+  const [teams, setTeams] = useState<TeamType[]>([]);
+  const [teamMemberships, setTeamMemberships] = useState<TeamMemberType[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!profile?.id) return;
+
       try {
+        // Fetch projects
         const { data: projectData, error: projectError } = await supabaseBrowser
           .from("projects")
           .select("*")
-          .eq("profile_id", profile?.id);
+          .eq("profile_id", profile.id);
 
         if (!projectError) {
           setProjects(sortProjects(projectData || []));
+        }
+        
+        console.log(projectData, projectError)
+
+        // Fetch team memberships
+        const { data: membershipData, error: membershipError } =
+          await supabaseBrowser
+            .from("team_members")
+            .select("*")
+            .eq("profile_id", profile.id);
+
+        if (!membershipError) {
+          setTeamMemberships(membershipData || []);
+
+          // Fetch teams based on memberships
+          if (membershipData && membershipData.length > 0) {
+            const teamIds = membershipData.map(
+              (membership) => membership.team_id
+            );
+            const { data: teamData, error: teamError } = await supabaseBrowser
+              .from("teams")
+              .select("*")
+              .in("id", teamIds);
+
+            if (!teamError) {
+              setTeams(teamData || []);
+            }
+          }
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -56,6 +88,8 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
   }, [profile?.id]);
 
   useEffect(() => {
+    if (!profile?.id) return;
+
     // Subscribe to real-time changes for projects
     const projectsSubscription = supabaseBrowser
       .channel("projects-all-channel")
@@ -65,15 +99,17 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
           event: "*",
           schema: "public",
           table: "projects",
-          filter: `profile_id=eq.${profile?.id}`,
+          filter: `profile_id=eq.${profile.id}`,
         },
         (payload) => {
           if (
             payload.eventType === "INSERT" &&
-            payload.new.profile_id === profile?.id
+            payload.new.profile_id === profile.id
           ) {
             setProjects((prev) =>
-              sortProjects([...prev, payload.new as ProjectType])
+              prev.map((project) => project.id !== payload.new.id)
+                ? sortProjects([...prev, payload.new as ProjectType])
+                : prev
             );
           } else if (payload.eventType === "UPDATE") {
             setProjects((prev) =>
@@ -96,20 +132,93 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
       )
       .subscribe();
 
+    // Subscribe to real-time changes for team memberships
+    const teamMembershipsSubscription = supabaseBrowser
+      .channel("team-memberships-channel")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "team_members",
+          filter: `profile_id=eq.${profile.id}`,
+        },
+        (payload) => {
+          if (payload.eventType === "INSERT") {
+            setTeamMemberships((prev) => [
+              ...prev,
+              payload.new as TeamMemberType,
+            ]);
+            // Fetch and add the new team
+            supabaseBrowser
+              .from("teams")
+              .select("*")
+              .eq("id", payload.new.team_id)
+              .single()
+              .then(({ data, error }) => {
+                if (!error && data) {
+                  setTeams((prev) => [...prev, data]);
+                }
+              });
+          } else if (payload.eventType === "UPDATE") {
+            setTeamMemberships((prev) =>
+              prev.map((membership) =>
+                membership.id === payload.new.id
+                  ? (payload.new as TeamMemberType)
+                  : membership
+              )
+            );
+          } else if (payload.eventType === "DELETE") {
+            setTeamMemberships((prev) =>
+              prev.filter((membership) => membership.id !== payload.old.id)
+            );
+            // Remove the team if it's no longer associated
+            setTeams((prev) =>
+              prev.filter((team) => team.id !== payload.old.team_id)
+            );
+          }
+        }
+      )
+      .subscribe();
+
+    // Subscribe to real-time changes for teams
+    const teamsSubscription = supabaseBrowser
+      .channel("teams-channel")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "teams",
+        },
+        (payload) => {
+          if (payload.eventType === "UPDATE") {
+            setTeams((prev) =>
+              prev.map((team) =>
+                team.id === payload.new.id ? (payload.new as TeamType) : team
+              )
+            );
+          }
+          // Note: INSERT and DELETE are handled by team_members subscription
+        }
+      )
+      .subscribe();
+
     return () => {
       supabaseBrowser.removeChannel(projectsSubscription);
+      supabaseBrowser.removeChannel(teamMembershipsSubscription);
+      supabaseBrowser.removeChannel(teamsSubscription);
     };
   }, [profile?.id]);
 
   return (
     <TaskProjectDataContext.Provider
       value={{
-        // tasks,
-        // setTasks,
         projects,
         setProjects,
-        // sections,
-        // setSections,
+        teams,
+        setTeams,
+        teamMemberships,
       }}
     >
       {children}

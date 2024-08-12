@@ -6,156 +6,225 @@ import {
   Briefcase,
   Building,
   UserCircle,
-  Users2,
-  ChevronDown,
-  LucideProps,
-  Group,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { TeamType } from "@/types/team";
+import {
+  BaseTeamType,
+  Permission,
+  RoleType,
+  TeamMemberType,
+  TeamRole,
+  TeamType,
+} from "@/types/team";
 import { useAuthProvider } from "@/context/AuthContext";
+import CustomSelect from "./ui/CustomSelect";
+import { supabaseBrowser } from "@/utils/supabase/client";
+import Textarea from "./ui/textarea";
 
-const CustomSelect = ({
-  id,
-  label,
-  Icon,
-  value,
-  onChange,
-  options,
-  placeholder,
-}: {
-  id: string;
-  label: string;
-  Icon: React.ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
-  >;
-  value: string;
-  onChange: (
-    e:
-      | React.ChangeEvent<HTMLInputElement>
-      | { target: { id: string; value: string } }
-  ) => void;
-  options: string[];
-  placeholder: string;
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
+// Enums for predefined options
+enum Industry {
+  Technology = "technology",
+  Healthcare = "healthcare",
+  Finance = "finance",
+  Education = "education",
+  Retail = "retail",
+  Manufacturing = "manufacturing",
+  Other = "other",
+}
 
-  return (
-    <div className="relative">
-      <label
-        htmlFor={id}
-        className="block text-sm font-medium text-gray-700 mb-1"
-      >
-        {label}
-      </label>
-      <div
-        className="flex items-center justify-between w-full p-2 border border-gray-300 rounded-md cursor-pointer"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <div className="flex items-center">
-          <Icon className="w-5 h-5 text-gray-400 mr-2" />
-          <span className={`${value ? "text-gray-900" : "text-gray-400"}`}>
-            {value || placeholder}
-          </span>
-        </div>
-        <ChevronDown className="w-5 h-5 text-gray-400" />
-      </div>
+enum WorkType {
+  SoftwareDevelopment = "software_development",
+  Marketing = "marketing",
+  Sales = "sales",
+  CustomerSupport = "customer_support",
+  HumanResources = "human_resources",
+  Other = "other",
+}
 
-      {isOpen && (
-        <>
-          <ul className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
-            {options.map((option) => (
-              <li
-                key={option}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                onClick={() => {
-                  onChange({ target: { id, value: option } });
-                  setIsOpen(false);
-                }}
-              >
-                {option}
-              </li>
-            ))}
-          </ul>
+enum WorkRole {
+  Owner = "owner",
+  TeamLead = "team_lead",
+  TeamMember = "team_member",
+}
 
-          <div
-            onClick={() => setIsOpen(false)}
-            className="fixed top-0 left-0 bottom-0 right-0"
-          ></div>
-        </>
-      )}
-    </div>
-  );
+enum OrganizationSize {
+  One = "1",
+  Small = "2-10",
+  Medium = "11-50",
+  Large = "51-100",
+  VeryLarge = "101-250",
+  Enterprise = "250+",
+}
+
+// Updated TeamData type
+interface TeamData extends BaseTeamType {
+  industry: {
+    value: Industry;
+    label: string;
+  } | null;
+  work_type: {
+    value: WorkType;
+    label: string;
+  } | null;
+  work_role: {
+    value: WorkRole;
+    label: string;
+  } | null;
+  organization_size: {
+    value: OrganizationSize;
+    label: string;
+  } | null;
+}
+
+const getPermissionsByRole = (role: RoleType): Permission[] => {
+  switch (role) {
+    case RoleType.ADMIN:
+      return [
+        Permission.CREATE_TASK,
+        Permission.EDIT_TASK,
+        Permission.DELETE_TASK,
+        Permission.ASSIGN_TASK,
+        Permission.CREATE_PROJECT,
+        Permission.EDIT_PROJECT,
+        Permission.DELETE_PROJECT,
+        Permission.INVITE_MEMBER,
+        Permission.REMOVE_MEMBER,
+        Permission.MANAGE_ROLES,
+      ];
+    case RoleType.MEMBER:
+      return [
+        Permission.CREATE_TASK,
+        Permission.EDIT_TASK,
+        Permission.DELETE_TASK,
+        Permission.ASSIGN_TASK,
+      ];
+    default:
+      return [];
+  }
 };
 
 const AddTeam = ({ onClose }: { onClose: () => void }) => {
   const { profile } = useAuthProvider();
-  const [teamData, setTeamData] = useState<Omit<TeamType, "id">>({
+  const [teamData, setTeamData] = useState<Omit<TeamData, "created_at">>({
     name: "",
-    industry: "",
-    workType: "",
-    role: "",
-    organizationSize: "",
+    industry: null,
+    work_type: null,
+    work_role: {
+      value: WorkRole.Owner,
+      label: "I own or run the company",
+    },
+    organization_size: null,
     avatar_url: "",
     profile_id: profile?.id || "",
     updated_at: new Date().toISOString(),
-    created_at: new Date().toISOString(),
   });
-  const [step, setStep] = useState<0 | 1>(0);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
 
   const handleInputChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
-      | { target: { id: string; value: string } }
+      | { target: { id: string; value: string; label?: string } }
   ) => {
-    setTeamData({ ...teamData, [e.target.id]: e.target.value });
+    if ("label" in e.target) {
+      setTeamData({
+        ...teamData,
+        [e.target.id]: { value: e.target.value, label: e.target.label },
+      });
+    } else {
+      setTeamData({ ...teamData, [e.target.id]: e.target.value });
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (step === 0) {
-      setStep(1);
+    if (step === 1) {
+      setStep(2);
+    } else if (step === 2) {
+      setStep(3);
     } else {
-      // Handle team creation logic here
-      console.log("Team data:", teamData);
+      if (
+        teamData.name &&
+        teamData.profile_id &&
+        teamData.industry &&
+        teamData.work_type &&
+        teamData.work_role &&
+        teamData.organization_size
+      ) {
+        // Prepare data for Supabase insertion
+        const supabaseData: Omit<Omit<TeamType, "id">, "created_at"> = {
+          ...teamData,
+          industry: teamData.industry.value,
+          work_type: teamData.work_type.value,
+          work_role: teamData.work_role.value,
+          organization_size: teamData.organization_size.value,
+        };
+
+        // Create the team
+        const { data: createdTeamData, error: teamError } =
+          await supabaseBrowser
+            .from("teams")
+            .insert(supabaseData)
+            .select()
+            .single();
+
+        if (teamError) {
+          console.error("Error creating team:", teamError);
+          return;
+        }
+
+        if (createdTeamData && profile) {
+          // Create the team member (team creator)
+          const adminRole: TeamRole = {
+            name: RoleType.ADMIN,
+            permissions: getPermissionsByRole(RoleType.ADMIN),
+          };
+
+          const teamMemberData: Omit<TeamMemberType, "id"> = {
+            team_id: createdTeamData.id,
+            profile_id: profile.id,
+            team_role: adminRole,
+            joined_at: new Date().toISOString(),
+          };
+
+          const { error: memberError } = await supabaseBrowser
+            .from("team_members")
+            .insert(teamMemberData);
+
+          if (memberError) {
+            console.error("Error creating team member:", memberError);
+            // Consider handling this error, possibly by deleting the created team
+            return;
+          }
+        }
+      }
+
       onClose();
     }
   };
 
-  const industryOptions = [
-    "Technology",
-    "Healthcare",
-    "Finance",
-    "Education",
-    "Retail",
-    "Manufacturing",
-    "Other",
-  ];
+  const industryOptions = Object.values(Industry).map((value) => ({
+    value,
+    label: value.charAt(0).toUpperCase() + value.slice(1).replace("_", " "),
+  }));
 
-  const workTypeOptions = [
-    "Software Development",
-    "Marketing",
-    "Sales",
-    "Customer Support",
-    "Human Resources",
-    "Other",
-  ];
+  const workTypeOptions = Object.values(WorkType).map((value) => ({
+    value,
+    label: value.charAt(0).toUpperCase() + value.slice(1).replace("_", " "),
+  }));
 
   const roleOptions = [
-    "I own or run the company",
-    "I lead a team within the company",
-    "I'm a team member",
+    { value: WorkRole.Owner, label: "I own or run the company" },
+    { value: WorkRole.TeamLead, label: "I lead a team within the company" },
+    { value: WorkRole.TeamMember, label: "I'm a team member" },
   ];
 
-  const organizationSizeOptions = [
-    "1",
-    "2-10",
-    "11-50",
-    "51-100",
-    "101-250",
-    "More than 250",
-  ];
+  const organizationSizeOptions = Object.values(OrganizationSize).map(
+    (value) => ({
+      value,
+      label: value,
+    })
+  );
 
   return (
     <div
@@ -168,7 +237,11 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-200">
           <h2 className="text-xl font-semibold">
-            {step === 0 ? "Add a team" : "Tell us about your team"}
+            {step === 1
+              ? "Add a team"
+              : step == 2
+              ? "Tell us about your team"
+              : "Invite your teammates"}
           </h2>
           <button
             onClick={onClose}
@@ -179,8 +252,8 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6">
-          {step === 0 ? (
-            <div className="space-y-4">
+          {step === 1 ? (
+            <div className="space-y-2">
               <Input
                 type="text"
                 id="name"
@@ -191,73 +264,103 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
                 placeholder="The name of your team or company"
                 required
                 autoComplete="off"
+                autoFocus
               />
-              <p className="text-sm text-gray-500">
+              <p className="text-gray-500 text-[13px]">
                 Keep it something simple your teammates will recognize.
               </p>
             </div>
-          ) : (
+          ) : step == 2 ? (
             <div className="space-y-4">
               <CustomSelect
                 id="industry"
                 label="What industry do you work in?"
                 Icon={Briefcase}
-                value={teamData.industry}
-                onChange={handleInputChange}
+                value={teamData.industry?.value}
+                onChange={(data) => handleInputChange(data)}
                 options={industryOptions}
                 placeholder="Select your answer"
               />
               <CustomSelect
-                id="workType"
+                id="work_type"
                 label="What work do you do?"
                 Icon={Building}
-                value={teamData.workType}
-                onChange={handleInputChange}
+                value={teamData.work_type?.value}
+                onChange={(data) => handleInputChange(data)}
                 options={workTypeOptions}
                 placeholder="Select your answer"
               />
               <CustomSelect
-                id="role"
+                id="work_role"
                 label="What's your role?"
                 Icon={UserCircle}
-                value={teamData.role}
-                onChange={handleInputChange}
+                value={teamData.work_role?.value}
+                onChange={(data) => handleInputChange(data)}
                 options={roleOptions}
                 placeholder="Select your answer"
               />
               <CustomSelect
-                id="organizationSize"
+                id="organization_size"
                 label="How big is your organization"
                 Icon={Users}
-                value={teamData.organizationSize}
-                onChange={handleInputChange}
+                value={teamData.organization_size?.value}
+                onChange={(data) => handleInputChange(data)}
                 options={organizationSizeOptions}
                 placeholder="Select your answer"
               />
             </div>
+          ) : (
+            <div className="space-y-2">
+              <Textarea
+                label="Invite members"
+                placeholder="Seperate multiple emails with commas"
+                rows={3}
+              />
+
+              <p className="text-gray-500 text-[13px]">
+                Gather your team and dive into collaboration together!
+              </p>
+            </div>
           )}
 
           <div className="mt-6">
-            <Button type="submit" fullWidth>
-              {step === 0 ? "Get started" : "Setup and continue"}
-              {step === 0 && <ChevronRight size={16} className="ml-2" />}
+            <Button
+              type="submit"
+              fullWidth
+              disabled={
+                step == 1
+                  ? teamData.name.trim().length == 0
+                  : step == 2
+                  ? !teamData.industry ||
+                    !teamData.work_type ||
+                    !teamData.work_role ||
+                    !teamData.organization_size
+                    ? true
+                    : false
+                  : false
+              }
+            >
+              {step === 1
+                ? "Get started"
+                : step == 2
+                ? "Setup and continue"
+                : "Create team"}
+              {step !== 3 && <ChevronRight size={16} className="ml-2" />}
             </Button>
           </div>
         </form>
 
-        {step === 0 && (
-          <div className="px-6 pb-6 text-xs text-gray-500">
-            By creating a team, you agree to our{" "}
-            <a href="#" className="text-blue-600 hover:underline">
-              Terms of Service
-            </a>{" "}
-            and{" "}
-            <a href="#" className="text-blue-600 hover:underline">
-              Privacy Policy
-            </a>
-            .
-          </div>
-        )}
+        <div className="px-6 pb-6 text-xs text-gray-500">
+          By creating a team, you agree to our{" "}
+          <a href="#" className="text-blue-600 hover:underline">
+            Terms of Service
+          </a>{" "}
+          and{" "}
+          <a href="#" className="text-blue-600 hover:underline">
+            Privacy Policy
+          </a>
+          .
+        </div>
       </div>
     </div>
   );

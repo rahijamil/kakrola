@@ -109,7 +109,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
 
 interface ProfileMoreOptionsProps {
   onClose: () => void;
-  setShowAddTeam: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowAddTeam: React.Dispatch<React.SetStateAction<boolean | number>>;
 }
 
 const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
@@ -131,24 +131,24 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
         },
       ],
     },
-    {
-      type: "group",
-      items: [
-        { icon: LogsIcon, label: "Activity log", path: "/app/activity" },
-        { icon: Printer, label: "Print" },
-        // {
-        //   icon: BookOpen,
-        //   label: "Resources",
-        //   subMenu: [
-        //     { icon: CircleHelp, label: "Help center" },
-        //     { icon: Lightbulb, label: "Inspiration" },
-        //     { icon: KeyboardIcon, label: "Keyboard shortcuts" },
-        //     { icon: GraduationCap, label: "Getting started guide" },
-        //     { icon: Smartphone, label: "Download apps" },
-        //   ],
-        // },
-      ],
-    },
+    // {
+    //   type: "group",
+    //   items: [
+    //     { icon: LogsIcon, label: "Activity log", path: "/app/activity" },
+    //     { icon: Printer, label: "Print" },
+    //     {
+    //       icon: BookOpen,
+    //       label: "Resources",
+    //       subMenu: [
+    //         { icon: CircleHelp, label: "Help center" },
+    //         { icon: Lightbulb, label: "Inspiration" },
+    //         { icon: KeyboardIcon, label: "Keyboard shortcuts" },
+    //         { icon: GraduationCap, label: "Getting started guide" },
+    //         { icon: Smartphone, label: "Download apps" },
+    //       ],
+    //     },
+    //   ],
+    // },
     // {
     //   type: "group",
     //   items: [{ icon: Gift, label: "What's new" }],

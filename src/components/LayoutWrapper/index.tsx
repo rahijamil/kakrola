@@ -45,7 +45,7 @@ const LayoutWrapper = ({
     project?.name || headline
   );
 
-  const { setProjects } = useTaskProjectDataProvider();
+  const { setProjects, teams } = useTaskProjectDataProvider();
 
   return (
     <>
@@ -54,7 +54,7 @@ const LayoutWrapper = ({
       <main className="flex-1 overflow-auto flex flex-col">
         {view && setView && (
           <div className="flex items-center justify-between p-4">
-            {!["Today", "Inbox"].includes(headline) && <div>My Projects /</div>}
+            {!["Today", "Inbox"].includes(headline) && <div>{teams.find((t) => t.id == project?.team_id)?.name ?? "My Projects"} /</div>}
 
             <div className="flex-1 flex items-center justify-end">
               <ul className="flex items-center relative">

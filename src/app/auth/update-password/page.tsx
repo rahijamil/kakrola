@@ -8,7 +8,6 @@ const UpdatePassword = () => {
     <AuthForm
       type="updatePassword"
       onSubmit={async ({ password }) => {
-        "use server";
         if (!password) {
           throw new Error("Please enter your password.");
         }

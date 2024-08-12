@@ -28,21 +28,23 @@ import ProfileMoreOptions from "@/components/Sidebar/ProfileMoreOptions";
 import AddTeam from "../AddTeam";
 import Image from "next/image";
 import MyProjects from "./MyProjects";
+import FavoriteProjects from "./FavoriteProjects";
+import TeamProjects from "./TeamProjects";
 
 const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const { profile } = useAuthProvider();
-  const { projects } = useTaskProjectDataProvider();
+  const { projects, teams } = useTaskProjectDataProvider();
 
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [showProfileMoreOptions, setShowProfileMoreOptions] = useState(false);
 
-  const [showAddTeam, setShowAddTeam] = useState<boolean>(false);
+  const [showAddTeam, setShowAddTeam] = useState<boolean | number>(false);
 
   const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [afterCollapse, setAfterCollapse] = useState(false);
-  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+  
   const [sidebarWidth, setSidebarWidth] = useState(220);
   const [sidebarLeft, setSidebarLeft] = useState(0);
 
@@ -175,7 +177,7 @@ const Sidebar: React.FC = () => {
                   sidebarWidth > 220 ? "gap-2" : "gap-1"
                 }`}
               >
-                <Link
+                {/* <Link
                   href="/app/notifications"
                   className={`rounded-md p-1 transition-colors ${
                     pathname == "/app/notifications"
@@ -184,7 +186,7 @@ const Sidebar: React.FC = () => {
                   }`}
                 >
                   <Bell strokeWidth={1.5} className="w-5 h-5" />
-                </Link>
+                </Link> */}
 
                 <button
                   onClick={toggleSidebar}
@@ -241,47 +243,23 @@ const Sidebar: React.FC = () => {
               </ul>
 
               {projects.filter((p) => p.is_favorite).length > 0 && (
-                <div className="mt-4 px-2">
-                  <div className="w-full flex items-center justify-between p-1 text-gray-700 rounded-md transition-colors">
-                    <span className="font-medium">Favorites</span>
-
-                    <div className="opacity-0 group-hover:opacity-100 transition flex items-center">
-                      <button
-                        className="p-1 hover:bg-gray-200 rounded-md transition"
-                        onClick={() =>
-                          setShowFavoritesProjects(!showFavoritesProjects)
-                        }
-                      >
-                        <ChevronRight
-                          strokeWidth={1.5}
-                          className={`w-[18px] h-[18px] transition-transform transform ${
-                            showFavoritesProjects ? "rotate-90" : ""
-                          }`}
-                        />
-                      </button>
-                    </div>
-                  </div>
-
-                  {showFavoritesProjects && (
-                    <ul className="ml-2">
-                      {projects
-                        .filter((project) => project.is_favorite)
-                        .map((project) => (
-                          <ProjectItem
-                            key={project.id}
-                            project={project}
-                            pathname={pathname}
-                          />
-                        ))}
-                    </ul>
-                  )}
-                </div>
+                <FavoriteProjects
+                  setShowFavoritesProjects={setShowFavoritesProjects}
+                  showFavoritesProjects={showFavoritesProjects}
+                />
               )}
 
               <MyProjects
-                setShowAddProjectModal={setShowAddProjectModal}
                 sidebarWidth={sidebarWidth}
               />
+
+              {teams.map((team) => (
+                <TeamProjects
+                  key={team.id}
+                  team={team}
+                  sidebarWidth={sidebarWidth}
+                />
+              ))}
             </nav>
 
             {/* <div className="p-4 border-t border-gray-200">
@@ -309,12 +287,6 @@ const Sidebar: React.FC = () => {
           addTask={addTask}
           onClose={() => setShowAddTaskModal(false)}
         />
-      )}
-
-      {showAddProjectModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <AddProject onClose={() => setShowAddProjectModal(false)} />
-        </div>
       )}
 
       {showAddTeam && <AddTeam onClose={() => setShowAddTeam(false)} />}

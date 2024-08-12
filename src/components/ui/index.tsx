@@ -100,23 +100,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
 Input.displayName = "Input";
 
-// Textarea Component
-interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  className?: string;
-}
 
-export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className = "", ...props }, ref) => (
-    <textarea
-      className={`w-full border-none outline-none ${className}`}
-      ref={ref}
-      {...props}
-    />
-  )
-);
-
-Textarea.displayName = "Textarea";
 
 // Button Component
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

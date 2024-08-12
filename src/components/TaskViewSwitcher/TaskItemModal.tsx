@@ -1,5 +1,5 @@
 import React, { Dispatch, MouseEvent, SetStateAction, useEffect, useRef, useState } from "react";
-import { Dialog, Input, Textarea } from "../ui";
+import { Dialog, Input } from "../ui";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 
 import AddTaskForm from "../AddTask/AddTaskForm";
@@ -22,6 +22,7 @@ import {
   Text,
   X,
 } from "lucide-react";
+import Textarea from "../ui/textarea";
 
 const TaskItemModal = ({
   task,

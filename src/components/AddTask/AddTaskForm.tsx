@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Input } from "../ui";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import {
@@ -21,6 +20,7 @@ import Priorities from "./Priorities";
 import { useAuthProvider } from "@/context/AuthContext";
 import Spinner from "../ui/Spinner";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import { Input } from "../ui";
 
 const AddTaskForm = ({
   onClose,

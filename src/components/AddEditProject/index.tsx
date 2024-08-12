@@ -1,38 +1,118 @@
 "use client";
-import React, { FormEvent, useState } from "react";
-import { Dialog, DialogHeader, DialogTitle } from "./ui";
+import React, { FormEvent, useEffect, useState } from "react";
+import { Dialog, DialogHeader, DialogTitle } from "../ui";
 import { ProjectType } from "@/types/project";
-import LayoutView from "./LayoutView";
-import { Check, ChevronDown, CircleHelp, SquareGanttChart } from "lucide-react";
-import { ToggleSwitch } from "./ui/ToggleSwitch";
-import { Input } from "./ui/input";
-import { Select } from "./ui/select";
+import LayoutView from "../LayoutView";
+import {
+  Check,
+  ChevronDown,
+  CircleHelp,
+  SquareGanttChart,
+  User,
+} from "lucide-react";
+import { ToggleSwitch } from "../ui/ToggleSwitch";
+import { Input } from "../ui/input";
+import { Select } from "../ui/select";
 import { useAuthProvider } from "@/context/AuthContext";
-import Spinner from "./ui/Spinner";
+import Spinner from "../ui/Spinner";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import WorkspaceSelector from "./WorkspaceSelector";
+import CustomSelect from "../ui/CustomSelect";
+
+const colors = [
+  {
+    id: 1,
+    label: "Red",
+    value: "red-500",
+    color: "#ef4444",
+  },
+  {
+    id: 2,
+    label: "Orange",
+    value: "orange-500",
+    color: "#f97316",
+  },
+  {
+    id: 3,
+    label: "Yellow",
+    value: "yellow-500",
+    color: "#eab308",
+  },
+  {
+    id: 4,
+    label: "Green",
+    value: "green-500",
+    color: "#22c55e",
+  },
+  {
+    id: 5,
+    label: "Blue",
+    value: "blue-500",
+    color: "#3b82f6",
+  },
+  {
+    id: 6,
+    label: "Indigo",
+    value: "indigo-500",
+    color: "#6366f1",
+  },
+  {
+    id: 7,
+    label: "Violet",
+    value: "violet-500",
+    color: "#8b5cf6",
+  },
+  {
+    id: 8,
+    label: "Purple",
+    value: "purple-500",
+    color: "#a855f7",
+  },
+  {
+    id: 9,
+    label: "Pink",
+    value: "pink-500",
+    color: "#ec4899",
+  },
+  {
+    id: 10,
+    label: "Teal",
+    value: "teal-500",
+    color: "#14b8a6",
+  },
+  {
+    id: 11,
+    label: "Gray",
+    value: "gray-500",
+    color: "#64748b",
+  },
+];
 
 const AddEditProject = ({
+  workspaceId,
   onClose,
   project,
   aboveBellow,
 }: {
+  workspaceId?: number | null;
   onClose: () => void;
   project?: ProjectType;
   aboveBellow?: "above" | "below" | null;
 }) => {
   const { profile } = useAuthProvider();
-  const { projects, setProjects } = useTaskProjectDataProvider();
+  const { projects, setProjects, teams, setTeams } =
+    useTaskProjectDataProvider();
 
   const [projectData, setProjectData] = useState<Omit<ProjectType, "id">>(
     project && !aboveBellow
       ? project
       : {
-          team_id: null,
+          team_id: workspaceId || null,
           profile_id: profile?.id || "",
           name: "",
           slug: "",
-          icon_url: "",
+          color: "gray-500",
           is_favorite: false,
           view: "List",
           updated_at: new Date().toISOString(),
@@ -57,7 +137,7 @@ const AddEditProject = ({
 
     if (project?.id) {
       const data: Partial<ProjectType> = {};
-      const fields = ["name", "icon_url", "is_favorite", "view"] as const;
+      const fields = ["name", "color", "is_favorite", "view"] as const;
 
       fields.forEach((field) => {
         if (projectData[field] !== project[field]) {
@@ -174,7 +254,40 @@ const AddEditProject = ({
     onClose();
   };
 
-  const [showWorkspace, setShowWorkspace] = useState(false);
+  const [workspaces, setWorkspaces] = useState<
+    { team_id: number | null; name: string; avatar_url: string }[]
+  >([]);
+
+  useEffect(() => {
+    setWorkspaces([
+      {
+        team_id: null,
+        name: "My Projects",
+        avatar_url: profile?.avatar_url || "",
+      },
+    ]);
+
+    teams.forEach((team) => {
+      if (!workspaces.some((w) => w.team_id === team.id)) {
+        setWorkspaces((prev) => [
+          ...prev,
+          {
+            team_id: team.id,
+            name: team.name,
+            avatar_url: team.avatar_url,
+          } as {
+            team_id: number;
+            name: string;
+            avatar_url: string;
+          },
+        ]);
+      }
+    });
+
+    return () => {
+      setWorkspaces([]);
+    };
+  }, [teams]);
 
   return (
     <Dialog size="xs" onClose={onClose}>
@@ -215,65 +328,28 @@ const AddEditProject = ({
               Icon={SquareGanttChart}
               placeholder="Project name"
             />
-            {/* <Input
-              type="color"
+
+            <CustomSelect
+              id="color"
               label="Color"
+              options={colors}
               value={projectData?.color}
-              onChange={(e) =>
-                setProjectData({ ...projectData, color: e.target.value })
+              onChange={({ target: { value } }) =>
+                setProjectData({ ...projectData, color: value })
               }
-              required
-            /> */}
+              placeholder="Select a color"
+            />
 
-            <div>
-              <label htmlFor="workspace" className="font-bold">
-                Workspace
-              </label>
-
-              <div className="relative">
-                <div
-                  className="border rounded-md p-2 cursor-pointer"
-                  onClick={() => setShowWorkspace(true)}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 bg-black rounded-md"></div>
-                      <p className="">mohammadrahi003</p>
-                    </div>
-
-                    <ChevronDown strokeWidth={1.5} className="w-5 h-5" />
-                  </div>
-                </div>
-
-                {showWorkspace && (
-                  <>
-                    <div className="absolute left-0 right-0 top-full border border-gray-200 bg-white z-10 shadow-md rounded-md">
-                      <div className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer transition">
-                        <div className="flex items-center gap-2">
-                          <div className="w-5 h-5 bg-black rounded-md"></div>
-                          <p className="">My Projects</p>
-                        </div>
-
-                        <Check strokeWidth={1.5} className="w-4 h-4" />
-                      </div>
-                      <div className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer transition">
-                        <div className="flex items-center gap-2">
-                          <div className="w-5 h-5 bg-indigo-600 rounded-md"></div>
-                          <p className="">Team name</p>
-                        </div>
-
-                        <Check strokeWidth={1.5} className="w-4 h-4" />
-                      </div>
-                    </div>
-
-                    <div
-                      onClick={() => setShowWorkspace(false)}
-                      className="fixed top-0 left-0 bottom-0 right-0"
-                    ></div>
-                  </>
-                )}
-              </div>
-            </div>
+            <WorkspaceSelector
+              currentWorkspace={
+                workspaces.find((w) => w.team_id === projectData?.team_id) ||
+                workspaces[0]
+              }
+              workspaces={workspaces}
+              onSelect={(workspace) =>
+                setProjectData({ ...projectData, team_id: workspace.team_id })
+              }
+            />
 
             <div>
               <button

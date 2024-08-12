@@ -1,10 +1,10 @@
 import React from "react";
-import { Textarea } from "../ui";
 import {
   FaceSmileIcon,
   MicrophoneIcon,
   PaperClipIcon,
 } from "@heroicons/react/24/outline";
+import Textarea from "../ui/textarea";
 
 const AddComentForm = ({ onCancelClick }: { onCancelClick?: () => void }) => {
   return (

@@ -1,10 +1,10 @@
 // Role and Permission structures
-enum RoleType {
+export enum RoleType {
   ADMIN = "ADMIN",
   MEMBER = "MEMBER",
 }
 
-enum Permission {
+export enum Permission {
   CREATE_TASK = "CREATE_TASK",
   EDIT_TASK = "EDIT_TASK",
   DELETE_TASK = "DELETE_TASK",
@@ -17,31 +17,33 @@ enum Permission {
   MANAGE_ROLES = "MANAGE_ROLES",
 }
 
-interface Role {
-  id: number;
+export interface TeamRole {
   name: RoleType;
   permissions: Permission[];
 }
 
-// Team type
-export interface TeamType {
-  id: number;
+export interface BaseTeamType {
   name: string;
-  industry: string;
-  workType: string;
-  role: string;
-  organizationSize: string;
   avatar_url: string | null;
   profile_id: string;
   updated_at: string;
   created_at: string;
 }
 
+// Team type
+export interface TeamType extends BaseTeamType {
+  id: number;
+  industry: string;
+  work_type: string;
+  work_role: string;
+  organization_size: string;
+}
+
 // Team member type
 export interface TeamMemberType {
   id: number;
   team_id: number;
-  profileId: string; // UUID
-  role: Role;
-  joinedAt: Date;
+  profile_id: string; // UUID
+  team_role: TeamRole;
+  joined_at: string;
 }

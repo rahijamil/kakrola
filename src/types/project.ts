@@ -7,7 +7,7 @@ export interface ProjectType {
   profile_id: string; // UUID
   name: string;
   slug: string;
-  icon_url: string; // Store as string in DB, convert to ReactNode in frontend
+  color: string; // Store as string in DB, convert to ReactNode in frontend
   is_favorite: boolean;
   view: ViewTypes["view"];
   updated_at: string;

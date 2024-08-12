@@ -144,7 +144,7 @@ const ProjectItem = ({
         >
           <div className="flex items-center">
             <div className="p-2">
-              <HashtagIcon className="w-4 h-4" />
+              <HashtagIcon className={`w-4 h-4 text-${project.color}`} />
             </div>
             {project.name}
           </div>
@@ -252,6 +252,7 @@ const ProjectItem = ({
           onClose={() => setAboveBellow(null)}
           aboveBellow={aboveBellow}
           project={project}
+          workspaceId={project.team_id}
         />
       )}
     </li>
