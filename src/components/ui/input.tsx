@@ -35,6 +35,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               fullWidth ? "w-full" : ""
             } ${className} ${Icon && "pl-10"}`}
             ref={ref}
+            id={id}
             {...props}
           />
         </div>

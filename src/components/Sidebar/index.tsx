@@ -18,6 +18,7 @@ import {
   LayoutGrid,
   CircleCheck,
   File,
+  LucideProps,
 } from "lucide-react";
 import AddTaskTextButton from "@/components/AddTaskTextButton";
 import AddTaskModal from "@/components/AddTask/AddTaskModal";
@@ -47,19 +48,27 @@ const Sidebar: React.FC = () => {
 
   const [isResizing, setIsResizing] = useState(false);
 
-  const menuItems = [
-    { id: 1, icon: Search, text: "Search", onClick: () => {} },
+  const menuItems: {
+    id: number;
+    icon: React.ForwardRefExoticComponent<
+      Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+    >;
+    text: string;
+    path?: string;
+    onClick?: () => void;
+  }[] = [
+    // { id: 1, icon: Search, text: "Search", onClick: () => {} },
     { id: 2, icon: Inbox, text: "Inbox", path: "/app/inbox" },
     { id: 3, icon: Calendar, text: "Today", path: "/app" },
-    { id: 4, icon: CalendarDays, text: "Upcoming", path: "/app/upcoming" },
-    {
-      id: 4,
-      icon: LayoutGrid,
-      text: "Filters & Labels",
-      path: "/app/filters-labels",
-    },
-    { id: 5, icon: CircleCheck, text: "Commpleted", path: "#" },
-    { id: 6, icon: File, text: "Docs", path: "/app/docs" },
+    // { id: 4, icon: CalendarDays, text: "Upcoming", path: "/app/upcoming" },
+    // {
+    //   id: 4,
+    //   icon: LayoutGrid,
+    //   text: "Filters & Labels",
+    //   path: "/app/filters-labels",
+    // },
+    // { id: 5, icon: CircleCheck, text: "Commpleted", path: "#" },
+    // { id: 6, icon: File, text: "Docs", path: "/app/docs" },
   ];
 
   const addTask = (newTask: TaskType) => {
@@ -269,7 +278,10 @@ const Sidebar: React.FC = () => {
                 </div>
               )}
 
-              <MyProjects setShowAddProjectModal={setShowAddProjectModal} sidebarWidth={sidebarWidth} />
+              <MyProjects
+                setShowAddProjectModal={setShowAddProjectModal}
+                sidebarWidth={sidebarWidth}
+              />
             </nav>
 
             {/* <div className="p-4 border-t border-gray-200">

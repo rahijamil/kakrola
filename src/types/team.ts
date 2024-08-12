@@ -27,10 +27,14 @@ interface Role {
 export interface TeamType {
   id: number;
   name: string;
+  industry: string;
+  workType: string;
+  role: string;
+  organizationSize: string;
   avatar_url: string | null;
   profile_id: string;
-  updated_at: Date;
-  created_at: Date;
+  updated_at: string;
+  created_at: string;
 }
 
 // Team member type

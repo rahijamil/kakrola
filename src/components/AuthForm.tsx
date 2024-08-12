@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 
 interface AuthFormProps {
   type: "signup" | "login" | "forgotPassword" | "updatePassword";
-  onSubmit: (data: { email: string; password?: string }) => Promise<{
+  onSubmit: (data: { email: string; password: string }) => Promise<{
     success: boolean;
     error: string;
   }>;
@@ -124,7 +124,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
         setMessage("Password reset link has been sent to your email.");
       }
 
-      if(result.success){
+      if (result.success) {
         router.push("/app");
       }
     } catch (error: any) {

@@ -1,171 +1,263 @@
-import { Check, Users, X } from "lucide-react";
 import React, { useState } from "react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import {
+  X,
+  ChevronRight,
+  Users,
+  Briefcase,
+  Building,
+  UserCircle,
+  Users2,
+  ChevronDown,
+  LucideProps,
+  Group,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { TeamType } from "@/types/team";
-import Image from "next/image";
+import { useAuthProvider } from "@/context/AuthContext";
+
+const CustomSelect = ({
+  id,
+  label,
+  Icon,
+  value,
+  onChange,
+  options,
+  placeholder,
+}: {
+  id: string;
+  label: string;
+  Icon: React.ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+  >;
+  value: string;
+  onChange: (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | { target: { id: string; value: string } }
+  ) => void;
+  options: string[];
+  placeholder: string;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <label
+        htmlFor={id}
+        className="block text-sm font-medium text-gray-700 mb-1"
+      >
+        {label}
+      </label>
+      <div
+        className="flex items-center justify-between w-full p-2 border border-gray-300 rounded-md cursor-pointer"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <div className="flex items-center">
+          <Icon className="w-5 h-5 text-gray-400 mr-2" />
+          <span className={`${value ? "text-gray-900" : "text-gray-400"}`}>
+            {value || placeholder}
+          </span>
+        </div>
+        <ChevronDown className="w-5 h-5 text-gray-400" />
+      </div>
+
+      {isOpen && (
+        <>
+          <ul className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+            {options.map((option) => (
+              <li
+                key={option}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                onClick={() => {
+                  onChange({ target: { id, value: option } });
+                  setIsOpen(false);
+                }}
+              >
+                {option}
+              </li>
+            ))}
+          </ul>
+
+          <div
+            onClick={() => setIsOpen(false)}
+            className="fixed top-0 left-0 bottom-0 right-0"
+          ></div>
+        </>
+      )}
+    </div>
+  );
+};
 
 const AddTeam = ({ onClose }: { onClose: () => void }) => {
-  const [teamData, setTeamData] = useState<TeamType>();
+  const { profile } = useAuthProvider();
+  const [teamData, setTeamData] = useState<Omit<TeamType, "id">>({
+    name: "",
+    industry: "",
+    workType: "",
+    role: "",
+    organizationSize: "",
+    avatar_url: "",
+    profile_id: profile?.id || "",
+    updated_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+  });
   const [step, setStep] = useState<0 | 1>(0);
+
+  const handleInputChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | { target: { id: string; value: string } }
+  ) => {
+    setTeamData({ ...teamData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (step === 0) {
+      setStep(1);
+    } else {
+      // Handle team creation logic here
+      console.log("Team data:", teamData);
+      onClose();
+    }
+  };
+
+  const industryOptions = [
+    "Technology",
+    "Healthcare",
+    "Finance",
+    "Education",
+    "Retail",
+    "Manufacturing",
+    "Other",
+  ];
+
+  const workTypeOptions = [
+    "Software Development",
+    "Marketing",
+    "Sales",
+    "Customer Support",
+    "Human Resources",
+    "Other",
+  ];
+
+  const roleOptions = [
+    "I own or run the company",
+    "I lead a team within the company",
+    "I'm a team member",
+  ];
+
+  const organizationSizeOptions = [
+    "1",
+    "2-10",
+    "11-50",
+    "51-100",
+    "101-250",
+    "More than 250",
+  ];
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 bottom-0 flex items-center md:items-start md:pt-40 z-10 justify-center bg-black/40"
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-md shadow-lg flex flex-col-reverse md:flex-row w-11/12 max-w-md md:max-w-[800px] relative max-h-[700px] overflow-y-auto"
+        className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4"
         onClick={(ev) => ev.stopPropagation()}
       >
-        {/* Left Section */}
-        <div className="flex-1 pt-4 md:pt-8 p-8 pb-0 flex flex-col">
-          <div className="flex-1 md:space-y-6">
-            <div className="hidden md:block">
-              <h2 className="text-xl font-semibold">
-                {step == 0 ? "Add a team" : "About you and your team"}
-              </h2>
-              <p className="text-sm text-gray-600 mt-2">
-                {step == 0 ? (
-                  <>
-                    Each team comes with 5 free projects. Upgrade as your needs
-                    grow.{" "}
-                    <span className="font-semibold text-gray-800">
-                      Each team is billed separately.
-                    </span>
-                  </>
-                ) : (
-                  "Your answers will help tailor your experience."
-                )}
+        <div className="flex justify-between items-center p-4 border-b border-gray-200">
+          <h2 className="text-xl font-semibold">
+            {step === 0 ? "Add a team" : "Tell us about your team"}
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition p-1 rounded-md"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6">
+          {step === 0 ? (
+            <div className="space-y-4">
+              <Input
+                type="text"
+                id="name"
+                label="Team name"
+                Icon={Users}
+                value={teamData.name}
+                onChange={handleInputChange}
+                placeholder="The name of your team or company"
+                required
+                autoComplete="off"
+              />
+              <p className="text-sm text-gray-500">
+                Keep it something simple your teammates will recognize.
               </p>
             </div>
-
-            <div>
-              {step == 0 ? (
-                <Input
-                  type="text"
-                  id="teamName"
-                  Icon={Users}
-                  label="Team Name"
-                  placeholder="The name of your team or company"
-                />
-              ) : (
-                <div className="space-y-4">
-                  <Input
-                    type="text"
-                    id="teamName"
-                    Icon={Users}
-                    label="What industry do you work in?"
-                    placeholder="Select your answer"
-                  />
-
-                  <Input
-                    type="text"
-                    id="teamName"
-                    Icon={Users}
-                    label="What work do you do?"
-                    placeholder="Select your answer"
-                  />
-
-                  <Input
-                    type="text"
-                    id="teamName"
-                    Icon={Users}
-                    label="What’s your role?"
-                    placeholder="Select your answer"
-                  />
-
-                  <Input
-                    type="text"
-                    id="teamName"
-                    Icon={Users}
-                    label="How big is your organization?"
-                    placeholder="Select your answer"
-                  />
-                </div>
-              )}
-
-              <p className="mt-2 text-sm text-gray-500">
-                {step == 0
-                  ? "Keep it something simple your teammates will recognize."
-                  : "Team of one? Please consider the Pro plan instead"}
-              </p>
+          ) : (
+            <div className="space-y-4">
+              <CustomSelect
+                id="industry"
+                label="What industry do you work in?"
+                Icon={Briefcase}
+                value={teamData.industry}
+                onChange={handleInputChange}
+                options={industryOptions}
+                placeholder="Select your answer"
+              />
+              <CustomSelect
+                id="workType"
+                label="What work do you do?"
+                Icon={Building}
+                value={teamData.workType}
+                onChange={handleInputChange}
+                options={workTypeOptions}
+                placeholder="Select your answer"
+              />
+              <CustomSelect
+                id="role"
+                label="What's your role?"
+                Icon={UserCircle}
+                value={teamData.role}
+                onChange={handleInputChange}
+                options={roleOptions}
+                placeholder="Select your answer"
+              />
+              <CustomSelect
+                id="organizationSize"
+                label="How big is your organization"
+                Icon={Users}
+                value={teamData.organizationSize}
+                onChange={handleInputChange}
+                options={organizationSizeOptions}
+                placeholder="Select your answer"
+              />
             </div>
-          </div>
+          )}
 
-          <div className="mt-4 sticky left-0 bottom-0 right-0 bg-white pb-8">
-            <Button fullWidth onClick={() => setStep(1)}>
-              Get started
+          <div className="mt-6">
+            <Button type="submit" fullWidth>
+              {step === 0 ? "Get started" : "Setup and continue"}
+              {step === 0 && <ChevronRight size={16} className="ml-2" />}
             </Button>
-            <p className="mt-4 text-xs text-gray-500">
-              By creating a team, you agree to our{" "}
-              <a href="#" className="underline text-gray-600">
-                Terms of Service
-              </a>{" "}
-              regarding team workspaces.
-            </p>
           </div>
-        </div>
+        </form>
 
-        {/* Right Section */}
-        <div className="md:w-[41%] md:bg-indigo-50/50 pb-4 md:pb-8 p-8 rounded-md flex flex-col gap-4 md:gap-6 items-center">
-          <Image src="/team-illustration.png" alt="Team Illustration" width={400} height={400} />
-
-          <div className="md:hidden">
-            <h2 className="text-xl font-semibold">Add a team</h2>
-            <p className="text-sm text-gray-600 mt-2">
-              Each team comes with 5 free projects. Upgrade as your needs grow.{" "}
-              <span className="font-semibold text-gray-800">
-                Each team is billed separately.
-              </span>
-            </p>
+        {step === 0 && (
+          <div className="px-6 pb-6 text-xs text-gray-500">
+            By creating a team, you agree to our{" "}
+            <a href="#" className="text-blue-600 hover:underline">
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a href="#" className="text-blue-600 hover:underline">
+              Privacy Policy
+            </a>
+            .
           </div>
-
-          <div className="md:px-4">
-            <h3 className="text-base font-semibold">
-              A home for your team&apos;s work
-            </h3>
-            <ul className="mt-2 text-[13px] text-gray-600 md:space-y-2 grid grid-cols-2 md:grid-cols-1 gap-x-2">
-              <li className="flex items-center md:items-start gap-2">
-                <div>
-                  <Check strokeWidth={1.5} className="text-green-500 w-4 h-4" />
-                </div>
-                Get a shared workspace for team projects
-              </li>
-              <li className="flex items-center md:items-start gap-2">
-                <div>
-                  <Check strokeWidth={1.5} className="text-green-500 w-4 h-4" />
-                </div>
-                Easily share work via links
-              </li>
-              <li className="flex items-center md:items-start gap-2">
-                <div>
-                  <Check strokeWidth={1.5} className="text-green-500 w-4 h-4" />
-                </div>
-                Filter personal from team tasks
-              </li>
-              <li className="flex items-center md:items-start gap-2">
-                <div>
-                  <Check strokeWidth={1.5} className="text-green-500 w-4 h-4" />
-                </div>
-                Control access to team data
-              </li>
-              <li className="flex items-center md:items-start gap-2">
-                <div>
-                  <Check strokeWidth={1.5} className="text-green-500 w-4 h-4" />
-                </div>
-                Centralize member management
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <button
-          className="absolute right-2 top-2 p-[6px] hover:bg-gray-200 rounded-md transition"
-          onClick={onClose}
-        >
-          <X strokeWidth={1.5} className="w-5 h-5 text-gray-600" />
-        </button>
+        )}
       </div>
     </div>
   );

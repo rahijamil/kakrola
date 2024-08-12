@@ -7,6 +7,7 @@ const SignUpPage = () => (
   <AuthForm
     type="signup"
     onSubmit={async ({ email, password }) => {
+      "use server";
       if (!password) {
         throw new Error("Password is required for sign up.");
       }

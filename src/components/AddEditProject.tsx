@@ -3,7 +3,7 @@ import React, { FormEvent, useState } from "react";
 import { Dialog, DialogHeader, DialogTitle } from "./ui";
 import { ProjectType } from "@/types/project";
 import LayoutView from "./LayoutView";
-import { CircleHelp, SquareGanttChart } from "lucide-react";
+import { Check, ChevronDown, CircleHelp, SquareGanttChart } from "lucide-react";
 import { ToggleSwitch } from "./ui/ToggleSwitch";
 import { Input } from "./ui/input";
 import { Select } from "./ui/select";
@@ -174,6 +174,8 @@ const AddEditProject = ({
     onClose();
   };
 
+  const [showWorkspace, setShowWorkspace] = useState(false);
+
   return (
     <Dialog size="xs" onClose={onClose}>
       <>
@@ -227,29 +229,60 @@ const AddEditProject = ({
               <label htmlFor="workspace" className="font-bold">
                 Workspace
               </label>
-              <Select
-                // label="Workspace"
-                value={projectData.team_id ? "Shared" : "Personal"}
-                onChange={(e) =>
-                  setProjectData({
-                    ...projectData,
-                    team_id: parseInt(e.target.value),
-                  })
-                }
-              >
-                <option value={0}>Personal</option>
-                <option value={1}>Shared</option>
-              </Select>
+
+              <div className="relative">
+                <div
+                  className="border rounded-md p-2 cursor-pointer"
+                  onClick={() => setShowWorkspace(true)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 bg-black rounded-md"></div>
+                      <p className="">mohammadrahi003</p>
+                    </div>
+
+                    <ChevronDown strokeWidth={1.5} className="w-5 h-5" />
+                  </div>
+                </div>
+
+                {showWorkspace && (
+                  <>
+                    <div className="absolute left-0 right-0 top-full border border-gray-200 bg-white z-10 shadow-md rounded-md">
+                      <div className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer transition">
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 bg-black rounded-md"></div>
+                          <p className="">My Projects</p>
+                        </div>
+
+                        <Check strokeWidth={1.5} className="w-4 h-4" />
+                      </div>
+                      <div className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer transition">
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 bg-indigo-600 rounded-md"></div>
+                          <p className="">Team name</p>
+                        </div>
+
+                        <Check strokeWidth={1.5} className="w-4 h-4" />
+                      </div>
+                    </div>
+
+                    <div
+                      onClick={() => setShowWorkspace(false)}
+                      className="fixed top-0 left-0 bottom-0 right-0"
+                    ></div>
+                  </>
+                )}
+              </div>
             </div>
 
             <div>
               <button
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 w-full"
                 type="button"
                 onClick={() =>
                   setProjectData((prev) => ({
                     ...prev,
-                    isFavorite: !prev.is_favorite,
+                    is_favorite: !prev.is_favorite,
                   }))
                 }
               >

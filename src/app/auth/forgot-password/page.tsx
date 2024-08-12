@@ -6,6 +6,7 @@ const ForgotPassword = () => (
   <AuthForm
     type="forgotPassword"
     onSubmit={async ({ email }) => {
+      "use server";
       return await forgotPassword(email);
     }}
     additionalFooter={

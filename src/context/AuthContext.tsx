@@ -39,7 +39,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     getAuthUser();
-  }, [supabase]);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ profile }}>{children}</AuthContext.Provider>
