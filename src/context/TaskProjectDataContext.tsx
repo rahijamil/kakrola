@@ -51,8 +51,6 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
         if (!projectError) {
           setProjects(sortProjects(projectData || []));
         }
-        
-        console.log(projectData, projectError)
 
         // Fetch team memberships
         const { data: membershipData, error: membershipError } =

@@ -1,6 +1,7 @@
+"use client";
 import React from "react";
 import { FcGoogle } from "react-icons/fc";
-import { FaApple, FaGithub } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { signInWithProvider } from "./action";
 
@@ -9,12 +10,7 @@ const SocialLogin = () => {
     {
       name: "Google",
       icon: FcGoogle,
-      onClick: () => {},
-    },
-    {
-      name: "Apple",
-      icon: FaApple,
-      onClick: () => {},
+      onClick: () => signInWithProvider("google"),
     },
     {
       name: "GitHub",
@@ -28,7 +24,12 @@ const SocialLogin = () => {
       <ul className="w-full space-y-3">
         {socialProviders.map((provider) => (
           <li key={provider.name}>
-            <Button variant="outline" color="gray" fullWidth>
+            <Button
+              variant="outline"
+              color="gray"
+              fullWidth
+              onClick={provider.onClick}
+            >
               <provider.icon className="w-5 h-5 mr-2" />
               Continue with {provider.name}
             </Button>

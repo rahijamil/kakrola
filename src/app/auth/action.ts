@@ -93,16 +93,20 @@ export async function updatePassword(newPassword: string) {
   redirect("/auth/login");
 }
 
-export async function signInWithProvider(provider: "github") {
+export async function signInWithProvider(provider: "google" | "github") {
   const supabaseServer = createClient();
-  const { error } = await supabaseServer.auth.signInWithOAuth({
+  const { data, error } = await supabaseServer.auth.signInWithOAuth({
     provider,
+    options: {
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
+    },
   });
 
   if (error) {
     return { success: false, error: error.message || "Unknown error" };
   }
 
-  revalidatePath("/", "layout");
-  redirect("/app");
+  if (data.url) {
+    redirect(data.url);
+  }
 }
