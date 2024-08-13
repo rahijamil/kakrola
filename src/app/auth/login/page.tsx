@@ -1,7 +1,11 @@
 import React from "react";
 import AuthForm from "@/components/AuthForm";
 import { login } from "@/app/auth/action";
-import SocialLogin from "../SocialLogin";
+
+import dynamic from "next/dynamic";
+
+// Dynamically import the SocialLogin component with no SSR
+const SocialLogin = dynamic(() => import("../SocialLogin"), { ssr: false });
 
 const LoginPage = () => (
   <AuthForm

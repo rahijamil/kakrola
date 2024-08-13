@@ -92,3 +92,17 @@ export async function updatePassword(newPassword: string) {
   revalidatePath("/", "layout");
   redirect("/auth/login");
 }
+
+export async function signInWithProvider(provider: "github") {
+  const supabaseServer = createClient();
+  const { error } = await supabaseServer.auth.signInWithOAuth({
+    provider,
+  });
+
+  if (error) {
+    return { success: false, error: error.message || "Unknown error" };
+  }
+
+  revalidatePath("/", "layout");
+  redirect("/app");
+}

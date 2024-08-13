@@ -168,29 +168,14 @@ const AuthForm: React.FC<AuthFormProps> = ({
             </div>
           </div>
 
-          {socialButtons && (
-            <>
-              {socialButtons}
-
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">
-                    Or continue with
-                  </span>
-                </div>
-              </div>
-            </>
-          )}
+          {socialButtons && <>{socialButtons}</>}
 
           {error && <div className="text-red-600 text-center">{error}</div>}
           {message && (
             <div className="text-green-600 text-center">{message}</div>
           )}
 
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6 mt-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
               {type !== "updatePassword" &&
                 message !==

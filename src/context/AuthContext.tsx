@@ -1,7 +1,6 @@
 "use client";
 import { ProfileType } from "@/types/user";
 import { createClient } from "@/utils/supabase/client";
-import { User } from "@supabase/auth-js";
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext<{ profile: ProfileType | null }>({

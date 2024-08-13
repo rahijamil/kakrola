@@ -18,14 +18,18 @@ import {
   SquarePlusIcon,
   TargetIcon,
   UserIcon,
+  Users,
   WalletIcon,
   X,
 } from "lucide-react";
 import AddTeam from "./AddTeam";
+import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import Image from "next/image";
 
 const SettingsModal = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const { teams } = useTaskProjectDataProvider();
 
   const [showAddTeam, setShowAddTeam] = useState(false);
 
@@ -62,18 +66,18 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
     //   path: "/app/settings/subscription",
     //   icon: WalletIcon,
     // },
-    // {
-    //   id: 5,
-    //   name: "Theme",
-    //   path: "/app/settings/theme",
-    //   icon: PaletteIcon,
-    // },
-    // {
-    //   id: 6,
-    //   name: "Sidebar",
-    //   path: "/app/settings/sidebar",
-    //   icon: PanelLeft,
-    // },
+    {
+      id: 5,
+      name: "Theme",
+      path: "/app/settings/theme",
+      icon: PaletteIcon,
+    },
+    {
+      id: 6,
+      name: "Sidebar",
+      path: "/app/settings/sidebar",
+      icon: PanelLeft,
+    },
     // {
     //   id: 7,
     //   name: "Quick Add",
@@ -148,6 +152,62 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                           {item.name}
                         </Link>
                       )}
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+
+              <nav className="p-3">
+                <ul className="space-y-1">
+                  {teams.map((team) => (
+                    <li key={team.id} className="space-y-2">
+                      <div className="font-medium">{team.name}</div>
+                      <ul>
+                        <li>
+                          <Link
+                            href={`/app/settings/workspaces/${team.id}/settings`}
+                            className="flex items-center gap-2 p-2 rounded-md transition-colors hover:bg-indigo-100 text-gray-700"
+                          >
+                            {team.avatar_url ? (
+                              <Image
+                                src={team.avatar_url}
+                                alt={team.name}
+                                width={20}
+                                height={20}
+                                className="rounded-md"
+                              />
+                            ) : (
+                              <div className="w-6 h-6 min-w-5 min-h-5 bg-indigo-500 rounded-md flex items-center justify-center">
+                                <span className="text-white text-[10px] font-medium">
+                                  {team.name.slice(0, 1).toUpperCase()}
+                                </span>
+                              </div>
+                            )}
+
+                            <span>General</span>
+                          </Link>
+                        </li>
+
+                        <li>
+                          <Link
+                            href={`/app/settings/workspaces/${team.id}/members`}
+                            className="flex items-center gap-2 p-2 rounded-md transition-colors hover:bg-indigo-100 text-gray-700"
+                          >
+                            <Users strokeWidth={1.5} size={20} />
+                            People
+                          </Link>
+                        </li>
+
+                        <li>
+                          <Link
+                            href={`/app/settings/workspaces/${team.id}/billing`}
+                            className="flex items-center gap-2 p-2 rounded-md transition-colors hover:bg-indigo-100 text-gray-700"
+                          >
+                            <WalletIcon strokeWidth={1.5} size={20} />
+                            Subscription
+                          </Link>
+                        </li>
+                      </ul>
                     </li>
                   ))}
                 </ul>
