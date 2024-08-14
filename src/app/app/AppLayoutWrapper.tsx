@@ -1,7 +1,7 @@
 "use client";
 import { useAuthProvider } from "@/context/AuthContext";
 import React from "react";
-import EktaLogo from "../EktaLogo";
+import KriyaLogo from "../KriyaLogo";
 import Spinner from "@/components/ui/Spinner";
 
 const AppLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
@@ -13,7 +13,7 @@ const AppLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
     return (
       <div className="flex items-center justify-center border w-full h-screen">
         <div className="flex flex-col gap-8 items-center justify-center">
-          <EktaLogo size="lg" />
+          <KriyaLogo size="lg" />
           <Spinner />
         </div>
       </div>

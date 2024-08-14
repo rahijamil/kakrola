@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Dialog } from "./ui";
 import {
   AlarmClock,
+  ArrowLeft,
   BellIcon,
   Blocks,
   CalendarDays,
@@ -140,7 +141,9 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                         <Link
                           href={item.path}
                           className={`flex items-center px-2 py-2 rounded-md transition-colors ${
-                            item.path === pathname
+                            item.path === pathname ||
+                            (item.path == "/app/settings/account" &&
+                              pathname == "/app/settings/account/password")
                               ? "bg-indigo-100 text-indigo-700"
                               : "hover:bg-gray-200 text-gray-700"
                           }`}
@@ -227,9 +230,21 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
 
           <div className="flex-1">
             <div className="p-3 flex items-center justify-between border-b border-gray-100">
-              <p className="font-bold">
-                {menuItems.find((item) => item.path === pathname)?.name}
-              </p>
+              <div className="flex items-center gap-2">
+                {pathname === "/app/settings/account/password" && (
+                  <button
+                    className="p-1 rounded-md hover:bg-gray-100 transition"
+                    onClick={() => router.back()}
+                  >
+                    <ArrowLeft strokeWidth={1.5} size={20} />
+                  </button>
+                )}
+                <p className="font-bold">
+                  {pathname === "/app/settings/account/password"
+                    ? "Password"
+                    : menuItems.find((item) => item.path === pathname)?.name}
+                </p>
+              </div>
 
               <button
                 className="p-1 rounded-md hover:bg-gray-100 transition"

@@ -1,6 +1,7 @@
+import Image from "next/image";
 import React from "react";
 
-const EktaLogo = ({
+const KriyaLogo = ({
   size = "sm",
   isTitle,
 }: {
@@ -10,7 +11,7 @@ const EktaLogo = ({
   return (
     <div className="flex items-center gap-2">
       <div
-        className={`rounded-md bg-gradient-to-b from-indigo-500 to-indigo-700 flex items-center justify-center ${
+        className={`relative ${
           size == "sm"
             ? "w-9 h-9"
             : size == "md"
@@ -20,23 +21,7 @@ const EktaLogo = ({
             : "w-9 h-9"
         }`}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className={`text-white ${
-            size == "sm"
-              ? "h-7 w-7"
-              : size == "md"
-              ? "h-9 w-9"
-              : size == "lg"
-              ? "h-12 w-12"
-              : "h-8 w-8"
-          }`}
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          aria-hidden="true"
-        >
-          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-        </svg>
+        <Image src="/kriya.svg" alt="Ekta Logo" fill />
       </div>
 
       {isTitle && (
@@ -51,11 +36,11 @@ const EktaLogo = ({
               : "text-xl"
           }`}
         >
-          Ekta
+          Kriya
         </span>
       )}
     </div>
   );
 };
 
-export default EktaLogo;
+export default KriyaLogo;

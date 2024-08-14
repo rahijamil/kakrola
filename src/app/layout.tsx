@@ -14,8 +14,8 @@ const poppins = Poppins({
 const nunito = Nunito({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Ekta",
-  description: "Ekta",
+  title: "Kriya: Plan Your Tasks",
+  description: "Kriya: Plan Your Tasks",
 };
 
 export default function RootLayout({

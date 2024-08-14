@@ -1,10 +1,10 @@
 "use client";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PasswordInput from "@/components/ui/PasswordInput";
-import EktaLogo from "@/app/EktaLogo";
+import KriyaLogo from "@/app/KriyaLogo";
 import Link from "next/link";
 import Spinner from "./ui/Spinner";
 import { AtSign } from "lucide-react";
@@ -21,6 +21,17 @@ interface AuthFormProps {
   additionalFooter?: JSX.Element;
 }
 
+const passwordCriteria = [
+  { regex: /.{8,}/, message: "At least 8 characters long" },
+  { regex: /[A-Z]/, message: "Include at least one uppercase letter" },
+  { regex: /[a-z]/, message: "Include at least one lowercase letter" },
+  { regex: /\d/, message: "Include at least one number" },
+  {
+    regex: /[!@#$%^&*(),.?":{}|<>]/,
+    message: 'Include at least one special character !@#$%^&*(),.?":{}|<>',
+  },
+];
+
 const AuthForm: React.FC<AuthFormProps> = ({
   type,
   onSubmit,
@@ -36,6 +47,36 @@ const AuthForm: React.FC<AuthFormProps> = ({
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
+
+  useEffect(() => {
+    if (type !== "forgotPassword" && type !== "login") {
+      const failedCriteria = passwordCriteria.filter(
+        ({ regex }) => !regex.test(password)
+      );
+
+      if (failedCriteria.length > 0) {
+        setError(
+          <div className="text-left text-sm">
+            <p className="font-semibold mb-2">Password must:</p>
+            <ul className="list-inside list-disc space-y-1">
+              {passwordCriteria.map(({ regex, message }, index) => (
+                <li
+                  key={index}
+                  className={
+                    regex.test(password) ? "text-green-600" : "text-red-500"
+                  }
+                >
+                  {message}
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+        setLoading(false);
+        return;
+      }
+    }
+  }, [password]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,18 +107,6 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
     // Password validation for signup and login
     if (type !== "forgotPassword" && type !== "login") {
-      const passwordCriteria = [
-        { regex: /.{8,}/, message: "At least 8 characters long" },
-        { regex: /[A-Z]/, message: "Include at least one uppercase letter" },
-        { regex: /[a-z]/, message: "Include at least one lowercase letter" },
-        { regex: /\d/, message: "Include at least one number" },
-        {
-          regex: /[!@#$%^&*(),.?":{}|<>]/,
-          message:
-            'Include at least one special character !@#$%^&*(),.?":{}|<>',
-        },
-      ];
-
       const failedCriteria = passwordCriteria.filter(
         ({ regex }) => !regex.test(password)
       );
@@ -148,7 +177,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
           className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-2xl"
         >
           <div className="text-center space-y-6">
-            <EktaLogo size="md" isTitle />
+            <KriyaLogo size="md" isTitle />
             <div>
               <h2 className="text-3xl font-extrabold text-gray-900">
                 {type === "signup" && "Join Ekta Today"}

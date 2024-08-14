@@ -87,21 +87,21 @@ const LandingPage = () => {
       role: "Project Manager",
       company: "TechCorp",
       quote:
-        "Ekta has revolutionized how we manage projects. It's intuitive, powerful, and has greatly improved our team's productivity.",
+        "Kriya has revolutionized how we manage projects. It's intuitive, powerful, and has greatly improved our team's productivity.",
     },
     {
       name: "Michael Chen",
       role: "CEO",
       company: "StartupX",
       quote:
-        "As a fast-growing startup, we needed a tool that could scale with us. Ekta has been the perfect solution for our team collaboration needs.",
+        "As a fast-growing startup, we needed a tool that could scale with us. Kriya has been the perfect solution for our team collaboration needs.",
     },
     {
       name: "Emily Rodriguez",
       role: "Marketing Director",
       company: "CreativeWorks",
       quote:
-        "The templates in Ekta have saved us countless hours. It's like having a productivity expert guiding us through our workflows.",
+        "The templates in Kriya have saved us countless hours. It's like having a productivity expert guiding us through our workflows.",
     },
   ];
 
@@ -123,7 +123,7 @@ const LandingPage = () => {
                 className="text-5xl font-extrabold text-gray-900 sm:text-6xl md:text-7xl"
               >
                 <span className="block">Unify Your Work with</span>
-                <span className="block text-indigo-600 mt-2">Ekta</span>
+                <span className="block text-indigo-600 mt-2">Kriya</span>
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -165,7 +165,7 @@ const LandingPage = () => {
                 Everything you need to stay organized
               </p>
               <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-                Ekta brings together the best of task management, note-taking,
+                Kriya brings together the best of task management, note-taking,
                 and team collaboration in one unified platform.
               </p>
             </div>
@@ -206,7 +206,7 @@ const LandingPage = () => {
                 Interactive Demo
               </h2>
               <p className="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl lg:text-5xl">
-                Experience Ekta in Action
+                Experience Kriya in Action
               </p>
             </div>
             <div className="relative">
@@ -220,7 +220,7 @@ const LandingPage = () => {
                 <div className="aspect-w-16 aspect-h-9 relative">
                   <Image
                     src=""
-                    alt="Ekta Demo"
+                    alt="Kriya Demo"
                     className="object-cover"
                     fill
                   />
@@ -273,7 +273,7 @@ const LandingPage = () => {
                 For Teams
               </h2>
               <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
-                Empower Your Team with Ekta
+                Empower Your Team with Kriya
               </p>
               <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
                 Boost collaboration and productivity across your entire
@@ -452,7 +452,7 @@ const LandingPage = () => {
               <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
                 <span className="block">Ready to boost your productivity?</span>
                 <span className="block text-indigo-200">
-                  Start using Ekta today.
+                  Start using Kriya today.
                 </span>
               </h2>
               <div className="mt-8 flex lg:mt-0 lg:flex-shrink-0">

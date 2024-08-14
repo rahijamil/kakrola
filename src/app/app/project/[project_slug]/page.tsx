@@ -1,5 +1,5 @@
 "use client";
-import EktaLogo from "@/app/EktaLogo";
+import KriyaLogo from "@/app/KriyaLogo";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import TaskViewSwitcher from "@/components/TaskViewSwitcher";
 import { Button } from "@/components/ui/button";

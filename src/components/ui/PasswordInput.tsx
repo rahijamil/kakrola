@@ -10,10 +10,12 @@ const PasswordInput = ({
   password,
   setPassword,
   label,
+  required = false
 }: {
   password: string;
   setPassword: (password: string) => void;
   label?: string;
+  required?: boolean
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -33,7 +35,7 @@ const PasswordInput = ({
           id={id}
           name="password"
           type={showPassword ? "text" : "password"}
-          required
+          required={required}
           Icon={LockClosedIcon}
           className="pl-10 w-full pr-10" // Added pr-10 for spacing
           placeholder={label ? label : "Password"}

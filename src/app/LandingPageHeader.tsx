@@ -2,7 +2,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MenuIcon, XIcon } from "lucide-react";
-import EktaLogo from "./EktaLogo";
+import KriyaLogo from "./KriyaLogo";
 import { motion } from "framer-motion";
 import { useAuthProvider } from "@/context/AuthContext";
 
@@ -47,7 +47,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex-shrink-0 flex items-center">
-                <EktaLogo size="sm" isTitle />
+                <KriyaLogo size="sm" isTitle />
               </Link>
 
               {!forAuth && (

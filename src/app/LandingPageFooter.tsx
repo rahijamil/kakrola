@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+import KriyaLogo from "./KriyaLogo";
 
 const LandingPageFooter = () => {
   return (
@@ -10,20 +11,7 @@ const LandingPageFooter = () => {
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
-            <div className="flex items-center space-x-2">
-              <div className="w-9 h-9 rounded-md bg-gradient-to-b from-indigo-500 to-indigo-700 flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-7 w-7 text-white"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-              </div>
-              <span className="text-2xl font-bold text-indigo-600">Ekta</span>
-            </div>
+            <KriyaLogo size="md" isTitle />
             <p className="text-gray-700 text-base">
               Making the world more productive, one task at a time.
             </p>
