@@ -1,5 +1,13 @@
 "use client";
-import React, { Dispatch, forwardRef, ReactNode, SetStateAction } from "react";
+import { LucideProps } from "lucide-react";
+import React, {
+  Dispatch,
+  forwardRef,
+  ForwardRefExoticComponent,
+  ReactNode,
+  RefAttributes,
+  SetStateAction,
+} from "react";
 
 // Dialog Component
 interface DialogProps {
@@ -85,7 +93,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           </label>
         )}
         <input
-          className={`w-full transition py-1 outline-none text-sm ${
+          className={`w-full transition py-1 outline-none ${
             label &&
             "px-2 border rounded-md border-gray-200 focus:border-gray-400"
           } ${className}`}
@@ -100,7 +108,48 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
 Input.displayName = "Input";
 
+interface TextareaProps extends React.InputHTMLAttributes<HTMLTextAreaElement> {
+  fullWidth?: boolean;
+  label?: string;
+  Icon?: ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+  >;
+  rows?: number;
+}
 
+export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
+  ({ className, fullWidth = false, label, Icon, id, rows, ...props }, ref) => {
+    return (
+      <div className="space-y-1">
+        {label && (
+          <label htmlFor={id} className="font-bold text-gray-700">
+            {label}
+          </label>
+        )}
+
+        <div className="relative">
+          {Icon && (
+            <Icon
+              strokeWidth={1.5}
+              className="h-5 w-5 text-gray-400 absolute top-1/2 left-3 -translate-y-1/2"
+            />
+          )}
+          <textarea
+            className={`flex w-full rounded-md border-none outline-none placeholder:text-muted-foreground ${
+              fullWidth ? "w-full" : ""
+            } ${className} ${Icon && "pl-10"}`}
+            ref={ref}
+            id={id}
+            rows={rows ? rows : 2}
+            {...props}
+          ></textarea>
+        </div>
+      </div>
+    );
+  }
+);
+
+Textarea.displayName = "Textarea";
 
 // Button Component
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

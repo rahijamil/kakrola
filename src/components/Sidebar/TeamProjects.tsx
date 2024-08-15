@@ -10,6 +10,7 @@ import { useAuthProvider } from "@/context/AuthContext";
 import { TeamType } from "@/types/team";
 import { ProjectType } from "@/types/project";
 import AddEditProject from "../AddEditProject";
+import Link from "next/link";
 
 const TeamProjects = ({
   team,
@@ -29,7 +30,7 @@ const TeamProjects = ({
     if (team) {
       setTeamProjects(projects.filter((p) => p.team_id === team.id));
     }
-  }, [team]);
+  }, [team, projects]);
 
   const handleOnDragEnd = async (result: any) => {
     const { source, destination } = result;
@@ -81,46 +82,49 @@ const TeamProjects = ({
   return (
     <>
       <div className="mt-4 px-2">
-        <div
-          className={`w-full flex items-center justify-between p-1 pl-2 text-gray-700 hover:bg-gray-200 rounded-md transition gap-1`}
-        >
-          <div
-            className={`flex items-center ${
-              sidebarWidth > 220 ? "gap-2" : "gap-1"
-            }`}
+        <div className="relative text-gray-700 hover:bg-gray-200 rounded-md transition">
+          <Link
+            href={`/app/${team.id}`}
+            className={`w-full flex items-center justify-between pl-2 py-[6px] gap-1`}
           >
             <div
               className={`flex items-center ${
                 sidebarWidth > 220 ? "gap-2" : "gap-1"
               }`}
-              style={{
-                maxWidth: `${sidebarWidth - 80}px`,
-              }}
             >
-              {profile?.avatar_url ? (
-                <Image
-                  src={profile.avatar_url}
-                  alt={profile.full_name || profile.username}
-                  width={20}
-                  height={20}
-                  className="rounded-md"
-                />
-              ) : (
-                <div className="w-5 h-5 min-w-5 min-h-5 bg-indigo-500 rounded-md flex items-center justify-center">
-                  <span className="text-white text-[10px] font-medium">
-                    {team.name.slice(0, 1).toUpperCase()}
-                  </span>
-                </div>
-              )}
-              <span
-                className={`font-medium transition overflow-hidden whitespace-nowrap text-ellipsis`}
+              <div
+                className={`flex items-center ${
+                  sidebarWidth > 220 ? "gap-2" : "gap-1"
+                }`}
+                style={{
+                  maxWidth: `${sidebarWidth - 80}px`,
+                }}
               >
-                {team.name}
-              </span>
+                {team.avatar_url ? (
+                  <Image
+                    src={team.avatar_url}
+                    alt={team.name}
+                    width={20}
+                    height={20}
+                    className="rounded-md"
+                  />
+                ) : (
+                  <div className="w-5 h-5 min-w-5 min-h-5 bg-indigo-500 rounded-md flex items-center justify-center">
+                    <span className="text-white text-[10px] font-medium">
+                      {team.name?.slice(0, 1).toUpperCase()}
+                    </span>
+                  </div>
+                )}
+                <span
+                  className={`font-medium transition overflow-hidden whitespace-nowrap text-ellipsis`}
+                >
+                  {team.name}
+                </span>
+              </div>
             </div>
-          </div>
+          </Link>
 
-          <div className="opacity-0 group-hover:opacity-100 transition flex items-center">
+          <div className="opacity-0 group-hover:opacity-100 transition flex items-center absolute right-0 top-1/2 -translate-y-1/2">
             <button
               className="p-1 hover:bg-gray-100 rounded-md transition"
               onClick={() => setTeamId(team.id)}

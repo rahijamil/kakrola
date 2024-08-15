@@ -1,8 +1,4 @@
 import { ProjectType, TaskType } from "@/types/project";
-import {
-  EllipsisHorizontalIcon,
-  HashtagIcon,
-} from "@heroicons/react/24/outline";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import SidebarProjectMoreOptions from "./SidebarProjectMoreOptions";
@@ -13,6 +9,7 @@ import ExportCSVModal from "./SidebarProjectMoreOptions/ExportCSVModal";
 import ImportCSVModal from "./SidebarProjectMoreOptions/ImportCSVModal";
 import AddEditProject from "../AddEditProject";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { Ellipsis, Hash } from "lucide-react";
 
 const ProjectItem = ({
   project,
@@ -129,22 +126,22 @@ const ProjectItem = ({
     <li>
       <div
         ref={moreRef}
-        className={`relative sidebar_project_item flex-1 flex items-center justify-between  transition-colors `}
+        className={`relative sidebar_project_item flex-1 flex items-center justify-between transition-colors rounded-md ${
+          isDragging
+            ? "bg-white shadow-[0_0_8px_1px_rgba(0,0,0,0.2)]"
+            : pathname === `/app/project/${project.slug}`
+            ? "bg-indigo-100 text-indigo-700"
+            : "hover:bg-gray-200 text-gray-700"
+        }`}
       >
         <Link
           href={`/app/project/${project.slug}`}
-          className={`p-[1px] w-full rounded-md ${
-            isDragging
-              ? "bg-white shadow-[0_0_8px_1px_rgba(0,0,0,0.2)]"
-              : pathname === `/app/project/${project.slug}`
-              ? "bg-indigo-100 text-indigo-700"
-              : "hover:bg-gray-200 text-gray-700"
-          }`}
+          className={`p-[1px] w-full`}
           draggable={false}
         >
           <div className="flex items-center">
             <div className="p-2">
-              <HashtagIcon className={`w-4 h-4 text-${project.color}`} />
+              <Hash className={`w-4 h-4 text-${project.color}`} strokeWidth={1.5} />
             </div>
             {project.name}
           </div>
@@ -170,7 +167,7 @@ const ProjectItem = ({
                   : "bg-gray-200"
               } hover:bg-gray-100 rounded-md opacity-0 sidebar_project_item_options w-7 h-7`}
             >
-              <EllipsisHorizontalIcon className="w-5 h-5 text-gray-700" />
+              <Ellipsis className="w-5 h-5 text-gray-700" strokeWidth={1.5} />
             </div>
           </div>
         </div>

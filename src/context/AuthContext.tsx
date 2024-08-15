@@ -1,14 +1,19 @@
 "use client";
 import { ProfileType } from "@/types/user";
-import { createClient } from "@/utils/supabase/client";
-import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { supabaseBrowser } from "@/utils/supabase/client";
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 const AuthContext = createContext<{ profile: ProfileType | null }>({
   profile: null,
 });
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const supabase = createClient();
   const [profile, setProfile] = useState<ProfileType | null>(null);
 
   useEffect(() => {
@@ -16,14 +21,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       const {
         data: { user },
         error,
-      } = await supabase.auth.getUser();
+      } = await supabaseBrowser.auth.getUser();
 
       if (error) {
         console.log("Error loading user data!");
       }
 
       if (user) {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseBrowser
           .from("profiles")
           .select(`id, username, email, full_name, avatar_url`)
           .eq("id", user?.id)
@@ -39,6 +44,40 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     getAuthUser();
   }, []);
+
+  useEffect(() => {
+    // Subscribe to real-time changes for projects
+    const profileSubscription = supabaseBrowser
+      .channel("profiles-all-channel")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "profiles",
+          filter: `id=eq.${profile?.id}`,
+        },
+        (payload) => {
+          if (
+            (payload.eventType === "INSERT" ||
+              payload.eventType === "UPDATE") &&
+            payload.new.id === profile?.id
+          ) {
+            setProfile(payload.new as ProfileType);
+          } else if (
+            payload.eventType === "DELETE" &&
+            payload.old.id === profile?.id
+          ) {
+            setProfile(null);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabaseBrowser.removeChannel(profileSubscription);
+    };
+  }, [profile]);
 
   return (
     <AuthContext.Provider value={{ profile }}>{children}</AuthContext.Provider>

@@ -8,26 +8,46 @@ import React, {
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   fullWidth?: boolean;
   label?: string;
+  labelRight?: ReactNode;
   Icon?: ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
   >;
+  rightIcon?: ReactNode;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, fullWidth = false, label, Icon, id, ...props }, ref) => {
+  (
+    {
+      className,
+      fullWidth = false,
+      label,
+      Icon,
+      id,
+      labelRight,
+      rightIcon,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <div className="space-y-1">
-        {label && (
-          <label htmlFor={id} className="font-bold text-gray-700">
-            {label}
-          </label>
-        )}
+        <div className="flex items-center justify-between">
+          {label && (
+            <>
+              <label htmlFor={id} className="font-bold text-gray-700">
+                {label}
+              </label>
+
+              {labelRight}
+            </>
+          )}
+        </div>
 
         <div className="relative">
           {Icon && (
             <Icon
               strokeWidth={1.5}
-              className="h-5 w-5 text-gray-400 absolute top-1/2 left-3 -translate-y-1/2"
+              className="h-5 w-5 text-gray-400 absolute top-1/2 left-3 -translate-y-1/2 pointer-events-none"
             />
           )}
           <input
@@ -38,6 +58,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={id}
             {...props}
           />
+
+          {rightIcon}
         </div>
       </div>
     );

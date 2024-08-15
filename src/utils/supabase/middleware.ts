@@ -32,7 +32,11 @@ export async function updateSession(request: NextRequest) {
   // refreshing the auth token
   const user = await supabase.auth.getUser();
 
-  if (request.nextUrl.pathname.startsWith("/app") && user.error) {
+  if (
+    (request.nextUrl.pathname.startsWith("/app") ||
+      request.nextUrl.pathname == "/auth/update-password") &&
+    user.error
+  ) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   } else if (
     ((request.nextUrl.pathname.startsWith("/auth") &&
@@ -41,6 +45,10 @@ export async function updateSession(request: NextRequest) {
     !user.error
   ) {
     return NextResponse.redirect(new URL("/app", request.url));
+  }
+
+  if (request.nextUrl.pathname == "/app/projects" && user.data.user) {
+    return NextResponse.redirect(new URL("/app/projects/active", request.url));
   }
 
   return supabaseResponse;

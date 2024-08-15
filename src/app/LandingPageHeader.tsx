@@ -5,6 +5,7 @@ import { MenuIcon, XIcon } from "lucide-react";
 import KriyaLogo from "./KriyaLogo";
 import { motion } from "framer-motion";
 import { useAuthProvider } from "@/context/AuthContext";
+import Image from "next/image";
 
 const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -47,16 +48,16 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex-shrink-0 flex items-center">
-                <KriyaLogo size="sm" isTitle />
+                <Image src='/kriya_text.svg' width={130} height={0} alt="Kriya" />
               </Link>
 
               {!forAuth && (
-                <div className="hidden lg:flex items-center ml-4 space-x-2">
+                <div className="hidden lg:flex items-center ml-2 space-x-2">
                   {menuItems.map((item) => (
                     <Link
                       key={item.id}
                       href={item.path}
-                      className="text-sm font-medium text-gray-700 hover:bg-gray-100 transition px-3 py-2 rounded-md"
+                      className="text-sm font-medium text-gray-700 hover:bg-gray-200 transition px-3 py-2 rounded-md"
                     >
                       {item.label}
                     </Link>

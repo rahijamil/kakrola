@@ -8,6 +8,7 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import Image from "next/image";
 import { useAuthProvider } from "@/context/AuthContext";
 import AddEditProject from "../AddEditProject";
+import Link from "next/link";
 
 const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
   const { profile } = useAuthProvider();
@@ -68,49 +69,49 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
   return (
     <>
       <div className="mt-4 px-2">
-        <div
-          className={`w-full flex items-center justify-between p-1 pl-2 text-gray-700 hover:bg-gray-200 rounded-md transition gap-1`}
-        >
-          <div
-            className={`flex items-center ${
-              sidebarWidth > 220 ? "gap-2" : "gap-1"
-            }`}
+        <div className="relative text-gray-700 hover:bg-gray-200 rounded-md transition">
+          <Link
+            href={`/app/projects`}
+            className={`w-full flex items-center justify-between pl-2 py-[6px] gap-1`}
           >
             <div
               className={`flex items-center ${
                 sidebarWidth > 220 ? "gap-2" : "gap-1"
               }`}
-              style={{
-                maxWidth: `${
-                  sidebarWidth - (projects.length > 3 ? 150 : 80)
-                }px`,
-              }}
             >
-              {profile?.avatar_url ? (
+              <div
+                className={`flex items-center ${
+                  sidebarWidth > 220 ? "gap-2" : "gap-1"
+                }`}
+                style={{
+                  maxWidth: `${
+                    sidebarWidth - (projects.length > 3 ? 150 : 80)
+                  }px`,
+                }}
+              >
                 <Image
-                  src={profile.avatar_url}
-                  alt={profile.full_name || profile.username}
+                  src={profile?.avatar_url || "/default-avatar.png"}
+                  alt={profile?.full_name || profile?.username || ""}
                   width={20}
                   height={20}
                   className="rounded-md"
                 />
-              ) : (
-                <div className="w-5 h-5 min-w-5 min-h-5 bg-black rounded-md"></div>
-              )}
-              <span
-                className={`font-medium transition overflow-hidden whitespace-nowrap text-ellipsis`}
-              >
-                My Projects
-              </span>
-            </div>
-            {projects.length > 3 && (
-              <span className="bg-gray-300 text-gray-700 px-1 py-[1px] rounded-md uppercase text-[11px] whitespace-nowrap font-medium">
-                Used: {projects.length}/{5}
-              </span>
-            )}
-          </div>
 
-          <div className="opacity-0 group-hover:opacity-100 transition flex items-center">
+                <span
+                  className={`font-medium transition overflow-hidden whitespace-nowrap text-ellipsis`}
+                >
+                  My Projects
+                </span>
+              </div>
+              {projects.length > 3 && (
+                <span className="bg-gray-300 text-gray-700 px-1 py-[1px] rounded-md uppercase text-[11px] whitespace-nowrap font-medium">
+                  Used: {projects.length}/{5}
+                </span>
+              )}
+            </div>
+          </Link>
+
+          <div className="opacity-0 group-hover:opacity-100 transition flex items-center absolute right-0 top-1/2 -translate-y-1/2">
             <button
               className="p-1 hover:bg-gray-100 rounded-md transition"
               onClick={() => setShowAddProjectModal(true)}

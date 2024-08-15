@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import {
   LockClosedIcon,
   EyeIcon,
@@ -10,12 +10,14 @@ const PasswordInput = ({
   password,
   setPassword,
   label,
-  required = false
+  labelRight,
+  required = false,
 }: {
   password: string;
   setPassword: (password: string) => void;
   label?: string;
-  required?: boolean
+  labelRight?: ReactNode;
+  required?: boolean;
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -26,24 +28,16 @@ const PasswordInput = ({
   const id = label ? label.replace(/\s+/g, "") : "password";
 
   return (
-    <div>
-      <label htmlFor={id} className="sr-only">
-        {label ? label : "Password"}
-      </label>
-      <div className="relative">
-        <Input
-          id={id}
-          name="password"
-          type={showPassword ? "text" : "password"}
-          required={required}
-          Icon={LockClosedIcon}
-          className="pl-10 w-full pr-10" // Added pr-10 for spacing
-          placeholder={label ? label : "Password"}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <div
-          className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+    <Input
+      id={id}
+      name="password"
+      type={showPassword ? "text" : "password"}
+      required={required}
+      Icon={LockClosedIcon}
+      rightIcon={
+        <button
+          type="button"
+          className="absolute top-1/2 -translate-y-1/2 right-0 pr-3 flex items-center cursor-pointer"
           onClick={togglePasswordVisibility}
         >
           {showPassword ? (
@@ -51,9 +45,15 @@ const PasswordInput = ({
           ) : (
             <EyeIcon className="h-5 w-5 text-gray-400" />
           )}
-        </div>
-      </div>
-    </div>
+        </button>
+      }
+      className="pl-10 w-full pr-10" // Added pr-10 for spacing
+      placeholder={label ? label : "Password"}
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      label={label}
+      labelRight={labelRight}
+    />
   );
 };
 

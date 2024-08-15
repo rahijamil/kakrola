@@ -174,7 +174,7 @@ const LayoutWrapper = ({
                   {editTitle ? (
                     <input
                       type="text"
-                      className={`text-2xl font-bold border border-gray-400 outline-none capitalize w-full rounded-md p-1`}
+                      className={`text-[26px] font-bold border border-gray-400 outline-none capitalize w-full rounded-md p-1`}
                       value={projectTitle}
                       onBlur={() => setEditTitle(false)}
                       autoFocus
@@ -195,7 +195,7 @@ const LayoutWrapper = ({
                     />
                   ) : (
                     <h1
-                      className={`text-2xl font-bold border border-transparent w-fit hover:w-full hover:border-gray-200 capitalize rounded-md p-1 ${
+                      className={`text-[26px] font-bold border border-transparent w-fit hover:w-full hover:border-gray-200 capitalize rounded-md p-1 ${
                         !setView && "pt-8"
                       }`}
                       onClick={() => setEditTitle(true)}

@@ -67,18 +67,18 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
     //   path: "/app/settings/subscription",
     //   icon: WalletIcon,
     // },
-    {
-      id: 5,
-      name: "Theme",
-      path: "/app/settings/theme",
-      icon: PaletteIcon,
-    },
-    {
-      id: 6,
-      name: "Sidebar",
-      path: "/app/settings/sidebar",
-      icon: PanelLeft,
-    },
+    // {
+    //   id: 5,
+    //   name: "Theme",
+    //   path: "/app/settings/theme",
+    //   icon: PaletteIcon,
+    // },
+    // {
+    //   id: 6,
+    //   name: "Sidebar",
+    //   path: "/app/settings/sidebar",
+    //   icon: PanelLeft,
+    // },
     // {
     //   id: 7,
     //   name: "Quick Add",
@@ -169,7 +169,12 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                         <li>
                           <Link
                             href={`/app/settings/workspaces/${team.id}/settings`}
-                            className="flex items-center gap-2 p-2 rounded-md transition-colors hover:bg-indigo-100 text-gray-700"
+                            className={`flex items-center gap-2 p-2 rounded-md transition-colors ${
+                              pathname ==
+                              `/app/settings/workspaces/${team.id}/settings`
+                                ? "bg-indigo-100 text-indigo-700"
+                                : "hover:bg-indigo-100 text-gray-700"
+                            }`}
                           >
                             {team.avatar_url ? (
                               <Image
@@ -194,7 +199,12 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                         <li>
                           <Link
                             href={`/app/settings/workspaces/${team.id}/members`}
-                            className="flex items-center gap-2 p-2 rounded-md transition-colors hover:bg-indigo-100 text-gray-700"
+                            className={`flex items-center gap-2 p-2 rounded-md transition-colors ${
+                              pathname ==
+                              `/app/settings/workspaces/${team.id}/members`
+                                ? "bg-indigo-100 text-indigo-700"
+                                : "hover:bg-indigo-100 text-gray-700"
+                            }`}
                           >
                             <Users strokeWidth={1.5} size={20} />
                             People
@@ -204,7 +214,12 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                         <li>
                           <Link
                             href={`/app/settings/workspaces/${team.id}/billing`}
-                            className="flex items-center gap-2 p-2 rounded-md transition-colors hover:bg-indigo-100 text-gray-700"
+                            className={`flex items-center gap-2 p-2 rounded-md transition-colors ${
+                              pathname ==
+                              `/app/settings/workspaces/${team.id}/billing`
+                                ? "bg-indigo-100 text-indigo-700"
+                                : "hover:bg-indigo-100 text-gray-700"
+                            }`}
                           >
                             <WalletIcon strokeWidth={1.5} size={20} />
                             Subscription

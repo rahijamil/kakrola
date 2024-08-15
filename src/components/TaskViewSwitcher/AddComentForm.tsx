@@ -4,7 +4,7 @@ import {
   MicrophoneIcon,
   PaperClipIcon,
 } from "@heroicons/react/24/outline";
-import Textarea from "../ui/textarea";
+import {Textarea} from "../ui";
 
 const AddComentForm = ({ onCancelClick }: { onCancelClick?: () => void }) => {
   return (

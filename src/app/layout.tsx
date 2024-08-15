@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={poppins.className}>
         <AuthProvider>
           <TaskProjectDataProvider>{children}</TaskProjectDataProvider>
         </AuthProvider>

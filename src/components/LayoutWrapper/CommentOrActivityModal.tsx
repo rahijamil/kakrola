@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { Dialog } from "../ui";
 import { HashtagIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import AddComentForm from "../TaskViewSwitcher/AddComentForm";
 import Image from "next/image";
 import { ProjectType } from "@/types/project";

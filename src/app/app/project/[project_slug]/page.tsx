@@ -55,27 +55,34 @@ const ProjectDetails = ({
     };
 
     fetchProject();
+
+    return () => {
+      setCurrentProject(null);
+    };
   }, [project_slug, profile?.id]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data: sectionData, error: sectionError } = await supabaseBrowser
-          .from("sections")
-          .select("*")
-          .eq("project_id", currentProject?.id);
+        if (currentProject?.id) {
+          const { data: sectionData, error: sectionError } =
+            await supabaseBrowser
+              .from("sections")
+              .select("*")
+              .eq("project_id", currentProject?.id);
 
-        if (!sectionError) {
-          setProjectSections(sectionData || []);
-        }
+          if (!sectionError) {
+            setProjectSections(sectionData || []);
+          }
 
-        const { data: taskData, error: taskError } = await supabaseBrowser
-          .from("tasks")
-          .select("*")
-          .eq("project_id", currentProject?.id);
+          const { data: taskData, error: taskError } = await supabaseBrowser
+            .from("tasks")
+            .select("*")
+            .eq("project_id", currentProject?.id);
 
-        if (!taskError) {
-          setProjectTasks(taskData || []);
+          if (!taskError) {
+            setProjectTasks(taskData || []);
+          }
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -134,7 +141,7 @@ const ProjectDetails = ({
           } else if (payload.eventType === "UPDATE") {
             setProjectSections((prevSections) =>
               prevSections.map((s) =>
-                s.id === payload.new.id ? payload.new as SectionType : s
+                s.id === payload.new.id ? (payload.new as SectionType) : s
               )
             );
           } else if (payload.eventType === "DELETE") {
@@ -162,14 +169,11 @@ const ProjectDetails = ({
             payload.eventType === "INSERT" &&
             payload.new.project_id === currentProject?.id
           ) {
-            setProjectTasks((prev) => [
-              ...prev,
-              payload.new as TaskType,
-            ]);
+            setProjectTasks((prev) => [...prev, payload.new as TaskType]);
           } else if (payload.eventType === "UPDATE") {
             setProjectTasks((prev) =>
               prev.map((s) =>
-                s.id === payload.new.id ? payload.new as TaskType : s
+                s.id === payload.new.id ? (payload.new as TaskType) : s
               )
             );
           } else if (payload.eventType === "DELETE") {
@@ -209,8 +213,8 @@ const ProjectDetails = ({
         <div className="text-center space-y-2 w-72">
           <h3 className="font-bold text-base">Project not found</h3>
           <p className="text-sm text-gray-600 pb-4">
-            The project doesn&apos;t seem to exist or you don&apos;t have permission to
-            access it.
+            The project doesn&apos;t seem to exist or you don&apos;t have
+            permission to access it.
           </p>
           <Link href="/app">
             <Button>Go back to home</Button>

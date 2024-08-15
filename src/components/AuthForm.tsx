@@ -54,7 +54,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
         ({ regex }) => !regex.test(password)
       );
 
-      if (failedCriteria.length > 0) {
+      if (password.length > 0 && failedCriteria.length > 0) {
         setError(
           <div className="text-left text-sm">
             <p className="font-semibold mb-2">Password must:</p>
@@ -74,9 +74,13 @@ const AuthForm: React.FC<AuthFormProps> = ({
         );
         setLoading(false);
         return;
+      } else {
+        setError(null);
+        setLoading(false);
+        return;
       }
     }
-  }, [password]);
+  }, [password, type]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -218,6 +222,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
                       id="email-address"
                       name="email"
                       type="email"
+                      label="Email"
                       autoComplete="email"
                       required
                       Icon={AtSign}
@@ -231,22 +236,26 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
               {type !== "forgotPassword" && (
                 <>
-                  <div>
+                  <div className="space-y-1">
                     <PasswordInput
                       password={password}
                       setPassword={setPassword}
+                      label="Password"
+                      labelRight={
+                        <>
+                          {type == "login" && (
+                            <div className="text-xs text-right">
+                              <Link
+                                href="/auth/forgot-password"
+                                className="font-medium text-indigo-600 hover:text-indigo-500 transition"
+                              >
+                                Forgot your password?
+                              </Link>
+                            </div>
+                          )}
+                        </>
+                      }
                     />
-
-                    {type == "login" && (
-                      <div className="text-sm text-right">
-                        <Link
-                          href="/auth/forgot-password"
-                          className="font-medium text-indigo-600 hover:text-indigo-500"
-                        >
-                          Forgot your password?
-                        </Link>
-                      </div>
-                    )}
                   </div>
 
                   <div>
@@ -255,6 +264,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
                         password={confirmPassword}
                         setPassword={setConfirmPassword}
                         label="Confirm Password"
+                        required
                       />
                     )}
                   </div>

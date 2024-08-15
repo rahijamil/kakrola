@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Check, ChevronDown } from "lucide-react";
+import Image from "next/image";
+import { useAuthProvider } from "@/context/AuthContext";
 
 type Workspace = {
   team_id: number | null;
@@ -21,6 +23,7 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const selectRef = useRef<HTMLDivElement>(null);
+  const { profile } = useAuthProvider();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -77,9 +80,31 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
       >
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <div className="w-5 h-5 min-w-5 min-h-5 bg-indigo-500 rounded-md flex items-center justify-center">
-            <span className="text-white text-[10px] font-medium">
-              {currentWorkspace?.name.slice(0, 1).toUpperCase()}
-            </span>
+            {currentWorkspace?.team_id == null ? (
+              <Image
+                src={profile?.avatar_url || ""}
+                alt={currentWorkspace?.name || ""}
+                width={20}
+                height={20}
+                className="rounded-md"
+              />
+            ) : (
+              <>
+                {currentWorkspace?.avatar_url ? (
+                  <Image
+                    src={currentWorkspace?.avatar_url}
+                    alt={currentWorkspace?.name}
+                    width={20}
+                    height={20}
+                    className="rounded-md"
+                  />
+                ) : (
+                  <span className="text-white text-[10px] font-medium">
+                    {currentWorkspace?.name.slice(0, 1).toUpperCase()}
+                  </span>
+                )}
+              </>
+            )}
           </div>
           <span className="truncate text-gray-900">
             {currentWorkspace?.name}
@@ -111,9 +136,31 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
             >
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <div className="w-5 h-5 min-w-5 min-h-5 bg-indigo-500 rounded-md flex items-center justify-center">
-                  <span className="text-white text-[10px] font-medium">
-                    {workspace.name.slice(0, 1).toUpperCase()}
-                  </span>
+                  {workspace?.team_id == null ? (
+                    <Image
+                      src={profile?.avatar_url || ""}
+                      alt={workspace?.name || ""}
+                      width={20}
+                      height={20}
+                      className="rounded-md"
+                    />
+                  ) : (
+                    <>
+                      {workspace?.avatar_url ? (
+                        <Image
+                          src={workspace?.avatar_url}
+                          alt={workspace?.name}
+                          width={20}
+                          height={20}
+                          className="rounded-md"
+                        />
+                      ) : (
+                        <span className="text-white text-[10px] font-medium">
+                          {workspace?.name.slice(0, 1).toUpperCase()}
+                        </span>
+                      )}
+                    </>
+                  )}
                 </div>
                 <span className="truncate">{workspace.name}</span>
               </div>

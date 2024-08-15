@@ -82,6 +82,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         onKeyDown={handleKeyDown}
         tabIndex={0}
         role="combobox"
+        aria-controls="listbox"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-labelledby={id}

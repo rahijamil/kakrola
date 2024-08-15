@@ -44,7 +44,7 @@ const Sidebar: React.FC = () => {
   const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [afterCollapse, setAfterCollapse] = useState(false);
-  
+
   const [sidebarWidth, setSidebarWidth] = useState(220);
   const [sidebarLeft, setSidebarLeft] = useState(0);
 
@@ -146,17 +146,14 @@ const Sidebar: React.FC = () => {
                   style={{ maxWidth: `${sidebarWidth - 80}px` }}
                   onClick={() => setShowProfileMoreOptions(true)}
                 >
-                  {profile?.avatar_url ? (
-                    <Image
-                      src={profile.avatar_url}
-                      alt={profile.full_name || profile.username}
-                      width={24}
-                      height={24}
-                      className="rounded-full"
-                    />
-                  ) : (
-                    <div className="w-6 h-6 min-w-6 min-h-6 bg-black rounded-full"></div>
-                  )}
+                  <Image
+                    src={profile?.avatar_url || "/default-avatar.png"}
+                    alt={profile?.full_name || profile?.username || ""}
+                    width={24}
+                    height={24}
+                    className="rounded-full"
+                  />
+
                   <span className="font-medium overflow-hidden text-ellipsis whitespace-nowrap transition">
                     {profile?.full_name || profile?.username}
                   </span>
@@ -249,9 +246,7 @@ const Sidebar: React.FC = () => {
                 />
               )}
 
-              <MyProjects
-                sidebarWidth={sidebarWidth}
-              />
+              <MyProjects sidebarWidth={sidebarWidth} />
 
               {teams.map((team) => (
                 <TeamProjects
