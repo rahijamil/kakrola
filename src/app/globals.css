@@ -7,10 +7,10 @@
     @apply scroll-smooth;
   }
   body {
-    @apply bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 text-sm text-black/80;
+    @apply bg-white text-sm text-black/80;
   }
   .wrapper {
-    @apply w-full max-w-7xl mx-auto;
+    @apply w-11/12 lg:w-full max-w-7xl mx-auto;
   }
   .sidebar_project_item:hover .sidebar_project_item_options,
   .taskitem_group:hover .taskitem_group_hover {
