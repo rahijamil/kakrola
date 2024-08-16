@@ -48,7 +48,12 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex-shrink-0 flex items-center">
-                <Image src='/kriya_text.svg' width={130} height={0} alt="Kriya" />
+                <Image
+                  src="/kriya_text.svg"
+                  width={130}
+                  height={0}
+                  alt="Kriya"
+                />
               </Link>
 
               {!forAuth && (

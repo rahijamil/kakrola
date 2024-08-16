@@ -173,12 +173,12 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 relative">
-      <div className="flex items-center justify-center h-[calc(100vh-64px)] px-4 sm:px-6 lg:px-8">
+      <div className="flex items-center justify-center h-screen sm:h-[calc(100vh-64px)]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-2xl"
+          className="w-full sm:max-w-md h-full sm:h-auto space-y-8 bg-white p-6 sm:p-10 rounded-xl shadow-2xl"
         >
           <div className="text-center space-y-6">
             <KriyaLogo size="md" isTitle />
