@@ -287,7 +287,7 @@ const AddEditProject = ({
     return () => {
       setWorkspaces([]);
     };
-  }, [teams, workspaces, profile?.avatar_url]);
+  }, [teams, profile?.avatar_url]);
 
   return (
     <Dialog size="xs" onClose={onClose}>

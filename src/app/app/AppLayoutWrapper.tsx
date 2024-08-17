@@ -3,6 +3,7 @@ import { useAuthProvider } from "@/context/AuthContext";
 import React from "react";
 import KriyaLogo from "../KriyaLogo";
 import Spinner from "@/components/ui/Spinner";
+import Image from "next/image";
 
 const AppLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   const { profile } = useAuthProvider();
@@ -12,9 +13,13 @@ const AppLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   } else {
     return (
       <div className="flex items-center justify-center border w-full h-screen">
-        <div className="flex flex-col gap-8 items-center justify-center">
-          <KriyaLogo size="lg" />
-          <Spinner />
+        <div className="flex items-center justify-center">
+          <Image
+            src="/kriya_animated.svg"
+            alt="Kriar Logo"
+            width={80}
+            height={80}
+          />
         </div>
       </div>
     );

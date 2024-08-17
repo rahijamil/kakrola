@@ -13,6 +13,7 @@ const AddComentForm = ({ onCancelClick }: { onCancelClick?: () => void }) => {
         placeholder="Comment"
         className="resize-none"
         rows={3}
+        fullWidth
         autoFocus
       ></Textarea>
 

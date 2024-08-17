@@ -20,6 +20,11 @@ const LandingPage = () => {
           <SectionsLayout />
         </div>
 
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-white via-indigo-50 to-white z-0"></div>
+          <section className="min-h-screen"></section>
+        </div>
+
         {/* CTA Section */}
         <section className="bg-gradient-to-r from-indigo-600 to-purple-600 py-20 sm:py-32">
           <div className="wrapper">
@@ -27,7 +32,7 @@ const LandingPage = () => {
               <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
                 <span className="block">Ready to boost your productivity?</span>
                 <span className="block text-indigo-200">
-                  Start using Kriya today.
+                  Start using Kriar today.
                 </span>
               </h2>
               <div className="mt-8 flex flex-wrap sm:flex-nowrap gap-3 lg:mt-0 lg:flex-shrink-0 whitespace-nowrap">

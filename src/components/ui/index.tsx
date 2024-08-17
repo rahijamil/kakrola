@@ -120,7 +120,7 @@ interface TextareaProps extends React.InputHTMLAttributes<HTMLTextAreaElement> {
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, fullWidth = false, label, Icon, id, rows, ...props }, ref) => {
     return (
-      <div className="space-y-1">
+      <div className="space-y-1 w-full">
         {label && (
           <label htmlFor={id} className="font-bold text-gray-700">
             {label}
@@ -135,7 +135,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             />
           )}
           <textarea
-            className={`flex w-full rounded-md border-none outline-none placeholder:text-muted-foreground ${
+            className={`rounded-md border-none outline-none placeholder:text-muted-foreground ${
               fullWidth ? "w-full" : ""
             } ${className} ${Icon && "pl-10"}`}
             ref={ref}

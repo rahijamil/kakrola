@@ -12,13 +12,13 @@ const KriyaLogo = ({
   const sizeClasses = {
     sm: "w-8 h-8",
     md: "w-10 h-10",
-    lg: "w-12 h-12",
+    lg: "w-20 h-20",
   };
 
   return (
     <div className="flex items-center gap-3">
       <div className={`relative ${sizeClasses[size]}`}>
-        <Image src="/kriya.svg" alt="Kriya Logo" fill />
+        <Image src="/kriya.svg" alt="Kriar Logo" fill />
       </div>
 
       {isTitle && (
@@ -31,7 +31,7 @@ const KriyaLogo = ({
               : "text-4xl"
           }`}
         >
-          Kriya
+          Kriar
         </span>
       )}
     </div>

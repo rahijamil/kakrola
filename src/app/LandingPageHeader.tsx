@@ -52,7 +52,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
                   src="/kriya_text.svg"
                   width={130}
                   height={0}
-                  alt="Kriya"
+                  alt="Kriar"
                 />
               </Link>
 
@@ -77,7 +77,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
                   <>
                     <Link href="/app">
                       <Button variant="ghost" size="sm">
-                        Open Ekta
+                        Open Kriar
                       </Button>
                     </Link>
                     <Link href="/pricing">
@@ -142,7 +142,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
                   <>
                     <Link href="/app" className="block flex-1">
                       <Button variant="gray" className="w-full justify-center">
-                        Open Ekta
+                        Open Kriar
                       </Button>
                     </Link>
                     <Link href="/pricing" className="block flex-1">

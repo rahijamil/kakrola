@@ -24,8 +24,8 @@ interface ListViewProps {
   unGroupedTasks: TaskType[];
   sections: SectionType[];
   setSections: Dispatch<SetStateAction<SectionType[]>>;
-  showAddTask: number | null;
-  setShowAddTask: Dispatch<SetStateAction<number | null>>;
+  showAddTask: string | number | null;
+  setShowAddTask: Dispatch<SetStateAction<string | number | null>>;
   showUngroupedAddTask: boolean;
   setShowUngroupedAddTask: Dispatch<SetStateAction<boolean>>;
   showUngroupedAddSection: boolean;
@@ -50,11 +50,11 @@ const ListView: React.FC<ListViewProps> = ({
   setShowShareOption,
   showShareOption,
   project,
-  setTasks
+  setTasks,
 }) => {
   const [showSectionMoreOptions, setShowSectionMoreOptions] =
     useState<SectionType | null>(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<{id: string | null, title: string} | null>(null);
   const [newSectionName, setNewSectionName] = useState("");
   const [showAddSection, setShowAddSection] = useState<number | null>(null);
 
@@ -90,20 +90,39 @@ const ListView: React.FC<ListViewProps> = ({
   // }, [sections, groupedTasks, unGroupedTasks]);
 
   const ListViewSection = ({ section }: { section: SectionType }) => {
-    const handleSectionDelete = () => {
-      // if (section) {
-      //   const updatedTasks = tasks.filter((t) => t.section_id !== section.id);
-      //   setTasks(updatedTasks);
+    const handleSectionDelete = async () => {
+      if (section) {
+        setTasks((prevTasks) => {
+          return prevTasks.filter((task) => task.section_id !== section.id);
+        });
 
-      //   const updatedSections = sections.filter((s) => s.id !== section.id);
+        setSections((prevSections) => {
+          return prevSections.filter((s) => s.id !== section.id);
+        });
 
-      //   setSections(updatedSections);
-      // } else {
-      //   const updatedTasks = tasks.filter((t) => t.section_id !== null);
-      //   setTasks(updatedTasks);
-      // }
+        const { error } = await supabaseBrowser
+          .from("tasks")
+          .delete()
+          .eq("section_id", section.id);
 
-      setShowDeleteConfirm(false);
+        if (!error) {
+          const { error } = await supabaseBrowser
+            .from("sections")
+            .delete()
+            .eq("id", section.id);
+        }
+      } else {
+        setTasks((prevTasks) => {
+          return prevTasks.filter((task) => task.section_id !== null);
+        });
+
+        const { error } = await supabaseBrowser
+          .from("tasks")
+          .delete()
+          .eq("section_id", null);
+      }
+
+      setShowDeleteConfirm(null);
     };
 
     return (
@@ -204,7 +223,7 @@ const ListView: React.FC<ListViewProps> = ({
                               .filter((t) => t.parent_task_id == task.id)
                               .map((childTask, childIndex) => (
                                 <li
-                                key={childTask.id}
+                                  key={childTask.id}
                                   className={`border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer ${
                                     childTask.parent_task_id && "ml-8"
                                   }`}
@@ -237,6 +256,7 @@ const ListView: React.FC<ListViewProps> = ({
                   showAddTask={showAddTask}
                   setShowAddTask={setShowAddTask}
                   project={project}
+                  setTasks={setTasks}
                 />
               </div>
             )}
@@ -538,6 +558,7 @@ const ListView: React.FC<ListViewProps> = ({
               showUngroupedAddTask={showUngroupedAddTask}
               setShowUngroupedAddTask={setShowUngroupedAddTask}
               project={project}
+              setTasks={setTasks}
             />
           </div>
 

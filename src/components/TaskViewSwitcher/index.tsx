@@ -12,7 +12,6 @@ interface TaskViewSwitcherProps {
   sections: SectionType[];
   setSections: Dispatch<SetStateAction<SectionType[]>>;
   view: ViewTypes["view"];
-  onTaskUpdate: (updatedTask: TaskType) => void;
   showShareOption?: boolean;
   setShowShareOption?: Dispatch<SetStateAction<boolean>>;
 }
@@ -24,11 +23,10 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
   view,
   sections,
   setSections,
-  onTaskUpdate,
   showShareOption,
   setShowShareOption,
 }) => {
-  const [showAddTask, setShowAddTask] = useState<number | null>(null);
+  const [showAddTask, setShowAddTask] = useState<string | number | null>(null);
 
   const [showUngroupedAddTask, setShowUngroupedAddTask] =
     useState<boolean>(false);
@@ -43,10 +41,10 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
       .filter((task) => (project ? task.project_id === project.id : true))
       .forEach((task) => {
         if (task.section_id) {
-          if (!grouped[task.section_id]) {
-            grouped[task.section_id] = [];
+          if (!grouped[task.section_id as number]) {
+            grouped[task.section_id as number] = [];
           }
-          grouped[task.section_id].push(task);
+          grouped[task.section_id as number].push(task);
         } else {
           ungrouped.push(task);
         }
@@ -78,10 +76,11 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
     case "Board":
       return (
         <BoardView
+          tasks={tasks}
           sections={sections}
+          setSections={setSections}
           groupedTasks={groupedTasks}
           unGroupedTasks={unGroupedTasks}
-          onTaskUpdate={onTaskUpdate}
           showAddTask={showAddTask}
           setShowAddTask={setShowAddTask}
           showUngroupedAddSection={showUngroupedAddSection}

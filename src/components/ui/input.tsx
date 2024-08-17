@@ -13,6 +13,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
   >;
   rightIcon?: ReactNode;
+  howBig?: "sm" | "md" | "lg";
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -25,12 +26,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       id,
       labelRight,
       rightIcon,
+      howBig = "md",
       ...props
     },
     ref
   ) => {
     return (
-      <div className="space-y-1">
+      <div className={`space-y-1 ${fullWidth && "w-full"}`}>
         <div className="flex items-center justify-between">
           {label && (
             <>
@@ -51,9 +53,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             />
           )}
           <input
-            className={`flex h-10 w-full rounded-md border border-gray-300 hover:border-gray-400 focus-visible:border-gray-300 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-indigo-300 disabled:cursor-not-allowed disabled:opacity-50 read-only:bg-indigo-50 read-only:cursor-default ${
-              fullWidth ? "w-full" : ""
-            } ${className} ${Icon && "pl-10"}`}
+            className={`flex rounded-md border border-gray-300 hover:border-gray-400 focus-visible:border-gray-300 bg-background ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ring-indigo-300 disabled:cursor-not-allowed disabled:opacity-50 read-only:bg-indigo-50 read-only:cursor-default ${
+              howBig == "sm"
+                ? "px-[6px]"
+                : howBig == "md"
+                ? " px-3 py-2 h-10"
+                : "py-3"
+            } ${fullWidth ? "w-full" : ""} ${className} ${Icon && "pl-10"}`}
             ref={ref}
             id={id}
             {...props}

@@ -1,5 +1,4 @@
 "use client";
-import KriyaLogo from "@/app/KriyaLogo";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import TaskViewSwitcher from "@/components/TaskViewSwitcher";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,7 @@ import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import { ViewTypes } from "@/types/viewTypes";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -18,6 +18,8 @@ const ProjectDetails = ({
 }: {
   params: { project_slug: string };
 }) => {
+  const { projects, setProjects, projectsLoading } =
+    useTaskProjectDataProvider();
   const { profile } = useAuthProvider();
 
   const [currentProject, setCurrentProject] = useState<ProjectType | null>(
@@ -29,37 +31,21 @@ const ProjectDetails = ({
 
   const [notFound, setNotFound] = useState<boolean>(false);
 
-  const handleTaskUpdate = (updatedTask: TaskType) => {
-    // setTasks((prevTasks) => {
-    //   const newTasks = prevTasks.map((t) =>
-    //     t.id === updatedTask.id ? updatedTask : t
-    //   );
-    //   return newTasks;
-    // });
-  };
-
   useEffect(() => {
-    const fetchProject = async () => {
-      const { data: projectData, error: projectError } = await supabaseBrowser
-        .from("projects")
-        .select("*")
-        .eq("slug", project_slug)
-        .eq("profile_id", profile?.id)
-        .single();
+    if (projectsLoading) return;
 
-      if (!projectError) {
-        setCurrentProject(projectData);
-      } else {
-        setNotFound(true);
-      }
-    };
+    const project = projects.find((p) => p.slug === project_slug);
 
-    fetchProject();
+    if (project) {
+      setCurrentProject(project);
+    } else {
+      setNotFound(true);
+    }
 
     return () => {
       setCurrentProject(null);
     };
-  }, [project_slug, profile?.id]);
+  }, [project_slug, profile?.id, projects, projectsLoading]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,7 +55,8 @@ const ProjectDetails = ({
             await supabaseBrowser
               .from("sections")
               .select("*")
-              .eq("project_id", currentProject?.id);
+              .eq("project_id", currentProject?.id)
+              .order("order", { ascending: true });
 
           if (!sectionError) {
             setProjectSections(sectionData || []);
@@ -91,33 +78,6 @@ const ProjectDetails = ({
 
     fetchData();
 
-    // Subscribe to real-time changes for projects
-    const projectSubcription = supabaseBrowser
-      .channel("projects-all-channel")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "projects",
-          filter: `id=eq.${currentProject?.id}`,
-        },
-        (payload) => {
-          if (
-            payload.eventType === "INSERT" &&
-            payload.new.profile_id === profile?.id
-          ) {
-            setCurrentProject(payload.new as ProjectType);
-          } else if (payload.eventType === "UPDATE") {
-            setCurrentProject(payload.new as ProjectType);
-          } else if (payload.eventType === "DELETE") {
-            setCurrentProject(null);
-            setNotFound(true);
-          }
-        }
-      )
-      .subscribe();
-
     // Subscribe to real-time changes for sections
     const sectionsSubcription = supabaseBrowser
       .channel("sections-all-channel")
@@ -134,10 +94,11 @@ const ProjectDetails = ({
             payload.eventType === "INSERT" &&
             payload.new.project_id === currentProject?.id
           ) {
-            setProjectSections((prevSections) => [
-              ...prevSections,
-              payload.new as SectionType,
-            ]);
+            setProjectSections((prevSections) =>
+              prevSections.some((s) => s.id === payload.new.id)
+                ? prevSections
+                : [payload.new as SectionType, ...prevSections]
+            );
           } else if (payload.eventType === "UPDATE") {
             setProjectSections((prevSections) =>
               prevSections.map((s) =>
@@ -154,8 +115,8 @@ const ProjectDetails = ({
       .subscribe();
 
     // Subscribe to real-time changes for tasks
-    const tasksSubcription = supabaseBrowser
-      .channel("sections-all-channel")
+    const tasksSubscription = supabaseBrowser
+      .channel("tasks-all-channel")
       .on(
         "postgres_changes",
         {
@@ -169,16 +130,40 @@ const ProjectDetails = ({
             payload.eventType === "INSERT" &&
             payload.new.project_id === currentProject?.id
           ) {
-            setProjectTasks((prev) => [...prev, payload.new as TaskType]);
-          } else if (payload.eventType === "UPDATE") {
+            setProjectTasks((prev) => {
+              // Check if the task already exists in the array
+              const taskExists = prev.some(
+                (task) => task.id === payload.new.id
+              );
+              if (taskExists) {
+                // If it exists, update it
+                return prev.map((task) =>
+                  task.id === payload.new.id
+                    ? { ...task, ...(payload.new as TaskType) }
+                    : task
+                );
+              } else {
+                // If it doesn't exist, add it to the array
+                return [...prev, payload.new as TaskType];
+              }
+            });
+          } else if (
+            payload.eventType === "UPDATE" &&
+            payload.new.project_id === currentProject?.id
+          ) {
             setProjectTasks((prev) =>
-              prev.map((s) =>
-                s.id === payload.new.id ? (payload.new as TaskType) : s
+              prev.map((task) =>
+                task.id === payload.new.id
+                  ? { ...task, ...(payload.new as TaskType) }
+                  : task
               )
             );
-          } else if (payload.eventType === "DELETE") {
+          } else if (
+            payload.eventType === "DELETE" &&
+            payload.old.project_id === currentProject?.id
+          ) {
             setProjectTasks((prev) =>
-              prev.filter((s) => s.id !== payload.old.id)
+              prev.filter((task) => task.id !== payload.old.id)
             );
           }
         }
@@ -186,12 +171,18 @@ const ProjectDetails = ({
       .subscribe();
 
     return () => {
-      supabaseBrowser.removeChannel(projectSubcription);
       supabaseBrowser.removeChannel(sectionsSubcription);
+      supabaseBrowser.removeChannel(tasksSubscription);
     };
   }, [currentProject?.id, profile?.id]);
 
   const updateProjectView = async (view: ViewTypes["view"]) => {
+    if (!currentProject?.id) return;
+
+    setProjects((prev) =>
+      prev.map((p) => (p.id === currentProject?.id ? { ...p, view } : p))
+    );
+
     await supabaseBrowser
       .from("projects")
       .update({ view })
@@ -224,51 +215,65 @@ const ProjectDetails = ({
     );
   }
 
+  useEffect(() => {
+    if (currentProject?.name) {
+      document.title = `${currentProject.name} | Kriar`;
+    }
+
+    return () => {
+      document.title = "Kriar";
+    };
+  }, [currentProject?.name]);
+
   if (currentProject?.id) {
     return (
-      <LayoutWrapper
-        headline={currentProject.name}
-        view={currentProject.view}
-        setView={(value) => updateProjectView(value)}
-        project={currentProject}
-        showShareOption={showShareOption}
-        setShowShareOption={setShowShareOption}
-      >
-        <TaskViewSwitcher
-          project={currentProject}
-          tasks={projectTasks}
-          setTasks={setProjectTasks}
-          sections={projectSections}
-          setSections={setProjectSections}
+      <>
+        <Head>
+          <title>{currentProject.name} | Kriar</title>
+        </Head>
+        <LayoutWrapper
+          headline={currentProject.name}
           view={currentProject.view}
-          onTaskUpdate={handleTaskUpdate}
+          setView={(value) => updateProjectView(value)}
+          project={currentProject}
           showShareOption={showShareOption}
           setShowShareOption={setShowShareOption}
-        />
+        >
+          <TaskViewSwitcher
+            project={currentProject}
+            tasks={projectTasks}
+            setTasks={setProjectTasks}
+            sections={projectSections.sort((a, b) => a.order - b.order)}
+            setSections={setProjectSections}
+            view={currentProject.view}
+            showShareOption={showShareOption}
+            setShowShareOption={setShowShareOption}
+          />
 
-        {projectTasks.length == 0 && currentProject.view == "List" && (
-          <div className="flex items-center justify-center flex-col gap-1 h-[30vh] select-none">
-            <Image
-              src="/project.png"
-              width={220}
-              height={200}
-              alt="Today"
-              className="rounded-full object-cover"
-              draggable={false}
-            />
+          {projectTasks.length == 0 && currentProject.view == "List" && (
+            <div className="flex items-center justify-center flex-col gap-1 h-[30vh] select-none">
+              <Image
+                src="/project.png"
+                width={220}
+                height={200}
+                alt="Today"
+                className="rounded-full object-cover"
+                draggable={false}
+              />
 
-            <div className="text-center space-y-1 w-72">
-              <h3 className="font-medium text-base">
-                Start small (or dream big)...
-              </h3>
-              <p className="text-sm text-gray-600">
-                Add your tasks or find a template to get started with your
-                project.
-              </p>
+              <div className="text-center space-y-1 w-72">
+                <h3 className="font-medium text-base">
+                  Start small (or dream big)...
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Add your tasks or find a template to get started with your
+                  project.
+                </p>
+              </div>
             </div>
-          </div>
-        )}
-      </LayoutWrapper>
+          )}
+        </LayoutWrapper>
+      </>
     );
   } else {
     return (

@@ -12,7 +12,7 @@ const LandingPageFooter = () => {
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
-            <Image src="/kriya_text.svg" width={130} height={0} alt="Kriya" />
+            <Image src="/kriya_text.svg" width={130} height={0} alt="Kriar" />
             <p className="text-gray-700 text-base">
               Making the world more productive, one task at a time.
             </p>
@@ -137,7 +137,7 @@ const LandingPageFooter = () => {
         </div>
         <div className="mt-12 border-t border-gray-400 pt-8">
           <p className="text-base text-gray-700 text-center sm:text-left xl:text-center">
-            &copy; 2024 Kriya, Inc. All rights reserved.
+            &copy; 2024 Kriar, Inc. All rights reserved.
           </p>
         </div>
       </div>

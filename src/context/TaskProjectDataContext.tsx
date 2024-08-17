@@ -16,12 +16,14 @@ import { TeamType, TeamMemberType } from "@/types/team";
 const TaskProjectDataContext = createContext<{
   projects: ProjectType[];
   setProjects: Dispatch<SetStateAction<ProjectType[]>>;
+  projectsLoading: boolean;
   teams: TeamType[];
   setTeams: Dispatch<SetStateAction<TeamType[]>>;
   teamMemberships: TeamMemberType[];
 }>({
   projects: [],
   setProjects: (value) => value,
+  projectsLoading: true,
   teams: [],
   setTeams: (value) => value,
   teamMemberships: [],
@@ -34,6 +36,7 @@ const sortProjects = (projects: ProjectType[]): ProjectType[] => {
 const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
   const { profile } = useAuthProvider();
   const [projects, setProjects] = useState<ProjectType[]>([]);
+  const [projectsLoading, setProjectsLoading] = useState<boolean>(true);
   const [teams, setTeams] = useState<TeamType[]>([]);
   const [teamMemberships, setTeamMemberships] = useState<TeamMemberType[]>([]);
 
@@ -50,6 +53,7 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
 
         if (!projectError) {
           setProjects(sortProjects(projectData || []));
+          setProjectsLoading(false);
         }
 
         // Fetch team memberships
@@ -214,6 +218,7 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
       value={{
         projects,
         setProjects,
+        projectsLoading,
         teams,
         setTeams,
         teamMemberships,

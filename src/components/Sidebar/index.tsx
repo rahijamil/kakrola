@@ -278,10 +278,7 @@ const Sidebar: React.FC = () => {
       </div>
 
       {showAddTaskModal && (
-        <AddTaskModal
-          addTask={addTask}
-          onClose={() => setShowAddTaskModal(false)}
-        />
+        <AddTaskModal onClose={() => setShowAddTaskModal(false)} />
       )}
 
       {showAddTeam && <AddTeam onClose={() => setShowAddTeam(false)} />}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import {
@@ -21,40 +21,52 @@ import { useAuthProvider } from "@/context/AuthContext";
 import Spinner from "../ui/Spinner";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { Input } from "../ui";
+import { v4 as uuidv4 } from "uuid";
 
 const AddTaskForm = ({
   onClose,
   isSmall,
-  section,
+  section_id,
   parentTaskIdForSubTask,
   project,
+  setTasks,
+  tasks,
+  addTaskAboveBellow,
+  taskForEdit,
 }: {
   onClose: () => void;
   isSmall?: boolean;
-  section?: SectionType;
-  parentTaskIdForSubTask?: number;
+  section_id?: SectionType["id"] | null;
+  parentTaskIdForSubTask?: string | number;
   project: ProjectType | null;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  tasks: TaskType[];
+  addTaskAboveBellow?: { position: "above" | "below"; task: TaskType } | null;
+  taskForEdit?: TaskType;
 }) => {
   const { projects } = useTaskProjectDataProvider();
   const { profile } = useAuthProvider();
 
-  const [taskData, setTaskData] = useState<TaskType>({
-    title: "",
-    description: "",
-    priority: "Priority",
-    project_id: project?.id || null,
-    section_id: section?.id || null,
-    parent_task_id: null,
-    profile_id: profile?.id || "",
-    assigned_to_id: null,
-    due_date: new Date().toISOString(),
-    reminder_time: null,
-    is_inbox: project ? false : true,
-    is_completed: false,
-    order: 0,
-    completed_at: null,
-    updated_at: new Date().toISOString(),
-  });
+  const [taskData, setTaskData] = useState<TaskType>(
+    taskForEdit || {
+      id: uuidv4(),
+      title: "",
+      description: "",
+      priority: "Priority",
+      project_id: project?.id || null,
+      section_id: section_id || null,
+      parent_task_id: null,
+      profile_id: profile?.id || "",
+      assigned_to_id: null,
+      due_date: new Date().toISOString(),
+      reminder_time: null,
+      is_inbox: project ? false : true,
+      is_completed: false,
+      order: Math.max(...tasks.map((task) => task.order), 0) + 1,
+      completed_at: null,
+      updated_at: new Date().toISOString(),
+    }
+  );
 
   const [showDueDate, setShowDueDate] = useState<boolean>(false);
   const [showAssignee, setShowAssignee] = useState<boolean>(false);
@@ -66,64 +78,140 @@ const AddTaskForm = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Helper functions
+  const calculateNewOrder = (
+    tasks: TaskType[],
+    currentIndex: number,
+    position: "above" | "below"
+  ) => {
+    const prevOrder =
+      position === "above"
+        ? tasks[currentIndex - 1]?.order || tasks[currentIndex].order - 1
+        : tasks[currentIndex].order;
+    const nextOrder =
+      position === "below"
+        ? tasks[currentIndex + 1]?.order || tasks[currentIndex].order + 1
+        : tasks[currentIndex].order;
+    return (prevOrder + nextOrder) / 2;
+  };
+
+  const resetTaskData = () => {
+    setTaskData({
+      id: uuidv4(),
+      title: "",
+      description: "",
+      priority: "Priority",
+      project_id: project?.id || null,
+      section_id: section_id || null,
+      parent_task_id: null,
+      profile_id: profile?.id || "",
+      assigned_to_id: null,
+      due_date: new Date().toISOString(),
+      reminder_time: null,
+      is_inbox: project ? false : true,
+      is_completed: false,
+      order: 0,
+      completed_at: null,
+      updated_at: new Date().toISOString(),
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!taskData.title) {
       setError("Task name is required.");
       return;
     }
 
-    setLoading(true); // Start loading
-    setError(null); // Clear previous errors
+    setLoading(true);
+    setError(null);
+
+    const isEditing = !!taskForEdit;
+    let updatedTasks: TaskType[] = [];
 
     try {
-      if (parentTaskIdForSubTask) {
-        const { error } = await supabaseBrowser.from("tasks").insert([
-          {
-            ...taskData,
-            updated_at: new Date().toISOString(),
-            parent_task_id: parentTaskIdForSubTask,
-          },
-        ]);
+      if (isEditing) {
+        // Optimistically update the task in the UI
+        updatedTasks = tasks.map((t) =>
+          t.id === taskData.id ? { ...t, ...taskData } : t
+        );
+        setTasks(updatedTasks);
+        setLoading(false);
 
-        if (error) {
-          setError(error.message); // Set error if any
-          setLoading(false); // Stop loading
-          return;
-        }
-      } else {
-        const { error } = await supabaseBrowser
+        // Update the existing task in Supabase
+        const { data, error } = await supabaseBrowser
           .from("tasks")
-          .insert([{ ...taskData, updated_at: new Date().toISOString() }]);
+          .update(taskData)
+          .eq("id", taskData.id)
+          .select()
+          .single();
 
-        if (error) {
-          setError(error.message); // Set error if any
-          setLoading(false); // Stop loading
-          return;
+        if (error) throw error;
+
+        // Ensure UI reflects any updates from the database
+        updatedTasks = tasks.map((t) => (t.id === taskData.id ? data : t));
+      } else {
+        // Create a temporary task with a UUID
+        const newTask: TaskType = {
+          ...taskData,
+          id: uuidv4(), // temporary ID
+          updated_at: new Date().toISOString(),
+          parent_task_id: parentTaskIdForSubTask || null,
+        };
+
+        if (addTaskAboveBellow) {
+          const { position, task: existingTask } = addTaskAboveBellow;
+          const currentIndex = tasks.findIndex((t) => t.id === existingTask.id);
+          const insertIndex =
+            position === "below" ? currentIndex + 1 : currentIndex;
+
+          newTask.order = calculateNewOrder(tasks, currentIndex, position);
+
+          updatedTasks = [
+            ...tasks.slice(0, insertIndex),
+            newTask,
+            ...tasks.slice(insertIndex),
+          ];
+        } else {
+          newTask.order = Math.max(...tasks.map((task) => task.order), 0) + 1;
+          updatedTasks = [...tasks, newTask];
         }
+
+        // Optimistically update the task list in the UI
+        setTasks(updatedTasks);
+        setLoading(false);
+        // Reset form and close
+        resetTaskData();
+
+        // Insert the new task into Supabase
+        const { id: tempId, ...taskDataWithoutId } = newTask;
+        const { data, error } = await supabaseBrowser
+          .from("tasks")
+          .insert([taskDataWithoutId])
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        // Replace the temporary ID with the actual ID from the database
+        updatedTasks = updatedTasks.map((t) =>
+          t.id === tempId ? { ...t, id: data.id } : t
+        );
+      }
+
+      // Update state with new/updated tasks
+      setTasks(updatedTasks);
+      setLoading(false);
+
+      if (isEditing) {
+        onClose();
       }
     } catch (error: any) {
-      setError(error.message); // Set error if any
+      setError(error.message);
+      // Revert the optimistic update on error
+      setTasks(tasks); // Revert to the original state
     } finally {
-      setTaskData({
-        title: "",
-        description: "",
-        priority: "Priority",
-        project_id: project?.id || null,
-        section_id: section?.id || null,
-        parent_task_id: 0 || null,
-        profile_id: profile?.id || "",
-        assigned_to_id: null,
-        due_date: new Date().toString(),
-        reminder_time: null,
-        is_inbox: project ? false : true,
-        is_completed: false,
-        order: 0,
-        completed_at: null,
-      });
-
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 

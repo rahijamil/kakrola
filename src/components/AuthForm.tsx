@@ -184,15 +184,15 @@ const AuthForm: React.FC<AuthFormProps> = ({
             <KriyaLogo size="md" isTitle />
             <div>
               <h2 className="text-3xl font-extrabold text-gray-900">
-                {type === "signup" && "Join Ekta Today"}
+                {type === "signup" && "Join Kriar Today"}
                 {type === "login" && "Welcome back"}
                 {type === "forgotPassword" && "Forgot your password?"}
                 {type === "updatePassword" && "Update your password"}
               </h2>
               <p className="mt-2 text-sm text-gray-600">
                 {type === "signup" &&
-                  "Create your Ekta account and start collaborating"}
-                {type === "login" && "Log in to your Ekta account"}
+                  "Create your Kriar account and start collaborating"}
+                {type === "login" && "Log in to your Kriar account"}
                 {type === "forgotPassword" &&
                   message !==
                     "Password reset link has been sent to your email." &&

@@ -4,8 +4,8 @@ import React from "react";
 import AppLayoutWrapper from "./AppLayoutWrapper";
 
 export const metadata: Metadata = {
-  title: "Kriya: Plan Your Tasks",
-  description: "Kriya: Plan Your Tasks",
+  title: "Kriar",
+  description: "Kriar",
 };
 
 export default function AppLayout({

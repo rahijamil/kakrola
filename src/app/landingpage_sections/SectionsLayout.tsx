@@ -87,8 +87,8 @@ const SectionsLayout = () => {
             </div>
 
             <div
-              className={`w-11/12 lg:w-[55%] overflow-hidden border pt-8 ${
-                index % 2 !== 0 ? "pl-8 rounded-l-3xl" : "pr-8 rounded-r-3xl"
+              className={`w-11/12 lg:w-[55%] overflow-hidden border pt-4 sm:pt-8 ${
+                index % 2 !== 0 ? "pl-4 sm:pl-8 rounded-l-3xl" : "pr-4 sm:pr-8 rounded-r-3xl"
               } ${
                 index == 0
                   ? "bg-indigo-600 border-indigo-600"

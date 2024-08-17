@@ -1,7 +1,12 @@
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ChevronRight, Plus } from "lucide-react";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "@hello-pangea/dnd";
 import ProjectItem from "./ProjectItem";
 import { usePathname } from "next/navigation";
 import { supabaseBrowser } from "@/utils/supabase/client";
@@ -19,8 +24,7 @@ const TeamProjects = ({
   team: TeamType;
   sidebarWidth: number;
 }) => {
-  const { profile } = useAuthProvider();
-  const { projects, teams, setTeams } = useTaskProjectDataProvider();
+  const { projects } = useTaskProjectDataProvider();
   const pathname = usePathname();
   const [showProjects, setShowProjects] = useState(true);
   const [teamProjects, setTeamProjects] = useState<ProjectType[]>([]);
@@ -32,31 +36,32 @@ const TeamProjects = ({
     }
   }, [team, projects]);
 
-  const handleOnDragEnd = async (result: any) => {
+  const handleOnDragEnd = async (result: DropResult) => {
     const { source, destination } = result;
 
     if (!destination) return;
 
-    const reorderedTeams = [...teams];
-    const [movedTeam] = reorderedTeams.splice(source.index, 1);
-    reorderedTeams.splice(destination.index, 0, movedTeam);
+    const reorderedProjects = [...teamProjects];
+    const [movedProject] = reorderedProjects.splice(source.index, 1);
+    reorderedProjects.splice(destination.index, 0, movedProject);
 
     // Calculate new order values
-    const newOrderTeams = reorderedTeams.map((team, index) => ({
-      ...team,
+    const newOrderProjects = reorderedProjects.map((project, index) => ({
+      ...project,
       order: index + 1, // Set order based on index
     }));
 
     // Update local state
-    setTeams(newOrderTeams);
+    setTeamProjects(newOrderProjects);
 
     try {
       // Update Supabase
-      const updatePromises = newOrderTeams.map((team) =>
+      const updatePromises = newOrderProjects.map((project) =>
         supabaseBrowser
-          .from("teams")
-          .update({ order: team.order })
-          .eq("id", team.id)
+          .from("projects")
+          .update({ order: project.order })
+          .eq("team_id", team.id)
+          .eq("id", project.id)
       );
 
       const results = await Promise.all(updatePromises);
@@ -65,7 +70,7 @@ const TeamProjects = ({
       results.forEach(({ error }, index) => {
         if (error) {
           console.error(
-            `Error updating project order for project ID ${newOrderTeams[index].id}:`,
+            `Error updating project order for project ID ${newOrderProjects[index].id}:`,
             error
           );
           // Optionally, revert state changes if needed
@@ -78,7 +83,6 @@ const TeamProjects = ({
       // setProjects(projects); // or handle error state
     }
   };
-
   return (
     <>
       <div className="mt-4 px-2">
@@ -150,7 +154,7 @@ const TeamProjects = ({
 
         {showProjects && (
           <DragDropContext onDragEnd={handleOnDragEnd}>
-            <Droppable droppableId="projects">
+            <Droppable droppableId="teams">
               {(provided) => {
                 return (
                   <ul

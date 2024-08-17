@@ -35,6 +35,6 @@
   <circle cx="25" cy="170" r="5" fill="white" opacity="0.3"/>
   <circle cx="185" cy="160" r="6" fill="white" opacity="0.4"/>
   
-  <!-- Text "Kriya" -->
-  <text x="250" y="150" font-family="Poppins, sans-serif" font-weight="bold" font-size="150" fill="url(#grad)" filter="url(#shadow)">Kriya</text>
+  <!-- Text "Kriar" -->
+  <text x="250" y="150" font-family="Poppins, sans-serif" font-weight="bold" font-size="150" fill="url(#grad)" filter="url(#shadow)">Kriar</text>
 </svg>

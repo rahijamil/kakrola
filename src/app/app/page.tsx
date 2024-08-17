@@ -34,10 +34,6 @@ const Today = () => {
     fetchTodayTasks();
   }, [profile?.id]);
 
-  const handleTaskUpdate = (updatedTask: TaskType) => {
-    // setTasks(tasks.map((t) => (t.id === updatedTask.id ? updatedTask : t)));
-  };
-
   return (
     <LayoutWrapper
       headline="Today"
@@ -50,7 +46,6 @@ const Today = () => {
         sections={[]}
         setTasks={() => null}
         view={view}
-        onTaskUpdate={handleTaskUpdate}
         project={null}
         setSections={() => null}
       />

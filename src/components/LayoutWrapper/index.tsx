@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { ProjectType } from "@/types/project";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { supabaseBrowser } from "@/utils/supabase/client";
 
 const LayoutWrapper = ({
   children,
@@ -47,6 +48,33 @@ const LayoutWrapper = ({
 
   const { setProjects, teams } = useTaskProjectDataProvider();
 
+  const handleEditTitle = async () => {
+    if (
+      project &&
+      projectTitle.trim().length &&
+      project.name !== projectTitle.trim()
+    ) {
+      setProjects((prevProjects) =>
+        prevProjects.map((p) =>
+          p.id == project.id ? { ...p, name: projectTitle.trim() } : p
+        )
+      );
+
+      setEditTitle(false);
+
+      const { error } = await supabaseBrowser
+        .from("projects")
+        .update({ name: projectTitle.trim() })
+        .eq("id", project.id);
+      if (error) {
+        console.log(error);
+      }
+    }
+
+    setProjectTitle(project?.name || headline);
+    setEditTitle(false);
+  };
+
   return (
     <>
       {headline == "Docs" && <DocsSidebar />}
@@ -54,7 +82,13 @@ const LayoutWrapper = ({
       <main className="flex-1 overflow-auto flex flex-col">
         {view && setView && (
           <div className="flex items-center justify-between p-4">
-            {!["Today", "Inbox"].includes(headline) && <div>{teams.find((t) => t.id == project?.team_id)?.name ?? "My Projects"} /</div>}
+            {!["Today", "Inbox"].includes(headline) && (
+              <div>
+                {teams.find((t) => t.id == project?.team_id)?.name ??
+                  "My Projects"}{" "}
+                /
+              </div>
+            )}
 
             <div className="flex-1 flex items-center justify-end">
               <ul className="flex items-center relative">
@@ -174,28 +208,16 @@ const LayoutWrapper = ({
                   {editTitle ? (
                     <input
                       type="text"
-                      className={`text-[26px] font-bold border border-gray-400 outline-none capitalize w-full rounded-md p-1`}
+                      className={`text-[26px] font-bold border border-gray-300 w-full rounded-md p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-indigo-300`}
                       value={projectTitle}
-                      onBlur={() => setEditTitle(false)}
+                      onBlur={handleEditTitle}
                       autoFocus
                       onChange={(ev) => setProjectTitle(ev.target.value)}
-                      onKeyDown={(ev) => {
-                        if (ev.key == "Enter" && project) {
-                          setProjects((prevProjects) =>
-                            prevProjects.map((p) =>
-                              p.id == project.id
-                                ? { ...p, name: projectTitle }
-                                : p
-                            )
-                          );
-
-                          setEditTitle(false);
-                        }
-                      }}
+                      onKeyDown={(ev) => ev.key == "Enter" && handleEditTitle()}
                     />
                   ) : (
                     <h1
-                      className={`text-[26px] font-bold border border-transparent w-fit hover:w-full hover:border-gray-200 capitalize rounded-md p-1 ${
+                      className={`text-[26px] font-bold border border-transparent w-fit hover:w-full hover:border-gray-200 rounded-md p-1 py-[14px] cursor-text ${
                         !setView && "pt-8"
                       }`}
                       onClick={() => setEditTitle(true)}
@@ -206,7 +228,7 @@ const LayoutWrapper = ({
                 </>
               ) : (
                 <h1
-                  className={`text-2xl font-bold capitalize ${
+                  className={`text-[26px] font-bold capitalize ${
                     !setView && "pt-8"
                   }`}
                 >

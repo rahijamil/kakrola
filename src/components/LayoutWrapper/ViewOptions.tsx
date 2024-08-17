@@ -47,7 +47,7 @@ const ViewOptions = ({
           >
             <div className="flex items-center gap-3">
               <div
-                className={`border border-gray-400 w-5 h-5 rounded-full flex items-center justify-center`}
+                className={`border border-gray-400 w-5 h-5 rounded-md flex items-center justify-center`}
               >
                 <Check
                   strokeWidth={1.5}

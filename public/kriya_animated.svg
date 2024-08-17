@@ -27,7 +27,7 @@
   
   <!-- Circular element (representing planning/cycles) -->
   <circle cx="729" cy="540" r="324" fill="none" stroke="white" stroke-width="43" stroke-dasharray="162 81" stroke-linecap="round" opacity="0.3">
-    <!-- <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 729 540" to="360 729 540" dur="20s" repeatCount="indefinite" /> -->
+    <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 729 540" to="360 729 540" dur="20s" repeatCount="indefinite" />
   </circle>
   
   <!-- Decorative elements -->

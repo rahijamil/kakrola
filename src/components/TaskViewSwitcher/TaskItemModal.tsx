@@ -1,4 +1,11 @@
-import React, { Dispatch, MouseEvent, SetStateAction, useEffect, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  MouseEvent,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Dialog, Input } from "../ui";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 
@@ -22,7 +29,9 @@ import {
   Text,
   X,
 } from "lucide-react";
-import Textarea from "../ui/textarea";
+import { Textarea } from "../ui";
+import { useAuthProvider } from "@/context/AuthContext";
+import Image from "next/image";
 
 const TaskItemModal = ({
   task,
@@ -30,7 +39,8 @@ const TaskItemModal = ({
   onClose,
   onCheckClick,
   project,
-  setTasks
+  setTasks,
+  tasks,
 }: {
   task: TaskType;
   subTasks: TaskType[];
@@ -40,7 +50,9 @@ const TaskItemModal = ({
   ) => Promise<void>;
   project: ProjectType | null;
   setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  tasks: TaskType[];
 }) => {
+  const { profile } = useAuthProvider();
   const [contentEditable, setContentEditable] = useState<boolean>(false);
   const [showCommentForm, setShowCommentForm] = useState<boolean>(false);
   const [showAddSubtask, setShowAddSubtask] = useState<boolean>(false);
@@ -60,6 +72,14 @@ const TaskItemModal = ({
   };
 
   useEffect(() => {
+    document.body.classList.add("overflow-y-hidden");
+
+    return () => {
+      document.body.classList.remove("overflow-y-hidden");
+    };
+  }, []);
+
+  useEffect(() => {
     const fetchSectionAndSubTasks = async () => {
       if (task.section_id) {
         const { data, error } = await supabaseBrowser
@@ -74,25 +94,20 @@ const TaskItemModal = ({
           setSection(data);
         }
       }
-
-      // const { data, error } = await supabaseBrowser
-      //   .from("tasks")
-      //   .select("*")
-      //   .eq("parent_task_id", task.id);
-
-      // if (error) {
-      //   console.error(error);
-      // } else {
-      //   setSubTasks(data);
-      // }
     };
 
     fetchSectionAndSubTasks();
   }, [task]);
 
   return (
-    <Dialog onClose={onClose} size="lg">
-      <div className="h-[94%]">
+    <div
+      className="fixed top-0 left-0 right-0 bottom-0 flex py-16 justify-center bg-black/50 z-10 overflow-y-auto"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-md overflow-hidden w-11/12 max-w-[52rem] min-h-full h-fit flex flex-col"
+        onClick={(ev) => ev.stopPropagation()}
+      >
         <div className="p-2 px-4 flex items-center justify-between border-b border-gray-200">
           {task.is_inbox ? (
             <div className="flex items-center gap-2">
@@ -136,7 +151,7 @@ const TaskItemModal = ({
           </div>
         </div>
 
-        <div className="flex h-full">
+        <div className="flex flex-[.99]">
           <div className="flex gap-1 bg-white p-4 flex-1">
             <div
               onClick={onCheckClick}
@@ -145,17 +160,39 @@ const TaskItemModal = ({
               <Circle
                 size={22}
                 strokeWidth={1.5}
-                className={`text-gray-400 ${
-                  task.is_completed ? "hidden" : "group-hover:hidden"
-                }`}
+                className={`${
+                  task.priority == "P1"
+                    ? "text-red-500"
+                    : task.priority == "P2"
+                    ? "text-orange-500"
+                    : task.priority == "P3"
+                    ? "text-indigo-500"
+                    : "text-gray-500"
+                } ${task.is_completed ? "hidden" : "group-hover:hidden"}`}
               />
               <CircleCheck
                 size={22}
                 strokeWidth={1.5}
-                className={`transition text-gray-400 rounded-full ${
+                className={`transition rounded-full ${
+                  task.priority == "P1"
+                    ? "text-red-500"
+                    : task.priority == "P2"
+                    ? "text-orange-500"
+                    : task.priority == "P3"
+                    ? "text-indigo-500"
+                    : "text-gray-500"
+                } ${
                   !task.is_completed
                     ? "hidden group-hover:block"
-                    : "bg-gray-400 text-white"
+                    : `text-white ${
+                        task.priority == "P1"
+                          ? "bg-red-500"
+                          : task.priority == "P2"
+                          ? "bg-orange-500"
+                          : task.priority == "P3"
+                          ? "bg-indigo-500"
+                          : "bg-gray-500"
+                      }`
                 }`}
               />
             </div>
@@ -193,6 +230,7 @@ const TaskItemModal = ({
                       className="w-4 h-4 mt-[2px] text-gray-400"
                     />
                     <Textarea
+                      fullWidth
                       placeholder={"Description"}
                       className="resize-none"
                       rows={contentEditable ? 3 : 2}
@@ -204,7 +242,7 @@ const TaskItemModal = ({
                           description: ev.target.value,
                         }))
                       }
-                    ></Textarea>
+                    />
                   </div>
                 </div>
 
@@ -245,6 +283,9 @@ const TaskItemModal = ({
                       onClose={() => setShowAddSubtask(false)}
                       parentTaskIdForSubTask={task.id}
                       project={project}
+                      setTasks={setTasks}
+                      tasks={tasks}
+                      section_id={task.section_id}
                     />
                   </div>
                 )}
@@ -260,7 +301,10 @@ const TaskItemModal = ({
                       setShowShareOption={(v) => {}}
                       index={index}
                       project={project}
-                      subTasks={subTasks}
+                      subTasks={tasks
+                        .map((t) => (t.parent_task_id == subTask.id ? t : null))
+                        .filter((t) => t != null)}
+                      tasks={tasks}
                     />
                   </li>
                 ))}
@@ -270,7 +314,13 @@ const TaskItemModal = ({
 
               {!showCommentForm && (
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 bg-black rounded-full"></div>
+                  <Image
+                    src={profile?.avatar_url || "/default_avatar.png"}
+                    width={28}
+                    height={28}
+                    alt={profile?.full_name || profile?.username || "avatar"}
+                    className="rounded-full"
+                  />
 
                   <div
                     className="flex items-center justify-between w-full border border-gray-100 rounded-full py-1 px-4 hover:bg-gray-50 cursor-pointer transition"
@@ -392,7 +442,7 @@ const TaskItemModal = ({
           </div>
         </div>
       </div>
-    </Dialog>
+    </div>
   );
 };
 

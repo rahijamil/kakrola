@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from "react";
 import AddTask from "../AddTask";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { ProjectType, SectionType } from "@/types/project";
+import { ProjectType, SectionType, TaskType } from "@/types/project";
 
 const SectionAddTask = ({
   showAddTask,
@@ -10,15 +10,19 @@ const SectionAddTask = ({
   showUngroupedAddTask,
   setShowUngroupedAddTask,
   isSmall,
-  project
+  project,
+  setTasks,
+  tasks
 }: {
-  showAddTask?: number | null;
-  setShowAddTask?: Dispatch<SetStateAction<number | null>>;
+  showAddTask?: string | number | null;
+  setShowAddTask?: Dispatch<SetStateAction<string | number | null>>;
   section?: SectionType;
   showUngroupedAddTask?: boolean;
   setShowUngroupedAddTask?: Dispatch<SetStateAction<boolean>>;
   isSmall?: boolean;
   project: ProjectType | null;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  tasks: TaskType[];
 }) => {
   const isAddTaskVisible = section
     ? showAddTask !== section.id
@@ -32,7 +36,7 @@ const SectionAddTask = ({
     <>
       {isAddTaskVisible && (
         <button
-          className="mt-4 text-gray-500 hover:text-gray-700 flex items-center gap-2 w-full group py-1"
+          className="mt-4 mx-[6px] text-gray-500 hover:text-gray-700 flex items-center gap-2 w-full group py-1"
           onClick={() =>
             section
               ? setShowAddTask && setShowAddTask(section.id)
@@ -52,8 +56,10 @@ const SectionAddTask = ({
                 : setShowUngroupedAddTask && setShowUngroupedAddTask(false)
             }
             isSmall={isSmall}
-            section={section}
+            section_id={section?.id}
             project={project}
+            tasks={tasks}
+            setTasks={setTasks}
           />
         </div>
       )}

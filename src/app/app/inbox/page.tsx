@@ -147,7 +147,6 @@ const InboxPage = () => {
         sections={inboxSections}
         setSections={setInboxSections}
         view={view}
-        onTaskUpdate={(updatedTask) => {}}
       />
 
       {inboxTasks.length === 0 && view === "List" && (

@@ -18,23 +18,24 @@ export interface ProjectType {
 
 // Section types
 export interface SectionType {
-  id: number;
+  id: string | number;
   project_id: number | null;
   profile_id: string;
   name: string;
   order: number;
   is_collapsed: boolean;
   is_inbox: boolean;
+  is_archived: boolean;
   updated_at: string;
   created_at?: string;
 }
 
 // Task types
 export interface TaskType {
-  id?: number;
+  id: string | number;
   project_id: number | null;
-  section_id: number | null;
-  parent_task_id: number | null; // For subtasks
+  section_id: string | number | null;
+  parent_task_id: string | number | null; // For subtasks
   profile_id: string; // UUID of the profile who created the task
   assigned_to_id: string | null; // UUID of the profile the task is assigned to
   title: string;

@@ -20,12 +20,12 @@ const ConfirmAlert = ({
       onClick={onCancel}
     >
       <div
-        className="bg-white rounded-md p-4 space-y-4 w-[420px] whitespace-normal"
+        className="bg-white rounded-md p-4 space-y-4 w-[450px] whitespace-normal"
         onClick={(ev) => ev.stopPropagation()}
       >
         <div className="space-y-1">
           <h2 className="font-bold text-base">{title}</h2>
-          <p className="text-gray-600">{description}</p>
+          <p className="text-gray-600 text-[13px]">{description}</p>
         </div>
 
         <div className="flex items-center justify-end gap-4">

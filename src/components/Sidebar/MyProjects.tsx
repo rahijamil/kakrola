@@ -1,7 +1,7 @@
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ChevronRight, Plus } from "lucide-react";
 import React, { Dispatch, SetStateAction, useState } from "react";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import ProjectItem from "./ProjectItem";
 import { usePathname } from "next/navigation";
 import { supabaseBrowser } from "@/utils/supabase/client";
@@ -17,7 +17,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
   const [showProjects, setShowProjects] = useState(true);
   const projects = allProjects.filter((p) => !p.team_id);
 
-  const handleOnDragEnd = async (result: any) => {
+  const handleOnDragEnd = async (result: DropResult) => {
     const { source, destination } = result;
 
     if (!destination) return;

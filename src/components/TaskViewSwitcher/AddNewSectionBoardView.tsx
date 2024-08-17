@@ -1,25 +1,28 @@
 import { useAuthProvider } from "@/context/AuthContext";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import React, { FormEvent, useState } from "react";
+import React, { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import Spinner from "../ui/Spinner";
+import { v4 as uuidv4 } from "uuid";
 
 const AddNewSectionBoardView = ({
-  sections,
   setShowUngroupedAddSection,
   showUngroupedAddSection,
   columnId,
   columns,
   index,
   project,
+  sections,
+  setSections,
 }: {
-  sections: SectionType[];
   setShowUngroupedAddSection: React.Dispatch<React.SetStateAction<boolean>>;
   showUngroupedAddSection?: boolean;
   columnId?: string;
   columns?: { id: string; title: string; tasks: TaskType[] }[];
   index?: number;
   project: ProjectType | null;
+  sections: SectionType[];
+  setSections: Dispatch<SetStateAction<SectionType[]>>;
 }) => {
   const [showAddSection, setShowAddSection] = useState<string | null>(null);
   const [mouseOnAddSection, setMouseOnAddSection] = useState<boolean>(false);
@@ -29,54 +32,90 @@ const AddNewSectionBoardView = ({
 
   const [loading, setLoading] = useState(false);
 
-  const handleAddSection = async (
-    ev: FormEvent<HTMLFormElement>,
-    order: number | null
-  ) => {
+  const handleAddSection = async (ev: FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
 
-    if (!newSectionName.trim()) {
+    if (!profile?.id || !newSectionName.trim()) {
       return;
     }
 
     setLoading(true);
 
-    try {
-      if (project?.id) {
-        const { error } = await supabaseBrowser.from("sections").insert([
-          {
-            name: newSectionName.trim(),
-            project_id: project.id,
-            profile_id: profile?.id,
-            is_collapsed: false,
-            is_inbox: false,
-            order: 0,
-            updated_at: new Date().toISOString(),
-          },
-        ]);
+    let newOrder: number;
 
-        if (error) {
-          console.error(error);
-        }
+    if (sections.length > 0) {
+      if (index !== undefined && index < sections.length) {
+        // If inserting after an existing section
+        const currentOrder = sections[index].order;
+        const nextOrder =
+          index < sections.length - 1
+            ? sections[index + 1].order
+            : currentOrder + 1;
+        newOrder = (currentOrder + nextOrder) / 2;
       } else {
-        const { error } = await supabaseBrowser.from("sections").insert([
-          {
-            name: newSectionName.trim(),
-            project_id: null,
-            profile_id: profile?.id,
-            is_collapsed: false,
-            is_inbox: true,
-            order: 0,
-            updated_at: new Date().toISOString(),
-          },
-        ]);
-
-        if (error) {
-          console.error(error);
-        }
+        // If adding to the end
+        newOrder = Math.max(...sections.map((s) => s.order)) + 1;
       }
+    } else {
+      // If it's the first section
+      newOrder = 1;
+    }
+
+    console.log("Calculated newOrder:", newOrder);
+
+    const newSection: SectionType = {
+      id: uuidv4(), // temporary placeholder ID
+      name: newSectionName.trim(),
+      project_id: project?.id || null,
+      profile_id: profile.id,
+      is_collapsed: false,
+      is_inbox: project ? false : true,
+      is_archived: false,
+      order: newOrder,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Optimistically update the state
+    const updatedSections = [
+      ...sections.slice(0, index ?? sections.length),
+      newSection,
+      ...sections.slice(index ?? sections.length),
+    ].sort((a, b) => a.order - b.order);
+
+    setSections(updatedSections);
+    setLoading(false);
+
+    try {
+      const { data, error } = await supabaseBrowser
+        .from("sections")
+        .insert([
+          {
+            name: newSection.name,
+            project_id: newSection.project_id,
+            profile_id: newSection.profile_id,
+            is_collapsed: newSection.is_collapsed,
+            is_inbox: newSection.is_inbox,
+            order: newOrder,
+            updated_at: newSection.updated_at,
+          },
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Update section with actual ID from database
+      setSections((prevSections) =>
+        prevSections
+          .map((s) =>
+            s.id === newSection.id ? { ...newSection, id: data.id } : s
+          )
+          .sort((a, b) => a.order - b.order)
+      );
     } catch (error) {
-      console.error(error);
+      console.error("Error inserting section:", error);
+      // Revert the optimistic update if there's an error
+      setSections(sections);
     } finally {
       setNewSectionName("");
       setShowAddSection(null);
@@ -154,7 +193,7 @@ const AddNewSectionBoardView = ({
       {(columnId ? showAddSection === columnId : showUngroupedAddSection) && (
         <form
           className="space-y-2 min-w-[300px] mx-5"
-          onSubmit={(ev) => handleAddSection(ev, index ? index + 1 : null)}
+          onSubmit={(ev) => handleAddSection(ev)}
         >
           <input
             type="text"

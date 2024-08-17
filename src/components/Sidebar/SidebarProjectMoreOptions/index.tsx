@@ -1,11 +1,5 @@
 import React, { Dispatch, RefObject, SetStateAction } from "react";
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  HeartIcon,
-  PencilIcon,
-} from "@heroicons/react/24/outline";
-import { HeartOffIcon } from "lucide-react";
+import { ArrowDown, ArrowUp, Heart, HeartOffIcon, Pencil } from "lucide-react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType } from "@/types/project";
 import DeleteOption from "./DeleteOption";
@@ -90,7 +84,7 @@ const SidebarProjectMoreOptions = ({
             }}
             className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
           >
-            <ArrowUpIcon className="w-4 h-4 mr-2" /> Add project above
+            <ArrowUp strokeWidth={1.5} className="w-4 h-4 mr-2" /> Add project above
           </button>
           <button
             onClick={() => {
@@ -99,7 +93,7 @@ const SidebarProjectMoreOptions = ({
             }}
             className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
           >
-            <ArrowDownIcon className="w-4 h-4 mr-2" /> Add project below
+            <ArrowDown strokeWidth={1.5} className="w-4 h-4 mr-2" /> Add project below
           </button>
         </div>
         <div className="h-[1px] bg-gray-100 my-1"></div>
@@ -111,7 +105,7 @@ const SidebarProjectMoreOptions = ({
             }}
             className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
           >
-            <PencilIcon className="w-4 h-4 mr-2" /> Edit
+            <Pencil strokeWidth={1.5} className="w-4 h-4 mr-2" /> Edit
           </button>
           <button
             onClick={handleFavorite}
@@ -120,7 +114,7 @@ const SidebarProjectMoreOptions = ({
             {project.is_favorite ? (
               <HeartOffIcon className="w-4 h-4 mr-4" />
             ) : (
-              <HeartIcon className="w-4 h-4 mr-4" />
+              <Heart strokeWidth={1.5} className="w-4 h-4 mr-4" />
             )}{" "}
             {project?.is_favorite
               ? "Remove from favorites"
