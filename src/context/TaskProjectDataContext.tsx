@@ -1,10 +1,8 @@
 "use client";
-import { ProjectType } from "@/types/project";
+import { ProjectType, SectionType, TaskType } from "@/types/project";
 import React, {
   createContext,
-  Dispatch,
   ReactNode,
-  SetStateAction,
   useContext,
   useEffect,
   useState,
@@ -15,17 +13,25 @@ import { TeamType, TeamMemberType } from "@/types/team";
 
 const TaskProjectDataContext = createContext<{
   projects: ProjectType[];
-  setProjects: Dispatch<SetStateAction<ProjectType[]>>;
+  setProjects: React.Dispatch<React.SetStateAction<ProjectType[]>>;
   projectsLoading: boolean;
   teams: TeamType[];
-  setTeams: Dispatch<SetStateAction<TeamType[]>>;
+  setTeams: React.Dispatch<React.SetStateAction<TeamType[]>>;
+  sections: SectionType[];
+  setSections: React.Dispatch<React.SetStateAction<SectionType[]>>;
+  tasks: TaskType[];
+  setTasks: React.Dispatch<React.SetStateAction<TaskType[]>>;
   teamMemberships: TeamMemberType[];
 }>({
   projects: [],
-  setProjects: (value) => value,
+  setProjects: () => {},
   projectsLoading: true,
   teams: [],
-  setTeams: (value) => value,
+  setTeams: () => {},
+  sections: [],
+  setSections: () => {},
+  tasks: [],
+  setTasks: () => {},
   teamMemberships: [],
 });
 
@@ -36,6 +42,8 @@ const sortProjects = (projects: ProjectType[]): ProjectType[] => {
 const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
   const { profile } = useAuthProvider();
   const [projects, setProjects] = useState<ProjectType[]>([]);
+  const [sections, setSections] = useState<SectionType[]>([]);
+  const [tasks, setTasks] = useState<TaskType[]>([]);
   const [projectsLoading, setProjectsLoading] = useState<boolean>(true);
   const [teams, setTeams] = useState<TeamType[]>([]);
   const [teamMemberships, setTeamMemberships] = useState<TeamMemberType[]>([]);
@@ -51,9 +59,35 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
           .select("*")
           .eq("profile_id", profile.id);
 
-        if (!projectError) {
+        if (projectError) {
+          console.error("Error fetching projects:", projectError);
+        } else {
           setProjects(sortProjects(projectData || []));
           setProjectsLoading(false);
+        }
+
+        // Fetch sections
+        const { data: sectionData, error: sectionError } = await supabaseBrowser
+          .from("sections")
+          .select("*")
+          .eq("profile_id", profile.id);
+
+        if (sectionError) {
+          console.error("Error fetching sections:", sectionError);
+        } else {
+          setSections(sectionData || []);
+        }
+
+        // Fetch tasks
+        const { data: taskData, error: taskError } = await supabaseBrowser
+          .from("tasks")
+          .select("*")
+          .eq("profile_id", profile.id);
+
+        if (taskError) {
+          console.error("Error fetching tasks:", taskError);
+        } else {
+          setTasks(taskData || []);
         }
 
         // Fetch team memberships
@@ -92,9 +126,9 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!profile?.id) return;
 
-    // Subscribe to real-time changes for projects
+    // Subscribe to real-time changes for projects, sections, and tasks
     const projectsSubscription = supabaseBrowser
-      .channel("projects-all-channel")
+      .channel("projects-channel")
       .on(
         "postgres_changes",
         {
@@ -103,34 +137,35 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
           table: "projects",
           filter: `profile_id=eq.${profile.id}`,
         },
-        (payload) => {
-          if (
-            payload.eventType === "INSERT" &&
-            payload.new.profile_id === profile.id
-          ) {
-            setProjects((prev) =>
-              prev.map((project) => project.id !== payload.new.id)
-                ? sortProjects([...prev, payload.new as ProjectType])
-                : prev
-            );
-          } else if (payload.eventType === "UPDATE") {
-            setProjects((prev) =>
-              sortProjects(
-                prev.map((project) =>
-                  project.id === payload.new.id
-                    ? (payload.new as ProjectType)
-                    : project
-                )
-              )
-            );
-          } else if (payload.eventType === "DELETE") {
-            setProjects((prev) =>
-              sortProjects(
-                prev.filter((project) => project.id !== payload.old.id)
-              )
-            );
-          }
-        }
+        handleProjectChanges
+      )
+      .subscribe();
+
+    const sectionsSubscription = supabaseBrowser
+      .channel("sections-channel")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "sections",
+          filter: `profile_id=eq.${profile.id}`,
+        },
+        handleSectionChanges
+      )
+      .subscribe();
+
+    const tasksSubscription = supabaseBrowser
+      .channel("tasks-channel")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "tasks",
+          filter: `profile_id=eq.${profile.id}`,
+        },
+        handleTaskChanges
       )
       .subscribe();
 
@@ -208,10 +243,70 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
 
     return () => {
       supabaseBrowser.removeChannel(projectsSubscription);
+      supabaseBrowser.removeChannel(sectionsSubscription);
+      supabaseBrowser.removeChannel(tasksSubscription);
+
       supabaseBrowser.removeChannel(teamMembershipsSubscription);
       supabaseBrowser.removeChannel(teamsSubscription);
     };
   }, [profile?.id]);
+
+  const handleProjectChanges = (payload: any) => {
+    if (
+      payload.eventType === "INSERT" &&
+      payload.new.profile_id === profile?.id
+    ) {
+      setProjects((prev) =>
+        prev.map((project) => project.id !== payload.new.id)
+          ? sortProjects([...prev, payload.new as ProjectType])
+          : prev
+      );
+    } else if (payload.eventType === "UPDATE") {
+      setProjects((prev) =>
+        sortProjects(
+          prev.map((project) =>
+            project.id === payload.new.id
+              ? (payload.new as ProjectType)
+              : project
+          )
+        )
+      );
+    } else if (payload.eventType === "DELETE") {
+      setProjects((prev) =>
+        sortProjects(prev.filter((project) => project.id !== payload.old.id))
+      );
+    }
+  };
+
+  const handleSectionChanges = (payload: any) => {
+    if (payload.eventType === "INSERT") {
+      setSections((prev) => [...prev, payload.new as SectionType]);
+    } else if (payload.eventType === "UPDATE") {
+      setSections((prev) =>
+        prev.map((section) =>
+          section.id === payload.new.id ? (payload.new as SectionType) : section
+        )
+      );
+    } else if (payload.eventType === "DELETE") {
+      setSections((prev) =>
+        prev.filter((section) => section.id !== payload.old.id)
+      );
+    }
+  };
+
+  const handleTaskChanges = (payload: any) => {
+    if (payload.eventType === "INSERT") {
+      setTasks((prev) => [...prev, payload.new as TaskType]);
+    } else if (payload.eventType === "UPDATE") {
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === payload.new.id ? (payload.new as TaskType) : task
+        )
+      );
+    } else if (payload.eventType === "DELETE") {
+      setTasks((prev) => prev.filter((task) => task.id !== payload.old.id));
+    }
+  };
 
   return (
     <TaskProjectDataContext.Provider
@@ -221,6 +316,10 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
         projectsLoading,
         teams,
         setTeams,
+        sections,
+        setSections,
+        tasks,
+        setTasks,
         teamMemberships,
       }}
     >

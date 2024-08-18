@@ -4,7 +4,7 @@ import React from "react";
 import AppLayoutWrapper from "./AppLayoutWrapper";
 
 export const metadata: Metadata = {
-  title: "Kriar",
+  title: "Today | Kriar",
   description: "Kriar",
 };
 
@@ -17,7 +17,7 @@ export default function AppLayout({
 }>) {
   return (
     <AppLayoutWrapper>
-      <div className="flex h-screen bg-white">
+      <div className="flex fixed top-0 left-0 bottom-0 right-0">
         <Sidebar />
         {children}
         {modal}

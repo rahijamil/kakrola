@@ -1,38 +1,24 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { TaskType } from "@/types/project";
 import LayoutWrapper from "../../components/LayoutWrapper";
 import Image from "next/image";
 import TaskViewSwitcher from "@/components/TaskViewSwitcher";
 import { ViewTypes } from "@/types/viewTypes";
-import { supabaseBrowser } from "@/utils/supabase/client";
-import { useAuthProvider } from "@/context/AuthContext";
-
+import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 const Today = () => {
-  const { profile } = useAuthProvider();
+  const { tasks, setTasks } = useTaskProjectDataProvider();
   const [view, setView] = useState<ViewTypes["view"]>("List");
-  const [todayTasks, setTodayTasks] = useState<TaskType[]>([]);
 
-  useEffect(() => {
-    const fetchTodayTasks = async () => {
-      const { data, error } = await supabaseBrowser
-        .from("tasks")
-        .select("*")
-        .eq("due_date", new Date().toISOString().split("T")[0])
-        .eq("profile_id", profile?.id);
-
-      if (error) {
-        console.error(error);
-        return;
-      }
-
-      if (data) {
-        setTodayTasks(data);
-      }
-    };
-
-    fetchTodayTasks();
-  }, [profile?.id]);
+  const todayTasks = useMemo(() => {
+    return (
+      tasks
+        // .filter(
+        //   (t) => projects.find((p) => p.id === t.project_id)?.team_id == null
+        // )
+        .sort((a, b) => a.order - b.order)
+    );
+  }, [tasks]);
 
   return (
     <LayoutWrapper
@@ -44,7 +30,7 @@ const Today = () => {
       <TaskViewSwitcher
         tasks={todayTasks}
         sections={[]}
-        setTasks={() => null}
+        setTasks={setTasks}
         view={view}
         project={null}
         setSections={() => null}

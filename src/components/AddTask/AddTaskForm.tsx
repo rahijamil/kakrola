@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import {
@@ -11,8 +11,10 @@ import {
   Hash,
   Inbox,
   MapPin,
+  MapPinIcon,
   SendHorizonal,
   Tag,
+  TagIcon,
   User,
   X,
 } from "lucide-react";
@@ -23,6 +25,11 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import { Input } from "../ui";
 import { v4 as uuidv4 } from "uuid";
 import ProjectsSelector from "./ProjectsSelector";
+import DueDateSelector from "./DueDateSelector";
+import AssigneeSelector from "./AssigneeSelector";
+import { getDateInfo } from "@/utils/getDateInfo";
+import Image from "next/image";
+import { TaskInput } from "./TaskInput";
 
 const AddTaskForm = ({
   onClose,
@@ -34,16 +41,18 @@ const AddTaskForm = ({
   tasks,
   addTaskAboveBellow,
   taskForEdit,
+  biggerTitle,
 }: {
   onClose: () => void;
   isSmall?: boolean;
   section_id?: SectionType["id"] | null;
   parentTaskIdForSubTask?: string | number;
   project: ProjectType | null;
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (updatedTasks: TaskType[]) => void;
   tasks: TaskType[];
   addTaskAboveBellow?: { position: "above" | "below"; task: TaskType } | null;
   taskForEdit?: TaskType;
+  biggerTitle?: boolean;
 }) => {
   const { projects } = useTaskProjectDataProvider();
   const { profile } = useAuthProvider();
@@ -216,21 +225,19 @@ const AddTaskForm = ({
     }
   };
 
+  const dateInfo = getDateInfo(taskData.due_date);
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="space-y-2 p-2">
         <div>
-          <Input
-            type="text"
-            placeholder="Task name"
-            className="font-semibold"
-            value={taskData.title}
-            onChange={(e) =>
-              setTaskData({ ...taskData, title: e.target.value })
-            }
-            required
-            autoFocus
+          <TaskInput
+            projects={projects}
+            taskData={taskData}
+            setTaskData={setTaskData}
+            biggerTitle={biggerTitle}
           />
+
           <Input
             type="text"
             placeholder="Description"
@@ -238,99 +245,102 @@ const AddTaskForm = ({
             onChange={(e) =>
               setTaskData({ ...taskData, description: e.target.value })
             }
+            className="text-xs"
           />
         </div>
 
         <div className="flex items-center flex-wrap gap-2 whitespace-nowrap">
           <div className="relative">
             <div
-              className="flex items-center gap-2 hover:bg-gray-100 cursor-pointer p-1 px-2 rounded-md border border-gray-200"
+              className={`flex items-center gap-1 cursor-pointer p-1 rounded-md border border-gray-200 ${
+                showDueDate ? "bg-gray-100" : "hover:bg-gray-100 text-xs"
+              }`}
               onClick={() => setShowDueDate(!showDueDate)}
             >
-              <Calendar strokeWidth={1.5} className="w-4 h-4 text-gray-500" />
-              {!isSmall && (
-                <span className="text-sm text-gray-700">Due date</span>
+              {taskData.due_date ? (
+                <>
+                  <div className="flex items-center gap-1">
+                    {dateInfo?.icon}
+                    <span className={dateInfo?.color}>{dateInfo?.label}</span>
+                  </div>
+
+                  <button
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      setTaskData({ ...taskData, due_date: null });
+                    }}
+                    className="text-gray-500 hover:text-gray-700 p-[2px] hover:bg-gray-200 rounded-md"
+                  >
+                    <X strokeWidth={1.5} className="w-3 h-3 text-gray-500" />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Calendar
+                    strokeWidth={1.5}
+                    className="w-4 h-4 text-gray-500"
+                  />
+                  {!isSmall && <span className="text-gray-700">Due date</span>}
+                </>
               )}
             </div>
             {showDueDate && (
-              <>
-                <div className="absolute bg-white border top-full -left-full translate-x-1/2 rounded-md overflow-hidden z-20 p-2">
-                  <input
-                    type="date"
-                    className="p-2 border border-gray-300 rounded"
-                    // value={}
-                    onChange={(e) =>
-                      setTaskData({
-                        ...taskData,
-                        due_date: new Date(e.target.value).toISOString(),
-                      })
-                    }
-                  />
-                </div>
-
-                <div
-                  className="fixed top-0 left-0 bottom-0 right-0 z-10"
-                  onClick={() => setShowDueDate(false)}
-                ></div>
-              </>
+              <DueDateSelector
+                task={taskData}
+                setTask={setTaskData}
+                onClose={() => setShowDueDate(false)}
+              />
             )}
           </div>
 
           <div className="relative">
             <div
-              className="flex items-center gap-2 hover:bg-gray-100 cursor-pointer p-1 px-2 rounded-md border border-gray-200"
+              className={`flex items-center gap-1 cursor-pointer text-xs p-1 rounded-md border border-gray-200 ${
+                showAssignee ? "bg-gray-100" : "hover:bg-gray-100"
+              }`}
               onClick={() => setShowAssignee(!showDueDate)}
             >
-              <User strokeWidth={1.5} className="w-4 h-4 text-gray-500" />
-              {!isSmall && (
-                <span className="text-sm text-gray-700">Assignee</span>
+              {taskData.assigned_to_id ? (
+                <>
+                  <div className="flex items-center gap-1">
+                    <Image
+                      src={profile?.avatar_url || "/default_avatar.png"}
+                      width={18}
+                      height={18}
+                      alt={profile?.full_name || profile?.username || "avatar"}
+                      className="rounded-full"
+                    />
+                    {profile?.full_name.split(" ")[0]}{" "}
+                    {profile?.full_name.split(" ")[1][0] &&
+                      profile?.full_name.split(" ")[1][0] + "."}
+                  </div>
+
+                  <button
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      setTaskData({ ...taskData, assigned_to_id: null });
+                    }}
+                    className="text-gray-500 hover:text-gray-700 p-[2px] hover:bg-gray-200 rounded-md"
+                  >
+                    <X strokeWidth={1.5} className="w-3 h-3 text-gray-500" />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <User strokeWidth={1.5} className="w-4 h-4 text-gray-500" />
+                  {!isSmall && <span className="text-gray-700">Assignee</span>}
+                </>
               )}
             </div>
             {showAssignee && (
-              <>
-                <div className="absolute bg-white border top-full min-w-[250px] -left-full rounded-md overflow-hidden z-20">
-                  <div className="p-2 border-b border-gray-200">
-                    <input
-                      type="text"
-                      placeholder="Type a project name"
-                      className="w-full p-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                  </div>
-
-                  <ul>
-                    {projects.map((project) => (
-                      <li
-                        key={project.id}
-                        className={
-                          "flex items-center pl-6 px-2 py-2 transition-colors text-gray-700 hover:bg-gray-100 cursor-pointer"
-                        }
-                        onClick={() => {
-                          setTaskData({
-                            ...taskData,
-                            project_id: project.id!,
-                            is_inbox: false,
-                          });
-                          setShowProjects(false);
-                        }}
-                      >
-                        <Hash strokeWidth={1.5} className="w-4 h-4 mr-2" />
-                        {project.name}
-                        {taskData.project_id === project.id && (
-                          <Check
-                            strokeWidth={1.5}
-                            className="w-4 h-4 ml-auto"
-                          />
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div
-                  className="fixed top-0 left-0 bottom-0 right-0 z-10"
-                  onClick={() => setShowAssignee(false)}
-                ></div>
-              </>
+              <AssigneeSelector
+                task={taskData}
+                setTask={setTaskData}
+                onClose={() => setShowAssignee(false)}
+                positionClassNames={
+                  isSmall ? "top-full left-full -translate-x-1/2" : undefined
+                }
+              />
             )}
           </div>
 
@@ -340,14 +350,14 @@ const AddTaskForm = ({
             isSmall={isSmall}
           />
 
-          <div className="relative">
+          {/* <div className="relative">
             <div
               className="flex items-center gap-2 hover:bg-gray-100 cursor-pointer p-1 px-2 rounded-md border border-gray-200"
               onClick={() => setShowReminder(!showReminder)}
             >
               <Bell strokeWidth={1.5} className="w-4 h-4 text-gray-500" />
               {!isSmall && (
-                <span className="text-sm text-gray-700">Reminders</span>
+                <span className="text-xs text-gray-700">Reminders</span>
               )}
             </div>
             {showReminder && (
@@ -380,7 +390,7 @@ const AddTaskForm = ({
 
             {showMore && (
               <>
-                <div className="shadow-xl border border-gray-200 rounded-md w-[250px] absolute bg-white right-0 top-full mt-1 z-20">
+                <div className="shadow-xl border border-gray-200 rounded-md w-[250px] absolute bg-white right-0 top-full mt-1 z-20 text-xs">
                   <ul className="p-2">
                     <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-gray-100 cursor-pointer text-gray-700 rounded-md">
                       <div className="flex items-center gap-2">
@@ -400,7 +410,7 @@ const AddTaskForm = ({
                       </p>
                     </li>
                   </ul>
-                  {/* <hr />
+                  <hr />
                   <ul className="p-2">
                     <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-gray-100 cursor-pointer text-gray-700 rounded-md">
                       <div className="flex items-center gap-2">
@@ -418,7 +428,7 @@ const AddTaskForm = ({
 
                       <AtSignIcon className="w-4 h-4" />
                     </li>
-                  </ul> */}
+                  </ul>
                 </div>
                 <div
                   className="fixed top-0 left-0 bottom-0 right-0 z-10"
@@ -426,7 +436,7 @@ const AddTaskForm = ({
                 ></div>
               </>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -443,7 +453,7 @@ const AddTaskForm = ({
             >
               <button
                 type="button"
-                className={`w-full flex items-center text-sm transition-colors text-gray-700 gap-2 ${
+                className={`w-full flex items-center text-xs transition-colors text-gray-700 gap-2 ${
                   isSmall && "max-w-[100px]"
                 }`}
               >
@@ -464,21 +474,10 @@ const AddTaskForm = ({
             {showProjects && (
               <ProjectsSelector
                 onClose={() => setShowProjects(false)}
-                onInboxClick={() =>
-                  setTaskData({
-                    ...taskData,
-                    project_id: null,
-                    is_inbox: true,
-                  })
-                }
-                onProjectSelect={(project) =>
-                  setTaskData({
-                    ...taskData,
-                    project_id: project.id,
-                    is_inbox: false,
-                  })
-                }
+                setTask={setTaskData}
                 task={taskData}
+                positionClassNames={isSmall ? "top-full -left-1/3" : undefined}
+                isInbox
               />
             )}
           </div>
@@ -487,14 +486,14 @@ const AddTaskForm = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-3 py-[6px] text-sm text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-md"
+              className="px-3 py-[6px] text-[13px] text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-md"
               disabled={loading}
             >
               {isSmall ? <X strokeWidth={1.5} className="w-5 h-5" /> : "Cancel"}
             </button>
             <button
               type="submit"
-              className="px-3 py-[6px] text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-600 disabled:cursor-not-allowed transition disabled:opacity-50"
+              className="px-3 py-[6px] text-[13px] text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-600 disabled:cursor-not-allowed transition disabled:opacity-50"
               disabled={!taskData.title.trim() || loading}
             >
               {loading ? (

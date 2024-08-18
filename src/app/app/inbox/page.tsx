@@ -1,142 +1,45 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { SectionType, TaskType } from "@/types/project";
 import LayoutWrapper from "../../../components/LayoutWrapper";
 import Image from "next/image";
 import TaskViewSwitcher from "@/components/TaskViewSwitcher";
 import { ViewTypes } from "@/types/viewTypes";
-import { supabaseBrowser } from "@/utils/supabase/client";
 import { useAuthProvider } from "@/context/AuthContext";
-import Spinner from "@/components/ui/Spinner";
+import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 
 const InboxPage = () => {
-  const { profile } = useAuthProvider();
+  const { tasks, sections, setSections, setTasks } =
+    useTaskProjectDataProvider();
   const [view, setView] = useState<ViewTypes["view"]>("List");
-  const [inboxTasks, setInboxTasks] = useState<TaskType[]>([]);
-  const [inboxSections, setInboxSections] = useState<SectionType[]>([]);
 
-  const [loading, setLoading] = useState(true);
+  const inboxSections = useMemo(() => {
+    return sections.filter((s) => s.is_inbox).sort((a, b) => a.order - b.order);
+  }, [sections]);
 
-  const handleTaskUpdate = (updatedTask: TaskType) => {
-    setInboxTasks((prevTasks) =>
-      prevTasks.map((t) => (t.id === updatedTask.id ? updatedTask : t))
+  const inboxTasks = useMemo(() => {
+    return tasks.filter((t) => t.is_inbox).sort((a, b) => a.order - b.order);
+  }, [tasks]);
+
+  const setInboxSections = (updatedSections: SectionType[]) => {
+    setSections((prev) =>
+      prev.map((section) =>
+        section.is_inbox
+          ? updatedSections.find((s) => s.id === section.id) || section
+          : section
+      )
     );
   };
 
-  useEffect(() => {
-    const fetchTasksAndSections = async () => {
-      if (profile?.id) {
-        const { data: tasksData, error: tasksError } = await supabaseBrowser
-          .from("tasks")
-          .select("*")
-          .eq("is_inbox", true)
-          .eq("profile_id", profile?.id);
-
-        if (tasksError) {
-          console.error(tasksError);
-        } else {
-          setInboxTasks(tasksData || []);
-        }
-
-        const { data: sectionData, error: sectionError } = await supabaseBrowser
-          .from("sections")
-          .select("*")
-          .eq("is_inbox", true)
-          .eq("profile_id", profile?.id);
-
-        if (sectionError) {
-          console.error(sectionError);
-        } else {
-          setInboxSections(sectionData || []);
-        }
-      }
-
-      setLoading(false);
-    };
-
-    fetchTasksAndSections();
-
-    // Subscribe to real-time changes for tasks
-    const tasksSubscription = supabaseBrowser
-      .channel("tasks-all-channel")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "tasks",
-          filter: `profile_id=eq.${profile?.id}`,
-        },
-        (payload) => {
-          console.log("Task change received!", payload);
-          if (
-            payload.eventType === "INSERT" &&
-            payload.new.profile_id === profile?.id
-          ) {
-            setInboxTasks((prevTasks) => [
-              ...prevTasks,
-              payload.new as TaskType,
-            ]);
-          } else if (payload.eventType === "UPDATE") {
-            handleTaskUpdate(payload.new as TaskType);
-          } else if (payload.eventType === "DELETE") {
-            setInboxTasks((prevTasks) =>
-              prevTasks.filter((task) => task.id !== payload.old.id)
-            );
-          }
-        }
+  const setInboxTasks = (updatedTasks: TaskType[]) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.is_inbox
+          ? updatedTasks.find((t) => t.id === task.id) || task
+          : task
       )
-      .subscribe();
-
-    // // Subscribe to real-time changes for sections
-    // const sectionsSubscription = supabaseBrowser
-    //   .channel("sections-all-channel")
-    //   .on(
-    //     "postgres_changes",
-    //     {
-    //       event: "*",
-    //       schema: "public",
-    //       table: "sections",
-    //       filter: `profile_id=eq.${profile?.id}`,
-    //     },
-    //     (payload) => {
-    //       console.log("Section change received!", payload);
-    //       if (payload.eventType === "INSERT" && payload.new.profile_id === profile?.id) {
-    //         setInboxSections((prevSections) => [
-    //           ...prevSections,
-    //           payload.new as SectionType,
-    //         ]);
-    //       } else if (payload.eventType === "UPDATE") {
-    //         setInboxSections((prevSections) =>
-    //           prevSections.map((section) =>
-    //             section.id === payload.new.id
-    //               ? (payload.new as SectionType)
-    //               : section
-    //           )
-    //         );
-    //       } else if (payload.eventType === "DELETE") {
-    //         setInboxSections((prevSections) =>
-    //           prevSections.filter((section) => section.id !== payload.old.id)
-    //         );
-    //       }
-    //     }
-    //   )
-    //   .subscribe();
-
-    // Cleanup subscriptions on component unmount
-    return () => {
-      supabaseBrowser.removeChannel(tasksSubscription);
-      // supabaseBrowser.removeChannel(sectionsSubscription);
-    };
-  }, [profile]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen w-full">
-        <Spinner />
-      </div>
     );
-  }
+  };
 
   return (
     <LayoutWrapper headline="Inbox" setView={setView} view={view}>

@@ -17,7 +17,11 @@
     @apply opacity-100;
   }
 
-  .dragging {
-    @apply opacity-50;
+  #scrollable {
+    scrollbar-width: 0;
+    -ms-overflow-style: none;
+  }
+  #scrollable::-webkit-scrollbar {
+    display: none;
   }
 }

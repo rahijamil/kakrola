@@ -47,17 +47,25 @@ const Priorities = ({
 }) => {
   const [showPriority, setShowPriority] = useState<boolean>(false);
 
+  const selectedPriority = priorities.find(
+    (priority) => priority.value === taskData.priority
+  );
+
   return (
     <div className="relative">
       {forTaskItemModal ? (
         <div
-          className="flex items-center justify-between hover:bg-gray-200 rounded-md cursor-pointer transition p-[6px] px-2 group"
+          className={`flex items-center justify-between rounded-md transition p-[6px] px-2 group cursor-pointer ${
+            showPriority ? "bg-indigo-100" : "hover:bg-indigo-100"
+          }`}
           onClick={() => setShowPriority(!showPriority)}
         >
           <div className="flex items-center gap-2 text-xs">
             <PriorityIcon priority={taskData.priority} />
-            <span className="text-sm text-gray-700">
-              {priorities.find((p) => p.value === taskData.priority)?.value}
+            <span className="text-xs">
+              {selectedPriority?.value == "Priority"
+                ? "P4"
+                : selectedPriority?.value || ""}
             </span>
           </div>
 
@@ -76,13 +84,13 @@ const Priorities = ({
           {isSmall ? (
             <>
               {taskData.priority !== "Priority" && (
-                <span className="text-sm text-gray-700">
+                <span className="text-xs text-gray-700">
                   {priorities.find((p) => p.value === taskData.priority)?.value}
                 </span>
               )}
             </>
           ) : (
-            <span className="text-sm text-gray-700">
+            <span className="text-xs text-gray-700">
               {priorities.find((p) => p.value === taskData.priority)?.value}
             </span>
           )}
@@ -91,7 +99,7 @@ const Priorities = ({
 
       {showPriority && (
         <>
-          <div className="absolute bg-white border top-full min-w-[200px] left-1/2 -translate-x-1/2 rounded-md overflow-hidden z-20">
+          <div className="absolute bg-white border top-full min-w-[200px] left-1/2 -translate-x-1/2 rounded-md overflow-hidden z-20 text-xs">
             <ul>
               {priorities.map((priority) => (
                 <li
@@ -108,7 +116,10 @@ const Priorities = ({
                   <PriorityIcon priority={priority.value} />
                   <span className="ml-2">{priority.label}</span>
                   {taskData.priority === priority.value && (
-                    <Check strokeWidth={1.5} className="w-4 h-4 ml-auto" />
+                    <Check
+                      strokeWidth={2}
+                      className="w-4 h-4 ml-auto text-indigo-600"
+                    />
                   )}
                 </li>
               ))}

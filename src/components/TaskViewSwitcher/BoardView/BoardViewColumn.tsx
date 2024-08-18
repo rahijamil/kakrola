@@ -54,7 +54,7 @@ const BoardViewColumn = ({
   showSectionMoreOptions: string | null;
   setShowSectionMoreOptions: Dispatch<SetStateAction<string | null>>;
   project: ProjectType | null;
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (updatedTasks: TaskType[]) => void;
   setShowShareOption?: Dispatch<SetStateAction<boolean>>;
   showShareOption?: boolean;
   sections: SectionType[];
@@ -70,7 +70,7 @@ const BoardViewColumn = ({
         tasks: TaskType[];
       }[]
     | undefined;
-  setSections: Dispatch<SetStateAction<SectionType[]>>;
+  setSections: (updatedSections: SectionType[]) => void;
 }) => {
   const [editColumnTitle, setEditColumnTitle] = useState(false);
   const [columnTitle, setColumnTitle] = useState(column.title);
@@ -119,11 +119,10 @@ const BoardViewColumn = ({
         draggableId={column.id?.toString()!}
         index={columnIndex}
         isDragDisabled={
-          showTaskItemModal
-            ? true
-            : false || showTaskDeleteConfirm
-            ? true
-            : false
+          (showTaskItemModal ? true : false) ||
+          (showTaskDeleteConfirm ? true : false) ||
+          (showAddTask ? true : false) ||
+          showUngroupedAddTask
         }
       >
         {(boardDraggaleProvided) => (

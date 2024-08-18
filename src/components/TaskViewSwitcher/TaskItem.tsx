@@ -5,7 +5,6 @@ import TaskItemMoreDropdown from "./TaskItemMoreDropdown";
 import { Draggable } from "@hello-pangea/dnd";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
 import {
-  Check,
   Circle,
   CircleCheck,
   Ellipsis,
@@ -35,7 +34,7 @@ const TaskItem = ({
   setShowShareOption?: Dispatch<SetStateAction<boolean>>;
   index: number;
   project: ProjectType | null;
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (updatedTasks: TaskType[]) => void;
   tasks: TaskType[];
   showModal?: string | null;
   setShowModal?: Dispatch<SetStateAction<string | null>>;
@@ -55,10 +54,9 @@ const TaskItem = ({
   } | null>(null);
 
   const handleTaskDelete = async () => {
-    setTasks((prevTasks) => {
-      const updatedTasks = prevTasks.filter((t) => t.id !== task.id);
-      return updatedTasks;
-    });
+    const updatedTasks = tasks.filter((t) => t.id !== task.id);
+
+    setTasks(updatedTasks);
 
     const { error } = await supabaseBrowser
       .from("tasks")
@@ -76,15 +74,11 @@ const TaskItem = ({
     ev.stopPropagation();
 
     // update local tasks
-    setTasks((prevTasks) => {
-      const updatedTasks = prevTasks.map((t) => {
-        if (t.id === task.id) {
-          return { ...t, is_completed: !t.is_completed };
-        }
-        return t;
-      });
-      return updatedTasks;
-    });
+    setTasks(
+      tasks.map((t) =>
+        t.id === task.id ? { ...t, is_completed: !t.is_completed } : t
+      )
+    );
 
     const { error } = await supabaseBrowser
       .from("tasks")

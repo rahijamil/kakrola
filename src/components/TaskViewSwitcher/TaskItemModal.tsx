@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Dialog, Input } from "../ui";
+import { Input } from "../ui";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 
 import AddTaskForm from "../AddTask/AddTaskForm";
@@ -16,7 +16,6 @@ import AddComentForm from "./AddComentForm";
 import TaskItem from "./TaskItem";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import {
-  Check,
   ChevronDown,
   Circle,
   CircleCheck,
@@ -33,6 +32,9 @@ import { Textarea } from "../ui";
 import { useAuthProvider } from "@/context/AuthContext";
 import Image from "next/image";
 import ProjectsSelector from "../AddTask/ProjectsSelector";
+import AssigneeSelector from "../AddTask/AssigneeSelector";
+import DueDateSelector from "../AddTask/DueDateSelector";
+import DueDateButton from "./DueDateButton";
 
 const TaskItemModal = ({
   task,
@@ -50,18 +52,21 @@ const TaskItemModal = ({
     ev: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
   ) => Promise<void>;
   project: ProjectType | null;
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (updatedTasks: TaskType[]) => void;
   tasks: TaskType[];
 }) => {
   const { profile } = useAuthProvider();
   const [contentEditable, setContentEditable] = useState<boolean>(false);
   const [showCommentForm, setShowCommentForm] = useState<boolean>(false);
   const [showAddSubtask, setShowAddSubtask] = useState<boolean>(false);
-  const { projects } = useTaskProjectDataProvider();
+  const { projects, sections } = useTaskProjectDataProvider();
   const [taskData, setTaskData] = useState<TaskType>(task);
-  const [section, setSection] = useState<SectionType | null>(null);
 
   const [showProjectsSelector, setShowProjectsSelector] =
+    useState<boolean>(false);
+  const [showAssigneeSelector, setShowAssigneeSelector] =
+    useState<boolean>(false);
+  const [showDueDateSelector, setShowDueDateSelector] =
     useState<boolean>(false);
 
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
@@ -82,26 +87,6 @@ const TaskItemModal = ({
       document.body.classList.remove("overflow-y-hidden");
     };
   }, []);
-
-  useEffect(() => {
-    const fetchSectionAndSubTasks = async () => {
-      if (task.section_id) {
-        const { data, error } = await supabaseBrowser
-          .from("sections")
-          .select("*")
-          .eq("id", task.section_id)
-          .single();
-
-        if (error) {
-          console.error(error);
-        } else {
-          setSection(data);
-        }
-      }
-    };
-
-    fetchSectionAndSubTasks();
-  }, [task]);
 
   return (
     <div
@@ -134,18 +119,18 @@ const TaskItemModal = ({
                 >
                   <path
                     fill="currentColor"
-                    d="M19.5 20a.5.5 0 0 1 0 1h-15a.5.5 0 0 1 0-1h15zM18 6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h12zm0 1H6a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zm-6 2a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 12 9zm7.5-6a.5.5 0 0 1 0 1h-15a.5.5 0 0 1 0-1h15z"
+                    d="M17.5 20a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11zM16 8a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h8zm0 1H8a1 1 0 0 0-.993.883L7 10v5a1 1 0 0 0 .883.993L8 16h8a1 1 0 0 0 .993-.883L17 15v-5a1 1 0 0 0-.883-.993L16 9zm1.5-5a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11z"
                   ></path>
                 </svg>
-                {section?.name}
+                {sections.find((s) => s.id == taskData.section_id)?.name}
               </div>
             </div>
           )}
 
           <div className="flex items-center gap-2">
-            <button className="p-1 hover:bg-gray-100 transition rounded-md">
+            {/* <button className="p-1 hover:bg-gray-100 transition rounded-md">
               <Ellipsis strokeWidth={1.5} className="w-6 h-6" />
-            </button>
+            </button> */}
             <button
               className="p-1 hover:bg-gray-100 transition rounded-md"
               onClick={onClose}
@@ -316,7 +301,7 @@ const TaskItemModal = ({
 
               <div className="my-4 bg-gray-100 h-[1px]" />
 
-              {!showCommentForm && (
+              {/* {!showCommentForm && (
                 <div className="flex items-center gap-2">
                   <Image
                     src={profile?.avatar_url || "/default_avatar.png"}
@@ -343,7 +328,7 @@ const TaskItemModal = ({
                 <AddComentForm
                   onCancelClick={() => setShowCommentForm(false)}
                 />
-              )}
+              )} */}
             </div>
           </div>
           <div className="bg-indigo-50/50 p-4 w-64">
@@ -376,7 +361,7 @@ const TaskItemModal = ({
                         </div>
                         <div>/</div>
                         <div className="flex items-center gap-2">
-                          {section?.name}
+                          {sections.find((s) => s.id == taskData.section_id)?.name}
                         </div>
                       </div>
                     )}
@@ -390,22 +375,10 @@ const TaskItemModal = ({
                   {showProjectsSelector && (
                     <ProjectsSelector
                       onClose={() => setShowProjectsSelector(false)}
-                      onInboxClick={() =>
-                        setTaskData({
-                          ...taskData,
-                          project_id: null,
-                          is_inbox: true,
-                        })
-                      }
-                      onProjectSelect={(project) =>
-                        setTaskData({
-                          ...taskData,
-                          project_id: project.id,
-                          is_inbox: false,
-                        })
-                      }
+                      setTask={setTaskData}
+                      isInbox
                       task={taskData}
-                      positionClasses="top-full left-1/2 -translate-x-1/2"
+                      positionClassNames="top-full left-1/2 -translate-x-1/2"
                     />
                   )}
                 </div>
@@ -414,18 +387,135 @@ const TaskItemModal = ({
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-indigo-100 rounded-md cursor-pointer transition p-[6px] px-2 group">
-                  <p className="font-semibold text-xs">Assignee</p>
-                  <Plus strokeWidth={1.5} className="w-4 h-4" />
+                <div className="relative">
+                  <div>
+                    <button
+                      onClick={() =>
+                        taskData.assigned_to_id == null &&
+                        setShowAssigneeSelector(true)
+                      }
+                      className={`flex items-center justify-between rounded-md transition p-[6px] px-2 group w-full ${
+                        taskData.assigned_to_id == null
+                          ? showAssigneeSelector
+                            ? "bg-indigo-100 cursor-pointer"
+                            : "hover:bg-indigo-100 cursor-pointer"
+                          : "cursor-default"
+                      }`}
+                    >
+                      <p
+                        className={`font-semibold text-xs ${
+                          taskData.assigned_to_id !== null && "cursor-text"
+                        }`}
+                      >
+                        Assignee
+                      </p>
+
+                      {taskData.assigned_to_id == null && (
+                        <Plus strokeWidth={1.5} className="w-4 h-4" />
+                      )}
+                    </button>
+
+                    {taskData.assigned_to_id !== null && (
+                      <button
+                        onClick={() => setShowAssigneeSelector(true)}
+                        className={`flex items-center relative rounded-md transition py-[6px] px-2 group w-full text-xs ${
+                          taskData.assigned_to_id !== null
+                            ? showAssigneeSelector
+                              ? "bg-indigo-100 cursor-pointer"
+                              : "hover:bg-indigo-100 cursor-pointer"
+                            : "cursor-default"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Image
+                            src={profile?.avatar_url || "/default_avatar.png"}
+                            width={18}
+                            height={18}
+                            alt={
+                              profile?.full_name ||
+                              profile?.username ||
+                              "avatar"
+                            }
+                            className="rounded-full"
+                          />
+                          {profile?.full_name.split(" ")[0]}{" "}
+                          {profile?.full_name.split(" ")[1][0] &&
+                            profile?.full_name.split(" ")[1][0] + "."}
+                        </div>
+
+                        <div
+                          onClick={(ev) => {
+                            ev.stopPropagation();
+                            setTaskData({ ...taskData, assigned_to_id: null });
+                          }}
+                          className="p-1 rounded-md hover:bg-white absolute top-1/2 -translate-y-1/2 right-1"
+                        >
+                          <X strokeWidth={1.5} size={16} />
+                        </div>
+                      </button>
+                    )}
+                  </div>
+
+                  {showAssigneeSelector && (
+                    <AssigneeSelector
+                      onClose={() => setShowAssigneeSelector(false)}
+                      positionClassNames="top-full left-1/2 -translate-x-1/2"
+                      task={taskData}
+                      setTask={setTaskData}
+                    />
+                  )}
                 </div>
               </div>
               <div className="h-[1px] bg-gray-200 m-2"></div>
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-indigo-100 rounded-md cursor-pointer transition p-[6px] px-2 group">
-                  <p className="font-semibold text-xs">Due date</p>
-                  <Plus strokeWidth={1.5} className="w-4 h-4" />
+                <div className="relative">
+                  <div>
+                    <button
+                      onClick={() =>
+                        taskData.due_date == null &&
+                        setShowDueDateSelector(true)
+                      }
+                      className={`flex items-center justify-between rounded-md transition p-[6px] px-2 group w-full ${
+                        taskData.due_date == null
+                          ? showDueDateSelector
+                            ? "bg-indigo-100 cursor-pointer"
+                            : "hover:bg-indigo-100 cursor-pointer"
+                          : "cursor-default"
+                      }`}
+                    >
+                      <p
+                        className={`font-semibold text-xs ${
+                          taskData.due_date !== null && "cursor-text"
+                        }`}
+                      >
+                        Due date
+                      </p>
+
+                      {taskData.due_date == null && (
+                        <Plus strokeWidth={1.5} className="w-4 h-4" />
+                      )}
+                    </button>
+
+                    {taskData.due_date !== null && (
+                      <DueDateButton
+                        taskData={taskData}
+                        setTaskData={setTaskData}
+                        setShowDueDateSelector={setShowDueDateSelector}
+                        showDueDateSelector={showDueDateSelector}
+                      />
+                    )}
+                  </div>
+
+                  {showDueDateSelector && (
+                    <DueDateSelector
+                      onClose={() => setShowDueDateSelector(false)}
+                      positionClassNames="top-full left-0"
+                      task={taskData}
+                      setTask={setTaskData}
+                    />
+                  )}
                 </div>
               </div>
               <div className="h-[1px] bg-gray-200 m-2"></div>
@@ -442,7 +532,8 @@ const TaskItemModal = ({
               </div>
               <div className="h-[1px] bg-gray-200 m-2"></div>
             </div>
-            <div>
+
+            {/* <div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between hover:bg-indigo-100 rounded-md cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Labels</p>
@@ -473,7 +564,7 @@ const TaskItemModal = ({
                 </div>
               </div>
               <div className="h-[1px] bg-gray-200 m-2"></div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

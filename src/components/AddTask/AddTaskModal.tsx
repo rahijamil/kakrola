@@ -1,37 +1,30 @@
 "use client";
-import React, { useEffect } from "react";
-import { TaskType } from "@/types/project";
+import React, { useMemo } from "react";
 import AddTaskForm from "./AddTaskForm";
 import { motion } from "framer-motion";
-import { supabaseBrowser } from "@/utils/supabase/client";
+import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { TaskType } from "@/types/project";
 
 interface AddTaskModalProps {
   onClose: () => void;
 }
 
 const AddTaskModal = ({ onClose }: AddTaskModalProps) => {
-  const [tasks, setTasks] = React.useState<TaskType[]>([]);
+  const { tasks, setTasks } = useTaskProjectDataProvider();
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      const { data, error } = await supabaseBrowser
-        .from("tasks")
-        .select("*")
-        .is("project_id", null)
-        .eq("is_inbox", true);
+  const inboxTasks = useMemo(() => {
+    return tasks.filter((t) => t.is_inbox).sort((a, b) => a.order - b.order);
+  }, [tasks]);
 
-      if (error) {
-        console.log(error);
-      } else {
-        setTasks(data);
-      }
-    };
-
-    fetchTasks();
-    return () => {
-      setTasks([]);
-    };
-  }, []);
+  const setInboxTasks = (updatedTasks: TaskType[]) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.is_inbox
+          ? updatedTasks.find((t) => t.id === task.id) || task
+          : task
+      )
+    );
+  };
 
   return (
     <div
@@ -48,8 +41,9 @@ const AddTaskModal = ({ onClose }: AddTaskModalProps) => {
         <AddTaskForm
           onClose={onClose}
           project={null}
-          setTasks={setTasks}
-          tasks={tasks}
+          setTasks={setInboxTasks}
+          tasks={inboxTasks}
+          biggerTitle
         />
       </motion.div>
     </div>

@@ -127,8 +127,8 @@ const Sidebar: React.FC = () => {
   }, [isCollapsed]);
 
   return (
-    <div className={"flex items-start h-screen"}>
-      <div className="flex relative z-10">
+    <>
+      <div className="relative z-10 flex">
         <div
           className="bg-indigo-50/50 transition-all duration-300 h-screen whitespace-nowrap"
           style={{
@@ -155,7 +155,7 @@ const Sidebar: React.FC = () => {
                   />
 
                   <span className="font-medium overflow-hidden text-ellipsis whitespace-nowrap transition">
-                    {profile?.full_name || profile?.username}
+                    {profile?.full_name.split(" ")[0] || profile?.username}
                   </span>
 
                   <ChevronDown strokeWidth={1.5} className="w-4 h-4" />
@@ -205,7 +205,7 @@ const Sidebar: React.FC = () => {
                     onClick={() => setShowAddTaskModal(true)}
                     className={`flex items-center px-2 py-2 rounded-md transition-colors text-gray-700 w-full cursor-pointer hover:bg-gray-200`}
                   >
-                    <AddTaskTextButton handleAddTask={() => {}} />
+                    <AddTaskTextButton />
                   </div>
                 </li>
                 {menuItems.map((item) => (
@@ -282,7 +282,7 @@ const Sidebar: React.FC = () => {
       )}
 
       {showAddTeam && <AddTeam onClose={() => setShowAddTeam(false)} />}
-    </div>
+    </>
   );
 };
 

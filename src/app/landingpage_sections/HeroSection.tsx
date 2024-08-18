@@ -75,7 +75,7 @@ const HeroSection = () => {
           />
         </motion.div>
 
-        <div className="absolute top-1/2 bg-[#E6E6FA] h-[20vh] sm:h-[25vh] md:h-[32vh] w-full z-0"></div>
+        <div className="absolute top-1/2 bg-[#E6E6FA] h-[20vh] sm:h-[25vh] md:h-[32vh] lg:h-[35vh] w-full z-0"></div>
       </div>
     </section>
   );

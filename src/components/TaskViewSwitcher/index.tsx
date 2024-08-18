@@ -8,9 +8,9 @@ import { ViewTypes } from "@/types/viewTypes";
 interface TaskViewSwitcherProps {
   project: ProjectType | null;
   tasks: TaskType[];
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (updatedTasks: TaskType[]) => void;
   sections: SectionType[];
-  setSections: Dispatch<SetStateAction<SectionType[]>>;
+  setSections: (updatedSections: SectionType[]) => void;
   view: ViewTypes["view"];
   showShareOption?: boolean;
   setShowShareOption?: Dispatch<SetStateAction<boolean>>;

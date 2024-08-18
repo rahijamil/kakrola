@@ -1,26 +1,28 @@
 import { useAuthProvider } from "@/context/AuthContext";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { ProjectType, TaskType } from "@/types/project";
+import { SectionType, TaskType } from "@/types/project";
 import { Check, Hash, Inbox } from "lucide-react";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { Input } from "../ui/input";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const ProjectsSelector = ({
   onClose,
-  onInboxClick,
+  isInbox,
   task,
-  onProjectSelect,
-  positionClasses,
+  setTask,
+  positionClassNames,
 }: {
   onClose: () => void;
-  onInboxClick: () => void;
+  isInbox?: boolean;
   task: TaskType;
-  onProjectSelect: (project: ProjectType) => void;
-  positionClasses?: string;
+  setTask: Dispatch<SetStateAction<TaskType>>;
+  positionClassNames?: string;
 }) => {
   const { profile } = useAuthProvider();
-  const { projects, teams } = useTaskProjectDataProvider();
+  const { projects, teams, sections } = useTaskProjectDataProvider();
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Filter projects based on the search query
@@ -45,12 +47,13 @@ const ProjectsSelector = ({
   return (
     <>
       <div
-        className={`absolute bg-white border rounded-md overflow-hidden z-20 text-xs w-[300px] ${
-          positionClasses ? positionClasses : "top-full -left-full"
+        className={`absolute bg-white border rounded-md overflow-hidden z-20 text-xs w-[300px] shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1),0_4px_6px_-2px_rgba(0,0,0,0.05)] ${
+          positionClassNames ? positionClassNames : "top-full left-1/2 -translate-x-1/2"
         }`}
       >
         <div className="p-2 border-b border-gray-200">
           <Input
+            howBig="sm"
             fullWidth
             type="text"
             placeholder="Type a project name"
@@ -60,15 +63,19 @@ const ProjectsSelector = ({
         </div>
 
         {/* Show Inbox if it matches the search query */}
-        {onInboxClick && inboxMatches && (
+        {isInbox && inboxMatches && (
           <div
             className="flex items-center p-2 transition-colors text-gray-700 hover:bg-gray-100 cursor-pointer"
             onClick={() => {
-              onInboxClick();
+              setTask({
+                ...task,
+                project_id: null,
+                is_inbox: true,
+              });
               onClose();
             }}
           >
-            <Inbox strokeWidth={1.5} className="w-5 h-5 mr-3" />
+            <Inbox strokeWidth={1.5} className="w-4 h-4 mr-3" />
             Inbox
             {task.is_inbox && (
               <Check strokeWidth={1.5} className="w-4 h-4 ml-auto" />
@@ -91,20 +98,71 @@ const ProjectsSelector = ({
         )}
         <ul>
           {personalProjects.map((project) => (
-            <li
-              key={project.id}
-              className="flex items-center pl-6 px-2 py-2 transition-colors text-gray-700 hover:bg-gray-100 cursor-pointer"
-              onClick={() => {
-                onProjectSelect(project);
-                onClose();
-              }}
-            >
-              <Hash strokeWidth={1.5} className="w-4 h-4 mr-2" />
-              {project.name}
-              {task.project_id === project.id && (
-                <Check strokeWidth={1.5} className="w-4 h-4 ml-auto" />
-              )}
-            </li>
+            <div key={project.id}>
+              <li
+                className="flex items-center pl-6 p-2 transition-colors text-gray-700 hover:bg-gray-100 cursor-pointer"
+                onClick={() => {
+                  setTask({
+                    ...task,
+                    project_id: project.id,
+                    section_id: null,
+                    is_inbox: false,
+                  });
+                  onClose();
+                }}
+              >
+                <Hash strokeWidth={1.5} className="w-4 h-4 mr-2" />
+                {project.name}
+                {task.project_id === project.id && task.section_id == null && (
+                  <Check
+                    strokeWidth={2}
+                    className="w-4 h-4 ml-auto text-indigo-600"
+                  />
+                )}
+              </li>
+              {/* Render sections under the project */}
+              <ul>
+                {sections
+                  .filter((section) => section.project_id === project.id)
+                  .map((section) => (
+                    <li
+                      key={section.id}
+                      className="flex items-center justify-between pl-8 p-2 transition-colors text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => {
+                        setTask({
+                          ...task,
+                          project_id: section.project_id,
+                          section_id: section.id,
+                        });
+                        onClose();
+                      }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            fill="currentColor"
+                            d="M17.5 20a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11zM16 8a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h8zm0 1H8a1 1 0 0 0-.993.883L7 10v5a1 1 0 0 0 .883.993L8 16h8a1 1 0 0 0 .993-.883L17 15v-5a1 1 0 0 0-.883-.993L16 9zm1.5-5a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11z"
+                          ></path>
+                        </svg>
+
+                        <span>{section.name}</span>
+                      </div>
+
+                      {task.section_id === section.id && (
+                        <Check
+                          strokeWidth={2}
+                          className="w-4 h-4 ml-auto text-indigo-600"
+                        />
+                      )}
+                    </li>
+                  ))}
+              </ul>
+            </div>
           ))}
         </ul>
 
@@ -134,20 +192,56 @@ const ProjectsSelector = ({
               )}
               <ul>
                 {projects.map((project) => (
-                  <li
-                    key={project.id}
-                    className="flex items-center pl-6 px-2 py-2 transition-colors text-gray-700 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => {
-                      onProjectSelect(project);
-                      onClose();
-                    }}
-                  >
-                    <Hash strokeWidth={1.5} className="w-4 h-4 mr-2" />
-                    {project.name}
-                    {task.project_id === project.id && (
-                      <Check strokeWidth={1.5} className="w-4 h-4 ml-auto" />
-                    )}
-                  </li>
+                  <div key={project.id}>
+                    <li
+                      className="flex items-center pl-6 px-2 py-2 transition-colors text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => {
+                        setTask({
+                          ...task,
+                          project_id: project.id,
+                          section_id: null,
+                          is_inbox: false,
+                        });
+                        onClose();
+                      }}
+                    >
+                      <Hash strokeWidth={1.5} className="w-4 h-4 mr-2" />
+                      {project.name}
+                      {task.project_id === project.id && (
+                        <Check
+                          strokeWidth={2}
+                          className="w-4 h-4 ml-auto text-indigo-600"
+                        />
+                      )}
+                    </li>
+                    {/* Render sections under the project */}
+                    <ul>
+                      {sections
+                        .filter((section) => section.project_id === project.id)
+                        .map((section) => (
+                          <li
+                            key={section.id}
+                            className="flex items-center justify-between pl-8 p-2 transition-colors text-gray-700 hover:bg-gray-100 cursor-pointer"
+                            onClick={() => {
+                              setTask({
+                                ...task,
+                                project_id: section.project_id,
+                                section_id: section.id,
+                              });
+                              onClose();
+                            }}
+                          >
+                            <span>{section.name}</span>
+                            {task.section_id === section.id && (
+                              <Check
+                                strokeWidth={2}
+                                className="w-4 h-4 ml-auto text-indigo-600"
+                              />
+                            )}
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
                 ))}
               </ul>
             </div>

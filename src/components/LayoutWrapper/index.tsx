@@ -79,7 +79,7 @@ const LayoutWrapper = ({
     <>
       {headline == "Docs" && <DocsSidebar />}
 
-      <main className="flex-1 overflow-auto flex flex-col">
+      <main className="flex-1 flex flex-col">
         {view && setView && (
           <div className="flex items-center justify-between p-4">
             {!["Today", "Inbox"].includes(headline) && (

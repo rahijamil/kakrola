@@ -1,8 +1,6 @@
 "use client";
 import { useAuthProvider } from "@/context/AuthContext";
 import React from "react";
-import KriyaLogo from "../KriyaLogo";
-import Spinner from "@/components/ui/Spinner";
 import Image from "next/image";
 
 const AppLayoutWrapper = ({ children }: { children: React.ReactNode }) => {

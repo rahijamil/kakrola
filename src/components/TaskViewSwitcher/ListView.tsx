@@ -23,7 +23,7 @@ interface ListViewProps {
   groupedTasks: Record<string, TaskType[]>;
   unGroupedTasks: TaskType[];
   sections: SectionType[];
-  setSections: Dispatch<SetStateAction<SectionType[]>>;
+  setSections: (updatedSections: SectionType[]) => void;
   showAddTask: string | number | null;
   setShowAddTask: Dispatch<SetStateAction<string | number | null>>;
   showUngroupedAddTask: boolean;
@@ -33,7 +33,7 @@ interface ListViewProps {
   showShareOption?: boolean;
   setShowShareOption?: Dispatch<SetStateAction<boolean>>;
   project: ProjectType | null;
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (updatedTasks: TaskType[]) => void;
   tasks: TaskType[];
 }
 
@@ -68,51 +68,18 @@ const ListView: React.FC<ListViewProps> = ({
   } | null>(null);
 
   const [newSectionName, setNewSectionName] = useState("");
-  const [showAddSection, setShowAddSection] = useState<string | number | null>(null);
-
-  // const rows = useMemo(() => {
-  //   const columnsObj: Record<
-  //     string,
-  //     { id: string; title: string; tasks: TaskType[] }
-  //   > = {
-  //     ungrouped: {
-  //       id: "ungrouped",
-  //       title: "(No section)",
-  //       tasks: unGroupedTasks,
-  //     },
-  //     ...sections.reduce(
-  //       (acc, section) => ({
-  //         ...acc,
-  //         [section.id]: {
-  //           id: section.id.toString(),
-  //           title: section.name,
-  //           tasks: groupedTasks[section.id] || [],
-  //         },
-  //       }),
-  //       {}
-  //     ),
-  //   };
-
-  //   const orderedColumns = [
-  //     columnsObj.ungrouped,
-  //     ...sections.map((section) => columnsObj[section.id]),
-  //   ];
-
-  //   return orderedColumns;
-  // }, [sections, groupedTasks, unGroupedTasks]);
+  const [showAddSection, setShowAddSection] = useState<string | number | null>(
+    null
+  );
 
   const ListViewSection = ({ section }: { section: SectionType }) => {
     const [editColumnTitle, setEditColumnTitle] = useState(false);
 
     const handleSectionDelete = async () => {
       if (section) {
-        setTasks((prevTasks) => {
-          return prevTasks.filter((task) => task.section_id !== section.id);
-        });
+        setTasks(tasks.filter((task) => task.section_id !== section.id));
 
-        setSections((prevSections) => {
-          return prevSections.filter((s) => s.id !== section.id);
-        });
+        setSections(sections.filter((s) => s.id !== section.id));
 
         const { error } = await supabaseBrowser
           .from("tasks")
@@ -126,9 +93,7 @@ const ListView: React.FC<ListViewProps> = ({
             .eq("id", section.id);
         }
       } else {
-        setTasks((prevTasks) => {
-          return prevTasks.filter((task) => task.section_id !== null);
-        });
+        setTasks(tasks.filter((task) => task.section_id !== null));
 
         const { error } = await supabaseBrowser
           .from("tasks")

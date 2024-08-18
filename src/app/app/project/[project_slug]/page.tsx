@@ -11,35 +11,63 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 
 const ProjectDetails = ({
   params: { project_slug },
 }: {
   params: { project_slug: string };
 }) => {
-  const { projects, setProjects, projectsLoading } =
-    useTaskProjectDataProvider();
+  const {
+    projects,
+    setProjects,
+    projectsLoading,
+    sections,
+    setSections,
+    tasks,
+    setTasks,
+  } = useTaskProjectDataProvider();
   const { profile } = useAuthProvider();
 
   const [currentProject, setCurrentProject] = useState<ProjectType | null>(
     null
   );
-  const [projectSections, setProjectSections] = useState<SectionType[]>([]);
-  const [projectTasks, setProjectTasks] = useState<TaskType[]>([]);
   const [showShareOption, setShowShareOption] = useState<boolean>(false);
-
   const [notFound, setNotFound] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (currentProject?.name) {
-      document.title = `${currentProject.name} | Kriar`;
-    }
+  const projectSections = useMemo(() => {
+    if (!currentProject) return [];
+    return sections
+      .filter((s) => s.project_id === currentProject.id)
+      .sort((a, b) => a.order - b.order);
+  }, [currentProject, sections]);
 
-    return () => {
-      document.title = "Kriar";
-    };
-  }, [currentProject?.name]);
+  const projectTasks = useMemo(() => {
+    if (!currentProject) return [];
+    return tasks
+      .filter((t) => t.project_id === currentProject.id)
+      .sort((a, b) => a.order - b.order);
+  }, [currentProject, tasks]);
+
+  const setProjectSections = (updatedSections: SectionType[]) => {
+    setSections((prev) =>
+      prev.map((section) =>
+        section.project_id === currentProject?.id
+          ? updatedSections.find((s) => s.id === section.id) || section
+          : section
+      )
+    );
+  };
+
+  const setProjectTasks = (updatedTasks: TaskType[]) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.project_id === currentProject?.id
+          ? updatedTasks.find((t) => t.id === task.id) || task
+          : task
+      )
+    );
+  };
 
   useEffect(() => {
     if (projectsLoading) return;
@@ -58,133 +86,14 @@ const ProjectDetails = ({
   }, [project_slug, profile?.id, projects, projectsLoading]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (currentProject?.id) {
-          const { data: sectionData, error: sectionError } =
-            await supabaseBrowser
-              .from("sections")
-              .select("*")
-              .eq("project_id", currentProject?.id)
-              .order("order", { ascending: true });
-
-          if (!sectionError) {
-            setProjectSections(sectionData || []);
-          }
-
-          const { data: taskData, error: taskError } = await supabaseBrowser
-            .from("tasks")
-            .select("*")
-            .eq("project_id", currentProject?.id);
-
-          if (!taskError) {
-            setProjectTasks(taskData || []);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-
-    // Subscribe to real-time changes for sections
-    const sectionsSubcription = supabaseBrowser
-      .channel("sections-all-channel")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "sections",
-          filter: `project_id=eq.${currentProject?.id}`,
-        },
-        (payload) => {
-          if (
-            payload.eventType === "INSERT" &&
-            payload.new.project_id === currentProject?.id
-          ) {
-            setProjectSections((prevSections) =>
-              prevSections.some((s) => s.id === payload.new.id)
-                ? prevSections
-                : [payload.new as SectionType, ...prevSections]
-            );
-          } else if (payload.eventType === "UPDATE") {
-            setProjectSections((prevSections) =>
-              prevSections.map((s) =>
-                s.id === payload.new.id ? (payload.new as SectionType) : s
-              )
-            );
-          } else if (payload.eventType === "DELETE") {
-            setProjectSections((prevSections) =>
-              prevSections.filter((s) => s.id !== payload.old.id)
-            );
-          }
-        }
-      )
-      .subscribe();
-
-    // Subscribe to real-time changes for tasks
-    const tasksSubscription = supabaseBrowser
-      .channel("tasks-all-channel")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "tasks",
-          filter: `project_id=eq.${currentProject?.id}`,
-        },
-        (payload) => {
-          if (
-            payload.eventType === "INSERT" &&
-            payload.new.project_id === currentProject?.id
-          ) {
-            setProjectTasks((prev) => {
-              // Check if the task already exists in the array
-              const taskExists = prev.some(
-                (task) => task.id === payload.new.id
-              );
-              if (taskExists) {
-                // If it exists, update it
-                return prev.map((task) =>
-                  task.id === payload.new.id
-                    ? { ...task, ...(payload.new as TaskType) }
-                    : task
-                );
-              } else {
-                // If it doesn't exist, add it to the array
-                return [...prev, payload.new as TaskType];
-              }
-            });
-          } else if (
-            payload.eventType === "UPDATE" &&
-            payload.new.project_id === currentProject?.id
-          ) {
-            setProjectTasks((prev) =>
-              prev.map((task) =>
-                task.id === payload.new.id
-                  ? { ...task, ...(payload.new as TaskType) }
-                  : task
-              )
-            );
-          } else if (
-            payload.eventType === "DELETE" &&
-            payload.old.project_id === currentProject?.id
-          ) {
-            setProjectTasks((prev) =>
-              prev.filter((task) => task.id !== payload.old.id)
-            );
-          }
-        }
-      )
-      .subscribe();
+    if (currentProject?.name) {
+      document.title = `${currentProject.name} | Kriar`;
+    }
 
     return () => {
-      supabaseBrowser.removeChannel(sectionsSubcription);
-      supabaseBrowser.removeChannel(tasksSubscription);
+      document.title = "Kriar";
     };
-  }, [currentProject?.id, profile?.id]);
+  }, [currentProject?.name]);
 
   const updateProjectView = async (view: ViewTypes["view"]) => {
     if (!currentProject?.id) return;
@@ -206,7 +115,7 @@ const ProjectDetails = ({
           src="/not_found.png"
           width={220}
           height={200}
-          alt="Today"
+          alt="Project not found"
           className="rounded-full object-cover"
           draggable={false}
         />
@@ -243,20 +152,20 @@ const ProjectDetails = ({
             project={currentProject}
             tasks={projectTasks}
             setTasks={setProjectTasks}
-            sections={projectSections.sort((a, b) => a.order - b.order)}
+            sections={projectSections}
             setSections={setProjectSections}
             view={currentProject.view}
             showShareOption={showShareOption}
             setShowShareOption={setShowShareOption}
           />
 
-          {projectTasks.length == 0 && currentProject.view == "List" && (
+          {projectTasks.length === 0 && currentProject.view === "List" && (
             <div className="flex items-center justify-center flex-col gap-1 h-[30vh] select-none">
               <Image
                 src="/project.png"
                 width={220}
                 height={200}
-                alt="Today"
+                alt="Empty project"
                 className="rounded-full object-cover"
                 draggable={false}
               />

@@ -22,7 +22,7 @@ const AddNewSectionBoardView = ({
   index?: number;
   project: ProjectType | null;
   sections: SectionType[];
-  setSections: Dispatch<SetStateAction<SectionType[]>>;
+  setSections: (updatedSections: SectionType[]) => void;
 }) => {
   const [showAddSection, setShowAddSection] = useState<string | null>(null);
   const [mouseOnAddSection, setMouseOnAddSection] = useState<boolean>(false);
@@ -105,8 +105,8 @@ const AddNewSectionBoardView = ({
       if (error) throw error;
 
       // Update section with actual ID from database
-      setSections((prevSections) =>
-        prevSections
+      setSections(
+        sections
           .map((s) =>
             s.id === newSection.id ? { ...newSection, id: data.id } : s
           )

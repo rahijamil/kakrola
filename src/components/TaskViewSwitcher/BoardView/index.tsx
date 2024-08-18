@@ -15,7 +15,7 @@ import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
 const BoardView: React.FC<{
   tasks: TaskType[];
   sections: SectionType[];
-  setSections: Dispatch<SetStateAction<SectionType[]>>;
+  setSections: (updatedSections: SectionType[]) => void;
   groupedTasks: Record<string, TaskType[]>;
   unGroupedTasks: TaskType[];
   showAddTask: string | number | null;
@@ -27,7 +27,7 @@ const BoardView: React.FC<{
   showShareOption?: boolean;
   setShowShareOption?: React.Dispatch<React.SetStateAction<boolean>>;
   project: ProjectType | null;
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (updatedTasks: TaskType[]) => void;
 }> = ({
   tasks,
   sections,
@@ -146,7 +146,7 @@ const BoardView: React.FC<{
       // To store the updated tasks that need to be sent to the database
       let tasksToUpdate: TaskType[] = [];
 
-      setTasks((prevTasks) => {
+      const updateTasks = (prevTasks: TaskType[]) => {
         // Find tasks in the source section
         const sourceTasks = prevTasks.filter(
           (task) => task.section_id === sourceSectionId
@@ -206,7 +206,9 @@ const BoardView: React.FC<{
         });
 
         return finalTasks;
-      });
+      };
+
+      setTasks(updateTasks(tasks));
 
       // Update tasks in the database with correct orders within their sections
       try {
@@ -234,13 +236,9 @@ const BoardView: React.FC<{
   const handleSectionDelete = async (section: { id: number } | null) => {
     if (section) {
       // first update localstate
-      setTasks((prevTasks) =>
-        prevTasks.filter((task) => task.section_id !== section.id)
-      );
+      setTasks(tasks.filter((task) => task.section_id !== section.id));
 
-      setSections((prevSections) =>
-        prevSections.filter((s) => s.id !== section.id)
-      );
+      setSections(sections.filter((s) => s.id !== section.id));
 
       setShowDeleteConfirm(null);
 
@@ -264,9 +262,7 @@ const BoardView: React.FC<{
       }
     } else {
       // update localstate
-      setTasks((prevTasks) =>
-        prevTasks.filter((task) => task.section_id !== null)
-      );
+      setTasks(tasks.filter((task) => task.section_id !== null));
       setShowDeleteConfirm(null);
 
       // delete all tasks in null sections
@@ -284,8 +280,8 @@ const BoardView: React.FC<{
   const handleSectionArchive = async (section: { id: number } | null) => {
     if (section) {
       if (showArchiveConfirm?.is_archived) {
-        setSections((prevSections) =>
-          prevSections.map((s) =>
+        setSections(
+          sections.map((s) =>
             s.id === section.id ? { ...s, is_archived: false } : s
           )
         );
@@ -302,14 +298,14 @@ const BoardView: React.FC<{
         }
       } else {
         // first update localstate
-        setTasks((prevTasks) =>
-          prevTasks.map((t) =>
+        setTasks(
+          tasks.map((t) =>
             t.section_id == section.id ? { ...t, is_completed: true } : t
           )
         );
 
-        setSections((prevSections) =>
-          prevSections.map((s) =>
+        setSections(
+          sections.map((s) =>
             s.id === section.id ? { ...s, is_archived: true } : s
           )
         );
