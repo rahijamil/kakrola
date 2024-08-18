@@ -32,6 +32,16 @@ const ProjectDetails = ({
   const [notFound, setNotFound] = useState<boolean>(false);
 
   useEffect(() => {
+    if (currentProject?.name) {
+      document.title = `${currentProject.name} | Kriar`;
+    }
+
+    return () => {
+      document.title = "Kriar";
+    };
+  }, [currentProject?.name]);
+
+  useEffect(() => {
     if (projectsLoading) return;
 
     const project = projects.find((p) => p.slug === project_slug);
@@ -214,16 +224,6 @@ const ProjectDetails = ({
       </div>
     );
   }
-
-  useEffect(() => {
-    if (currentProject?.name) {
-      document.title = `${currentProject.name} | Kriar`;
-    }
-
-    return () => {
-      document.title = "Kriar";
-    };
-  }, [currentProject?.name]);
 
   if (currentProject?.id) {
     return (

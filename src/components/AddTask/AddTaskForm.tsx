@@ -22,6 +22,7 @@ import Spinner from "../ui/Spinner";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { Input } from "../ui";
 import { v4 as uuidv4 } from "uuid";
+import ProjectsSelector from "./ProjectsSelector";
 
 const AddTaskForm = ({
   onClose,
@@ -393,7 +394,7 @@ const AddTaskForm = ({
                       <MapPin strokeWidth={1.5} className="w-4 h-4" />
                       <p className="space-x-1">
                         <span>Location</span>
-                        <span className="uppercase text-[10px] tracking-widest font-bold text-orange-800 bg-orange-100 p-[2px] px-1 rounded-md">
+                        <span className="uppercase text-[10px] tracking-widest font-bold text-indigo-800 bg-indigo-100 p-[2px] px-1 rounded-md">
                           Upgrade
                         </span>
                       </p>
@@ -461,75 +462,24 @@ const AddTaskForm = ({
             </div>
 
             {showProjects && (
-              <>
-                <div className="absolute bg-white border top-full w-[300px] -left-full rounded-md overflow-hidden z-20 text-xs">
-                  <div className="p-2 border-b border-gray-200">
-                    <input
-                      type="text"
-                      placeholder="Type a project name"
-                      className="w-full p-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                  </div>
-
-                  <div
-                    className={`flex items-center p-2 transition-colors text-gray-700 hover:bg-gray-100 cursor-pointer`}
-                    onClick={() => {
-                      setTaskData({
-                        ...taskData,
-                        project_id: null,
-                        is_inbox: true,
-                      });
-                      setShowProjects(false);
-                    }}
-                  >
-                    <Inbox strokeWidth={1.5} className="w-5 h-5 mr-3" />
-                    Inbox
-                    {taskData.is_inbox && (
-                      <Check strokeWidth={1.5} className="w-4 h-4 ml-auto" />
-                    )}
-                  </div>
-
-                  <div>
-                    <div className="font-bold p-2 flex items-center gap-2">
-                      <div className="w-5 h-5 bg-black rounded-full"></div>
-                      <span>My projects</span>
-                    </div>
-
-                    <ul>
-                      {projects.map((project) => (
-                        <li
-                          key={project.id}
-                          className={
-                            "flex items-center pl-6 px-2 py-2 transition-colors text-gray-700 hover:bg-gray-100 cursor-pointer"
-                          }
-                          onClick={() => {
-                            setTaskData({
-                              ...taskData,
-                              project_id: project.id!,
-                              is_inbox: false,
-                            });
-                            setShowProjects(false);
-                          }}
-                        >
-                          <Hash strokeWidth={1.5} className="w-4 h-4 mr-2" />
-                          {project.name}
-                          {taskData.project_id === project.id && (
-                            <Check
-                              strokeWidth={1.5}
-                              className="w-4 h-4 ml-auto"
-                            />
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                <div
-                  className="fixed top-0 left-0 bottom-0 right-0 z-10"
-                  onClick={() => setShowProjects(false)}
-                ></div>
-              </>
+              <ProjectsSelector
+                onClose={() => setShowProjects(false)}
+                onInboxClick={() =>
+                  setTaskData({
+                    ...taskData,
+                    project_id: null,
+                    is_inbox: true,
+                  })
+                }
+                onProjectSelect={(project) =>
+                  setTaskData({
+                    ...taskData,
+                    project_id: project.id,
+                    is_inbox: false,
+                  })
+                }
+                task={taskData}
+              />
             )}
           </div>
 

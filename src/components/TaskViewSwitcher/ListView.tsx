@@ -34,6 +34,7 @@ interface ListViewProps {
   setShowShareOption?: Dispatch<SetStateAction<boolean>>;
   project: ProjectType | null;
   setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  tasks: TaskType[];
 }
 
 const ListView: React.FC<ListViewProps> = ({
@@ -51,12 +52,23 @@ const ListView: React.FC<ListViewProps> = ({
   showShareOption,
   project,
   setTasks,
+  tasks,
 }) => {
   const [showSectionMoreOptions, setShowSectionMoreOptions] =
     useState<SectionType | null>(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<{id: string | null, title: string} | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
+  const [showArchiveConfirm, setShowArchiveConfirm] = useState<{
+    id: string;
+    title: string;
+    tasks: TaskType[];
+    is_archived?: boolean;
+  } | null>(null);
+
   const [newSectionName, setNewSectionName] = useState("");
-  const [showAddSection, setShowAddSection] = useState<number | null>(null);
+  const [showAddSection, setShowAddSection] = useState<string | number | null>(null);
 
   // const rows = useMemo(() => {
   //   const columnsObj: Record<
@@ -90,6 +102,8 @@ const ListView: React.FC<ListViewProps> = ({
   // }, [sections, groupedTasks, unGroupedTasks]);
 
   const ListViewSection = ({ section }: { section: SectionType }) => {
+    const [editColumnTitle, setEditColumnTitle] = useState(false);
+
     const handleSectionDelete = async () => {
       if (section) {
         setTasks((prevTasks) => {
@@ -166,8 +180,12 @@ const ListView: React.FC<ListViewProps> = ({
                   column={{
                     id: section.id.toString(),
                     title: section.name,
+                    tasks: groupedTasks[section.id] || [],
+                    is_archived: section.is_archived,
                   }}
                   setShowDeleteConfirm={setShowDeleteConfirm}
+                  setEditColumnTitle={setEditColumnTitle}
+                  setShowArchiveConfirm={setShowArchiveConfirm}
                 />
               )}
 
@@ -176,7 +194,7 @@ const ListView: React.FC<ListViewProps> = ({
                   title="Delete section?"
                   description={`This will permanently delete "${section.name}" and all of its tasks. This can't be undone.`}
                   submitBtnText="Delete"
-                  onCancel={() => setShowDeleteConfirm(false)}
+                  onCancel={() => setShowDeleteConfirm(null)}
                   onSubmit={handleSectionDelete}
                 />
               )}
@@ -212,6 +230,7 @@ const ListView: React.FC<ListViewProps> = ({
                             setShowShareOption={setShowShareOption}
                             index={index}
                             project={project}
+                            tasks={tasks}
                           />
                         </li>
 
@@ -240,6 +259,7 @@ const ListView: React.FC<ListViewProps> = ({
                                     setShowShareOption={setShowShareOption}
                                     index={childIndex}
                                     project={project}
+                                    tasks={tasks}
                                   />
                                 </li>
                               ))}
@@ -257,6 +277,7 @@ const ListView: React.FC<ListViewProps> = ({
                   setShowAddTask={setShowAddTask}
                   project={project}
                   setTasks={setTasks}
+                  tasks={tasks}
                 />
               </div>
             )}
@@ -266,7 +287,10 @@ const ListView: React.FC<ListViewProps> = ({
     );
   };
 
-  const toggleSection = async (section_id: number, is_collapsed: boolean) => {
+  const toggleSection = async (
+    section_id: string | number,
+    is_collapsed: boolean
+  ) => {
     setSections(
       sections.map((section) =>
         section.id === section_id
@@ -519,6 +543,7 @@ const ListView: React.FC<ListViewProps> = ({
                             setShowShareOption={setShowShareOption}
                             index={index}
                             project={project}
+                            tasks={tasks}
                           />
                         </li>
 
@@ -543,6 +568,7 @@ const ListView: React.FC<ListViewProps> = ({
                                     setShowShareOption={setShowShareOption}
                                     index={childIndex}
                                     project={project}
+                                    tasks={tasks}
                                   />
                                 </li>
                               ))}
@@ -559,6 +585,7 @@ const ListView: React.FC<ListViewProps> = ({
               setShowUngroupedAddTask={setShowUngroupedAddTask}
               project={project}
               setTasks={setTasks}
+              tasks={tasks}
             />
           </div>
 

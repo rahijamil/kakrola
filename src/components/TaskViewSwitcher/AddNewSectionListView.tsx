@@ -18,8 +18,8 @@ const AddNewSectionListView = ({
   newSectionName: string;
   setNewSectionName: Dispatch<SetStateAction<string>>;
   handleAddSection: (ev: FormEvent<HTMLFormElement>, index: number | null) => void;
-  showAddSection: number | null;
-  setShowAddSection: Dispatch<SetStateAction<number | null>>;
+  showAddSection: string | number | null;
+  setShowAddSection: Dispatch<SetStateAction<string | number | null>>;
 }) => {
   
 

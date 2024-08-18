@@ -12,15 +12,13 @@ const AppLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
     return <>{children}</>;
   } else {
     return (
-      <div className="flex items-center justify-center border w-full h-screen">
-        <div className="flex items-center justify-center">
-          <Image
-            src="/kriya_animated.svg"
-            alt="Kriar Logo"
-            width={80}
-            height={80}
-          />
-        </div>
+      <div className="flex items-center justify-center w-full h-screen">
+        <Image
+          src="/kriya_animated.svg"
+          alt="Kriar Logo"
+          width={80}
+          height={80}
+        />
       </div>
     );
   }

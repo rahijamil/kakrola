@@ -415,7 +415,7 @@ const BoardView: React.FC<{
                 &quot;{showDeleteConfirm.title}
                 &quot;
               </span>{" "}
-              and all of its tasks. This can't be undone.
+              and all of its tasks. This can&apos;t be undone.
             </>
           }
           submitBtnText="Delete"

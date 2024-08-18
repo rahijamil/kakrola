@@ -71,6 +71,7 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
           setShowShareOption={setShowShareOption}
           project={project}
           setTasks={setTasks}
+          tasks={tasks}
         />
       );
     case "Board":

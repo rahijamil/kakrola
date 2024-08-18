@@ -32,6 +32,7 @@ import {
 import { Textarea } from "../ui";
 import { useAuthProvider } from "@/context/AuthContext";
 import Image from "next/image";
+import ProjectsSelector from "../AddTask/ProjectsSelector";
 
 const TaskItemModal = ({
   task,
@@ -59,6 +60,9 @@ const TaskItemModal = ({
   const { projects } = useTaskProjectDataProvider();
   const [taskData, setTaskData] = useState<TaskType>(task);
   const [section, setSection] = useState<SectionType | null>(null);
+
+  const [showProjectsSelector, setShowProjectsSelector] =
+    useState<boolean>(false);
 
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
@@ -105,11 +109,11 @@ const TaskItemModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-md overflow-hidden w-11/12 max-w-[52rem] min-h-full h-fit flex flex-col"
+        className="bg-white rounded-md w-11/12 max-w-[52rem] min-h-full h-fit flex flex-col"
         onClick={(ev) => ev.stopPropagation()}
       >
         <div className="p-2 px-4 flex items-center justify-between border-b border-gray-200">
-          {task.is_inbox ? (
+          {taskData.is_inbox ? (
             <div className="flex items-center gap-2">
               <Inbox className="w-4 h-4" />
               Inbox
@@ -161,35 +165,35 @@ const TaskItemModal = ({
                 size={22}
                 strokeWidth={1.5}
                 className={`${
-                  task.priority == "P1"
+                  taskData.priority == "P1"
                     ? "text-red-500"
-                    : task.priority == "P2"
+                    : taskData.priority == "P2"
                     ? "text-orange-500"
-                    : task.priority == "P3"
+                    : taskData.priority == "P3"
                     ? "text-indigo-500"
                     : "text-gray-500"
-                } ${task.is_completed ? "hidden" : "group-hover:hidden"}`}
+                } ${taskData.is_completed ? "hidden" : "group-hover:hidden"}`}
               />
               <CircleCheck
                 size={22}
                 strokeWidth={1.5}
                 className={`transition rounded-full ${
-                  task.priority == "P1"
+                  taskData.priority == "P1"
                     ? "text-red-500"
-                    : task.priority == "P2"
+                    : taskData.priority == "P2"
                     ? "text-orange-500"
-                    : task.priority == "P3"
+                    : taskData.priority == "P3"
                     ? "text-indigo-500"
                     : "text-gray-500"
                 } ${
-                  !task.is_completed
+                  !taskData.is_completed
                     ? "hidden group-hover:block"
                     : `text-white ${
-                        task.priority == "P1"
+                        taskData.priority == "P1"
                           ? "bg-red-500"
-                          : task.priority == "P2"
+                          : taskData.priority == "P2"
                           ? "bg-orange-500"
-                          : task.priority == "P3"
+                          : taskData.priority == "P3"
                           ? "bg-indigo-500"
                           : "bg-gray-500"
                       }`
@@ -342,44 +346,75 @@ const TaskItemModal = ({
               )}
             </div>
           </div>
-          <div className="bg-gray-50 p-4 w-64">
+          <div className="bg-indigo-50/50 p-4 w-64">
             <div>
               <div className="space-y-2">
                 <p className="font-semibold text-xs pl-2">Project</p>
 
-                <div className="flex items-center justify-between hover:bg-gray-200 rounded-md cursor-pointer transition p-[6px] px-2 group">
-                  {task.is_inbox ? (
-                    <div className="flex items-center gap-2 text-xs">
-                      <Inbox strokeWidth={1.5} className="w-3 h-3" />
-                      Inbox
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 text-xs">
-                      <div className="flex items-center gap-2">
-                        <Hash strokeWidth={1.5} className="w-3 h-3" />
-                        {
-                          projects.find((p) => p.id == taskData.project_id)
-                            ?.name
-                        }
+                <div className="relative">
+                  <button
+                    onClick={() => setShowProjectsSelector(true)}
+                    className={`flex items-center justify-between rounded-md cursor-pointer transition p-[6px] px-2 group w-full ${
+                      showProjectsSelector
+                        ? "bg-indigo-100"
+                        : "hover:bg-indigo-100"
+                    }`}
+                  >
+                    {taskData.is_inbox ? (
+                      <div className="flex items-center gap-2 text-xs">
+                        <Inbox strokeWidth={1.5} className="w-3 h-3" />
+                        Inbox
                       </div>
-                      <div>/</div>
-                      <div className="flex items-center gap-2">
-                        {section?.name}
+                    ) : (
+                      <div className="flex items-center gap-2 text-xs">
+                        <div className="flex items-center gap-2">
+                          <Hash strokeWidth={1.5} className="w-3 h-3" />
+                          {
+                            projects.find((p) => p.id == taskData.project_id)
+                              ?.name
+                          }
+                        </div>
+                        <div>/</div>
+                        <div className="flex items-center gap-2">
+                          {section?.name}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  <ChevronDown
-                    strokeWidth={1.5}
-                    className="w-4 h-4 opacity-0 group-hover:opacity-100 transition"
-                  />
+                    <ChevronDown
+                      strokeWidth={1.5}
+                      className="w-4 h-4 opacity-0 group-hover:opacity-100 transition"
+                    />
+                  </button>
+
+                  {showProjectsSelector && (
+                    <ProjectsSelector
+                      onClose={() => setShowProjectsSelector(false)}
+                      onInboxClick={() =>
+                        setTaskData({
+                          ...taskData,
+                          project_id: null,
+                          is_inbox: true,
+                        })
+                      }
+                      onProjectSelect={(project) =>
+                        setTaskData({
+                          ...taskData,
+                          project_id: project.id,
+                          is_inbox: false,
+                        })
+                      }
+                      task={taskData}
+                      positionClasses="top-full left-1/2 -translate-x-1/2"
+                    />
+                  )}
                 </div>
               </div>
               <div className="h-[1px] bg-gray-200 m-2"></div>
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-gray-200 rounded-md cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-indigo-100 rounded-md cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Assignee</p>
                   <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
@@ -388,7 +423,7 @@ const TaskItemModal = ({
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-gray-200 rounded-md cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-indigo-100 rounded-md cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Due date</p>
                   <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
@@ -409,7 +444,7 @@ const TaskItemModal = ({
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-gray-200 rounded-md cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-indigo-100 rounded-md cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Labels</p>
                   <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
@@ -418,7 +453,7 @@ const TaskItemModal = ({
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-gray-200 rounded-md cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-indigo-100 rounded-md cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Reminders</p>
                   <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
@@ -427,10 +462,10 @@ const TaskItemModal = ({
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-gray-200 rounded-md cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-indigo-100 rounded-md cursor-pointer transition p-[6px] px-2 group">
                   <p className="space-x-1 font-semibold text-xs">
                     <span>Location</span>
-                    <span className="uppercase text-[10px] tracking-widest font-bold text-orange-800 bg-orange-100 p-[2px] px-1 rounded-md">
+                    <span className="uppercase text-[10px] tracking-widest font-bold text-indigo-800 bg-indigo-100 p-[2px] px-1 rounded-md">
                       Upgrade
                     </span>
                   </p>
