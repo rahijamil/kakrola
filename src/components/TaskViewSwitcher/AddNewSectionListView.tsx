@@ -1,38 +1,41 @@
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { SectionType } from "@/types/project";
-import React, { Dispatch, FormEvent, SetStateAction, useState } from "react";
+import { SectionType, TaskType } from "@/types/project";
+import React, { Dispatch, FormEvent, SetStateAction } from "react";
 
 const AddNewSectionListView = ({
-  setShowUngroupedAddSection,
   section,
   index,
   setNewSectionName,
   newSectionName,
   handleAddSection,
   setShowAddSection,
-  showAddSection
+  showAddSection,
 }: {
-  setShowUngroupedAddSection: Dispatch<SetStateAction<boolean>>;
-  section: SectionType;
+  section: {
+    id: string;
+    title: string;
+    tasks: TaskType[];
+    is_archived?: boolean;
+  };
   index: number;
   newSectionName: string;
   setNewSectionName: Dispatch<SetStateAction<string>>;
-  handleAddSection: (ev: FormEvent<HTMLFormElement>, index: number | null) => void;
+  handleAddSection: (
+    ev: FormEvent<HTMLFormElement>,
+    index: number | null
+  ) => void;
   showAddSection: string | number | null;
   setShowAddSection: Dispatch<SetStateAction<string | number | null>>;
 }) => {
-  
-
   return (
     <div>
       {!showAddSection && (
         <div
-          className="flex items-center gap-2 pl-7 opacity-0 hover:opacity-100 cursor-pointer transition"
+          className={`flex items-center gap-2 pl-7 opacity-0 hover:opacity-100 cursor-pointer transition`}
           onClick={() => setShowAddSection(section.id)}
         >
-          <div className="flex-1 bg-gray-400 h-[1px]"></div>
-          <div className="font-bold text-gray-600 text-sm">Add section</div>
-          <div className="flex-1 bg-gray-500 h-[1px]"></div>
+          <div className="flex-1 bg-indigo-400 h-[1px]"></div>
+          <div className="font-semibold text-indigo-600 text-sm">Add section</div>
+          <div className="flex-1 bg-indigo-500 h-[1px]"></div>
         </div>
       )}
 

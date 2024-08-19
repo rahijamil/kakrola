@@ -10,6 +10,8 @@ import ImportCSVModal from "./SidebarProjectMoreOptions/ImportCSVModal";
 import AddEditProject from "../AddEditProject";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { Ellipsis, Hash } from "lucide-react";
+import ProjectDeleteConfirm from "./ProjectDeleteConfirm";
+import ProjectArchiveConfirm from "./ProjectArchiveConfirm";
 
 const ProjectItem = ({
   project,
@@ -72,56 +74,6 @@ const ProjectItem = ({
     null
   );
 
-  const handleProjectDelete = async () => {
-    const updatedProjects = projects.filter((proj) => proj.id !== project.id);
-    setProjects(updatedProjects);
-
-    // Delete tasks
-    const { error } = await supabaseBrowser
-      .from("tasks")
-      .delete()
-      .eq("project_id", project.id);
-    if (error) {
-      console.error(error);
-    }
-
-    // Delete sections
-    const { error: deleteError } = await supabaseBrowser
-      .from("sections")
-      .delete()
-      .eq("project_id", project.id);
-    if (deleteError) {
-      console.error(deleteError);
-    }
-
-    // Delete project
-    const { error: projectError } = await supabaseBrowser
-      .from("projects")
-      .delete()
-      .eq("id", project.id);
-    if (projectError) {
-      console.error(projectError);
-    }
-  };
-
-  const handleArchive = async () => {
-    const updatedProjects = projects.map((p) => {
-      if (p.id === project.id) {
-        return { ...p, is_archived: true };
-      }
-      return p;
-    });
-    setProjects(updatedProjects);
-
-    const { error } = await supabaseBrowser
-      .from("projects")
-      .update({ is_archived: true })
-      .eq("id", project.id);
-    if (error) {
-      console.error(error);
-    }
-  };
-
   return (
     <li>
       <div
@@ -141,7 +93,10 @@ const ProjectItem = ({
         >
           <div className="flex items-center">
             <div className="p-2">
-              <Hash className={`w-4 h-4 text-${project.color}`} strokeWidth={1.5} />
+              <Hash
+                className={`w-4 h-4 text-${project.color}`}
+                strokeWidth={1.5}
+              />
             </div>
             {project.name}
           </div>
@@ -192,34 +147,16 @@ const ProjectItem = ({
       )}
 
       {showDeleteConfirm && (
-        <ConfirmAlert
-          title="Delete project?"
-          description={
-            <>
-              This will permanently delete{" "}
-              <span className="font-semibold">&quot;{project.name}&quot;</span>{" "}
-              and all its tasks. This can&apos;t be undone.
-            </>
-          }
-          submitBtnText="Delete"
-          onCancel={() => setShowDeleteConfirm(false)}
-          onSubmit={handleProjectDelete}
+        <ProjectDeleteConfirm
+          setShowDeleteConfirm={setShowDeleteConfirm}
+          project={project}
         />
       )}
 
       {showArchiveConfirm && (
-        <ConfirmAlert
-          title="Archive?"
-          description={
-            <>
-              This will archive{" "}
-              <span className="font-semibold">&quot;{project.name}&quot;</span>{" "}
-              and all its tasks.
-            </>
-          }
-          submitBtnText="Archive"
-          onCancel={() => setShowArchiveConfirm(false)}
-          onSubmit={handleArchive}
+        <ProjectArchiveConfirm
+          setShowArchiveConfirm={setShowArchiveConfirm}
+          project={project}
         />
       )}
 

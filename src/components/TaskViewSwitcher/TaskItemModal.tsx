@@ -361,7 +361,10 @@ const TaskItemModal = ({
                         </div>
                         <div>/</div>
                         <div className="flex items-center gap-2">
-                          {sections.find((s) => s.id == taskData.section_id)?.name}
+                          {
+                            sections.find((s) => s.id == taskData.section_id)
+                              ?.name
+                          }
                         </div>
                       </div>
                     )}

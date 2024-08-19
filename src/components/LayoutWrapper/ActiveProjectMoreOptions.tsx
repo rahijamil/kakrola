@@ -1,82 +1,64 @@
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import {
-  ArchiveBoxArrowDownIcon,
-  ArrowDownTrayIcon,
-  ArrowUpTrayIcon,
-  HeartIcon,
-  LinkIcon,
-  PencilIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
-import { CopyPlusIcon, HeartOffIcon, LogsIcon } from "lucide-react";
-import React, { useState } from "react";
+import { CopyPlusIcon, Heart, HeartOffIcon, PencilLine } from "lucide-react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
-import { useRouter } from "next/navigation";
 import { ProjectType } from "@/types/project";
+import DeleteOption from "../Sidebar/SidebarProjectMoreOptions/DeleteOption";
+import ArchiveOption from "../Sidebar/SidebarProjectMoreOptions/ArchiveOption";
+import ActivityLogOption from "../Sidebar/SidebarProjectMoreOptions/ActivityLogOption";
+import ImportCSVOption from "../Sidebar/SidebarProjectMoreOptions/ImportCSVOption";
+import ExportCSVOption from "../Sidebar/SidebarProjectMoreOptions/ExportCSVOption";
+import CopyProjectLinkOption from "../Sidebar/SidebarProjectMoreOptions/CopyProjectLinkOption";
+import CommentOrActivityModal from "./CommentOrActivityModal";
+import ExportCSVModal from "../Sidebar/SidebarProjectMoreOptions/ExportCSVModal";
+import ImportCSVModal from "../Sidebar/SidebarProjectMoreOptions/ImportCSVModal";
+import AddEditProject from "../AddEditProject";
+import ProjectDeleteConfirm from "../Sidebar/ProjectDeleteConfirm";
+import ProjectArchiveConfirm from "../Sidebar/ProjectArchiveConfirm";
+import FavoriteOption from "../Sidebar/SidebarProjectMoreOptions/FavoriteOption";
 
 const ActiveProjectMoreOptions = ({
   onClose,
   project,
+  stateActions: {
+    setShowDeleteConfirm,
+    setShowArchiveConfirm,
+    setShowCommentOrActivity,
+    setExportAsCSV,
+    setImportFromCSV,
+    setProjectEdit,
+  },
 }: {
   onClose: () => void;
   project: ProjectType;
-}) => {
-  const {
-    projects,
-    // setProjects,
-    // setTasks,
-    // setSections,
-  } = useTaskProjectDataProvider();
-
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
-
-  const router = useRouter();
-
-  const handleProjectDelete = () => {
-    // const updatedTasks = tasks.filter(
-    //   (t) => t.project_id !== project?.id
-    // );
-    // setTasks(updatedTasks);
-
-    // const updatedSections = sections.filter(
-    //   (s) => s.project_id !== project?.id
-    // );
-    // setSections(updatedSections);
-
-    // const updatedProjects = projects.filter(
-    //   (proj) => proj.id !== project?.id
-    // );
-    // setProjects(updatedProjects);
-
-    router.replace(`/app`);
+  stateActions: {
+    setShowDeleteConfirm: Dispatch<SetStateAction<boolean>>;
+    setShowArchiveConfirm: Dispatch<SetStateAction<boolean>>;
+    setShowCommentOrActivity: Dispatch<
+      SetStateAction<"comment" | "activity" | null>
+    >;
+    setExportAsCSV: Dispatch<SetStateAction<boolean>>;
+    setImportFromCSV: Dispatch<SetStateAction<boolean>>;
+    setProjectEdit: Dispatch<SetStateAction<boolean>>;
   };
-
-  const handleFavorite = () => {};
-
+}) => {
   return (
     <>
       <div className="absolute bg-white drop-shadow-md rounded-md border border-gray-200 top-full right-0 z-20 w-60 py-1">
         <div>
-          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-            <PencilIcon className="w-4 h-4 mr-4" /> Edit
-          </button>
           <button
-            onClick={handleFavorite}
+            onClick={() => {
+              setProjectEdit(true);
+              onClose();
+            }}
             className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
           >
-            {project?.is_favorite ? (
-              <HeartOffIcon className="w-4 h-4 mr-4" />
-            ) : (
-              <HeartIcon className="w-4 h-4 mr-4" />
-            )}{" "}
-            {project?.is_favorite
-              ? "Remove from favorites"
-              : "Add to favorites"}
+            <PencilLine strokeWidth={1.5} className="w-4 h-4 mr-2" /> Edit
           </button>
-          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
+          <FavoriteOption project={project} />
+          {/* <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
             <CopyPlusIcon className="w-4 h-4 mr-4" /> Duplicate
-          </button>
-          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
+          </button> */}
+          {/* <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
             <span className="w-5 h-5 mr-4 flex items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -91,40 +73,53 @@ const ActiveProjectMoreOptions = ({
               </svg>
             </span>{" "}
             Add section
-          </button>
+          </button> */}
         </div>
         <div className="h-[1px] bg-gray-100 my-1"></div>
         <div>
-          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-            <LinkIcon className="w-4 h-4 mr-4" /> Copy project link
-          </button>
+          <CopyProjectLinkOption
+            onClose={onClose}
+            project_slug={project.slug}
+          />
+        </div>
+        {/* <div className="h-[1px] bg-gray-100 my-1"></div>
+        <div>
+          <ImportCSVOption
+            onClick={() => {
+              setImportFromCSV(true);
+              onClose();
+            }}
+          />
+          <ExportCSVOption
+            onClick={() => {
+              setExportAsCSV(true);
+              onClose();
+            }}
+          />
         </div>
         <div className="h-[1px] bg-gray-100 my-1"></div>
         <div>
-          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-            <ArrowDownTrayIcon className="w-4 h-4 mr-4" /> Import from CSV
-          </button>
-          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-            <ArrowUpTrayIcon className="w-4 h-4 mr-4" /> Export as CSV
-          </button>
-        </div>
+          <ActivityLogOption
+            onClick={() => {
+              setShowCommentOrActivity("activity");
+              onClose();
+            }}
+          />
+        </div> */}
         <div className="h-[1px] bg-gray-100 my-1"></div>
         <div>
-          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-            <LogsIcon className="w-4 h-4 mr-4" /> Activity log
-          </button>
-        </div>
-        <div className="h-[1px] bg-gray-100 my-1"></div>
-        <div>
-          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-            <ArchiveBoxArrowDownIcon className="w-4 h-4 mr-4" /> Archive
-          </button>
-          <button
-            onClick={() => setShowDeleteConfirm(true)}
-            className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition flex items-center"
-          >
-            <TrashIcon className="w-4 h-4 mr-4" /> Delete
-          </button>
+          <ArchiveOption
+            onClick={() => {
+              setShowArchiveConfirm(true);
+              onClose();
+            }}
+          />
+          <DeleteOption
+            onClick={() => {
+              setShowDeleteConfirm(true);
+              onClose();
+            }}
+          />
         </div>
       </div>
 
@@ -132,22 +127,6 @@ const ActiveProjectMoreOptions = ({
         className="fixed top-0 left-0 bottom-0 right-0 z-10"
         onClick={onClose}
       ></div>
-
-      {showDeleteConfirm && (
-        <ConfirmAlert
-          title="Delete project?"
-          description={
-            <>
-              This will permanently delete{" "}
-              <span className="font-semibold">&quot;{project?.name}&quot;</span> and
-              all its tasks. This can&apos;t be undone.
-            </>
-          }
-          submitBtnText="Delete"
-          onCancel={() => setShowDeleteConfirm(false)}
-          onSubmit={handleProjectDelete}
-        />
-      )}
     </>
   );
 };

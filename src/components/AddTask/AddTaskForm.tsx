@@ -236,6 +236,7 @@ const AddTaskForm = ({
             taskData={taskData}
             setTaskData={setTaskData}
             biggerTitle={biggerTitle}
+            handleSubmit={handleSubmit}
           />
 
           <Input
@@ -252,8 +253,8 @@ const AddTaskForm = ({
         <div className="flex items-center flex-wrap gap-2 whitespace-nowrap">
           <div className="relative">
             <div
-              className={`flex items-center gap-1 cursor-pointer p-1 rounded-md border border-gray-200 ${
-                showDueDate ? "bg-gray-100" : "hover:bg-gray-100 text-xs"
+              className={`flex items-center gap-1 cursor-pointer p-1 text-xs rounded-md border border-gray-200 ${
+                showDueDate ? "bg-gray-100" : "hover:bg-gray-100"
               }`}
               onClick={() => setShowDueDate(!showDueDate)}
             >

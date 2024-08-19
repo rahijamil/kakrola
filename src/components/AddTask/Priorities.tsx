@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 
 import { TaskType } from "@/types/project";
-import { Check, ChevronDown, Flag } from "lucide-react";
+import { Check, ChevronDown, Flag, X } from "lucide-react";
 import { FlagIcon } from "@heroicons/react/16/solid";
 const priorities = [
   { value: "P1", label: "Priority 1", color: "text-red-500" },
@@ -76,7 +76,7 @@ const Priorities = ({
         </div>
       ) : (
         <div
-          className="flex items-center gap-2 hover:bg-gray-100 cursor-pointer p-1 px-2 rounded-md border border-gray-200"
+          className="flex items-center gap-1 hover:bg-gray-100 cursor-pointer p-1 px-2 rounded-md border border-gray-200"
           onClick={() => setShowPriority(!showPriority)}
         >
           <PriorityIcon priority={taskData.priority} />
@@ -93,6 +93,19 @@ const Priorities = ({
             <span className="text-xs text-gray-700">
               {priorities.find((p) => p.value === taskData.priority)?.value}
             </span>
+          )}
+
+          {taskData.priority !== "Priority" && (
+            <button
+              type="button"
+              onClick={(ev) => {
+                ev.stopPropagation();
+                setTaskData({ ...taskData, priority: "Priority" });
+              }}
+              className="text-gray-500 hover:text-gray-700 p-[2px] hover:bg-gray-200 rounded-md"
+            >
+              <X strokeWidth={1.5} className="w-3 h-3 text-gray-500" />
+            </button>
           )}
         </div>
       )}

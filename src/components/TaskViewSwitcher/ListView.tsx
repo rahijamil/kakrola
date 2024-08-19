@@ -1,23 +1,24 @@
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
-import TaskItem from "./TaskItem";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import {
   Dispatch,
-  FormEvent,
-  Fragment,
   SetStateAction,
+  useCallback,
   useMemo,
   useState,
 } from "react";
-import SectionAddTask from "./SectionAddTask";
-import { CopyPlusIcon, MoreHorizontal } from "lucide-react";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from "@hello-pangea/dnd";
 import AddNewSectionListView from "./AddNewSectionListView";
-import SectionMoreOptions from "./SectionMoreOptions";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useAuthProvider } from "@/context/AuthContext";
+import ListViewSection from "./ListViewSection";
+import UngroupedTasks from "./UngroupedTasks";
+import { debounce } from "lodash";
 
 interface ListViewProps {
   groupedTasks: Record<string, TaskType[]>;
@@ -44,7 +45,6 @@ const ListView: React.FC<ListViewProps> = ({
   setSections,
   showAddTask,
   setShowAddTask,
-  showUngroupedAddSection,
   showUngroupedAddTask,
   setShowUngroupedAddSection,
   setShowUngroupedAddTask,
@@ -72,185 +72,191 @@ const ListView: React.FC<ListViewProps> = ({
     null
   );
 
-  const ListViewSection = ({ section }: { section: SectionType }) => {
-    const [editColumnTitle, setEditColumnTitle] = useState(false);
+  const [showTaskItemModal, setShowTaskItemModal] = useState<string | null>(
+    null
+  );
 
-    const handleSectionDelete = async () => {
-      if (section) {
-        setTasks(tasks.filter((task) => task.section_id !== section.id));
+  const { profile } = useAuthProvider();
 
-        setSections(sections.filter((s) => s.id !== section.id));
-
-        const { error } = await supabaseBrowser
-          .from("tasks")
-          .delete()
-          .eq("section_id", section.id);
-
-        if (!error) {
-          const { error } = await supabaseBrowser
-            .from("sections")
-            .delete()
-            .eq("id", section.id);
-        }
-      } else {
-        setTasks(tasks.filter((task) => task.section_id !== null));
-
-        const { error } = await supabaseBrowser
-          .from("tasks")
-          .delete()
-          .eq("section_id", null);
-      }
-
-      setShowDeleteConfirm(null);
+  const columns = useMemo(() => {
+    const columnsObj: Record<
+      string,
+      { id: string; title: string; tasks: TaskType[]; is_archived?: boolean }
+    > = {
+      ungrouped: {
+        id: "ungrouped",
+        title: "(No section)",
+        tasks: unGroupedTasks,
+      },
+      ...sections.reduce(
+        (acc, section) => ({
+          ...acc,
+          [section.id]: {
+            id: section.id.toString(),
+            title: section.name,
+            tasks: groupedTasks[section.id] || [],
+            is_archived: section.is_archived,
+          },
+        }),
+        {}
+      ),
     };
 
-    return (
-      <div>
-        <div className="flex items-center gap-1 py-2">
-          <button
-            className={`p-1 hover:bg-gray-100 transition rounded-md ${
-              !section.is_collapsed && "rotate-90"
-            }`}
-            onClick={() => toggleSection(section.id, !section.is_collapsed)}
-          >
-            <ChevronRightIcon className="w-4 h-4 text-gray-700" />
-          </button>
+    const orderedColumns =
+      unGroupedTasks.length > 0
+        ? [
+            columnsObj.ungrouped,
+            ...sections.map((section) => columnsObj[section.id]),
+          ]
+        : [...sections.map((section) => columnsObj[section.id])];
 
-          <div className="flex items-center justify-between gap-8 border-b border-gray-200 w-full">
-            <div className="flex items-center gap-2">
-              <h3 className="font-bold ">{section.name}</h3>
+    return orderedColumns;
+  }, [sections, groupedTasks, unGroupedTasks]);
 
-              {(groupedTasks[section.id] || []).length > 0 && (
-                <p className="text-sm text-gray-600">
-                  {(groupedTasks[section.id] || []).length}
-                </p>
-              )}
-            </div>
+  const onDragEnd = useCallback(async (result: DropResult) => {
+    const { source, destination, type } = result;
 
-            <div className="relative">
-              <button
-                className={`p-1 hover:bg-gray-100 transition rounded-md ${
-                  showSectionMoreOptions?.id == section.id
-                    ? "bg-gray-200"
-                    : "hover:bg-gray-200"
-                }`}
-                onClick={() => setShowSectionMoreOptions(section)}
-              >
-                <MoreHorizontal className="w-5 h-5 text-gray-700" />
-              </button>
+    if (!destination) return;
 
-              {showSectionMoreOptions?.id == section.id && (
-                <SectionMoreOptions
-                  onClose={() => setShowSectionMoreOptions(null)}
-                  column={{
-                    id: section.id.toString(),
-                    title: section.name,
-                    tasks: groupedTasks[section.id] || [],
-                    is_archived: section.is_archived,
-                  }}
-                  setShowDeleteConfirm={setShowDeleteConfirm}
-                  setEditColumnTitle={setEditColumnTitle}
-                  setShowArchiveConfirm={setShowArchiveConfirm}
-                />
-              )}
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    ) {
+      return;
+    }
 
-              {showDeleteConfirm && (
-                <ConfirmAlert
-                  title="Delete section?"
-                  description={`This will permanently delete "${section.name}" and all of its tasks. This can't be undone.`}
-                  submitBtnText="Delete"
-                  onCancel={() => setShowDeleteConfirm(null)}
-                  onSubmit={handleSectionDelete}
-                />
-              )}
-            </div>
-          </div>
-        </div>
+    // Handle section reordering
+    if (type === "column") {
+      const reorderedSections = Array.from(sections);
+      const [movedSection] = reorderedSections.splice(source.index, 1);
+      reorderedSections.splice(destination.index, 0, movedSection);
 
-        {!section.is_collapsed && (
-          <Droppable key={section.id} droppableId={section.id.toString()}>
-            {(provided, snapshot) => (
-              <div
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                className="pl-8"
-              >
-                <ul>
-                  {(groupedTasks[section.id] || [])
-                    .filter((t) => !t.parent_task_id)
-                    .map((task, index) => (
-                      <Fragment key={task.id}>
-                        <li
-                          className={`border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer ${
-                            task.parent_task_id && "ml-8"
-                          }`}
-                        >
-                          <TaskItem
-                            task={task}
-                            setTasks={setTasks}
-                            subTasks={(groupedTasks[section.id] || []).filter(
-                              (t) => t.parent_task_id == task.id
-                            )}
-                            showShareOption={showShareOption}
-                            setShowShareOption={setShowShareOption}
-                            index={index}
-                            project={project}
-                            tasks={tasks}
-                          />
-                        </li>
+      // Update section order based on new positions
+      const updatedSections = reorderedSections.map((section, index) => ({
+        ...section,
+        order: index,
+      }));
 
-                        {(groupedTasks[section.id] || []).filter(
-                          (t) => t.parent_task_id == task.id
-                        ).length > 0 && (
-                          <ul className="ml-8">
-                            {(groupedTasks[section.id] || [])
-                              .filter((t) => t.parent_task_id == task.id)
-                              .map((childTask, childIndex) => (
-                                <li
-                                  key={childTask.id}
-                                  className={`border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer ${
-                                    childTask.parent_task_id && "ml-8"
-                                  }`}
-                                >
-                                  <TaskItem
-                                    task={childTask}
-                                    setTasks={setTasks}
-                                    subTasks={(
-                                      groupedTasks[section.id] || []
-                                    ).filter(
-                                      (t) => t.parent_task_id == childTask.id
-                                    )}
-                                    showShareOption={showShareOption}
-                                    setShowShareOption={setShowShareOption}
-                                    index={childIndex}
-                                    project={project}
-                                    tasks={tasks}
-                                  />
-                                </li>
-                              ))}
-                          </ul>
-                        )}
-                      </Fragment>
-                    ))}
+      setSections(updatedSections);
 
-                  {provided.placeholder}
-                </ul>
+      // Update section order in Supabase
+      try {
+        for (const section of updatedSections) {
+          const { error } = await supabaseBrowser
+            .from("sections")
+            .update({ order: section.order })
+            .eq("id", section.id);
 
-                <SectionAddTask
-                  section={section}
-                  showAddTask={showAddTask}
-                  setShowAddTask={setShowAddTask}
-                  project={project}
-                  setTasks={setTasks}
-                  tasks={tasks}
-                />
-              </div>
-            )}
-          </Droppable>
-        )}
-      </div>
-    );
-  };
+          if (error) throw error;
+        }
+      } catch (error) {
+        console.error("Error updating section order:", error);
+      }
+
+      return;
+    }
+
+    // Handle task reordering or moving between sections
+    if (type === "task") {
+      const newSectionId =
+        destination.droppableId !== "ungrouped"
+          ? parseInt(destination.droppableId)
+          : null;
+
+      const sourceSectionId =
+        source.droppableId !== "ungrouped"
+          ? parseInt(source.droppableId)
+          : null;
+
+      // To store the updated tasks that need to be sent to the database
+      let tasksToUpdate: TaskType[] = [];
+
+      const updateTasks = (prevTasks: TaskType[]) => {
+        // Find tasks in the source section
+        const sourceTasks = prevTasks.filter(
+          (task) => task.section_id === sourceSectionId
+        );
+
+        // Find the moved task
+        const movedTask = sourceTasks[source.index];
+
+        if (!movedTask) {
+          console.error("Moved task not found");
+          return prevTasks;
+        }
+
+        // Remove the moved task from the source section
+        const tasksWithoutMoved = prevTasks.filter(
+          (task) => task.id !== movedTask.id
+        );
+
+        // Update the moved task with new section and order
+        const updatedMovedTask: TaskType = {
+          ...movedTask,
+          section_id: newSectionId,
+          order: destination.index,
+        };
+
+        // Find tasks in the destination section
+        const destinationTasks = tasksWithoutMoved.filter(
+          (task) => task.section_id === newSectionId
+        );
+
+        // Insert the updated task at the new position
+        const updatedDestinationTasks = [
+          ...destinationTasks.slice(0, destination.index),
+          updatedMovedTask,
+          ...destinationTasks.slice(destination.index),
+        ];
+
+        // Combine all tasks back together, ensuring correct order
+        const updatedTasks = [
+          ...tasksWithoutMoved.filter(
+            (task) => task.section_id !== newSectionId
+          ),
+          ...updatedDestinationTasks,
+        ];
+
+        // Reorder tasks in the affected sections
+        const finalTasks = updatedTasks.map((task, index) => {
+          if (
+            task.section_id === newSectionId ||
+            task.section_id === movedTask.section_id
+          ) {
+            const updatedTask = { ...task, order: index };
+            tasksToUpdate.push(updatedTask); // Collect tasks to update in the database
+            return updatedTask;
+          }
+          return task;
+        });
+
+        return finalTasks;
+      };
+
+      setTasks(updateTasks(tasks));
+
+      // Update tasks in the database with correct orders within their sections
+      try {
+        const promises = tasksToUpdate.map((task) =>
+          supabaseBrowser
+            .from("tasks")
+            .update({
+              section_id: task.section_id,
+              order: task.order,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", task.id)
+        );
+        const results = await Promise.all(promises);
+        results.forEach((result) => {
+          if (result.error) throw result.error;
+        });
+      } catch (error) {
+        console.error("Error updating tasks:", error);
+        // Optionally, implement a way to revert the state if the database update fails
+      }
+    }
+  }, [sections, setSections, tasks]);
 
   const toggleSection = async (
     section_id: string | number,
@@ -276,94 +282,8 @@ const ListView: React.FC<ListViewProps> = ({
     }
   };
 
-  const updateSectionOrder = async (sections: SectionType[]) => {
-    for (let i = 0; i < sections.length; i++) {
-      const { error } = await supabaseBrowser
-        .from("sections")
-        .update({
-          order: i,
-        })
-        .eq("id", sections[i].id);
-
-      if (error) {
-        console.error(error);
-      }
-    }
-  };
-
-  const onDragEnd = async (result: DropResult) => {
-    const { source, destination, type } = result;
-
-    if (!destination) {
-      return;
-    }
-
-    if (
-      source.droppableId === destination.droppableId &&
-      source.index === destination.index
-    ) {
-      return;
-    }
-
-    if (type === "section") {
-      const newSections = Array.from(sections || []);
-      const [reorderedSection] = newSections.splice(source.index, 1);
-      newSections.splice(destination.index, 0, reorderedSection);
-
-      // Update the order of the sections in the database
-      await updateSectionOrder(newSections);
-
-      // Update the state with the new section order
-      // setActiveProjectSections(newSections);
-    }
-
-    // if (type === "section") {
-    //   const newSections = Array.from(sections);
-    //   const [reorderedSection] = newSections.splice(source.index, 1);
-    //   newSections.splice(destination.index, 0, reorderedSection);
-    //   setSections(newSections);
-    // } else if (type === "task") {
-    //   const sourceSection = source.droppableId;
-    //   const destinationSection = destination.droppableId;
-
-    //   if (sourceSection === destinationSection) {
-    //     const newTasks = Array.from(groupedTasks[sourceSection]);
-    //     const [reorderedTask] = newTasks.splice(source.index, 1);
-    //     newTasks.splice(destination.index, 0, reorderedTask);
-
-    //     const newGroupedTasks = {
-    //       ...groupedTasks,
-    //       [sourceSection]: newTasks,
-    //     };
-
-    //     setTasks(Object.values(newGroupedTasks).flat());
-    //   } else {
-    //     const sourceTasks = Array.from(groupedTasks[sourceSection]);
-    //     const destinationTasks = Array.from(groupedTasks[destinationSection]);
-    //     const [movedTask] = sourceTasks.splice(source.index, 1);
-
-    //     const updatedTask: TaskType = {
-    //       ...movedTask,
-    //       sectionId: parseInt(destinationSection),
-    //     };
-
-    //     destinationTasks.splice(destination.index, 0, updatedTask);
-
-    //     const newGroupedTasks = {
-    //       ...groupedTasks,
-    //       [sourceSection]: sourceTasks,
-    //       [destinationSection]: destinationTasks,
-    //     };
-
-    //     setTasks(Object.values(newGroupedTasks).flat());
-    //   }
-    // }
-  };
-
-  const { profile } = useAuthProvider();
-
   const handleAddSection = async (
-    ev: FormEvent<HTMLFormElement>,
+    ev: React.FormEvent<HTMLFormElement>,
     positionIndex: number | null
   ) => {
     ev.preventDefault();
@@ -372,256 +292,281 @@ const ListView: React.FC<ListViewProps> = ({
       return;
     }
 
-    if (project?.id) {
-      // Get the current sections for the project
-      const { data: sections, error: sectionsError } = await supabaseBrowser
-        .from("sections")
-        .select("*")
-        .eq("project_id", project.id)
-        .order("order", { ascending: true });
+    const existingSections = sections.filter(
+      (s) => s.project_id == project?.id
+    );
 
-      if (sectionsError) {
-        console.error(sectionsError);
-        return;
+    let newOrder;
+    if (positionIndex === null) {
+      newOrder =
+        existingSections.length > 0
+          ? existingSections[existingSections.length - 1].order + 1
+          : 0;
+    } else {
+      newOrder = existingSections[positionIndex].order + 1;
+      for (let i = positionIndex + 1; i < existingSections.length; i++) {
+        await supabaseBrowser
+          .from("sections")
+          .update({
+            order: existingSections[i].order + 1,
+          })
+          .eq("id", existingSections[i].id);
       }
+    }
 
-      let newOrder;
-      if (positionIndex === null) {
-        // Add the section at the end
-        newOrder =
-          sections.length > 0 ? sections[sections.length - 1].order + 1 : 0;
-      } else {
-        // Insert the section at the specified position
-        newOrder = sections[positionIndex].order + 1;
-        for (let i = positionIndex + 1; i < sections.length; i++) {
-          await supabaseBrowser
-            .from("sections")
-            .update({
-              order: sections[i].order + 1,
-            })
-            .eq("id", sections[i].id);
-        }
-      }
+    const { error } = await supabaseBrowser.from("sections").insert([
+      {
+        name: newSectionName.trim(),
+        project_id: project?.id ?? null,
+        profile_id: profile?.id,
+        is_collapsed: false,
+        is_inbox: project?.id ? false : true,
+        order: newOrder,
+        updated_at: new Date().toISOString(),
+      },
+    ]);
 
-      const { error } = await supabaseBrowser.from("sections").insert([
-        {
-          name: newSectionName.trim(),
-          project_id: project.id,
-          profile_id: profile?.id,
-          is_collapsed: false,
-          is_inbox: false,
-          order: newOrder,
-          updated_at: new Date().toISOString(),
-        },
-      ]);
+    if (error) {
+      console.error(error);
+    } else {
+      setNewSectionName("");
+      setShowAddSection(null);
+      setShowUngroupedAddSection(false);
+    }
+  };
 
-      if (error) {
-        console.error(error);
-      } else {
-        setNewSectionName("");
-        setShowAddSection(null);
-        setShowUngroupedAddSection(false);
+  const handleSectionDelete = async (section: { id: number } | null) => {
+    if (section) {
+      setTasks(tasks.filter((task) => task.section_id !== section.id));
+      setSections(sections.filter((s) => s.id !== section.id));
+      setShowDeleteConfirm(null);
+
+      const { error } = await supabaseBrowser
+        .from("tasks")
+        .delete()
+        .eq("section_id", section.id);
+      if (!error) {
+        await supabaseBrowser.from("sections").delete().eq("id", section.id);
       }
     } else {
-      // Get the current sections for the project
-      const { data: sections, error: sectionsError } = await supabaseBrowser
-        .from("sections")
-        .select("*")
-        .eq("project_id", null)
-        .eq("is_inbox", true)
-        .order("order", { ascending: true });
+      setTasks(tasks.filter((task) => task.section_id !== null));
+      setShowDeleteConfirm(null);
 
-      if (sectionsError) {
-        console.error(sectionsError);
-        return;
-      }
+      await supabaseBrowser.from("tasks").delete().is("section_id", null);
+    }
+  };
 
-      let newOrder;
-      if (positionIndex === null) {
-        // Add the section at the end
-        newOrder =
-          sections.length > 0 ? sections[sections.length - 1].order + 1 : 0;
+  const handleSectionArchive = async (section: { id: number } | null) => {
+    if (section) {
+      if (showArchiveConfirm?.is_archived) {
+        setSections(
+          sections.map((s) =>
+            s.id === section.id ? { ...s, is_archived: false } : s
+          )
+        );
+
+        setShowArchiveConfirm(null);
+
+        await supabaseBrowser
+          .from("sections")
+          .update({ is_archived: false })
+          .eq("id", section.id);
       } else {
-        // Insert the section at the specified position
-        newOrder = sections[positionIndex].order + 1;
-        for (let i = positionIndex + 1; i < sections.length; i++) {
-          await supabaseBrowser
-            .from("sections")
-            .update({
-              order: sections[i].order + 1,
-            })
-            .eq("id", sections[i].id);
-        }
-      }
+        setTasks(
+          tasks.map((t) =>
+            t.section_id == section.id ? { ...t, is_completed: true } : t
+          )
+        );
 
-      const { error } = await supabaseBrowser.from("sections").insert([
-        {
-          name: newSectionName.trim(),
-          project_id: null,
-          profile_id: profile?.id,
-          is_collapsed: false,
-          is_inbox: true,
-          order: newOrder,
-          updated_at: new Date().toISOString(),
-        },
-      ]);
+        setSections(
+          sections.map((s) =>
+            s.id === section.id ? { ...s, is_archived: true } : s
+          )
+        );
 
-      if (error) {
-        console.error(error);
-      } else {
-        setNewSectionName("");
-        setShowAddSection(null);
-        setShowUngroupedAddSection(false);
+        setShowArchiveConfirm(null);
+
+        await supabaseBrowser
+          .from("tasks")
+          .update({ is_completed: true })
+          .eq("section_id", section.id);
+
+        await supabaseBrowser
+          .from("sections")
+          .update({ is_archived: true })
+          .eq("id", section.id);
       }
     }
   };
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <div
-        className={`space-y-2 ${
-          unGroupedTasks.length > 0 &&
-          Object.keys(groupedTasks).length > 0 &&
-          "h-full"
-        }`}
-      >
-        <div className="space-y-1">
-          <div className="pl-8">
-            <Droppable droppableId="ungrouped">
-              {(provided) => (
-                <ul {...provided.droppableProps} ref={provided.innerRef}>
-                  {unGroupedTasks
-                    .filter((t) => !t.parent_task_id)
-                    .map((task, index) => (
-                      <Fragment key={task.id}>
-                        <li
-                          key={task.id}
-                          className={`border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer`}
-                        >
-                          <TaskItem
-                            task={task}
-                            setTasks={setTasks}
-                            subTasks={unGroupedTasks.filter(
-                              (t) => t.parent_task_id === task.id
-                            )}
-                            showShareOption={showShareOption}
-                            setShowShareOption={setShowShareOption}
-                            index={index}
-                            project={project}
-                            tasks={tasks}
-                          />
-                        </li>
-
-                        {unGroupedTasks.filter(
-                          (t) => t.parent_task_id === task.id
-                        ).length > 0 && (
-                          <ul className="ml-8">
-                            {unGroupedTasks
-                              .filter((t) => t.parent_task_id === task.id)
-                              .map((childTask, childIndex) => (
-                                <li
-                                  key={childTask.id}
-                                  className={`border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer`}
-                                >
-                                  <TaskItem
-                                    task={childTask}
-                                    setTasks={setTasks}
-                                    subTasks={unGroupedTasks.filter(
-                                      (t) => t.parent_task_id === childTask.id
-                                    )}
-                                    showShareOption={showShareOption}
-                                    setShowShareOption={setShowShareOption}
-                                    index={childIndex}
-                                    project={project}
-                                    tasks={tasks}
-                                  />
-                                </li>
-                              ))}
-                          </ul>
-                        )}
-                      </Fragment>
-                    ))}
-                </ul>
-              )}
-            </Droppable>
-
-            <SectionAddTask
-              showUngroupedAddTask={showUngroupedAddTask}
-              setShowUngroupedAddTask={setShowUngroupedAddTask}
-              project={project}
-              setTasks={setTasks}
-              tasks={tasks}
-            />
-          </div>
-
-          <div>
-            {!showUngroupedAddSection && (
-              <div
-                className="flex items-center gap-2 pl-7 opacity-0 hover:opacity-100 cursor-pointer transition"
-                onClick={() => setShowUngroupedAddSection(true)}
-              >
-                <div className="flex-1 bg-gray-400 h-[1px]"></div>
-                <div className="font-bold text-gray-600 text-sm">
-                  Add section
-                </div>
-                <div className="flex-1 bg-gray-500 h-[1px]"></div>
-              </div>
-            )}
-
-            {showUngroupedAddSection && (
-              <form
-                className="space-y-2 pl-7 mt-3"
-                onSubmit={(ev) => handleAddSection(ev, null)}
-              >
-                <input
-                  type="text"
-                  value={newSectionName}
-                  onChange={(e) => setNewSectionName(e.target.value)}
-                  placeholder="Name this section"
-                  className="border border-gray-200 focus:outline-none focus:border-gray-400 w-full rounded px-2 py-1 font-semibold"
-                  autoFocus
+    <>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="list" type="column" direction="vertical">
+          {(listProvided) => (
+            <div
+              ref={listProvided.innerRef}
+              {...listProvided.droppableProps}
+              className="space-y-2"
+            >
+              <div className="space-y-4">
+                <UngroupedTasks
+                  tasks={unGroupedTasks}
+                  showUngroupedAddTask={showUngroupedAddTask}
+                  setShowUngroupedAddTask={setShowUngroupedAddTask}
+                  project={project}
+                  setTasks={setTasks}
+                  showShareOption={showShareOption}
+                  setShowShareOption={setShowShareOption}
+                  showTaskItemModal={showTaskItemModal}
+                  setShowTaskItemModal={setShowTaskItemModal}
                 />
 
-                <div className="flex items-center gap-2">
-                  <button
-                    type="submit"
-                    className="px-2 py-[6px] text-xs text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-600 disabled:cursor-not-allowed transition disabled:opacity-50"
-                    disabled={!newSectionName.trim()}
+                <AddNewSectionListView
+                  section={{ id: "ungrouped", title: "Ungrouped", tasks: [] }}
+                  index={0}
+                  newSectionName={newSectionName}
+                  setNewSectionName={setNewSectionName}
+                  handleAddSection={handleAddSection}
+                  setShowAddSection={setShowAddSection}
+                  showAddSection={showAddSection}
+                />
+              </div>
+
+              {columns
+                .filter((c) => c.id !== "ungrouped")
+                .map((column, columnIndex) => (
+                  <Draggable
+                    key={column.id}
+                    draggableId={column.id}
+                    index={columnIndex}
                   >
-                    Add section
-                  </button>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className="space-y-4"
+                      >
+                        <ListViewSection
+                          section={
+                            sections.find((s) => s.id.toString() === column.id)!
+                          }
+                          sections={sections}
+                          setSections={setSections}
+                          toggleSection={toggleSection}
+                          groupedTasks={groupedTasks}
+                          showSectionMoreOptions={showSectionMoreOptions}
+                          setShowSectionMoreOptions={setShowSectionMoreOptions}
+                          setShowDeleteConfirm={setShowDeleteConfirm}
+                          setShowArchiveConfirm={setShowArchiveConfirm}
+                          setShowAddTask={setShowAddTask}
+                          setShowShareOption={setShowShareOption}
+                          setTasks={setTasks}
+                          showAddTask={showAddTask}
+                          showShareOption={showShareOption}
+                          tasks={tasks}
+                          project={project}
+                          showTaskItemModal={showTaskItemModal}
+                          setShowTaskItemModal={setShowTaskItemModal}
+                        />
 
-                  <button
-                    type="button"
-                    onClick={() => setShowUngroupedAddSection(false)}
-                    className="px-3 py-[6px] text-xs text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-md"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
+                        <AddNewSectionListView
+                          section={column}
+                          index={columnIndex}
+                          newSectionName={newSectionName}
+                          setNewSectionName={setNewSectionName}
+                          handleAddSection={handleAddSection}
+                          setShowAddSection={setShowAddSection}
+                          showAddSection={showAddSection}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
 
-        {sections?.map((section, index) => (
-          <div className="space-y-1" key={section.id}>
-            <ListViewSection key={section.id} section={section} />
+              {listProvided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
 
-            <AddNewSectionListView
-              section={section}
-              index={index}
-              setShowUngroupedAddSection={setShowUngroupedAddSection}
-              newSectionName={newSectionName}
-              setNewSectionName={setNewSectionName}
-              handleAddSection={handleAddSection}
-              setShowAddSection={setShowAddSection}
-              showAddSection={showAddSection}
-            />
-          </div>
-        ))}
-      </div>
-    </DragDropContext>
+      {showDeleteConfirm && (
+        <ConfirmAlert
+          title="Delete section?"
+          description={
+            <>
+              This will permanently delete{" "}
+              <span className="font-semibold">
+                &quot;{showDeleteConfirm.title}
+                &quot;
+              </span>{" "}
+              and all of its tasks. This can&apos;t be undone.
+            </>
+          }
+          submitBtnText="Delete"
+          onCancel={() => setShowDeleteConfirm(null)}
+          onSubmit={() =>
+            handleSectionDelete(
+              showDeleteConfirm.id == "ungrouped"
+                ? null
+                : { id: parseInt(showDeleteConfirm.id) }
+            )
+          }
+        />
+      )}
+
+      {showArchiveConfirm && (
+        <ConfirmAlert
+          title={
+            showArchiveConfirm.is_archived
+              ? "Unarchive section?"
+              : "Archive section?"
+          }
+          description={
+            <div className="space-y-2">
+              <p>
+                Are you sure you want to{" "}
+                {showArchiveConfirm.is_archived ? "unarchive" : "archive"}{" "}
+                <span className="font-semibold">
+                  &quot;{showArchiveConfirm.title}
+                  &quot;
+                </span>
+                {showArchiveConfirm.tasks.filter((t) => !t.is_completed)
+                  .length > 0 && (
+                  <>
+                    with its{" "}
+                    <span className="font-semibold">
+                      {showArchiveConfirm.tasks.length}
+                    </span>{" "}
+                    tasks
+                  </>
+                )}
+                ?
+              </p>
+
+              {showArchiveConfirm.tasks.filter((t) => !t.is_completed).length >
+                0 && (
+                <p>
+                  When archived, uncompleted tasks will be marked as complete.
+                </p>
+              )}
+            </div>
+          }
+          submitBtnText={
+            showArchiveConfirm.is_archived ? "Unarchive" : "Archive"
+          }
+          onCancel={() => setShowArchiveConfirm(null)}
+          onSubmit={() =>
+            handleSectionArchive(
+              showArchiveConfirm.id == "ungrouped"
+                ? null
+                : { id: parseInt(showArchiveConfirm.id) }
+            )
+          }
+        />
+      )}
+    </>
   );
 };
 

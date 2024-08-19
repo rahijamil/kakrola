@@ -36,14 +36,14 @@ const SectionAddTask = ({
     <>
       {isAddTaskVisible && (
         <button
-          className="mt-4 mx-[6px] text-gray-500 hover:text-gray-700 flex items-center gap-2 w-full group py-1"
+          className="mt-4 mx-[6px] text-gray-500 hover:text-indigo-600 flex items-center gap-2 w-full group py-1"
           onClick={() =>
             section
               ? setShowAddTask && setShowAddTask(section.id)
               : setShowUngroupedAddTask && setShowUngroupedAddTask(true)
           }
         >
-          <PlusIcon className="w-4 h-4 text-gray-700 group-hover:text-white transition group-hover:bg-gray-600 rounded-full" />
+          <PlusIcon className="w-[18px] h-[18px] text-indigo-600 group-hover:text-white transition group-hover:bg-indigo-600 rounded-full" />
           <span>Add task</span>
         </button>
       )}

@@ -4,15 +4,11 @@ import { Dispatch, MouseEvent, SetStateAction, useState } from "react";
 import TaskItemMoreDropdown from "./TaskItemMoreDropdown";
 import { Draggable } from "@hello-pangea/dnd";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
-import {
-  Circle,
-  CircleCheck,
-  Ellipsis,
-  User,
-  Workflow,
-} from "lucide-react";
+import { Circle, CircleCheck, Ellipsis, User, Workflow } from "lucide-react";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import AddTask from "../AddTask";
+import { debounce } from "lodash";
+
 const TaskItem = ({
   task,
   subTasks,
@@ -25,6 +21,7 @@ const TaskItem = ({
   setShowModal,
   showModal,
   showDeleteConfirm,
+  smallAddTask,
   setShowDeleteConfirm,
   column,
 }: {
@@ -37,6 +34,7 @@ const TaskItem = ({
   setTasks: (updatedTasks: TaskType[]) => void;
   tasks: TaskType[];
   showModal?: string | null;
+  smallAddTask?: boolean;
   setShowModal?: Dispatch<SetStateAction<string | null>>;
   showDeleteConfirm?: string | null;
   setShowDeleteConfirm?: Dispatch<SetStateAction<string | null>>;
@@ -53,6 +51,8 @@ const TaskItem = ({
     task: TaskType;
   } | null>(null);
 
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
+
   const handleTaskDelete = async () => {
     const updatedTasks = tasks.filter((t) => t.id !== task.id);
 
@@ -68,38 +68,56 @@ const TaskItem = ({
     }
   };
 
+  const handleCheckClickDebounced = debounce(async () => {
+    try {
+      // Update local tasks
+      setTasks(
+        tasks.map((t) =>
+          t.id === task.id ? { ...t, is_completed: !t.is_completed } : t
+        )
+      );
+
+      const { error } = await supabaseBrowser
+        .from("tasks")
+        .update({
+          is_completed: !task.is_completed,
+        })
+        .eq("id", task.id);
+
+      if (error) {
+        throw error;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, 300);
+
   const handleCheckClick = async (
     ev: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
   ) => {
     ev.stopPropagation();
 
-    // update local tasks
-    setTasks(
-      tasks.map((t) =>
-        t.id === task.id ? { ...t, is_completed: !t.is_completed } : t
-      )
-    );
-
-    const { error } = await supabaseBrowser
-      .from("tasks")
-      .update({
-        is_completed: !task.is_completed,
-      })
-      .eq("id", task.id);
-
-    if (error) {
-      console.log(error);
+    if (!task.is_completed) {
+      // Play sound
+      const audio = new Audio("/sounds/done.wav");
+      audio.play();
     }
+
+    // Trigger animation
+    setIsAnimating(true);
+    setTimeout(() => setIsAnimating(false), 300); // Duration of animation
+
+    handleCheckClickDebounced();
   };
 
   const [editTaskId, setEditTaskId] = useState<TaskType["id"] | null>(null);
 
   return (
-    <>
+    <div className="w-full">
       {addTaskAboveBellow?.position == "above" && (
         <AddTask
           onClose={() => setAddTaskAboveBellow(null)}
-          isSmall={true}
+          isSmall={smallAddTask}
           section_id={task.section_id}
           project={project}
           tasks={tasks}
@@ -111,7 +129,7 @@ const TaskItem = ({
       {editTaskId == task.id ? (
         <AddTask
           onClose={() => setEditTaskId(null)}
-          isSmall={true}
+          isSmall={smallAddTask}
           section_id={task.section_id}
           project={project}
           tasks={tasks}
@@ -135,7 +153,9 @@ const TaskItem = ({
                 <div className="flex items-center gap-1">
                   <div
                     onClick={handleCheckClick}
-                    className="p-1 group cursor-pointer h-fit"
+                    className={`p-1 group cursor-pointer h-fit ${
+                      isAnimating ? "check-animation" : ""
+                    }`}
                   >
                     <Circle
                       size={22}
@@ -244,7 +264,7 @@ const TaskItem = ({
       {addTaskAboveBellow?.position == "below" && (
         <AddTask
           onClose={() => setAddTaskAboveBellow(null)}
-          isSmall={true}
+          isSmall={smallAddTask}
           section_id={task.section_id}
           project={project}
           tasks={tasks}
@@ -274,7 +294,7 @@ const TaskItem = ({
           onSubmit={handleTaskDelete}
         />
       )}
-    </>
+    </div>
   );
 };
 

@@ -1,7 +1,13 @@
 import { Trash2 } from "lucide-react";
 import React from "react";
 
-const DeleteOption = ({ onClick }: { onClick: () => void }) => {
+const DeleteOption = ({
+  onClick,
+}: {
+  onClick: () => void;
+}) => {
+
+
   return (
     <button
       onClick={onClick}

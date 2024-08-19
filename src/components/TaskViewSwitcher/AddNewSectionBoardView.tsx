@@ -131,7 +131,7 @@ const AddNewSectionBoardView = ({
           {(columns ? columns.length - 1 == index : true) ? (
             <div className="bg-gray-100 p-3 py-2 rounded-lg min-w-[300px] h-fit ml-5">
               <button
-                className="text-gray-500 hover:text-gray-700 flex items-center gap-1 w-full group py-1 whitespace-nowrap"
+                className="text-gray-500 hover:text-indigo-600 flex items-center gap-2 w-full group py-1 whitespace-nowrap"
                 onClick={() =>
                   columnId
                     ? setShowAddSection(columnId)
@@ -179,11 +179,11 @@ const AddNewSectionBoardView = ({
                     : setShowUngroupedAddSection(true)
                 }
               >
-                <div className="flex-1 bg-gray-400 w-[1px]"></div>
-                <div className="font-bold text-gray-600 text-sm">
+                <div className="flex-1 bg-indigo-400 w-[1px]"></div>
+                <div className="font-medium text-indigo-600 text-sm">
                   Add section
                 </div>
-                <div className="flex-1 bg-gray-500 w-[1px]"></div>
+                <div className="flex-1 bg-indigo-500 w-[1px]"></div>
               </div>
             </div>
           )}

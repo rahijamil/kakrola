@@ -9,6 +9,7 @@ import ExportCSVOption from "./ExportCSVOption";
 import ImportCSVOption from "./ImportCSVOption";
 import CopyProjectLinkOption from "./CopyProjectLinkOption";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import FavoriteOption from "./FavoriteOption";
 
 const SidebarProjectMoreOptions = ({
   onClose,
@@ -44,28 +45,6 @@ const SidebarProjectMoreOptions = ({
     setAboveBellow: Dispatch<SetStateAction<"above" | "below" | null>>;
   };
 }) => {
-  const { projects, setProjects } = useTaskProjectDataProvider();
-
-  const handleFavorite = async () => {
-    const updatedProjects = projects.map((p) => {
-      if (p.id === project.id) {
-        return { ...p, is_favorite: !p.is_favorite };
-      }
-      return p;
-    });
-
-    setProjects(updatedProjects);
-
-    const { error } = await supabaseBrowser
-      .from("projects")
-      .update({ is_favorite: !project.is_favorite })
-      .eq("id", project.id);
-
-    if (error) {
-      console.error(error);
-    }
-  };
-
   return (
     <div>
       <div
@@ -84,7 +63,8 @@ const SidebarProjectMoreOptions = ({
             }}
             className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
           >
-            <ArrowUp strokeWidth={1.5} className="w-4 h-4 mr-2" /> Add project above
+            <ArrowUp strokeWidth={1.5} className="w-4 h-4 mr-2" /> Add project
+            above
           </button>
           <button
             onClick={() => {
@@ -93,7 +73,8 @@ const SidebarProjectMoreOptions = ({
             }}
             className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
           >
-            <ArrowDown strokeWidth={1.5} className="w-4 h-4 mr-2" /> Add project below
+            <ArrowDown strokeWidth={1.5} className="w-4 h-4 mr-2" /> Add project
+            below
           </button>
         </div>
         <div className="h-[1px] bg-gray-100 my-1"></div>
@@ -107,19 +88,7 @@ const SidebarProjectMoreOptions = ({
           >
             <Pencil strokeWidth={1.5} className="w-4 h-4 mr-2" /> Edit
           </button>
-          <button
-            onClick={handleFavorite}
-            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
-          >
-            {project.is_favorite ? (
-              <HeartOffIcon className="w-4 h-4 mr-4" />
-            ) : (
-              <Heart strokeWidth={1.5} className="w-4 h-4 mr-4" />
-            )}{" "}
-            {project?.is_favorite
-              ? "Remove from favorites"
-              : "Add to favorites"}
-          </button>
+          <FavoriteOption project={project} />
           {/* <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
             <CopyPlusIcon className="w-4 h-4 mr-2" /> Duplicate
           </button> */}
@@ -137,7 +106,7 @@ const SidebarProjectMoreOptions = ({
             project_slug={project.slug}
           />
         </div>
-        <div className="h-[1px] bg-gray-100 my-1"></div>
+        {/* <div className="h-[1px] bg-gray-100 my-1"></div>
         <div>
           <ImportCSVOption
             onClick={() => {
@@ -161,7 +130,7 @@ const SidebarProjectMoreOptions = ({
             }}
           />
         </div>
-        <div className="h-[1px] bg-gray-100 my-1"></div>
+        <div className="h-[1px] bg-gray-100 my-1"></div> */}
         <div>
           <ArchiveOption
             onClick={() => {

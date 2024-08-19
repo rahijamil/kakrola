@@ -1,30 +1,37 @@
 "use client";
 import React, { Dispatch, SetStateAction, useState } from "react";
-import CommentOrActivityModal from "./CommentOrActivityModal";
-import ActiveProjectMoreOptions from "./ActiveProjectMoreOptions";
-import ViewOptions from "./ViewOptions";
-import ShareOption from "./ShareOption";
-import DocsSidebar from "../DocsSidebar";
-import { ViewTypes } from "@/types/viewTypes";
 import {
   Ellipsis,
   MessageSquare,
   SlidersHorizontal,
   UserPlus,
 } from "lucide-react";
-import { ProjectType } from "@/types/project";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import { ProjectType, TaskType } from "@/types/project";
+import { ViewTypes } from "@/types/viewTypes";
+import DocsSidebar from "../DocsSidebar";
+import ShareOption from "./ShareOption";
+import ViewOptions from "./ViewOptions";
+import ActiveProjectMoreOptions from "./ActiveProjectMoreOptions";
+import ProjectDeleteConfirm from "../Sidebar/ProjectDeleteConfirm";
+import ProjectArchiveConfirm from "../Sidebar/ProjectArchiveConfirm";
+import CommentOrActivityModal from "./CommentOrActivityModal";
+import ExportCSVModal from "../Sidebar/SidebarProjectMoreOptions/ExportCSVModal";
+import ImportCSVModal from "../Sidebar/SidebarProjectMoreOptions/ImportCSVModal";
+import AddEditProject from "../AddEditProject";
 
 const LayoutWrapper = ({
   children,
   headline,
   project,
+  view,
+  setView,
   showShareOption,
   setShowShareOption,
   hideCalendarView,
-  view,
-  setView,
+  setTasks,
+  tasks,
 }: {
   children: React.ReactNode;
   headline: string;
@@ -34,13 +41,20 @@ const LayoutWrapper = ({
   showShareOption?: boolean;
   setShowShareOption?: Dispatch<SetStateAction<boolean>>;
   hideCalendarView?: boolean;
+  setTasks?: (updatedTasks: TaskType[]) => void;
+  tasks?: TaskType[];
 }) => {
-  const [editTitle, setEditTitle] = useState<boolean>(false);
-  const [showViewOptions, setShowViewOptions] = useState<boolean>(false);
-  const [showMoreOptions, setShowMoreOptions] = useState<boolean>(false);
-  const [showCommentOrActivity, setShowCommentOrActivity] = useState<
-    "comment" | "activity" | null
-  >(null);
+  const [modalState, setModalState] = useState({
+    projectEdit: false,
+    showImportFromCSV: false,
+    showExportAsCSV: false,
+    showCommentOrActivity: null as "comment" | "activity" | null,
+    showArchiveConfirm: false,
+    showDeleteConfirm: false,
+    editTitle: false,
+    showViewOptions: false,
+    showMoreOptions: false,
+  });
 
   const [projectTitle, setProjectTitle] = useState<string>(
     project?.name || headline
@@ -56,40 +70,37 @@ const LayoutWrapper = ({
     ) {
       setProjects((prevProjects) =>
         prevProjects.map((p) =>
-          p.id == project.id ? { ...p, name: projectTitle.trim() } : p
+          p.id === project.id ? { ...p, name: projectTitle.trim() } : p
         )
       );
-
-      setEditTitle(false);
 
       const { error } = await supabaseBrowser
         .from("projects")
         .update({ name: projectTitle.trim() })
         .eq("id", project.id);
-      if (error) {
-        console.log(error);
-      }
-    }
 
-    setProjectTitle(project?.name || headline);
-    setEditTitle(false);
+      if (error) console.log(error);
+    }
+    setModalState((prev) => ({ ...prev, editTitle: false }));
   };
+
+  const toggleModal = (key: keyof typeof modalState, value: boolean | null) =>
+    setModalState((prev) => ({ ...prev, [key]: value }));
 
   return (
     <>
-      {headline == "Docs" && <DocsSidebar />}
+      {headline === "Docs" && <DocsSidebar />}
 
-      <main className="flex-1 flex flex-col">
+      <div className="flex flex-col h-full w-full">
         {view && setView && (
           <div className="flex items-center justify-between p-4">
             {!["Today", "Inbox"].includes(headline) && (
               <div>
-                {teams.find((t) => t.id == project?.team_id)?.name ??
+                {teams.find((t) => t.id === project?.team_id)?.name ??
                   "My Projects"}{" "}
                 /
               </div>
             )}
-
             <div className="flex-1 flex items-center justify-end">
               <ul className="flex items-center relative">
                 {typeof setShowShareOption === "function" &&
@@ -98,7 +109,7 @@ const LayoutWrapper = ({
                       <button
                         className={`${
                           showShareOption ? "bg-gray-100" : "hover:bg-gray-100"
-                        }  transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
+                        } transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
                         onClick={() => setShowShareOption(true)}
                       >
                         <UserPlus
@@ -107,7 +118,6 @@ const LayoutWrapper = ({
                         />
                         Share
                       </button>
-
                       {showShareOption && (
                         <ShareOption
                           onClose={() => setShowShareOption(false)}
@@ -118,9 +128,11 @@ const LayoutWrapper = ({
                 <li>
                   <button
                     className={`${
-                      showViewOptions ? "bg-gray-100" : "hover:bg-gray-100"
-                    }  transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
-                    onClick={() => setShowViewOptions(true)}
+                      modalState.showViewOptions
+                        ? "bg-gray-100"
+                        : "hover:bg-gray-100"
+                    } transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
+                    onClick={() => toggleModal("showViewOptions", true)}
                   >
                     <SlidersHorizontal
                       strokeWidth={1.5}
@@ -128,64 +140,53 @@ const LayoutWrapper = ({
                     />
                     View
                   </button>
-
-                  {showViewOptions && (
+                  {modalState.showViewOptions && (
                     <ViewOptions
-                      onClose={() => setShowViewOptions(false)}
+                      onClose={() => toggleModal("showViewOptions", false)}
                       hideCalendarView={hideCalendarView}
                       view={view}
                       setView={setView}
+                      setTasks={setTasks}
+                      tasks={tasks}
                     />
                   )}
                 </li>
-
                 {headline !== "Today" && (
-                  <>
-                    <li>
-                      <button
-                        className={`${
-                          showCommentOrActivity
-                            ? "bg-gray-100"
-                            : "hover:bg-gray-100"
-                        } transition p-1 rounded-md cursor-pointer`}
-                        onClick={() => setShowCommentOrActivity("comment")}
-                      >
-                        <MessageSquare
-                          strokeWidth={1.5}
-                          className="w-5 h-5 text-gray-500"
-                        />
-                      </button>
-
-                      {showCommentOrActivity && project && (
-                        <CommentOrActivityModal
-                          onClose={() => setShowCommentOrActivity(null)}
-                          showCommentOrActivity={showCommentOrActivity}
-                          setShowCommentOrActivity={setShowCommentOrActivity}
-                          project={project}
-                        />
-                      )}
-                    </li>
-                    <li>
-                      <button
-                        className={`${
-                          showMoreOptions ? "bg-gray-100" : "hover:bg-gray-100"
-                        } transition p-1 rounded-md cursor-pointer`}
-                        onClick={() => setShowMoreOptions(true)}
-                      >
-                        <Ellipsis
-                          strokeWidth={1.5}
-                          className="w-5 h-5 text-gray-500"
-                        />
-                      </button>
-
-                      {showMoreOptions && project && (
-                        <ActiveProjectMoreOptions
-                          onClose={() => setShowMoreOptions(false)}
-                          project={project}
-                        />
-                      )}
-                    </li>
-                  </>
+                  <li>
+                    <button
+                      className={`${
+                        modalState.showMoreOptions
+                          ? "bg-gray-100"
+                          : "hover:bg-gray-100"
+                      } transition p-1 rounded-md cursor-pointer`}
+                      onClick={() => toggleModal("showMoreOptions", true)}
+                    >
+                      <Ellipsis
+                        strokeWidth={1.5}
+                        className="w-5 h-5 text-gray-500"
+                      />
+                    </button>
+                    {modalState.showMoreOptions && project && (
+                      <ActiveProjectMoreOptions
+                        onClose={() => toggleModal("showMoreOptions", false)}
+                        project={project}
+                        stateActions={{
+                          setProjectEdit: (value) =>
+                            toggleModal("projectEdit", value as boolean),
+                          setImportFromCSV: (value) =>
+                            toggleModal("showImportFromCSV", value as boolean),
+                          setExportAsCSV: (value) =>
+                            toggleModal("showExportAsCSV", value as boolean),
+                          setShowArchiveConfirm: (value) =>
+                            toggleModal("showArchiveConfirm", value as boolean),
+                          setShowDeleteConfirm: (value) =>
+                            toggleModal("showDeleteConfirm", value as boolean),
+                          setShowCommentOrActivity: (value) =>
+                            toggleModal("showCommentOrActivity", value as null),
+                        }}
+                      />
+                    )}
+                  </li>
                 )}
               </ul>
             </div>
@@ -199,48 +200,84 @@ const LayoutWrapper = ({
         >
           <div className="flex flex-col h-full">
             <div
-              className={`mb-6 ${view == "Board" && "mx-8"} ${
-                !setView && "pt-8"
-              }`}
+              className={`${project && view === "Board" ? "pb-4" : "pl-3.5"} ${
+                view === "Board" && "mx-8"
+              } ${!setView && "pt-8"}`}
             >
               {project ? (
-                <>
-                  {editTitle ? (
-                    <input
-                      type="text"
-                      className={`text-[26px] font-bold border border-gray-300 w-full rounded-md p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-indigo-300`}
-                      value={projectTitle}
-                      onBlur={handleEditTitle}
-                      autoFocus
-                      onChange={(ev) => setProjectTitle(ev.target.value)}
-                      onKeyDown={(ev) => ev.key == "Enter" && handleEditTitle()}
-                    />
-                  ) : (
-                    <h1
-                      className={`text-[26px] font-bold border border-transparent w-fit hover:w-full hover:border-gray-200 rounded-md p-1 py-[14px] cursor-text ${
-                        !setView && "pt-8"
-                      }`}
-                      onClick={() => setEditTitle(true)}
-                    >
-                      {project.name}
-                    </h1>
-                  )}
-                </>
+                modalState.editTitle ? (
+                  <input
+                    type="text"
+                    className="text-[26px] font-bold border border-gray-300 w-full rounded-md p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+                    value={projectTitle}
+                    onBlur={handleEditTitle}
+                    autoFocus
+                    onChange={(ev) => setProjectTitle(ev.target.value)}
+                    onKeyDown={(ev) => ev.key === "Enter" && handleEditTitle()}
+                  />
+                ) : (
+                  <h1
+                    className="text-[26px] font-bold border border-transparent w-fit hover:w-full hover:border-gray-200 rounded-md p-1 py-[14px] cursor-text"
+                    onClick={() => toggleModal("editTitle", true)}
+                  >
+                    {project.name}
+                  </h1>
+                )
               ) : (
-                <h1
-                  className={`text-[26px] font-bold capitalize ${
-                    !setView && "pt-8"
-                  }`}
-                >
+                <h1 className="text-[26px] font-bold p-1 py-[14px]">
                   {headline}
                 </h1>
               )}
             </div>
-
             <div className="flex-1">{children}</div>
           </div>
         </div>
-      </main>
+      </div>
+
+      {modalState.showDeleteConfirm && project && (
+        <ProjectDeleteConfirm
+          project={project}
+          setShowDeleteConfirm={(value) =>
+            toggleModal("showDeleteConfirm", value as boolean)
+          }
+        />
+      )}
+
+      {modalState.showArchiveConfirm && project && (
+        <ProjectArchiveConfirm
+          project={project}
+          setShowArchiveConfirm={(value) =>
+            toggleModal("showArchiveConfirm", value as boolean)
+          }
+        />
+      )}
+
+      {modalState.showCommentOrActivity && project && (
+        <CommentOrActivityModal
+          onClose={() => toggleModal("showCommentOrActivity", null)}
+          showCommentOrActivity={modalState.showCommentOrActivity}
+          setShowCommentOrActivity={(value) =>
+            toggleModal("showCommentOrActivity", value as null)
+          }
+          project={project}
+        />
+      )}
+
+      {modalState.showExportAsCSV && (
+        <ExportCSVModal onClose={() => toggleModal("showExportAsCSV", false)} />
+      )}
+      {modalState.showImportFromCSV && (
+        <ImportCSVModal
+          onClose={() => toggleModal("showImportFromCSV", false)}
+        />
+      )}
+
+      {modalState.projectEdit && (
+        <AddEditProject
+          onClose={() => toggleModal("projectEdit", false)}
+          project={project}
+        />
+      )}
     </>
   );
 };

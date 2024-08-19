@@ -7,10 +7,12 @@ export const TaskInput: React.FC<{
   taskData: TaskType;
   setTaskData: React.Dispatch<React.SetStateAction<TaskType>>;
   biggerTitle?: boolean;
-}> = ({ projects, biggerTitle, setTaskData }) => {
-  const [inputValue, setInputValue] = useState("");
-  const [showPlaceholder, setShowPlaceholder] = useState(true);
+  handleSubmit: (e: React.FormEvent) => void;
+}> = ({ projects, biggerTitle, taskData, setTaskData, handleSubmit }) => {
+  const [inputValue, setInputValue] = useState(taskData.title);
   const contentEditableRef = useRef<HTMLDivElement>(null);
+  const cursorOffsetRef = useRef(0);
+  const firstRenderRef = useRef(true); // Track if it's the first render
 
   useEffect(() => {
     const parsedData = parseInput(inputValue, projects);
@@ -18,56 +20,116 @@ export const TaskInput: React.FC<{
   }, [inputValue, projects, setTaskData]);
 
   const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
-    setShowPlaceholder(false);
     const text = e.currentTarget.textContent || "";
     setInputValue(text);
-    setShowPlaceholder(text.length === 0);
-  };
-
-  const handleBlur = () => {
-    setShowPlaceholder(inputValue.length === 0);
   };
 
   const highlightCommands = (text: string) => {
     const regex =
       /(today|tomorrow|next week|\d{1,2}\/\d{1,2}(?:\/\d{2,4})?|\d{1,2}\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)|\+\w+|!\d|#\w+)/gi;
     const parts = text.split(regex);
-    return parts.map((part, index) =>
-      regex.test(part) ? (
-        <span
-          key={index}
-          className="bg-indigo-200 rounded-md px-1 py-0.5 text-indigo-700"
-        >
-          {part}
-        </span>
-      ) : (
-        part
+    return parts
+      .map((part, index) =>
+        regex.test(part)
+          ? `<span class="bg-indigo-200 rounded px-1 py-0.5 text-indigo-700">${part}</span>`
+          : part
       )
-    );
+      .join("");
   };
 
+  const saveCursorPosition = () => {
+    const selection = window.getSelection();
+    if (selection?.rangeCount) {
+      const range = selection.getRangeAt(0);
+      const preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(contentEditableRef.current!);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+      cursorOffsetRef.current = preCaretRange.toString().length;
+    }
+  };
+
+  const restoreCursorPosition = () => {
+    const el = contentEditableRef.current;
+    const selection = window.getSelection();
+    if (el && selection) {
+      let charIndex = 0;
+      const range = document.createRange();
+      range.setStart(el, 0);
+      range.collapse(true);
+
+      const nodeStack: Node[] = [el];
+      let node: Node | null = null;
+      let foundStart = false;
+
+      while (!foundStart && (node = nodeStack.pop()!)) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const nextCharIndex = charIndex + (node.textContent?.length || 0);
+          if (
+            firstRenderRef.current ||
+            cursorOffsetRef.current <= nextCharIndex
+          ) {
+            range.setStart(node, cursorOffsetRef.current - charIndex);
+            foundStart = true;
+          } else {
+            charIndex = nextCharIndex;
+          }
+        } else {
+          for (let i = node.childNodes.length - 1; i >= 0; i--) {
+            nodeStack.push(node.childNodes[i]);
+          }
+        }
+      }
+
+      if (foundStart) {
+        range.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    }
+  };
+
+  useEffect(() => {
+    saveCursorPosition();
+    const el = contentEditableRef.current;
+
+    if (el) {
+      // Highlight the commands and update the content
+      const highlightedText = highlightCommands(inputValue);
+      el.innerHTML = highlightedText;
+
+      // Set cursor position at the end of the text on the first render
+      if (firstRenderRef.current) {
+        if (inputValue) {
+          cursorOffsetRef.current = inputValue.length;
+        }
+        el.focus(); // Ensure the element is focused
+        firstRenderRef.current = false; // Disable first render flag after first use
+      }
+
+      // Restore cursor position
+      restoreCursorPosition();
+    }
+  }, [inputValue]);
+
   return (
-    <>
-      <div className="relative w-full max-w-xl mx-auto">
-        <div
-          ref={contentEditableRef}
-          contentEditable
-          className={`relative font-medium bg-white border rounded p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-            biggerTitle ? "text-lg" : "text-base"
-          }`}
-          onInput={handleInput}
-          onBlur={handleBlur}
-          dangerouslySetInnerHTML={{ __html: inputValue }}
-        />
-        {showPlaceholder && (
-          <div className="absolute top-0 left-0 p-3 text-gray-400 pointer-events-none select-none">
-            Task name (Try: Buy milk tomorrow +John #Groceries !1)
-          </div>
-        )}
-        <div className="absolute top-0 left-0 right-0 bottom-0 pointer-events-none p-3">
-          {highlightCommands(inputValue)}
-        </div>
-      </div>
-    </>
+    <div
+      ref={contentEditableRef}
+      contentEditable
+      className={`py-1 outline-none cursor-text font-medium ${
+        biggerTitle ? "text-lg" : "text-sm"
+      }`}
+      onInput={handleInput}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleSubmit(e);
+        }
+      }}
+      aria-placeholder={`${
+        biggerTitle
+          ? "Task name (Try: Buy milk tomorrow +John #Groceries !1)"
+          : "Task name"
+      }`}
+    />
   );
 };

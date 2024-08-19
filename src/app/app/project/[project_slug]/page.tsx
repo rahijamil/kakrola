@@ -1,152 +1,151 @@
 "use client";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import TaskViewSwitcher from "@/components/TaskViewSwitcher";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/Spinner";
-import { useAuthProvider } from "@/context/AuthContext";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import { ViewTypes } from "@/types/viewTypes";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState, useMemo } from "react";
 
-const ProjectDetails = ({
-  params: { project_slug },
-}: {
-  params: { project_slug: string };
-}) => {
-  const {
-    projects,
-    setProjects,
-    projectsLoading,
-    sections,
-    setSections,
-    tasks,
-    setTasks,
-  } = useTaskProjectDataProvider();
-  const { profile } = useAuthProvider();
+const ProjectDetails = React.memo(
+  ({ params: { project_slug } }: { params: { project_slug: string } }) => {
+    const {
+      projects,
+      setProjects,
+      projectsLoading,
+      sections,
+      setSections,
+      tasks,
+      setTasks,
+    } = useTaskProjectDataProvider();
 
-  const [currentProject, setCurrentProject] = useState<ProjectType | null>(
-    null
-  );
-  const [showShareOption, setShowShareOption] = useState<boolean>(false);
-  const [notFound, setNotFound] = useState<boolean>(false);
-
-  const projectSections = useMemo(() => {
-    if (!currentProject) return [];
-    return sections
-      .filter((s) => s.project_id === currentProject.id)
-      .sort((a, b) => a.order - b.order);
-  }, [currentProject, sections]);
-
-  const projectTasks = useMemo(() => {
-    if (!currentProject) return [];
-    return tasks
-      .filter((t) => t.project_id === currentProject.id)
-      .sort((a, b) => a.order - b.order);
-  }, [currentProject, tasks]);
-
-  const setProjectSections = (updatedSections: SectionType[]) => {
-    setSections((prev) =>
-      prev.map((section) =>
-        section.project_id === currentProject?.id
-          ? updatedSections.find((s) => s.id === section.id) || section
-          : section
-      )
+    const [currentProject, setCurrentProject] = useState<ProjectType | null>(
+      null
     );
-  };
+    const [showShareOption, setShowShareOption] = useState<boolean>(false);
+    const [notFound, setNotFound] = useState<boolean>(false);
 
-  const setProjectTasks = (updatedTasks: TaskType[]) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.project_id === currentProject?.id
-          ? updatedTasks.find((t) => t.id === task.id) || task
-          : task
-      )
-    );
-  };
+    const projectSections = useMemo(() => {
+      if (!currentProject) return [];
+      return sections
+        .filter((s) => s.project_id === currentProject.id)
+        .sort((a, b) => a.order - b.order);
+    }, [currentProject, sections]);
 
-  useEffect(() => {
-    if (projectsLoading) return;
+    const projectTasks = useMemo(() => {
+      if (!currentProject) return [];
+      return tasks
+        .filter((t) => t.project_id === currentProject.id)
+        .sort((a, b) => a.order - b.order);
+    }, [currentProject, tasks]);
 
-    const project = projects.find((p) => p.slug === project_slug);
-
-    if (project) {
-      setCurrentProject(project);
-    } else {
-      setNotFound(true);
-    }
-
-    return () => {
-      setCurrentProject(null);
-    };
-  }, [project_slug, profile?.id, projects, projectsLoading]);
-
-  useEffect(() => {
-    if (currentProject?.name) {
-      document.title = `${currentProject.name} | Kriar`;
-    }
-
-    return () => {
-      document.title = "Kriar";
-    };
-  }, [currentProject?.name]);
-
-  const updateProjectView = async (view: ViewTypes["view"]) => {
-    if (!currentProject?.id) return;
-
-    setProjects((prev) =>
-      prev.map((p) => (p.id === currentProject?.id ? { ...p, view } : p))
+    const setProjectSections = useCallback(
+      (updatedSections: SectionType[]) => {
+        setSections((prev) =>
+          prev.map((section) =>
+            section.project_id === currentProject?.id
+              ? updatedSections.find((s) => s.id === section.id) || section
+              : section
+          )
+        );
+      },
+      [currentProject?.id, setSections]
     );
 
-    await supabaseBrowser
-      .from("projects")
-      .update({ view })
-      .eq("id", currentProject?.id);
-  };
+    const setProjectTasks = useCallback(
+      (updatedTasks: TaskType[]) => {
+        setTasks((prev) =>
+          prev.map((task) =>
+            task.project_id === currentProject?.id
+              ? updatedTasks.find((t) => t.id === task.id) || task
+              : task
+          )
+        );
+      },
+      [currentProject?.id, setTasks]
+    );
 
-  if (notFound) {
-    return (
-      <div className="flex items-center justify-center flex-col gap-1 h-[70vh] select-none w-full">
-        <Image
-          src="/not_found.png"
-          width={220}
-          height={200}
-          alt="Project not found"
-          className="rounded-full object-cover"
-          draggable={false}
-        />
+    useEffect(() => {
+      if (projectsLoading) return;
 
-        <div className="text-center space-y-2 w-72">
-          <h3 className="font-bold text-base">Project not found</h3>
-          <p className="text-sm text-gray-600 pb-4">
-            The project doesn&apos;t seem to exist or you don&apos;t have
-            permission to access it.
-          </p>
-          <Link href="/app">
-            <Button>Go back to home</Button>
-          </Link>
+      const project = projects.find((p) => p.slug === project_slug);
+
+      if (project) {
+        setCurrentProject(project);
+        setNotFound(false);
+      } else {
+        setNotFound(true);
+        setCurrentProject(null);
+      }
+    }, [project_slug, projects, projectsLoading]);
+
+    useEffect(() => {
+      if (currentProject?.name) {
+        document.title = `${currentProject.name} | Kriar`;
+      } else {
+        document.title = "Kriar";
+      }
+    }, [currentProject?.name]);
+
+    const updateProjectView = useCallback(
+      async (view: ViewTypes["view"]) => {
+        if (!currentProject?.id) return;
+
+        setProjects((prev) =>
+          prev.map((p) => (p.id === currentProject?.id ? { ...p, view } : p))
+        );
+
+        const { error } = await supabaseBrowser
+          .from("projects")
+          .update({ view })
+          .eq("id", currentProject?.id);
+
+        if (error) console.log(error);
+      },
+      [currentProject?.id, setProjects]
+    );
+
+    if (notFound) {
+      return (
+        <div className="flex items-center justify-center flex-col gap-1 h-[70vh] select-none w-full">
+          <Image
+            src="/not_found.png"
+            width={220}
+            height={200}
+            alt="Project not found"
+            className="rounded-full object-cover"
+            draggable={false}
+          />
+
+          <div className="text-center space-y-2 w-72">
+            <h3 className="font-bold text-base">Project not found</h3>
+            <p className="text-sm text-gray-600 pb-4">
+              The project doesn&apos;t seem to exist or you don&apos;t have
+              permission to access it.
+            </p>
+            <Link href="/app">
+              <Button>Go back to home</Button>
+            </Link>
+          </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
-  if (currentProject?.id) {
-    return (
-      <>
-        <Head>
-          <title>{currentProject.name} | Kriar</title>
-        </Head>
+    if (currentProject?.id) {
+      return (
         <LayoutWrapper
           headline={currentProject.name}
           view={currentProject.view}
-          setView={(value) => updateProjectView(value)}
+          setView={updateProjectView}
           project={currentProject}
           showShareOption={showShareOption}
           setShowShareOption={setShowShareOption}
+          setTasks={setProjectTasks}
+          tasks={projectTasks}
         >
           <TaskViewSwitcher
             project={currentProject}
@@ -182,15 +181,15 @@ const ProjectDetails = ({
             </div>
           )}
         </LayoutWrapper>
-      </>
-    );
-  } else {
-    return (
-      <div className="flex items-center justify-center w-full h-screen">
-        <Spinner />
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div className="flex items-center justify-center w-full h-screen">
+          <Spinner />
+        </div>
+      );
+    }
   }
-};
+);
 
 export default ProjectDetails;

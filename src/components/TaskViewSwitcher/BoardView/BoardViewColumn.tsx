@@ -141,7 +141,9 @@ const BoardViewColumn = ({
                     column.is_archived ? "" : "cursor-pointer"
                   }`}
                   onClick={() =>
-                    !column.is_archived && setEditColumnTitle(true)
+                    !column.is_archived &&
+                    column.id !== "ungrouped" &&
+                    setEditColumnTitle(true)
                   }
                 >
                   <h3 className="font-bold pl-[6px]">{column.title}</h3>
@@ -195,13 +197,21 @@ const BoardViewColumn = ({
             <Droppable droppableId={column.id} type="task">
               {(provided, snapshot) => (
                 <div
+                key={column.id}
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                   className="space-y-2 min-h-1"
                 >
                   {column.tasks
                     .filter((t) => !t.parent_task_id)
-                    .sort((a, b) => a.order - b.order)
+                    .sort((a, b) => {
+                      // Sort by is_completed: false (incomplete) comes before true (completed)
+                      if (a.is_completed !== b.is_completed) {
+                        return a.is_completed ? 1 : -1;
+                      }
+                      // Then sort by order within each completion status
+                      return a.order - b.order;
+                    })
                     .map((task, taskIndex) => (
                       <>
                         <div
@@ -222,9 +232,10 @@ const BoardViewColumn = ({
                             project={project}
                             setShowDeleteConfirm={setShowTaskDeleteConfirm}
                             setShowModal={setShowTaskItemModal}
-                            showDeleteConfirm={showTaskDeleteConfirm}
                             showModal={showTaskItemModal}
+                            showDeleteConfirm={showTaskDeleteConfirm}
                             column={column}
+                            smallAddTask
                           />
                         </div>
                       </>
