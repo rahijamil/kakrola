@@ -122,6 +122,7 @@ export const TaskInput: React.FC<{
       onKeyDown={(e) => {
         if (e.key === "Enter") {
           e.preventDefault();
+          e.currentTarget.innerHTML = ""
           handleSubmit(e);
         }
       }}

@@ -8,6 +8,7 @@ import { Circle, CircleCheck, Ellipsis, User, Workflow } from "lucide-react";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import AddTask from "../AddTask";
 import { debounce } from "lodash";
+import { getDateInfo } from "@/utils/getDateInfo";
 
 const TaskItem = ({
   task,
@@ -112,6 +113,8 @@ const TaskItem = ({
 
   const [editTaskId, setEditTaskId] = useState<TaskType["id"] | null>(null);
 
+  const dateInfo = getDateInfo(task.due_date);
+
   return (
     <div className="w-full">
       {addTaskAboveBellow?.position == "above" && (
@@ -147,13 +150,13 @@ const TaskItem = ({
               className="transition w-full"
             >
               <div
-                className="flex items-start justify-between gap-2 taskitem_group bg-white p-1 w-full rounded-md cursor-pointer"
+                className="flex items-start justify-between gap-2 taskitem_group bg-white p-1 w-full rounded-md cursor-pointer relative"
                 onClick={() => setShowModal && setShowModal(task.id.toString())}
               >
                 <div className="flex items-center gap-1">
                   <div
                     onClick={handleCheckClick}
-                    className={`p-1 group cursor-pointer h-fit ${
+                    className={`p-1 self-start group cursor-pointer h-fit ${
                       isAnimating ? "check-animation" : ""
                     }`}
                   >
@@ -196,26 +199,46 @@ const TaskItem = ({
                       }`}
                     />
                   </div>
-                  <div>
-                    <p
-                      className={`${
-                        task.is_completed ? "line-through text-gray-500" : ""
-                      } line-clamp-3`}
-                    >
-                      {task.title}
-                    </p>
 
-                    {subTasks.length > 0 ? (
-                      <div className="flex items-center gap-[2px] text-gray-500">
-                        <Workflow strokeWidth={1.5} className="w-3 h-3" />
-                        <span className="text-xs">0/{subTasks.length}</span>
-                      </div>
-                    ) : null}
+                  <div className="space-y-2 py-1 pr-1 flex-1">
+                    <div className="space-y-[2px]">
+                      <p
+                        className={`text-[13px] ${
+                          task.is_completed ? "line-through text-gray-500" : ""
+                        } line-clamp-3`}
+                      >
+                        {task.title}
+                      </p>
+
+                      {task.description && (
+                        <p className="text-[11px] text-gray-500 line-clamp-1">
+                          {task.description}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {subTasks.length > 0 ? (
+                        <div className="flex items-center gap-[2px] text-gray-500">
+                          <Workflow strokeWidth={1.5} className="w-3 h-3" />
+                          <span className="text-[11px]">0/{subTasks.length}</span>
+                        </div>
+                      ) : null}
+
+                      {dateInfo && (
+                        <div className="flex items-center gap-1 text-[11px]">
+                          {dateInfo?.icon}
+                          <span className={dateInfo?.color}>
+                            {dateInfo?.label}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 <div
-                  className={`flex items-center gap-[2px] taskitem_group_hover transition ${
+                  className={`flex items-center gap-[2px] taskitem_group_hover transition absolute top-1 right-1 bg-white ${
                     !showMoreDropdown ? "opacity-0" : ""
                   }`}
                 >

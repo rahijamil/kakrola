@@ -130,11 +130,11 @@ const BoardViewColumn = ({
             ref={boardDraggaleProvided.innerRef}
             {...boardDraggaleProvided.draggableProps}
             {...boardDraggaleProvided.dragHandleProps}
-            className={`bg-gray-100 p-2 rounded-lg min-w-[300px] h-fit transition-colors cursor-default ${
+            className={`bg-gray-100 rounded-lg w-[320px] h-fit max-h-[93%] overflow-y-auto transition-colors cursor-default ${
               column.is_archived && "opacity-70"
             }`}
           >
-            <div className="mb-2 flex justify-between">
+            <div className="flex justify-between sticky top-0 z-10 bg-gray-100 p-2 pb-1">
               {!editColumnTitle && (
                 <div
                   className={`flex items-center gap-2 w-full ${
@@ -200,7 +200,7 @@ const BoardViewColumn = ({
                 key={column.id}
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className="space-y-2 min-h-1"
+                  className="space-y-2 min-h-1 p-2 pt-1"
                 >
                   {column.tasks
                     .filter((t) => !t.parent_task_id)
@@ -247,7 +247,7 @@ const BoardViewColumn = ({
             </Droppable>
 
             {!column.is_archived && (
-              <div>
+              <div className="sticky bottom-0 bg-gray-100 p-2">
                 <SectionAddTask
                   section={
                     column.id === "ungrouped"

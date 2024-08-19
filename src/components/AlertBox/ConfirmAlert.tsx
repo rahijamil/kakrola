@@ -20,7 +20,7 @@ const ConfirmAlert = ({
       onClick={onCancel}
     >
       <div
-        className="bg-white rounded-md p-4 space-y-4 w-[450px] whitespace-normal"
+        className="bg-white rounded-md p-4 space-y-4 w-11/12 max-w-[450px] whitespace-normal"
         onClick={(ev) => ev.stopPropagation()}
       >
         <div className="space-y-1">

@@ -91,9 +91,9 @@ const LayoutWrapper = ({
     <>
       {headline === "Docs" && <DocsSidebar />}
 
-      <div className="flex flex-col h-full w-full">
+      <div className="flex flex-col h-full w-full overflow-y-hidden">
         {view && setView && (
-          <div className="flex items-center justify-between p-4">
+          <div className="flex items-center justify-between p-4 sticky top-0 bg-white z-10 mb-1">
             {!["Today", "Inbox"].includes(headline) && (
               <div>
                 {teams.find((t) => t.id === project?.team_id)?.name ??
@@ -101,7 +101,12 @@ const LayoutWrapper = ({
                 /
               </div>
             )}
-            <div className="flex-1 flex items-center justify-end">
+
+            {view == "List" && (
+              <h1 className="font-bold text-base">{project?.name}</h1>
+            )}
+
+            <div className="flex items-center justify-end">
               <ul className="flex items-center relative">
                 {typeof setShowShareOption === "function" &&
                   headline !== "Today" && (
