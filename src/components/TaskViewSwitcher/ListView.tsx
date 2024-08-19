@@ -256,7 +256,7 @@ const ListView: React.FC<ListViewProps> = ({
         // Optionally, implement a way to revert the state if the database update fails
       }
     }
-  }, [sections, setSections, tasks]);
+  }, [sections, setSections, tasks, setTasks]);
 
   const toggleSection = async (
     section_id: string | number,

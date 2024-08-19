@@ -13,10 +13,10 @@ const LandingPageFooter = () => {
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
             <Image src="/kriya_text.svg" width={130} height={0} alt="Kriar" />
-            <p className="text-gray-700 text-base">
+            <p className="text-gray-700 ">
               Making the world more productive, one task at a time.
             </p>
-            <div className="flex space-x-6">
+            {/* <div className="flex space-x-6">
               {["Facebook", "Twitter", "GitHub", "LinkedIn"].map((social) => (
                 <Link
                   key={social}
@@ -38,9 +38,9 @@ const LandingPageFooter = () => {
                   </svg>
                 </Link>
               ))}
-            </div>
+            </div> */}
           </div>
-          <div className="mt-12 grid grid-cols-2 gap-8 xl:mt-0 xl:col-span-2">
+          {/* <div className="mt-12 grid grid-cols-2 gap-8 xl:mt-0 xl:col-span-2">
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
                 <h3 className="text-sm font-semibold text-gray-800 tracking-wider uppercase">
@@ -57,7 +57,7 @@ const LandingPageFooter = () => {
                     <li key={item}>
                       <Link
                         href="#"
-                        className="text-base text-gray-700 hover:text-gray-900"
+                        className=" text-gray-700 hover:text-gray-900"
                       >
                         {item}
                       </Link>
@@ -80,7 +80,7 @@ const LandingPageFooter = () => {
                     <li key={item}>
                       <Link
                         href="#"
-                        className="text-base text-gray-700 hover:text-gray-900"
+                        className=" text-gray-700 hover:text-gray-900"
                       >
                         {item}
                       </Link>
@@ -100,7 +100,7 @@ const LandingPageFooter = () => {
                       <li key={item}>
                         <Link
                           href="#"
-                          className="text-base text-gray-700 hover:text-gray-900"
+                          className=" text-gray-700 hover:text-gray-900"
                         >
                           {item}
                         </Link>
@@ -124,7 +124,7 @@ const LandingPageFooter = () => {
                     <li key={item}>
                       <Link
                         href="#"
-                        className="text-base text-gray-700 hover:text-gray-900"
+                        className=" text-gray-700 hover:text-gray-900"
                       >
                         {item}
                       </Link>
@@ -133,10 +133,10 @@ const LandingPageFooter = () => {
                 </ul>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="mt-12 border-t border-gray-400 pt-8">
-          <p className="text-base text-gray-700 text-center sm:text-left xl:text-center">
+          <p className=" text-gray-700 text-center sm:text-left xl:text-center">
             &copy; 2024 Kriar, Inc. All rights reserved.
           </p>
         </div>

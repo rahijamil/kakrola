@@ -97,4 +97,6 @@ const ViewOptions = React.memo(
   }
 );
 
+ViewOptions.displayName = "ViewOptions";
+
 export default ViewOptions;

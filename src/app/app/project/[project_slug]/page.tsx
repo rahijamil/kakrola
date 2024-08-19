@@ -192,4 +192,6 @@ const ProjectDetails = React.memo(
   }
 );
 
+ProjectDetails.displayName = "ProjectDetails";
+
 export default ProjectDetails;

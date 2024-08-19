@@ -7,8 +7,16 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { ForwardRefExoticComponent, RefAttributes } from "react";
 
-const sections = [
+const sections: {
+  id: string;
+  label: string;
+  content: string;
+  imgSrc?: string;
+  video?: string;
+  icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
+}[] = [
   {
     id: "section1",
     label: "Organize Tasks Effortlessly",
@@ -49,46 +57,50 @@ const SectionsLayout = () => {
       className="py-20 sm:py-32 z-10 sm:z-0 relative bg-[#E6E6FA]"
       id="top-features"
     >
-      <div className="lg:wrapper space-y-8 md:space-y-16 lg:space-y-32">
+      <div className="lg:wrapper space-y-4 sm:space-y-8 md:space-y-16 lg:space-y-32">
         {sections.map((section, index) => (
           <motion.div
             key={section.id}
-            className={`flex gap-4 md:gap-8 lg:gap-20 ${
-              index % 2 !== 0 ? "flex-col-reverse lg:flex-row items-end lg:items-start" : "flex-col-reverse lg:flex-row-reverse"
+            className={`flex gap-2 sm:gap-4 md:gap-8 lg:gap-20 ${
+              index % 2 !== 0
+                ? "flex-col-reverse lg:flex-row items-end lg:items-start"
+                : "flex-col-reverse lg:flex-row-reverse"
             }`}
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <div
-              className={`p-4 lg:pl-0 lg:w-[45%] flex flex-col justify-center mb-8 lg:mb-0 ${
+              className={`p-4 lg:pl-0 lg:w-[45%] flex flex-col justify-center mb-4 md:mb-8 lg:mb-0 ${
                 index % 2 !== 0 ? "" : "self-center"
               }`}
             >
               <div className="flex items-center space-x-4 mb-4">
                 <div
-                  className={`${
+                  className={`p-2 sm::p-4 ${
                     index == 0
-                      ? "text-white bg-indigo-600 p-4 rounded-md"
+                      ? "text-white bg-indigo-600 rounded-md"
                       : index == 1
-                      ? "text-white bg-purple-600 p-4 rounded-md"
+                      ? "text-white bg-purple-600 rounded-md"
                       : index == 2
-                      ? "text-white bg-pink-600 p-4 rounded-md"
-                      : "text-white bg-teal-600 p-4 rounded-md"
+                      ? "text-white bg-pink-600 rounded-md"
+                      : "text-white bg-teal-600 rounded-md"
                   }`}
                 >
-                  <section.icon size={24} />
+                  <section.icon className="w-5 h-5 md:w-6 md:h-6" />
                 </div>
-                <h3 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+                <h3 className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
                   {section.label}
                 </h3>
               </div>
-              <p className="text-lg text-gray-700">{section.content}</p>
+              <p className="text-base sm:text-lg text-gray-700">{section.content}</p>
             </div>
 
             <div
-              className={`w-11/12 lg:w-[55%] overflow-hidden border pt-4 sm:pt-8 ${
-                index % 2 !== 0 ? "pl-4 sm:pl-8 rounded-l-3xl" : "pr-4 sm:pr-8 rounded-r-3xl"
+              className={`w-11/12 lg:w-[55%] overflow-hidden border pt-3 sm:pt-8 ${
+                index % 2 !== 0
+                  ? "pl-3 sm:pl-8 rounded-l-3xl"
+                  : "pr-3 sm:pr-8 rounded-r-3xl"
               } ${
                 index == 0
                   ? "bg-indigo-600 border-indigo-600"
