@@ -91,7 +91,7 @@ const LayoutWrapper = ({
     <>
       {headline === "Docs" && <DocsSidebar />}
 
-      <div className="flex flex-col h-full w-full overflow-y-hidden">
+      <div className={`flex flex-col h-full w-full ${view == "Board" && "overflow-y-hidden"}`}>
         {view && setView && (
           <div className="flex items-center justify-between p-4 sticky top-0 bg-white z-10 mb-1">
             {!["Today", "Inbox"].includes(headline) && (
