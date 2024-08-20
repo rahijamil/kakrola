@@ -95,7 +95,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <input
           className={`w-full transition py-1 outline-none ${
             label &&
-            "px-2 border rounded-md border-gray-200 focus:border-gray-400"
+            "px-2 border rounded-lg border-gray-200 focus:border-gray-400"
           } ${className}`}
           ref={ref}
           id={id}
@@ -135,7 +135,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             />
           )}
           <textarea
-            className={`rounded-md border-none outline-none placeholder:text-muted-foreground ${
+            className={`rounded-lg border-none outline-none placeholder:text-muted-foreground ${
               fullWidth ? "w-full" : ""
             } ${className} ${Icon && "pl-10"}`}
             ref={ref}
@@ -159,7 +159,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = "", ...props }, ref) => (
     <button
-      className={`px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${className}`}
+      className={`px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${className}`}
       ref={ref}
       {...props}
     />
@@ -185,7 +185,7 @@ export const Select: React.FC<SelectProps> = ({
       <select
         onChange={(e) => onValueChange(e.target.value)}
         defaultValue={defaultValue}
-        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none"
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none"
       >
         {children}
       </select>

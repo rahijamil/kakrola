@@ -4,20 +4,20 @@ import React, {
   useState,
   useRef,
   useEffect,
+  LegacyRef,
 } from "react";
 import { TaskType } from "@/types/project";
 import {
   Armchair,
   Calendar,
   CalendarArrowDown,
-  CalendarX,
   CircleSlash,
   Sun,
+  X,
 } from "lucide-react";
 import {
   format,
   addDays,
-  startOfWeek,
   addWeeks,
   addMonths,
   startOfMonth,
@@ -26,17 +26,17 @@ import {
 } from "date-fns";
 import { Input } from "../ui/input";
 import MonthCalendar from "../ui/MonthCalendar";
+import Dropdown from "../ui/Dropdown";
+import { getDateInfo } from "@/utils/getDateInfo";
 
 const DueDateSelector = ({
-  onClose,
-  positionClassNames,
   task,
   setTask,
+  isSmall,
 }: {
-  onClose: () => void;
-  positionClassNames?: string;
   task: TaskType;
   setTask: Dispatch<SetStateAction<TaskType>>;
+  isSmall?: boolean;
 }) => {
   const [date, setDate] = useState<Date | undefined>(
     task.due_date ? new Date(task.due_date) : undefined
@@ -54,6 +54,12 @@ const DueDateSelector = ({
     ),
   ]);
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const onClose = () => {
+    setIsOpen(false);
+  };
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const handleDateSelect = (newDate: Date | undefined) => {
@@ -62,6 +68,7 @@ const DueDateSelector = ({
       ...prevTask,
       due_date: newDate ? newDate.toISOString() : null,
     }));
+
     onClose();
   };
 
@@ -143,93 +150,124 @@ const DueDateSelector = ({
         }
       }
     }
-  }, [date, months]);
+  }, [date, months, initialRender]);
+
+  const dateInfo = getDateInfo(task.due_date);
 
   return (
-    <>
-      <div
-        className={`absolute bg-white border rounded-md overflow-hidden z-20 text-sm w-[250px] shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1),0_4px_6px_-2px_rgba(0,0,0,0.05)] ${
-          positionClassNames ? positionClassNames : "top-full left-0"
-        }`}
-      >
-        <div className="p-2 border-b border-gray-200">
-          <Input
-            howBig="sm"
-            type="text"
-            placeholder="Type a due date"
-            value={
-              task.due_date ? format(new Date(task.due_date), "dd MMM") : ""
-            }
-            readOnly
-            className="text-xs"
-          />
-        </div>
-
-        <ul className="max-h-[250px] overflow-y-auto">
-          {predefinedDates.map((item, index) => (
-            <li
-              key={index}
-              className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer text-xs"
-              onClick={() => handleDateSelect(item.date)}
-            >
-              <div className="flex items-center gap-2">
-                {item.icon}
-                <span>{item.label}</span>
-              </div>
-              {item.date && (
-                <span className="text-gray-500">
-                  {format(item.date, "EEE")}{" "}
-                  {item.label == "Next Week" &&
-                    format(addWeeks(today, 1), "d MMM")}
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
-
+    <Dropdown
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      Label={({ ref, onClick }) => (
         <div
-          ref={scrollRef}
-          className={`max-h-[300px] overflow-y-auto ${
-            !initialRender && "scroll-smooth"
+          ref={ref as LegacyRef<HTMLDivElement>}
+          className={`flex items-center gap-1 cursor-pointer p-1 text-xs rounded-lg border border-gray-200 ${
+            isOpen ? "bg-gray-100" : "hover:bg-gray-100"
           }`}
-          id="scrollable"
+          onClick={onClick}
         >
-          {months.map((month, index) => (
-            <div key={index}>
-              <div className="border-t border-b py-1 px-2 border-gray-200 space-y-2 sticky top-0 bg-white">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold">
-                    {format(month, "MMM yyyy")}
-                  </span>
-                </div>
-                <div className="grid grid-cols-7 gap-1 place-items-center">
-                  {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
-                    (day) => (
-                      <div
-                        key={day}
-                        className="text-center font-medium text-gray-500 text-[11px]"
-                      >
-                        {day}
-                      </div>
-                    )
-                  )}
-                </div>
+          {task.due_date ? (
+            <>
+              <div className="flex items-center gap-1">
+                {dateInfo?.icon}
+                <span className={dateInfo?.color}>{dateInfo?.label}</span>
               </div>
-              <MonthCalendar
-                month={month}
-                selected={date}
-                onSelect={handleDateSelect}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
 
-      <div
-        className="fixed top-0 left-0 bottom-0 right-0 z-10"
-        onClick={onClose}
-      ></div>
-    </>
+              <button
+                onClick={(ev) => {
+                  ev.stopPropagation();
+                  setTask({ ...task, due_date: null });
+                }}
+                className="text-gray-500 hover:text-gray-700 p-[2px] hover:bg-gray-200 rounded-lg"
+              >
+                <X strokeWidth={1.5} className="w-3 h-3 text-gray-500" />
+              </button>
+            </>
+          ) : (
+            <>
+              <Calendar strokeWidth={1.5} className="w-4 h-4 text-gray-500" />
+              {!isSmall && <span className="text-gray-700">Due date</span>}
+            </>
+          )}
+        </div>
+      )}
+      content={
+        <div>
+          <div className="p-2 border-b border-gray-200">
+            <Input
+              howBig="sm"
+              type="text"
+              placeholder="Type a due date"
+              value={
+                task.due_date ? format(new Date(task.due_date), "dd MMM") : ""
+              }
+              readOnly
+              className="text-xs"
+            />
+          </div>
+
+          <ul className="max-h-[250px] overflow-y-auto">
+            {predefinedDates.map((item, index) => (
+              <li
+                key={index}
+                className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer text-xs"
+                onClick={() => handleDateSelect(item.date)}
+              >
+                <div className="flex items-center gap-2">
+                  {item.icon}
+                  <span>{item.label}</span>
+                </div>
+                {item.date && (
+                  <span className="text-gray-500">
+                    {format(item.date, "EEE")}{" "}
+                    {item.label == "Next Week" &&
+                      format(addWeeks(today, 1), "d MMM")}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+
+          <div
+            ref={scrollRef}
+            className={`max-h-[300px] overflow-y-auto ${
+              !initialRender && "scroll-smooth"
+            }`}
+            id="scrollable"
+          >
+            {months.map((month, index) => (
+              <div key={index}>
+                <div className="border-t border-b py-1 px-2 border-gray-200 space-y-2 sticky top-0 bg-white">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold">
+                      {format(month, "MMM yyyy")}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-7 gap-1 place-items-center">
+                    {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
+                      (day) => (
+                        <div
+                          key={day}
+                          className="text-center font-medium text-gray-500 text-[11px]"
+                        >
+                          {day}
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+                <MonthCalendar
+                  month={month}
+                  selected={date}
+                  onSelect={handleDateSelect}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      }
+      contentWidthClass={`w-[250px]`}
+    />
   );
 };
 

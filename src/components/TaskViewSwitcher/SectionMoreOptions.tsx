@@ -1,99 +1,95 @@
-import {
-  ArchiveBoxArrowDownIcon,
-  ArrowRightCircleIcon,
-  LinkIcon,
-  PencilIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
-import { CopyPlusIcon } from "lucide-react";
-import React, { Dispatch, SetStateAction } from "react";
+import React, {
+  Dispatch,
+  LegacyRef,
+  ReactNode,
+  SetStateAction,
+  useState,
+} from "react";
+import Dropdown from "../ui/Dropdown";
+import { Archive, Ellipsis, Pencil, Trash2 } from "lucide-react";
 import { TaskType } from "@/types/project";
 
 const SectionMoreOptions = ({
-  onClose,
-  column,
   setEditColumnTitle,
-  setShowDeleteConfirm,
+  column,
   setShowArchiveConfirm,
+  setShowDeleteConfirm,
 }: {
-  onClose: () => void;
+  setEditColumnTitle: Dispatch<SetStateAction<boolean>>;
   column: {
     id: string;
     title: string;
     tasks: TaskType[];
     is_archived?: boolean;
-  } | null;
-  setEditColumnTitle: Dispatch<SetStateAction<boolean>>;
+  };
+  setShowArchiveConfirm: Dispatch<
+    SetStateAction<{
+      id: string;
+      title: string;
+      tasks: TaskType[];
+      is_archived?: boolean;
+    } | null>
+  >;
   setShowDeleteConfirm: Dispatch<
     SetStateAction<{
       id: string;
       title: string;
     } | null>
   >;
-  setShowArchiveConfirm: Dispatch<
-    SetStateAction<{
-      id: string;
-      title: string;
-      tasks: TaskType[];
-    } | null>
-  >;
 }) => {
-  return (
-    <>
-      <div className="absolute bg-white drop-shadow-md rounded-md border border-gray-200 top-full left-1/2 -translate-x-1/2 z-20 w-72 py-1">
-        {!column?.is_archived && (
-          <>
-            <div>
-              <button
-                onClick={() => {
-                  setEditColumnTitle(true);
-                  onClose();
-                }}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
-              >
-                <PencilIcon className="w-4 h-4 mr-4" /> Edit
-              </button>
-              {/* <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-            <ArrowRightCircleIcon className="w-5 h-5 mr-4" /> Move to...
-          </button>
-          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-            <CopyPlusIcon className="w-4 h-4 mr-4" /> Duplicate
-          </button>
-          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
-            <LinkIcon className="w-4 h-4 mr-4" /> Copy link to section
-          </button> */}
-            </div>
-            <div className="h-[1px] bg-gray-100 my-1"></div>
-          </>
-        )}
-        <div>
-          <button
-            onClick={() => {
-              setShowArchiveConfirm(column);
-              onClose();
-            }}
-            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
-          >
-            <ArchiveBoxArrowDownIcon className="w-4 h-4 mr-4" />{" "}
-            {column?.is_archived ? "Unarchive" : "Archive"}
-          </button>
-          <button
-            onClick={() => {
-              setShowDeleteConfirm(column);
-              onClose();
-            }}
-            className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition flex items-center"
-          >
-            <TrashIcon className="w-4 h-4 mr-4" /> Delete
-          </button>
-        </div>
-      </div>
+  const [isOpen, setIsOpen] = useState(false);
 
-      <div
-        className="fixed top-0 left-0 bottom-0 right-0 z-10"
-        onClick={onClose}
-      ></div>
-    </>
+  const onClose = () => {
+    setIsOpen(false);
+  };
+
+  return (
+    <Dropdown
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      Label={({ ref, onClick }) => (
+        <button
+          ref={ref as LegacyRef<HTMLButtonElement>}
+          className={`p-1 transition rounded-lg ${
+            isOpen ? "bg-gray-200" : "hover:bg-gray-200"
+          }`}
+          onClick={onClick}
+        >
+          <Ellipsis strokeWidth={1.5} className="w-5 h-5 text-gray-700" />
+        </button>
+      )}
+      items={[
+        {
+          id: 1,
+          label: "Edit",
+          onClick: () => {
+            setEditColumnTitle(true);
+            onClose();
+          },
+          icon: <Pencil strokeWidth={1.5} size={16} />,
+        },
+        {
+          id: 2,
+          label: column?.is_archived ? "Unarchive" : "Archive",
+          onClick: () => {
+            setShowArchiveConfirm(column);
+            onClose();
+          },
+          icon: <Archive strokeWidth={1.5} size={16} />,
+          devide: true,
+        },
+        {
+          id: 3,
+          label: "Delete",
+          onClick: () => {
+            setShowDeleteConfirm(column);
+            onClose();
+          },
+          icon: <Trash2 strokeWidth={1.5} size={16} />,
+          className: "text-red-600",
+        },
+      ]}
+    />
   );
 };
 

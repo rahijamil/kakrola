@@ -19,16 +19,16 @@ const AddComentForm = ({ onCancelClick }: { onCancelClick?: () => void }) => {
 
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-1">
-          <button className="p-[5px] rounded-md hover:bg-gray-100 transition">
+          <button className="p-[5px] rounded-lg hover:bg-gray-100 transition">
             <PaperClipIcon className="w-5 h-5" />
           </button>
-          <button className="p-[5px] rounded-md hover:bg-gray-100 transition">
+          <button className="p-[5px] rounded-lg hover:bg-gray-100 transition">
             <MicrophoneIcon className="w-5 h-5" />
           </button>
-          <button className="p-[5px] rounded-md hover:bg-gray-100 transition">
+          <button className="p-[5px] rounded-lg hover:bg-gray-100 transition">
             <FaceSmileIcon className="w-5 h-5" />
           </button>
-          <button className="p-[5px] rounded-md hover:bg-gray-100 transition">
+          <button className="p-[5px] rounded-lg hover:bg-gray-100 transition">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"

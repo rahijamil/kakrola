@@ -1,12 +1,12 @@
 import { Draggable, Droppable } from "@hello-pangea/dnd";
 import { Ellipsis } from "lucide-react";
-import React, { Dispatch, SetStateAction, useState } from "react";
-import SectionMoreOptions from "../SectionMoreOptions";
+import React, { Dispatch, LegacyRef, SetStateAction, useEffect, useState } from "react";
 import TaskItem from "../TaskItem";
 import SectionAddTask from "../SectionAddTask";
 import AddNewSectionBoardView from "../AddNewSectionBoardView";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import SectionMoreOptions from "../SectionMoreOptions";
 
 const BoardViewColumn = ({
   column,
@@ -112,8 +112,24 @@ const BoardViewColumn = ({
     setColumnTitle(column.title);
   };
 
+  const [foundFixedDropdown, setFoundFixedDropdwon] = useState(false);
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const fixedDropdown = document.getElementById("fixed_dropdown");
+      setFoundFixedDropdwon(!!fixedDropdown);
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    const fixedDropdown = document.getElementById("fixed_dropdown");
+    setFoundFixedDropdwon(!!fixedDropdown);
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <React.Fragment key={column.id}>
+    <>
       <Draggable
         key={column.id?.toString()!}
         draggableId={column.id?.toString()!}
@@ -130,11 +146,11 @@ const BoardViewColumn = ({
             ref={boardDraggaleProvided.innerRef}
             {...boardDraggaleProvided.draggableProps}
             {...boardDraggaleProvided.dragHandleProps}
-            className={`bg-gray-100 rounded-lg w-[320px] h-fit max-h-[93%] overflow-y-auto transition-colors cursor-default ${
+            className={`bg-gray-100 rounded-lg min-w-72 md:min-w-80 w-80 h-fit max-h-[93%] overflow-y-auto transition-colors cursor-default ${
               column.is_archived && "opacity-70"
             }`}
           >
-            <div className="flex justify-between sticky top-0 z-10 bg-gray-100 p-2 pb-1">
+            <div className={`flex justify-between ${!foundFixedDropdown && "sticky"} top-0 z-10 bg-gray-100 p-2 pb-1`}>
               {!editColumnTitle && (
                 <div
                   className={`flex items-center gap-2 w-full ${
@@ -155,7 +171,7 @@ const BoardViewColumn = ({
                 <input
                   value={columnTitle}
                   onChange={(ev) => setColumnTitle(ev.target.value)}
-                  className="font-bold rounded-md px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-indigo-300 w-full"
+                  className="font-bold rounded-lg px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-indigo-300 w-full"
                   onKeyDown={(ev) => {
                     if (ev.key === "Enter") {
                       handleUpdateColumnTitle();
@@ -167,37 +183,21 @@ const BoardViewColumn = ({
                 />
               )}
 
-              <div className="relative">
-                <button
-                  className={`p-1 transition rounded-md ${
-                    showSectionMoreOptions == column.id
-                      ? "bg-gray-200"
-                      : "hover:bg-gray-200"
-                  }`}
-                  onClick={() => setShowSectionMoreOptions(column.id)}
-                >
-                  <Ellipsis
-                    strokeWidth={1.5}
-                    className="w-5 h-5 text-gray-700"
-                  />
-                </button>
-
-                {showSectionMoreOptions == column.id && (
-                  <SectionMoreOptions
-                    onClose={() => setShowSectionMoreOptions(null)}
-                    column={column}
-                    setEditColumnTitle={setEditColumnTitle}
-                    setShowArchiveConfirm={setShowArchiveConfirm}
-                    setShowDeleteConfirm={setShowDeleteConfirm}
-                  />
-                )}
+              <div>
+                <SectionMoreOptions
+                  key={column.id}
+                  column={column}
+                  setShowDeleteConfirm={setShowDeleteConfirm}
+                  setEditColumnTitle={setEditColumnTitle}
+                  setShowArchiveConfirm={setShowArchiveConfirm}
+                />
               </div>
             </div>
 
             <Droppable droppableId={column.id} type="task">
               {(provided, snapshot) => (
                 <div
-                key={column.id}
+                  key={column.id}
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                   className="space-y-2 min-h-1 p-2 pt-1"
@@ -247,7 +247,7 @@ const BoardViewColumn = ({
             </Droppable>
 
             {!column.is_archived && (
-              <div className="sticky bottom-0 bg-gray-100 p-2">
+              <div className={`${!foundFixedDropdown && "sticky"} bottom-0 bg-gray-100 p-2`}>
                 <SectionAddTask
                   section={
                     column.id === "ungrouped"
@@ -278,7 +278,7 @@ const BoardViewColumn = ({
         setSections={setSections}
         sections={sections}
       />
-    </React.Fragment>
+    </>
   );
 };
 

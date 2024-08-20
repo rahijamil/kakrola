@@ -207,7 +207,7 @@ const AddNewSectionBoardView = ({
           <div className="flex items-center gap-2">
             <button
               type="submit"
-              className="px-2 py-[6px] text-xs text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-600 disabled:cursor-not-allowed transition disabled:opacity-50"
+              className="px-2 py-[6px] text-xs text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-600 disabled:cursor-not-allowed transition disabled:opacity-50"
               disabled={!newSectionName.trim() || loading}
             >
               {loading ? (
@@ -226,7 +226,7 @@ const AddNewSectionBoardView = ({
                 setShowAddSection(null);
                 setShowUngroupedAddSection(false);
               }}
-              className="px-3 py-[6px] text-xs text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-md disabled:opacity-50 disabled:hover:bg-gray-100 disabled:cursor-not-allowed"
+              className="px-3 py-[6px] text-xs text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-lg disabled:opacity-50 disabled:hover:bg-gray-100 disabled:cursor-not-allowed"
               disabled={loading}
             >
               Cancel

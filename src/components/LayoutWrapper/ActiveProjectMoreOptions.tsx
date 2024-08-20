@@ -43,7 +43,7 @@ const ActiveProjectMoreOptions = ({
 }) => {
   return (
     <>
-      <div className="absolute bg-white drop-shadow-md rounded-md border border-gray-200 top-full right-0 z-20 w-60 py-1">
+      <div className="absolute bg-white rounded-lg border border-gray-200 top-11 right-4 z-20 w-60 py-1 shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)]">
         <div>
           <button
             onClick={() => {

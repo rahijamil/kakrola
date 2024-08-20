@@ -91,9 +91,13 @@ const LayoutWrapper = ({
     <>
       {headline === "Docs" && <DocsSidebar />}
 
-      <div className={`flex flex-col h-full w-full ${view == "Board" && "overflow-y-hidden"}`}>
+      <div
+        className={`flex flex-col h-full w-full ${
+          view == "Board" && "overflow-y-hidden"
+        }`}
+      >
         {view && setView && (
-          <div className="flex items-center justify-between p-4 sticky top-0 bg-white z-10 mb-1">
+          <div className="flex items-center justify-between p-4 py-3 sticky top-0 bg-white/70 backdrop-blur-md z-10 mb-1 pl-14">
             {!["Today", "Inbox"].includes(headline) && (
               <div>
                 {teams.find((t) => t.id === project?.team_id)?.name ??
@@ -102,32 +106,31 @@ const LayoutWrapper = ({
               </div>
             )}
 
-            {view == "List" && (
+            {/* {view == "List" && (
               <h1 className="font-bold text-base">{project?.name}</h1>
-            )}
+            )} */}
 
-            <div className="flex items-center justify-end">
-              <ul className="flex items-center relative">
+            <div
+              className={`flex items-center justify-end ${
+                view == "Board" && "flex-1"
+              }`}
+            >
+              <ul className="flex items-center">
                 {typeof setShowShareOption === "function" &&
                   headline !== "Today" && (
                     <li>
                       <button
                         className={`${
                           showShareOption ? "bg-gray-100" : "hover:bg-gray-100"
-                        } transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
+                        } transition p-1 pr-3 rounded-lg cursor-pointer flex items-center gap-1`}
                         onClick={() => setShowShareOption(true)}
                       >
                         <UserPlus
                           strokeWidth={1.5}
                           className="w-5 h-5 text-gray-500"
                         />
-                        Share
+                        <span className="hidden md:inline-block">Share</span>
                       </button>
-                      {showShareOption && (
-                        <ShareOption
-                          onClose={() => setShowShareOption(false)}
-                        />
-                      )}
                     </li>
                   )}
                 <li>
@@ -136,25 +139,15 @@ const LayoutWrapper = ({
                       modalState.showViewOptions
                         ? "bg-gray-100"
                         : "hover:bg-gray-100"
-                    } transition p-1 pr-3 rounded-md cursor-pointer flex items-center gap-1`}
+                    } transition p-1 pr-3 rounded-lg cursor-pointer flex items-center gap-1`}
                     onClick={() => toggleModal("showViewOptions", true)}
                   >
                     <SlidersHorizontal
                       strokeWidth={1.5}
                       className="w-5 h-5 text-gray-500"
                     />
-                    View
+                    <span className="hidden md:inline-block">View</span>
                   </button>
-                  {modalState.showViewOptions && (
-                    <ViewOptions
-                      onClose={() => toggleModal("showViewOptions", false)}
-                      hideCalendarView={hideCalendarView}
-                      view={view}
-                      setView={setView}
-                      setTasks={setTasks}
-                      tasks={tasks}
-                    />
-                  )}
                 </li>
                 {headline !== "Today" && (
                   <li>
@@ -163,7 +156,7 @@ const LayoutWrapper = ({
                         modalState.showMoreOptions
                           ? "bg-gray-100"
                           : "hover:bg-gray-100"
-                      } transition p-1 rounded-md cursor-pointer`}
+                      } transition p-1 rounded-lg cursor-pointer`}
                       onClick={() => toggleModal("showMoreOptions", true)}
                     >
                       <Ellipsis
@@ -171,26 +164,6 @@ const LayoutWrapper = ({
                         className="w-5 h-5 text-gray-500"
                       />
                     </button>
-                    {modalState.showMoreOptions && project && (
-                      <ActiveProjectMoreOptions
-                        onClose={() => toggleModal("showMoreOptions", false)}
-                        project={project}
-                        stateActions={{
-                          setProjectEdit: (value) =>
-                            toggleModal("projectEdit", value as boolean),
-                          setImportFromCSV: (value) =>
-                            toggleModal("showImportFromCSV", value as boolean),
-                          setExportAsCSV: (value) =>
-                            toggleModal("showExportAsCSV", value as boolean),
-                          setShowArchiveConfirm: (value) =>
-                            toggleModal("showArchiveConfirm", value as boolean),
-                          setShowDeleteConfirm: (value) =>
-                            toggleModal("showDeleteConfirm", value as boolean),
-                          setShowCommentOrActivity: (value) =>
-                            toggleModal("showCommentOrActivity", value as null),
-                        }}
-                      />
-                    )}
                   </li>
                 )}
               </ul>
@@ -213,7 +186,7 @@ const LayoutWrapper = ({
                 modalState.editTitle ? (
                   <input
                     type="text"
-                    className="text-[26px] font-bold border border-gray-300 w-full rounded-md p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+                    className="text-[26px] font-bold border border-gray-300 w-full rounded-lg p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
                     value={projectTitle}
                     onBlur={handleEditTitle}
                     autoFocus
@@ -222,7 +195,7 @@ const LayoutWrapper = ({
                   />
                 ) : (
                   <h1
-                    className="text-[26px] font-bold border border-transparent w-fit hover:w-full hover:border-gray-200 rounded-md p-1 py-[14px] cursor-text"
+                    className="text-[26px] font-bold border border-transparent w-fit hover:w-full hover:border-gray-200 rounded-lg p-1 py-[14px] cursor-text"
                     onClick={() => toggleModal("editTitle", true)}
                   >
                     {project.name}
@@ -238,6 +211,42 @@ const LayoutWrapper = ({
           </div>
         </div>
       </div>
+
+      {showShareOption && setShowShareOption && (
+        <ShareOption onClose={() => setShowShareOption(false)} />
+      )}
+
+      {modalState.showViewOptions && setView && (
+        <ViewOptions
+          onClose={() => toggleModal("showViewOptions", false)}
+          hideCalendarView={hideCalendarView}
+          view={view}
+          setView={setView}
+          setTasks={setTasks}
+          tasks={tasks}
+        />
+      )}
+
+      {modalState.showMoreOptions && project && (
+        <ActiveProjectMoreOptions
+          onClose={() => toggleModal("showMoreOptions", false)}
+          project={project}
+          stateActions={{
+            setProjectEdit: (value) =>
+              toggleModal("projectEdit", value as boolean),
+            setImportFromCSV: (value) =>
+              toggleModal("showImportFromCSV", value as boolean),
+            setExportAsCSV: (value) =>
+              toggleModal("showExportAsCSV", value as boolean),
+            setShowArchiveConfirm: (value) =>
+              toggleModal("showArchiveConfirm", value as boolean),
+            setShowDeleteConfirm: (value) =>
+              toggleModal("showDeleteConfirm", value as boolean),
+            setShowCommentOrActivity: (value) =>
+              toggleModal("showCommentOrActivity", value as null),
+          }}
+        />
+      )}
 
       {modalState.showDeleteConfirm && project && (
         <ProjectDeleteConfirm

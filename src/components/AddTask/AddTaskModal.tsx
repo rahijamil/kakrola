@@ -35,7 +35,7 @@ const AddTaskModal = ({ onClose }: AddTaskModalProps) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2 }}
-        className="bg-white rounded-md shadow-[1px_1px_32px_1px_rgba(0,0,0,0.3)] p-2 w-[550px]"
+        className="bg-white rounded-lg shadow-[1px_1px_32px_1px_rgba(0,0,0,0.3)] p-2 w-[550px]"
         onClick={(ev) => ev.stopPropagation()}
       >
         <AddTaskForm

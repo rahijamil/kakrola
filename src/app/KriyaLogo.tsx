@@ -18,7 +18,7 @@ const KriyaLogo = ({
   return (
     <div className="flex items-center gap-3">
       <div className={`relative ${sizeClasses[size]}`}>
-        <Image src="/kriya.svg" alt="Kriar Logo" fill />
+        <Image src="/kriya.svg" alt="Kakrola Logo" fill />
       </div>
 
       {isTitle && (
@@ -31,7 +31,7 @@ const KriyaLogo = ({
               : "text-4xl"
           }`}
         >
-          Kriar
+          Kakrola
         </span>
       )}
     </div>

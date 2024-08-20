@@ -79,12 +79,12 @@ const SectionsLayout = () => {
                 <div
                   className={`p-2 sm::p-4 ${
                     index == 0
-                      ? "text-white bg-indigo-600 rounded-md"
+                      ? "text-white bg-indigo-600 rounded-lg"
                       : index == 1
-                      ? "text-white bg-purple-600 rounded-md"
+                      ? "text-white bg-purple-600 rounded-lg"
                       : index == 2
-                      ? "text-white bg-pink-600 rounded-md"
-                      : "text-white bg-teal-600 rounded-md"
+                      ? "text-white bg-pink-600 rounded-lg"
+                      : "text-white bg-teal-600 rounded-lg"
                   }`}
                 >
                   <section.icon className="w-5 h-5 md:w-6 md:h-6" />

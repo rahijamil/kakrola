@@ -25,7 +25,7 @@ const AddTask: React.FC<AddTaskProps> = ({
 }) => {
   return (
     <div
-      className={`rounded-md border border-gray-200 focus-within:border-gray-400 bg-white ${
+      className={`rounded-lg border border-gray-200 focus-within:border-gray-400 bg-white ${
         addTaskAboveBellow?.position == "above" ? "mb-2" : "mt-2"
       }`}
     >

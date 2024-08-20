@@ -45,6 +45,7 @@ const MonthCalendar = ({
             <div key={index} className="w-7 h-7">
               {isCurrentMonth ? (
                 <button
+                type="button"
                   onClick={() => onSelect(day)}
                   className={`rounded-full text-xs w-7 h-7 ${
                     selected && isSameDay(day, selected)

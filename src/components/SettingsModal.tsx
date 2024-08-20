@@ -126,7 +126,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
   return (
     <Dialog size="lg" onClose={closeSettings}>
       <>
-        <div className="flex h-full rounded-md overflow-hidden">
+        <div className="flex h-full rounded-lg overflow-hidden">
           <div className="w-56 flex flex-col bg-indigo-50/50">
             <div className="flex-1">
               <div className="p-3">
@@ -140,7 +140,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                       {item.path && (
                         <Link
                           href={item.path}
-                          className={`flex items-center px-2 py-2 rounded-md transition-colors ${
+                          className={`flex items-center px-2 py-2 rounded-lg transition-colors ${
                             item.path === pathname ||
                             (item.path == "/app/settings/account" &&
                               pathname == "/app/settings/account/password")
@@ -169,7 +169,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                         <li>
                           <Link
                             href={`/app/settings/workspaces/${team.id}/settings`}
-                            className={`flex items-center gap-2 p-2 rounded-md transition-colors ${
+                            className={`flex items-center gap-2 p-2 rounded-lg transition-colors ${
                               pathname ==
                               `/app/settings/workspaces/${team.id}/settings`
                                 ? "bg-indigo-100 text-indigo-700"
@@ -182,10 +182,10 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                                 alt={team.name}
                                 width={20}
                                 height={20}
-                                className="rounded-md"
+                                className="rounded-lg"
                               />
                             ) : (
-                              <div className="w-6 h-6 min-w-5 min-h-5 bg-indigo-500 rounded-md flex items-center justify-center">
+                              <div className="w-6 h-6 min-w-5 min-h-5 bg-indigo-500 rounded-lg flex items-center justify-center">
                                 <span className="text-white text-[10px] font-medium">
                                   {team.name.slice(0, 1).toUpperCase()}
                                 </span>
@@ -199,7 +199,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                         <li>
                           <Link
                             href={`/app/settings/workspaces/${team.id}/members`}
-                            className={`flex items-center gap-2 p-2 rounded-md transition-colors ${
+                            className={`flex items-center gap-2 p-2 rounded-lg transition-colors ${
                               pathname ==
                               `/app/settings/workspaces/${team.id}/members`
                                 ? "bg-indigo-100 text-indigo-700"
@@ -214,7 +214,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                         <li>
                           <Link
                             href={`/app/settings/workspaces/${team.id}/billing`}
-                            className={`flex items-center gap-2 p-2 rounded-md transition-colors ${
+                            className={`flex items-center gap-2 p-2 rounded-lg transition-colors ${
                               pathname ==
                               `/app/settings/workspaces/${team.id}/billing`
                                 ? "bg-indigo-100 text-indigo-700"
@@ -235,7 +235,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
             <div className="border-t border-gray-200 p-1 px-3">
               <button
                 onClick={() => setShowAddTeam(true)}
-                className={`flex items-center px-2 py-2 rounded-md transition-colors hover:bg-indigo-100 text-gray-700 w-full`}
+                className={`flex items-center px-2 py-2 rounded-lg transition-colors hover:bg-indigo-100 text-gray-700 w-full`}
               >
                 <Plus className="w-5 h-5 mr-3" strokeWidth={1.5} />
                 Add team
@@ -248,7 +248,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
               <div className="flex items-center gap-2">
                 {pathname === "/app/settings/account/password" && (
                   <button
-                    className="p-1 rounded-md hover:bg-gray-100 transition"
+                    className="p-1 rounded-lg hover:bg-gray-100 transition"
                     onClick={() => router.back()}
                   >
                     <ArrowLeft strokeWidth={1.5} size={20} />
@@ -262,7 +262,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
               </div>
 
               <button
-                className="p-1 rounded-md hover:bg-gray-100 transition"
+                className="p-1 rounded-lg hover:bg-gray-100 transition"
                 onClick={closeSettings}
               >
                 <X strokeWidth={1.5} size={20} />

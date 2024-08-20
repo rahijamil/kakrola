@@ -32,11 +32,11 @@ const LandingPage = () => {
               <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
                 <span className="block">Ready to boost your productivity?</span>
                 <span className="block text-indigo-200">
-                  Start using Kriar today.
+                  Start using Kakrola today.
                 </span>
               </h2>
               <div className="mt-8 flex flex-wrap sm:flex-nowrap gap-3 lg:mt-0 lg:flex-shrink-0 whitespace-nowrap">
-                <div className="inline-flex rounded-md shadow">
+                <div className="inline-flex rounded-lg shadow">
                   <Link href="/auth/signup">
                     <Button
                       size="lg"
@@ -48,7 +48,7 @@ const LandingPage = () => {
                     </Button>
                   </Link>
                 </div>
-                <div className="inline-flex rounded-md shadow">
+                <div className="inline-flex rounded-lg shadow">
                   <Button
                     size="lg"
                     variant="outline"

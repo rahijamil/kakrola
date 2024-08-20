@@ -56,12 +56,12 @@ const LayoutView = ({
       </div>
 
       <div>
-        <ul className="bg-gray-100 text-gray-700 rounded-md overflow-hidden flex items-center gap-1 p-1">
+        <ul className="bg-gray-100 text-gray-700 rounded-lg overflow-hidden flex items-center gap-1 p-1">
           {views.map((v) => (
             !((v.name === "Calendar" && hideCalendarView)) && (
               <li
                 key={v.id}
-                className={`flex flex-col items-center justify-center gap-1 py-1 rounded-md cursor-pointer flex-1 transition border ${
+                className={`flex flex-col items-center justify-center gap-1 py-1 rounded-lg cursor-pointer flex-1 transition border ${
                   v.name === view
                     ? "bg-white border-gray-200"
                     : "hover:bg-gray-200 border-transparent"

@@ -1,7 +1,7 @@
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { ChevronRightIcon, MoreHorizontal } from "lucide-react";
-import { Dispatch, Fragment, SetStateAction, useState } from "react";
+import { Dispatch, Fragment, LegacyRef, SetStateAction, useState } from "react";
 import SectionMoreOptions from "./SectionMoreOptions";
 import { Droppable } from "@hello-pangea/dnd";
 import TaskItem from "./TaskItem";
@@ -99,10 +99,10 @@ const ListViewSection = ({
   };
 
   return (
-    <div className="">
+    <div>
       <div className="flex items-center gap-1 py-2">
         <button
-          className={`p-1 hover:bg-gray-100 transition rounded-md ${
+          className={`p-1 hover:bg-gray-100 transition rounded-lg ${
             !section.is_collapsed && "rotate-90"
           }`}
           onClick={() => toggleSection(section.id, !section.is_collapsed)}
@@ -123,7 +123,7 @@ const ListViewSection = ({
               <input
                 value={columnTitle}
                 onChange={(ev) => setColumnTitle(ev.target.value)}
-                className="font-bold rounded-md px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-indigo-300"
+                className="font-bold rounded-lg px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-indigo-300"
                 onKeyDown={(ev) => {
                   if (ev.key === "Enter") {
                     handleUpdateColumnTitle();
@@ -143,31 +143,17 @@ const ListViewSection = ({
           </div>
 
           <div className="relative">
-            <button
-              className={`p-1 hover:bg-gray-100 transition rounded-md ${
-                showSectionMoreOptions?.id == section.id
-                  ? "bg-gray-200"
-                  : "hover:bg-gray-200"
-              }`}
-              onClick={() => setShowSectionMoreOptions(section)}
-            >
-              <MoreHorizontal className="w-5 h-5 text-gray-700" />
-            </button>
-
-            {showSectionMoreOptions?.id == section.id && (
-              <SectionMoreOptions
-                onClose={() => setShowSectionMoreOptions(null)}
-                column={{
-                  id: section.id.toString(),
-                  title: section.name,
-                  tasks: groupedTasks[section.id] || [],
-                  is_archived: section.is_archived,
-                }}
-                setShowDeleteConfirm={setShowDeleteConfirm}
-                setEditColumnTitle={setEditColumnTitle}
-                setShowArchiveConfirm={setShowArchiveConfirm}
-              />
-            )}
+            <SectionMoreOptions
+              column={{
+                id: section.id.toString(),
+                title: section.name,
+                tasks: groupedTasks[section.id] || [],
+                is_archived: section.is_archived,
+              }}
+              setShowDeleteConfirm={setShowDeleteConfirm}
+              setEditColumnTitle={setEditColumnTitle}
+              setShowArchiveConfirm={setShowArchiveConfirm}
+            />
           </div>
         </div>
       </div>
@@ -223,7 +209,7 @@ const ListViewSection = ({
                       {(groupedTasks[section.id] || []).filter(
                         (t) => t.parent_task_id == task.id
                       ).length > 0 && (
-                        <ul className="ml-8">
+                        <ul>
                           {(groupedTasks[section.id] || [])
                             .filter((t) => t.parent_task_id == task.id)
                             .map((childTask, childIndex) => (

@@ -170,7 +170,7 @@ export default function AccountSettingsPage() {
                   />
                   <label
                     htmlFor="avatar-upload"
-                    className={`border cursor-pointer h-9 inline-flex items-center justify-center gap-2 rounded-md px-3 border-indigo-600 text-indigo-600 ${
+                    className={`border cursor-pointer h-9 inline-flex items-center justify-center gap-2 rounded-lg px-3 border-indigo-600 text-indigo-600 ${
                       uploadLoading ? "opacity-50" : "hover:bg-indigo-50"
                     }`}
                   >

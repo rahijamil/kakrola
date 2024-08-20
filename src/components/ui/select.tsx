@@ -12,7 +12,7 @@ export const Select: FC<SelectProps> = ({ value, onChange, children }) => {
       <select
         value={value}
         onChange={onChange}
-        className="block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        className="block w-full px-3 py-2 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
       >
         {children}
       </select>

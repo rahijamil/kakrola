@@ -294,7 +294,7 @@ const AddEditProject = ({
       <>
         <DialogHeader>
           <DialogTitle>Add project</DialogTitle>
-          <button className="p-2 rounded-md hover:bg-gray-100 transition">
+          <button className="p-2 rounded-lg hover:bg-gray-100 transition">
             <CircleHelp strokeWidth={1.5} className="w-5 h-5 text-gray-500" />
           </button>
         </DialogHeader>

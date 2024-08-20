@@ -202,7 +202,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
 
   return (
     <>
-      <div className="absolute bg-white drop-shadow-md rounded-md border border-gray-200 top-full mt-1 left-0 z-20 w-60 py-1">
+      <div className="absolute bg-white shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg border border-gray-200 top-full mt-1 left-0 z-20 w-60 py-1">
         {menuItems.map((group, groupIndex) => (
           <React.Fragment key={groupIndex}>
             {group.items.map((item, itemIndex) => (
@@ -221,7 +221,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
                 />
 
                 {item.subMenu && activeSubmenu === item.label && (
-                  <div className="absolute bg-white drop-shadow-md rounded-md border border-gray-200 top-0 left-full z-20 w-60 py-1">
+                  <div className="absolute bg-white shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg border border-gray-200 top-0 left-full z-20 w-60 py-1">
                     {item.subMenu.map((subItem, subIndex) => (
                       <MenuItem
                         key={subIndex}

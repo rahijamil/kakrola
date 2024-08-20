@@ -49,7 +49,7 @@ const SidebarProjectMoreOptions = ({
     <div>
       <div
         ref={dropdownRef}
-        className="fixed z-20 w-60 bg-white rounded-md drop-shadow-md border border-gray-200 py-1"
+        className="fixed z-20 w-60 bg-white rounded-lg shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] border border-gray-200 py-1"
         style={{
           top: `${dropdownPosition.top}px`,
           left: `${dropdownPosition.left}px`,

@@ -69,7 +69,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
   return (
     <>
       <div className="mt-4 px-2">
-        <div className="relative text-gray-700 hover:bg-gray-200 rounded-md transition">
+        <div className="relative text-gray-700 hover:bg-gray-200 rounded-lg transition">
           <Link
             href={`/app/projects`}
             className={`w-full flex items-center justify-between pl-2 py-[6px] gap-1`}
@@ -94,7 +94,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
                   alt={profile?.full_name || profile?.username || ""}
                   width={20}
                   height={20}
-                  className="rounded-md"
+                  className="rounded-lg"
                 />
 
                 <span
@@ -104,7 +104,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
                 </span>
               </div>
               {projects.length > 3 && (
-                <span className="bg-gray-300 text-gray-700 px-1 py-[1px] rounded-md uppercase text-[11px] whitespace-nowrap font-medium">
+                <span className="bg-gray-300 text-gray-700 px-1 py-[1px] rounded-lg uppercase text-[11px] whitespace-nowrap font-medium">
                   Used: {projects.length}/{5}
                 </span>
               )}
@@ -113,7 +113,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
 
           <div className="opacity-0 group-hover:opacity-100 transition flex items-center absolute right-0 top-1/2 -translate-y-1/2">
             <button
-              className="p-1 hover:bg-gray-100 rounded-md transition"
+              className="p-1 hover:bg-gray-100 rounded-lg transition"
               onClick={() => setShowAddProjectModal(true)}
             >
               <Plus
@@ -122,7 +122,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
               />
             </button>
             <button
-              className="p-1 hover:bg-gray-100 rounded-md transition"
+              className="p-1 hover:bg-gray-100 rounded-lg transition"
               onClick={() => setShowProjects(!showProjects)}
             >
               <ChevronRight

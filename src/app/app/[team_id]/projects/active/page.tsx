@@ -27,7 +27,7 @@ const AppProjectsActivePage = () => {
       <div className="flex items-center justify-end p-3">
         <Link
           href="/app/settings/account"
-          className="py-[5px] px-2 hover:bg-gray-200 flex items-center gap-1 transition rounded-md font-medium text-gray-600 hover:text-gray-800"
+          className="py-[5px] px-2 hover:bg-gray-200 flex items-center gap-1 transition rounded-lg font-medium text-gray-600 hover:text-gray-800"
         >
           <Settings strokeWidth={1.5} size={20} className="text-gray-500" />
           <span>Settings</span>
@@ -42,7 +42,7 @@ const AppProjectsActivePage = () => {
               alt={profile?.full_name || profile?.username || ""}
               width={26}
               height={26}
-              className="rounded-md"
+              className="rounded-lg"
             />
 
             <h1
@@ -59,7 +59,7 @@ const AppProjectsActivePage = () => {
 
             <div className="flex items-center justify-between">
               <div>
-                <button className="flex items-center gap-2 hover:bg-gray-100 transition px-2 py-1 rounded-md border border-gray-200">
+                <button className="flex items-center gap-2 hover:bg-gray-100 transition px-2 py-1 rounded-lg border border-gray-200">
                   <span>Active projects</span>
                   <ChevronDown className="w-5 h-5" />
                 </button>
@@ -67,7 +67,7 @@ const AppProjectsActivePage = () => {
 
               <div>
                 <button
-                  className="p-1 hover:bg-gray-100 rounded-md transition"
+                  className="p-1 hover:bg-gray-100 rounded-lg transition"
                   //   onClick={() => setShowAddProjectModal(true)}
                 >
                   <Plus
@@ -89,7 +89,7 @@ const AppProjectsActivePage = () => {
                 {activeProjects.map((p) => (
                   <li
                     key={p.id}
-                    className="relative hover:bg-gray-100 transition rounded-md"
+                    className="relative hover:bg-gray-100 transition rounded-lg"
                   >
                     <Link
                       href={`/app/project/${p.slug}`}
@@ -101,7 +101,7 @@ const AppProjectsActivePage = () => {
 
                     <div className="absolute right-3 top-1/2 -translate-y-1/2">
                       <button
-                        className="hover:bg-gray-200 p-[5px] rounded-md transition"
+                        className="hover:bg-gray-200 p-[5px] rounded-lg transition"
                         onClick={(ev) => ev.stopPropagation()}
                       >
                         <Ellipsis className="w-5 h-5" strokeWidth={1.5} />

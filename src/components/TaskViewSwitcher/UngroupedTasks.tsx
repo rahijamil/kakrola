@@ -65,7 +65,7 @@ const UngroupedTasks: React.FC<UngroupedTasksProps> = ({
 
                   {tasks.filter((t) => t.parent_task_id === task.id).length >
                     0 && (
-                    <ul className="ml-8">
+                    <ul>
                       {tasks
                         .filter((t) => t.parent_task_id === task.id)
                         .map((childTask, childIndex) => (

@@ -15,12 +15,12 @@ const FavoriteProjects = ({
   const pathname = usePathname();
   return (
     <div className="mt-4 px-2">
-      <div className="w-full flex items-center justify-between p-1 text-gray-700 rounded-md transition-colors">
+      <div className="w-full flex items-center justify-between p-1 text-gray-700 rounded-lg transition-colors">
         <span className="font-medium">Favorites</span>
 
         <div className="opacity-0 group-hover:opacity-100 transition flex items-center">
           <button
-            className="p-1 hover:bg-gray-200 rounded-md transition"
+            className="p-1 hover:bg-gray-200 rounded-lg transition"
             onClick={() => setShowFavoritesProjects(!showFavoritesProjects)}
           >
             <ChevronRight

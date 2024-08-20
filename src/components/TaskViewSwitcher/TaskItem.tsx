@@ -1,6 +1,12 @@
 import { ProjectType, TaskType } from "@/types/project";
 import TaskItemModal from "./TaskItemModal";
-import { Dispatch, MouseEvent, SetStateAction, useState } from "react";
+import {
+  Dispatch,
+  LegacyRef,
+  MouseEvent,
+  SetStateAction,
+  useState,
+} from "react";
 import TaskItemMoreDropdown from "./TaskItemMoreDropdown";
 import { Draggable } from "@hello-pangea/dnd";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
@@ -150,7 +156,7 @@ const TaskItem = ({
               className="transition w-full"
             >
               <div
-                className="flex items-start justify-between gap-2 taskitem_group bg-white p-1 w-full rounded-md cursor-pointer relative"
+                className="flex items-start justify-between gap-2 taskitem_group bg-white p-1 w-full rounded-lg cursor-pointer relative"
                 onClick={() => setShowModal && setShowModal(task.id.toString())}
               >
                 <div className="flex items-center gap-1">
@@ -161,7 +167,7 @@ const TaskItem = ({
                     }`}
                   >
                     <Circle
-                      size={22}
+                      size={20}
                       strokeWidth={1.5}
                       className={`${
                         task.priority == "P1"
@@ -174,7 +180,7 @@ const TaskItem = ({
                       } ${task.is_completed ? "hidden" : "group-hover:hidden"}`}
                     />
                     <CircleCheck
-                      size={22}
+                      size={20}
                       strokeWidth={1.5}
                       className={`transition rounded-full ${
                         task.priority == "P1"
@@ -203,7 +209,7 @@ const TaskItem = ({
                   <div className="space-y-2 py-1 pr-1 flex-1">
                     <div className="space-y-[2px]">
                       <p
-                        className={`text-[13px] ${
+                        className={`text-sm ${
                           task.is_completed ? "line-through text-gray-500" : ""
                         } line-clamp-3`}
                       >
@@ -211,29 +217,31 @@ const TaskItem = ({
                       </p>
 
                       {task.description && (
-                        <p className="text-[11px] text-gray-500 line-clamp-1">
+                        <p className="text-xs text-gray-500 line-clamp-1">
                           {task.description}
                         </p>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      {subTasks.length > 0 ? (
-                        <div className="flex items-center gap-[2px] text-gray-500">
-                          <Workflow strokeWidth={1.5} className="w-3 h-3" />
-                          <span className="text-[11px]">0/{subTasks.length}</span>
-                        </div>
-                      ) : null}
+                    {(subTasks.length > 0 || dateInfo) && (
+                      <div className="flex items-center gap-2">
+                        {subTasks.length > 0 ? (
+                          <div className="flex items-center gap-[2px] text-gray-500">
+                            <Workflow strokeWidth={1.5} className="w-3 h-3" />
+                            <span className="text-xs">0/{subTasks.length}</span>
+                          </div>
+                        ) : null}
 
-                      {dateInfo && (
-                        <div className="flex items-center gap-1 text-[11px]">
-                          {dateInfo?.icon}
-                          <span className={dateInfo?.color}>
-                            {dateInfo?.label}
-                          </span>
-                        </div>
-                      )}
-                    </div>
+                        {dateInfo && (
+                          <div className="flex items-center gap-1 text-xs">
+                            {dateInfo?.icon}
+                            <span className={dateInfo?.color}>
+                              {dateInfo?.label}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -246,29 +254,17 @@ const TaskItem = ({
                     className="relative cursor-default"
                     onClick={(ev) => ev.stopPropagation()}
                   >
-                    <button
-                      className="p-1 hover:bg-gray-100 transition rounded-md"
-                      onClick={(ev) => {
-                        setShowMoreDropdown(true);
-                      }}
-                    >
-                      <Ellipsis strokeWidth={1.5} className="w-5 h-5" />
-                    </button>
-
-                    {showMoreDropdown && setShowDeleteConfirm && (
-                      <TaskItemMoreDropdown
-                        onClose={() => setShowMoreDropdown(false)}
-                        setShowDeleteConfirm={setShowDeleteConfirm}
-                        setAddTaskAboveBellow={setAddTaskAboveBellow}
-                        task={task}
-                        column={column}
-                        setEditTaskId={setEditTaskId}
-                      />
-                    )}
+                    <TaskItemMoreDropdown
+                      setShowDeleteConfirm={setShowDeleteConfirm!}
+                      setAddTaskAboveBellow={setAddTaskAboveBellow}
+                      task={task}
+                      column={column}
+                      setEditTaskId={setEditTaskId}
+                    />
                   </div>
 
                   <button
-                    className="p-1 hover:bg-gray-100 transition rounded-md"
+                    className="p-1 hover:bg-gray-100 transition rounded-lg"
                     onClick={(ev) => {
                       ev.stopPropagation();
                       typeof setShowShareOption == "function" &&
@@ -310,8 +306,12 @@ const TaskItem = ({
 
       {showDeleteConfirm == task.id && setShowDeleteConfirm && (
         <ConfirmAlert
-          title="Delete task?"
-          description={`This will permanently delete "${task.title}". This can't be undone.`}
+          description={
+            <>
+              Are you sure you want to delete{" "}
+              <span className="font-semibold">&quot;{task.title}&quot;</span>?
+            </>
+          }
           submitBtnText="Delete"
           onCancel={() => setShowDeleteConfirm(null)}
           onSubmit={handleTaskDelete}

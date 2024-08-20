@@ -85,9 +85,9 @@ const ProjectDetails = React.memo(
 
     useEffect(() => {
       if (currentProject?.name) {
-        document.title = `${currentProject.name} | Kriar`;
+        document.title = `${currentProject.name} | Kakrola`;
       } else {
-        document.title = "Kriar";
+        document.title = "Kakrola";
       }
     }, [currentProject?.name]);
 

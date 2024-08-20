@@ -245,7 +245,7 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition p-1 rounded-md"
+            className="text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition p-1 rounded-lg"
           >
             <X size={20} />
           </button>

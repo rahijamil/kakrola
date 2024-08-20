@@ -94,7 +94,7 @@ const TaskItemModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-md w-11/12 max-w-[52rem] min-h-full h-fit flex flex-col"
+        className="bg-white rounded-lg w-11/12 max-w-[52rem] min-h-full h-fit flex flex-col"
         onClick={(ev) => ev.stopPropagation()}
       >
         <div className="p-2 px-4 flex items-center justify-between border-b border-gray-200">
@@ -128,11 +128,11 @@ const TaskItemModal = ({
           )}
 
           <div className="flex items-center gap-2">
-            {/* <button className="p-1 hover:bg-gray-100 transition rounded-md">
+            {/* <button className="p-1 hover:bg-gray-100 transition rounded-lg">
               <Ellipsis strokeWidth={1.5} className="w-6 h-6" />
             </button> */}
             <button
-              className="p-1 hover:bg-gray-100 transition rounded-md"
+              className="p-1 hover:bg-gray-100 transition rounded-lg"
               onClick={onClose}
             >
               <X strokeWidth={1.5} className="w-6 h-6" />
@@ -258,7 +258,7 @@ const TaskItemModal = ({
               <div className="mt-6">
                 {!showAddSubtask && (
                   <button
-                    className="text-xs hover:bg-gray-100 transition rounded-md flex items-center gap-2 px-2 py-[6px] text-gray-600"
+                    className="text-xs hover:bg-gray-100 transition rounded-lg flex items-center gap-2 px-2 py-[6px] text-gray-600"
                     onClick={() => setShowAddSubtask(true)}
                   >
                     <Plus strokeWidth={1.5} className="w-4 h-4" />
@@ -339,7 +339,7 @@ const TaskItemModal = ({
                 <div className="relative">
                   <button
                     onClick={() => setShowProjectsSelector(true)}
-                    className={`flex items-center justify-between rounded-md cursor-pointer transition p-[6px] px-2 group w-full ${
+                    className={`flex items-center justify-between rounded-lg cursor-pointer transition p-[6px] px-2 group w-full ${
                       showProjectsSelector
                         ? "bg-indigo-100"
                         : "hover:bg-indigo-100"
@@ -377,11 +377,9 @@ const TaskItemModal = ({
 
                   {showProjectsSelector && (
                     <ProjectsSelector
-                      onClose={() => setShowProjectsSelector(false)}
                       setTask={setTaskData}
                       isInbox
                       task={taskData}
-                      positionClassNames="top-full left-1/2 -translate-x-1/2"
                     />
                   )}
                 </div>
@@ -397,7 +395,7 @@ const TaskItemModal = ({
                         taskData.assigned_to_id == null &&
                         setShowAssigneeSelector(true)
                       }
-                      className={`flex items-center justify-between rounded-md transition p-[6px] px-2 group w-full ${
+                      className={`flex items-center justify-between rounded-lg transition p-[6px] px-2 group w-full ${
                         taskData.assigned_to_id == null
                           ? showAssigneeSelector
                             ? "bg-indigo-100 cursor-pointer"
@@ -421,7 +419,7 @@ const TaskItemModal = ({
                     {taskData.assigned_to_id !== null && (
                       <button
                         onClick={() => setShowAssigneeSelector(true)}
-                        className={`flex items-center relative rounded-md transition py-[6px] px-2 group w-full text-xs ${
+                        className={`flex items-center relative rounded-lg transition py-[6px] px-2 group w-full text-xs ${
                           taskData.assigned_to_id !== null
                             ? showAssigneeSelector
                               ? "bg-indigo-100 cursor-pointer"
@@ -451,7 +449,7 @@ const TaskItemModal = ({
                             ev.stopPropagation();
                             setTaskData({ ...taskData, assigned_to_id: null });
                           }}
-                          className="p-1 rounded-md hover:bg-white absolute top-1/2 -translate-y-1/2 right-1"
+                          className="p-1 rounded-lg hover:bg-white absolute top-1/2 -translate-y-1/2 right-1"
                         >
                           <X strokeWidth={1.5} size={16} />
                         </div>
@@ -461,8 +459,6 @@ const TaskItemModal = ({
 
                   {showAssigneeSelector && (
                     <AssigneeSelector
-                      onClose={() => setShowAssigneeSelector(false)}
-                      positionClassNames="top-full left-1/2 -translate-x-1/2"
                       task={taskData}
                       setTask={setTaskData}
                     />
@@ -480,7 +476,7 @@ const TaskItemModal = ({
                         taskData.due_date == null &&
                         setShowDueDateSelector(true)
                       }
-                      className={`flex items-center justify-between rounded-md transition p-[6px] px-2 group w-full ${
+                      className={`flex items-center justify-between rounded-lg transition p-[6px] px-2 group w-full ${
                         taskData.due_date == null
                           ? showDueDateSelector
                             ? "bg-indigo-100 cursor-pointer"
@@ -513,8 +509,6 @@ const TaskItemModal = ({
 
                   {showDueDateSelector && (
                     <DueDateSelector
-                      onClose={() => setShowDueDateSelector(false)}
-                      positionClassNames="top-full left-0"
                       task={taskData}
                       setTask={setTaskData}
                     />
@@ -538,7 +532,7 @@ const TaskItemModal = ({
 
             {/* <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-indigo-100 rounded-md cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-indigo-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Labels</p>
                   <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
@@ -547,7 +541,7 @@ const TaskItemModal = ({
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-indigo-100 rounded-md cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-indigo-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Reminders</p>
                   <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
@@ -556,10 +550,10 @@ const TaskItemModal = ({
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-indigo-100 rounded-md cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-indigo-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
                   <p className="space-x-1 font-semibold text-xs">
                     <span>Location</span>
-                    <span className="uppercase text-[10px] tracking-widest font-bold text-indigo-800 bg-indigo-100 p-[2px] px-1 rounded-md">
+                    <span className="uppercase text-[10px] tracking-widest font-bold text-indigo-800 bg-indigo-100 p-[2px] px-1 rounded-lg">
                       Upgrade
                     </span>
                   </p>

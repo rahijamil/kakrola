@@ -78,7 +78,7 @@ const ProjectItem = ({
     <li>
       <div
         ref={moreRef}
-        className={`relative sidebar_project_item flex-1 flex items-center justify-between transition-colors rounded-md ${
+        className={`relative sidebar_project_item flex-1 flex items-center justify-between transition-colors rounded-lg ${
           isDragging
             ? "bg-white shadow-[0_0_8px_1px_rgba(0,0,0,0.2)]"
             : pathname === `/app/project/${project.slug}`
@@ -120,7 +120,7 @@ const ProjectItem = ({
                 pathname === `/app/project/${project.slug}`
                   ? "bg-gray-300"
                   : "bg-gray-200"
-              } hover:bg-gray-100 rounded-md opacity-0 sidebar_project_item_options w-7 h-7`}
+              } hover:bg-gray-100 rounded-lg opacity-0 sidebar_project_item_options w-7 h-7`}
             >
               <Ellipsis className="w-5 h-5 text-gray-700" strokeWidth={1.5} />
             </div>

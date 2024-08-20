@@ -52,7 +52,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
                   src="/kriya_text.svg"
                   width={130}
                   height={0}
-                  alt="Kriar"
+                  alt="Kakrola"
                 />
               </Link>
 
@@ -62,7 +62,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
                     <Link
                       key={item.id}
                       href={item.path}
-                      className="text-sm font-medium text-gray-700 hover:bg-gray-200 transition px-3 py-2 rounded-md"
+                      className="text-sm font-medium text-gray-700 hover:bg-gray-200 transition px-3 py-2 rounded-lg"
                     >
                       {item.label}
                     </Link>
@@ -77,7 +77,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
                   <>
                     <Link href="/app">
                       <Button variant="ghost" size="sm">
-                        Open Kriar
+                        Open Kakrola
                       </Button>
                     </Link>
                     <Link href="/pricing">
@@ -130,7 +130,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
                   <Link
                     key={item.id}
                     href={item.path}
-                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 transition"
+                    className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 transition"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {item.label}
@@ -142,7 +142,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
                   <>
                     <Link href="/app" className="block flex-1">
                       <Button variant="gray" className="w-full justify-center">
-                        Open Kriar
+                        Open Kakrola
                       </Button>
                     </Link>
                     <Link href="/pricing" className="block flex-1">

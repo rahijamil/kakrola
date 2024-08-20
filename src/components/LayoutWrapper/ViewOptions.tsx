@@ -45,7 +45,7 @@ const ViewOptions = React.memo(
 
     return (
       <>
-        <div className="absolute bg-white drop-shadow-md rounded-md border border-gray-200 pt-3 pb-1 w-[300px] top-full right-0 z-20 text-xs">
+        <div className="absolute bg-white shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg border border-gray-200 pt-3 pb-1 w-[300px] top-11 right-5 z-20 text-xs">
           <div className="space-y-2">
             <div className="px-3">
               {view && (
@@ -59,7 +59,7 @@ const ViewOptions = React.memo(
             </div>
 
             {/* <div
-              className="flex justify-between items-center hover:bg-gray-100 transition cursor-pointer py-[6px] px-3 mx-1 rounded-md"
+              className="flex justify-between items-center hover:bg-gray-100 transition cursor-pointer py-[6px] px-3 mx-1 rounded-lg"
               onClick={toggleShowCompletedTasks}
             >
               <div className="flex items-center gap-3">
