@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PasswordInput from "@/components/ui/PasswordInput";
-import KriyaLogo from "@/app/KriyaLogo";
+import KakrolaLogo from "@/app/kakrolaLogo";
 import Link from "next/link";
 import Spinner from "./ui/Spinner";
 import { AtSign } from "lucide-react";
@@ -181,7 +181,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
           className="w-full sm:max-w-md h-full sm:h-auto space-y-8 bg-white p-6 sm:p-10 rounded-xl shadow-2xl"
         >
           <div className="text-center space-y-6">
-            <KriyaLogo size="md" isTitle />
+            <KakrolaLogo size="md" isTitle />
             <div>
               <h2 className="text-3xl font-extrabold text-gray-900">
                 {type === "signup" && "Join Kakrola Today"}

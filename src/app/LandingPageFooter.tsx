@@ -1,6 +1,5 @@
-import Link from "next/link";
+
 import React from "react";
-import KriyaLogo from "./KriyaLogo";
 import Image from "next/image";
 
 const LandingPageFooter = () => {
@@ -12,7 +11,7 @@ const LandingPageFooter = () => {
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
-            <Image src="/kriya_text.svg" width={130} height={0} alt="Kakrola" />
+            <Image src="/kakrola_text.svg" width={130} height={0} alt="Kakrola" />
             <p className="text-gray-700 ">
               Making the world more productive, one task at a time.
             </p>

@@ -12,7 +12,7 @@ const AppLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
     return (
       <div className="flex items-center justify-center w-full h-screen">
         <Image
-          src="/kriya_animated.svg"
+          src="/kakrola_animated.svg"
           alt="Kakrola Logo"
           width={80}
           height={80}

@@ -1,8 +1,7 @@
-import { CheckCheck } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 
-const KriyaLogo = ({
+const KakrolaLogo = ({
   size = "sm",
   isTitle,
 }: {
@@ -18,7 +17,7 @@ const KriyaLogo = ({
   return (
     <div className="flex items-center gap-3">
       <div className={`relative ${sizeClasses[size]}`}>
-        <Image src="/kriya.svg" alt="Kakrola Logo" fill />
+        <Image src="/kakrola.svg" alt="Kakrola Logo" fill />
       </div>
 
       {isTitle && (
@@ -38,4 +37,4 @@ const KriyaLogo = ({
   );
 };
 
-export default KriyaLogo;
+export default KakrolaLogo;
