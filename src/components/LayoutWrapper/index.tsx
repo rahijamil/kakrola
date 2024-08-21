@@ -20,6 +20,8 @@ import CommentOrActivityModal from "./CommentOrActivityModal";
 import ExportCSVModal from "../Sidebar/SidebarProjectMoreOptions/ExportCSVModal";
 import ImportCSVModal from "../Sidebar/SidebarProjectMoreOptions/ImportCSVModal";
 import AddEditProject from "../AddEditProject";
+import NoDueDate from "../TaskViewSwitcher/CalendarView/NoDueDate";
+import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 
 const LayoutWrapper = ({
   children,
@@ -32,6 +34,7 @@ const LayoutWrapper = ({
   hideCalendarView,
   setTasks,
   tasks,
+  showNoDateTasks,
 }: {
   children: React.ReactNode;
   headline: string;
@@ -43,6 +46,7 @@ const LayoutWrapper = ({
   hideCalendarView?: boolean;
   setTasks?: (updatedTasks: TaskType[]) => void;
   tasks?: TaskType[];
+  showNoDateTasks?: boolean;
 }) => {
   const [modalState, setModalState] = useState({
     projectEdit: false,
@@ -87,130 +91,182 @@ const LayoutWrapper = ({
   const toggleModal = (key: keyof typeof modalState, value: boolean | null) =>
     setModalState((prev) => ({ ...prev, [key]: value }));
 
+  const onDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+    if (tasks && setTasks && result.type == "calendarview_task") {
+      if (result.source.droppableId == result.destination.droppableId) return;
+
+      const reorderedTasks = Array.from(tasks);
+      const [movedTask] = reorderedTasks.splice(result.source.index, 1);
+      reorderedTasks.splice(result.destination.index, 0, movedTask);
+
+      if (result.destination.droppableId == "no_date_tasks") {
+        setTasks(
+          reorderedTasks.map((t, index) =>
+            t.id == result.draggableId
+              ? { ...t, due_date: null, order: index }
+              : { ...t, order: index }
+          )
+        );
+      } else {
+        setTasks(
+          tasks.map((t, index) =>
+            t.id == result.draggableId
+              ? {
+                  ...t,
+                  due_date: result.destination?.droppableId as string,
+                  order: index,
+                }
+              : { ...t, order: index }
+          )
+        );
+      }
+    }
+  };
+
   return (
     <>
       {headline === "Docs" && <DocsSidebar />}
 
-      <div
-        className={`flex flex-col h-full w-full ${
-          view == "Board" && "overflow-y-hidden"
-        }`}
-      >
-        {view && setView && (
-          <div className="flex items-center justify-between p-4 py-3 sticky top-0 bg-white/70 backdrop-blur-md z-10 mb-1 pl-14">
-            {!["Today", "Inbox"].includes(headline) && (
-              <div>
-                {teams.find((t) => t.id === project?.team_id)?.name ??
-                  "My Projects"}{" "}
-                /
-              </div>
-            )}
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className={`${view == "Calendar" && "flex overflow-x-hidden"}`}>
+          <div
+            className={`flex flex-col h-full w-full flex-1 transition-all duration-200 ${
+              view == "Board" && "overflow-y-hidden"
+            }`}
+          >
+            {view && setView && (
+              <div className="flex items-center justify-between p-4 py-3 sticky top-0 bg-white/70 backdrop-blur-md z-10 mb-1 pl-14">
+                {!["Today", "Inbox"].includes(headline) && (
+                  <div>
+                    {teams.find((t) => t.id === project?.team_id)?.name ??
+                      "My Projects"}{" "}
+                    /
+                  </div>
+                )}
 
-            {/* {view == "List" && (
+                {/* {view == "List" && (
               <h1 className="font-bold text-base">{project?.name}</h1>
             )} */}
 
-            <div
-              className={`flex items-center justify-end ${
-                view == "Board" && "flex-1"
-              }`}
-            >
-              <ul className="flex items-center">
-                {typeof setShowShareOption === "function" &&
-                  headline !== "Today" && (
+                <div
+                  className={`flex items-center justify-end flex-1`}
+                >
+                  <ul className="flex items-center">
+                    {typeof setShowShareOption === "function" &&
+                      headline !== "Today" && (
+                        <li>
+                          <button
+                            className={`${
+                              showShareOption
+                                ? "bg-gray-100"
+                                : "hover:bg-gray-100"
+                            } transition p-1 pr-3 rounded-lg cursor-pointer flex items-center gap-1`}
+                            onClick={() => setShowShareOption(true)}
+                          >
+                            <UserPlus
+                              strokeWidth={1.5}
+                              className="w-5 h-5 text-gray-500"
+                            />
+                            <span className="hidden md:inline-block">
+                              Share
+                            </span>
+                          </button>
+                        </li>
+                      )}
                     <li>
                       <button
                         className={`${
-                          showShareOption ? "bg-gray-100" : "hover:bg-gray-100"
+                          modalState.showViewOptions
+                            ? "bg-gray-100"
+                            : "hover:bg-gray-100"
                         } transition p-1 pr-3 rounded-lg cursor-pointer flex items-center gap-1`}
-                        onClick={() => setShowShareOption(true)}
+                        onClick={() => toggleModal("showViewOptions", true)}
                       >
-                        <UserPlus
+                        <SlidersHorizontal
                           strokeWidth={1.5}
                           className="w-5 h-5 text-gray-500"
                         />
-                        <span className="hidden md:inline-block">Share</span>
+                        <span className="hidden md:inline-block">View</span>
                       </button>
                     </li>
-                  )}
-                <li>
-                  <button
-                    className={`${
-                      modalState.showViewOptions
-                        ? "bg-gray-100"
-                        : "hover:bg-gray-100"
-                    } transition p-1 pr-3 rounded-lg cursor-pointer flex items-center gap-1`}
-                    onClick={() => toggleModal("showViewOptions", true)}
-                  >
-                    <SlidersHorizontal
-                      strokeWidth={1.5}
-                      className="w-5 h-5 text-gray-500"
-                    />
-                    <span className="hidden md:inline-block">View</span>
-                  </button>
-                </li>
-                {headline !== "Today" && (
-                  <li>
-                    <button
-                      className={`${
-                        modalState.showMoreOptions
-                          ? "bg-gray-100"
-                          : "hover:bg-gray-100"
-                      } transition p-1 rounded-lg cursor-pointer`}
-                      onClick={() => toggleModal("showMoreOptions", true)}
-                    >
-                      <Ellipsis
-                        strokeWidth={1.5}
-                        className="w-5 h-5 text-gray-500"
-                      />
-                    </button>
-                  </li>
-                )}
-              </ul>
-            </div>
-          </div>
-        )}
+                    {headline !== "Today" && (
+                      <li>
+                        <button
+                          className={`${
+                            modalState.showMoreOptions
+                              ? "bg-gray-100"
+                              : "hover:bg-gray-100"
+                          } transition p-1 rounded-lg cursor-pointer`}
+                          onClick={() => toggleModal("showMoreOptions", true)}
+                        >
+                          <Ellipsis
+                            strokeWidth={1.5}
+                            className="w-5 h-5 text-gray-500"
+                          />
+                        </button>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            )}
 
-        <div
-          className={`flex-1 ${
-            view !== "Board" && "max-w-4xl w-full mx-auto p-8 pt-0"
-          }`}
-        >
-          <div className="flex flex-col h-full">
             <div
-              className={`${project && view === "Board" ? "pb-4" : "pl-3.5"} ${
-                view === "Board" && "mx-8"
-              } ${!setView && "pt-8"}`}
+              className={`flex-1 ${
+                view === "List" && "max-w-4xl w-full mx-auto p-8 pt-0"
+              }`}
             >
-              {project ? (
-                modalState.editTitle ? (
-                  <input
-                    type="text"
-                    className="text-[26px] font-bold border border-gray-300 w-full rounded-lg p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
-                    value={projectTitle}
-                    onBlur={handleEditTitle}
-                    autoFocus
-                    onChange={(ev) => setProjectTitle(ev.target.value)}
-                    onKeyDown={(ev) => ev.key === "Enter" && handleEditTitle()}
-                  />
-                ) : (
-                  <h1
-                    className="text-[26px] font-bold border border-transparent w-fit hover:w-full hover:border-gray-200 rounded-lg p-1 py-[14px] cursor-text"
-                    onClick={() => toggleModal("editTitle", true)}
-                  >
-                    {project.name}
-                  </h1>
-                )
-              ) : (
-                <h1 className="text-[26px] font-bold p-1 py-[14px]">
-                  {headline}
-                </h1>
-              )}
+              <div className="flex flex-col h-full">
+                <div
+                  className={`${
+                    project && view !== "List" ? "pb-4" : "pl-3.5"
+                  } ${
+                    view == "Board" ? "mx-8" : view == "Calendar" && "mx-3"
+                  } ${!setView && "pt-8"}`}
+                >
+                  {project ? (
+                    modalState.editTitle ? (
+                      <input
+                        type="text"
+                        className="text-[26px] font-bold border border-gray-300 w-full rounded-lg p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+                        value={projectTitle}
+                        onBlur={handleEditTitle}
+                        autoFocus
+                        onChange={(ev) => setProjectTitle(ev.target.value)}
+                        onKeyDown={(ev) =>
+                          ev.key === "Enter" && handleEditTitle()
+                        }
+                      />
+                    ) : (
+                      <h1
+                        className="text-[26px] font-bold border border-transparent w-fit hover:w-full hover:border-gray-200 rounded-lg p-1 py-[14px] cursor-text"
+                        onClick={() => toggleModal("editTitle", true)}
+                      >
+                        {project.name}
+                      </h1>
+                    )
+                  ) : (
+                    <h1 className="text-[26px] font-bold p-1 py-[14px]">
+                      {headline}
+                    </h1>
+                  )}
+                </div>
+                <div className="flex-1">{children}</div>
+              </div>
             </div>
-            <div className="flex-1">{children}</div>
           </div>
+
+          {view == "Calendar" && project && tasks && setTasks && (
+            <NoDueDate
+              showNoDateTasks={showNoDateTasks}
+              setTasks={setTasks}
+              tasks={tasks}
+              project={project}
+            />
+          )}
         </div>
-      </div>
+      </DragDropContext>
 
       {showShareOption && setShowShareOption && (
         <ShareOption onClose={() => setShowShareOption(false)} />

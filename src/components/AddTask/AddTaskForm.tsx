@@ -48,6 +48,7 @@ const AddTaskForm = ({
   addTaskAboveBellow,
   taskForEdit,
   biggerTitle,
+  dueDate,
 }: {
   onClose: () => void;
   isSmall?: boolean;
@@ -59,8 +60,9 @@ const AddTaskForm = ({
   addTaskAboveBellow?: { position: "above" | "below"; task: TaskType } | null;
   taskForEdit?: TaskType;
   biggerTitle?: boolean;
+  dueDate?: Date | null;
 }) => {
-  const { projects } = useTaskProjectDataProvider();
+  const { projects, activeProject } = useTaskProjectDataProvider();
   const { profile } = useAuthProvider();
 
   const [taskData, setTaskData] = useState<TaskType>(
@@ -69,14 +71,14 @@ const AddTaskForm = ({
       title: "",
       description: "",
       priority: "Priority",
-      project_id: project?.id || null,
+      project_id: activeProject ? activeProject.id : project?.id || null,
       section_id: section_id || null,
       parent_task_id: null,
       profile_id: profile?.id || "",
       assigned_to_id: null,
-      due_date: new Date().toISOString(),
+      due_date: dueDate ? dueDate.toISOString() : new Date().toISOString(),
       reminder_time: null,
-      is_inbox: project ? false : true,
+      is_inbox: activeProject ? false : project ? false : true,
       is_completed: false,
       order: Math.max(...tasks.map((task) => task.order), 0) + 1,
       completed_at: null,

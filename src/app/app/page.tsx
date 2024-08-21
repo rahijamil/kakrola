@@ -1,24 +1,33 @@
 "use client";
 import React, { useMemo, useState } from "react";
-import { TaskType } from "@/types/project";
 import LayoutWrapper from "../../components/LayoutWrapper";
 import Image from "next/image";
-import TaskViewSwitcher from "@/components/TaskViewSwitcher";
 import { ViewTypes } from "@/types/viewTypes";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { isToday } from "date-fns";
+import ListViewForToday from "@/components/TaskViewSwitcher/ListViewForToday";
+import BoardViewForToday from "@/components/TaskViewSwitcher/BoardViewForToday";
 const Today = () => {
   const { tasks, setTasks } = useTaskProjectDataProvider();
   const [view, setView] = useState<ViewTypes["view"]>("List");
 
   const todayTasks = useMemo(() => {
-    return (
-      tasks
-        // .filter(
-        //   (t) => projects.find((p) => p.id === t.project_id)?.team_id == null
-        // )
-        .sort((a, b) => a.order - b.order)
-    );
+    return tasks
+      .filter((t) => t.due_date && isToday(new Date(t.due_date)))
+      .sort((a, b) => a.order - b.order);
   }, [tasks]);
+
+  const renderTaskViewSwitcherForToday = () => {
+    switch (view) {
+      case "List":
+        return <ListViewForToday tasks={tasks} setTasks={setTasks} />;
+      case "Board":
+        return <BoardViewForToday tasks={tasks} setTasks={setTasks} />;
+
+      default:
+        return <div>Invalid view selected</div>;
+    }
+  };
 
   return (
     <LayoutWrapper
@@ -27,14 +36,7 @@ const Today = () => {
       view={view}
       hideCalendarView
     >
-      <TaskViewSwitcher
-        tasks={todayTasks}
-        sections={[]}
-        setTasks={setTasks}
-        view={view}
-        project={null}
-        setSections={() => null}
-      />
+      {renderTaskViewSwitcherForToday()}
 
       {todayTasks.length == 0 && view == "List" && (
         <div className="flex items-center justify-center flex-col gap-1 h-[30vh] select-none">

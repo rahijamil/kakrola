@@ -1,24 +1,6 @@
 import { TaskType } from "@/types/project";
-import { ViewTypes } from "@/types/viewTypes";
-import {
-  CopyPlusIcon,
-  AlarmClockIcon,
-  ArrowUp,
-  ArrowDown,
-  Pencil,
-  Link,
-  Trash2,
-  Calendar,
-  Flag,
-  Ellipsis,
-} from "lucide-react";
-import React, {
-  Dispatch,
-  LegacyRef,
-  ReactNode,
-  SetStateAction,
-  useState,
-} from "react";
+import { ArrowUp, ArrowDown, Pencil, Trash2, Ellipsis } from "lucide-react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import Dropdown from "../ui/Dropdown";
 
 const TaskItemMoreDropdown = ({
@@ -50,13 +32,16 @@ const TaskItemMoreDropdown = ({
     setIsOpen(false);
   };
 
+  const triggerRef = useRef(null);
+
   return (
     <Dropdown
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      Label={({ ref, onClick }) => (
+      triggerRef={triggerRef}
+      Label={({ onClick }) => (
         <button
-          ref={ref as LegacyRef<HTMLButtonElement>}
+          ref={triggerRef}
           className={`p-1 transition rounded-lg ${
             isOpen ? "bg-gray-100" : "hover:bg-gray-100"
           }`}

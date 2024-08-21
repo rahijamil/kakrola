@@ -3,6 +3,7 @@ import React, {
   LegacyRef,
   ReactNode,
   SetStateAction,
+  useRef,
   useState,
 } from "react";
 import { Input } from "../ui/input";
@@ -30,13 +31,16 @@ const AssigneeSelector = ({
     setIsOpen(false);
   };
 
+  const triggerRef = useRef(null);
+
   return (
     <Dropdown
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      Label={({ ref, onClick }) => (
+      triggerRef={triggerRef}
+      Label={({ onClick }) => (
         <div
-          ref={ref as LegacyRef<HTMLDivElement>}
+          ref={triggerRef}
           className={`flex items-center gap-1 cursor-pointer text-xs p-1 rounded-lg border border-gray-200 ${
             isOpen ? "bg-gray-100" : "hover:bg-gray-100"
           }`}

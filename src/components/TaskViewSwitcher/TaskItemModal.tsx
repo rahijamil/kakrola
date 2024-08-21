@@ -90,7 +90,7 @@ const TaskItemModal = ({
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 bottom-0 flex py-16 justify-center bg-black/50 z-10 overflow-y-auto"
+      className="fixed top-0 left-0 right-0 bottom-0 flex py-16 justify-center bg-black/50 z-20 overflow-y-auto"
       onClick={onClose}
     >
       <div
@@ -458,10 +458,7 @@ const TaskItemModal = ({
                   </div>
 
                   {showAssigneeSelector && (
-                    <AssigneeSelector
-                      task={taskData}
-                      setTask={setTaskData}
-                    />
+                    <AssigneeSelector task={taskData} setTask={setTaskData} />
                   )}
                 </div>
               </div>
@@ -469,51 +466,11 @@ const TaskItemModal = ({
             </div>
             <div>
               <div className="space-y-2">
-                <div className="relative">
-                  <div>
-                    <button
-                      onClick={() =>
-                        taskData.due_date == null &&
-                        setShowDueDateSelector(true)
-                      }
-                      className={`flex items-center justify-between rounded-lg transition p-[6px] px-2 group w-full ${
-                        taskData.due_date == null
-                          ? showDueDateSelector
-                            ? "bg-indigo-100 cursor-pointer"
-                            : "hover:bg-indigo-100 cursor-pointer"
-                          : "cursor-default"
-                      }`}
-                    >
-                      <p
-                        className={`font-semibold text-xs ${
-                          taskData.due_date !== null && "cursor-text"
-                        }`}
-                      >
-                        Due date
-                      </p>
-
-                      {taskData.due_date == null && (
-                        <Plus strokeWidth={1.5} className="w-4 h-4" />
-                      )}
-                    </button>
-
-                    {taskData.due_date !== null && (
-                      <DueDateButton
-                        taskData={taskData}
-                        setTaskData={setTaskData}
-                        setShowDueDateSelector={setShowDueDateSelector}
-                        showDueDateSelector={showDueDateSelector}
-                      />
-                    )}
-                  </div>
-
-                  {showDueDateSelector && (
-                    <DueDateSelector
-                      task={taskData}
-                      setTask={setTaskData}
-                    />
-                  )}
-                </div>
+                <DueDateSelector
+                  forTaskModal
+                  task={taskData}
+                  setTask={setTaskData}
+                />
               </div>
               <div className="h-[1px] bg-gray-200 m-2"></div>
             </div>

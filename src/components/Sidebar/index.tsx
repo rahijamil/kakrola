@@ -125,7 +125,7 @@ const Sidebar: React.FC = () => {
       )}
 
       <div
-        className={`fixed md:relative z-20 flex bg-[#f5f7ff] transition-all duration-300 h-screen whitespace-nowrap ${
+        className={`fixed md:relative z-20 flex bg-[#f5f7ff] transition-all duration-200 h-screen whitespace-nowrap ${
           isCollapsed ? "-left-full" : "left-0"
         }`}
         style={{ width: `${sidebarWidth}px`, marginLeft: `${sidebarLeft}px` }}

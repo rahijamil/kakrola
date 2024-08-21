@@ -1,5 +1,6 @@
 import { ViewTypes } from "@/types/viewTypes";
 import { CalendarDays, CircleHelp, SquareKanban } from "lucide-react";
+import Image from "next/image";
 import React from "react";
 
 const views: {
@@ -17,22 +18,22 @@ const views: {
     name: "Board",
     icon: <SquareKanban size={24} strokeWidth={1.5} />,
   },
-  // {
-  //   id: 3,
-  //   name: "Calendar",
-  //   icon: (
-  //     <div className="relative">
-  //       <CalendarDays strokeWidth={1.5} size={24} />
-  //       <Image
-  //         src="/ProIcon.svg"
-  //         width={12}
-  //         height={12}
-  //         alt="List"
-  //         className="absolute bottom-0 right-0"
-  //       />
-  //     </div>
-  //   ),
-  // },
+  {
+    id: 3,
+    name: "Calendar",
+    icon: (
+      <div className="relative">
+        <CalendarDays strokeWidth={1.5} size={24} />
+        {/* <Image
+          src="/ProIcon.svg"
+          width={12}
+          height={12}
+          alt="List"
+          className="absolute bottom-0 right-0"
+        /> */}
+      </div>
+    ),
+  },
 ];
 
 const LayoutView = ({
@@ -57,22 +58,23 @@ const LayoutView = ({
 
       <div>
         <ul className="bg-gray-100 text-gray-700 rounded-lg overflow-hidden flex items-center gap-1 p-1">
-          {views.map((v) => (
-            !((v.name === "Calendar" && hideCalendarView)) && (
-              <li
-                key={v.id}
-                className={`flex flex-col items-center justify-center gap-1 py-1 rounded-lg cursor-pointer flex-1 transition border ${
-                  v.name === view
-                    ? "bg-white border-gray-200"
-                    : "hover:bg-gray-200 border-transparent"
-                }`}
-                onClick={() => setView(v.name)}
-              >
-                {v.icon}
-                <span className="text-xs">{v.name}</span>
-              </li>
-            )
-          ))}
+          {views.map(
+            (v) =>
+              !(v.name === "Calendar" && hideCalendarView) && (
+                <li
+                  key={v.id}
+                  className={`flex flex-col items-center justify-center gap-1 py-1 rounded-lg cursor-pointer flex-1 transition border ${
+                    v.name === view
+                      ? "bg-white border-gray-200"
+                      : "hover:bg-gray-200 border-transparent"
+                  }`}
+                  onClick={() => setView(v.name)}
+                >
+                  {v.icon}
+                  <span className="text-xs">{v.name}</span>
+                </li>
+              )
+          )}
         </ul>
       </div>
     </div>

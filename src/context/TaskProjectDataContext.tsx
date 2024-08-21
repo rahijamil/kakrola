@@ -22,6 +22,8 @@ const TaskProjectDataContext = createContext<{
   tasks: TaskType[];
   setTasks: React.Dispatch<React.SetStateAction<TaskType[]>>;
   teamMemberships: TeamMemberType[];
+  activeProject: ProjectType | null;
+  setActiveProject: React.Dispatch<React.SetStateAction<ProjectType | null>>;
 }>({
   projects: [],
   setProjects: () => {},
@@ -33,6 +35,8 @@ const TaskProjectDataContext = createContext<{
   tasks: [],
   setTasks: () => {},
   teamMemberships: [],
+  activeProject: null,
+  setActiveProject: () => {},
 });
 
 const sortProjects = (projects: ProjectType[]): ProjectType[] => {
@@ -47,6 +51,7 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
   const [projectsLoading, setProjectsLoading] = useState<boolean>(true);
   const [teams, setTeams] = useState<TeamType[]>([]);
   const [teamMemberships, setTeamMemberships] = useState<TeamMemberType[]>([]);
+  const [activeProject, setActiveProject] = useState<ProjectType | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -257,9 +262,13 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
       payload.new.profile_id === profile?.id
     ) {
       setProjects((prev) =>
-        prev.map((project) => project.id !== payload.new.id)
-          ? sortProjects([...prev, payload.new as ProjectType])
-          : prev
+        sortProjects(
+          prev.map((project) =>
+            project.id == payload.new.id
+              ? project
+              : (payload.new as ProjectType)
+          )
+        )
       );
     } else if (payload.eventType === "UPDATE") {
       setProjects((prev) =>
@@ -321,6 +330,8 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
         tasks,
         setTasks,
         teamMemberships,
+        activeProject,
+        setActiveProject,
       }}
     >
       {children}

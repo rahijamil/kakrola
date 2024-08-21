@@ -3,6 +3,7 @@ import React, {
   LegacyRef,
   ReactNode,
   SetStateAction,
+  useRef,
   useState,
 } from "react";
 import Dropdown from "../ui/Dropdown";
@@ -43,13 +44,16 @@ const SectionMoreOptions = ({
     setIsOpen(false);
   };
 
+  const triggerRef = useRef(null);
+
   return (
     <Dropdown
+      triggerRef={triggerRef}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      Label={({ ref, onClick }) => (
+      Label={({ onClick }) => (
         <button
-          ref={ref as LegacyRef<HTMLButtonElement>}
+          ref={triggerRef}
           className={`p-1 transition rounded-lg ${
             isOpen ? "bg-gray-200" : "hover:bg-gray-200"
           }`}

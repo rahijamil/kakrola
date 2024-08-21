@@ -14,6 +14,8 @@ interface TaskViewSwitcherProps {
   view: ViewTypes["view"];
   showShareOption?: boolean;
   setShowShareOption?: Dispatch<SetStateAction<boolean>>;
+  showNoDateTasks?: boolean;
+  setShowNoDateTasks?: Dispatch<SetStateAction<boolean>>;
 }
 
 const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
@@ -25,6 +27,8 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
   setSections,
   showShareOption,
   setShowShareOption,
+  showNoDateTasks,
+  setShowNoDateTasks,
 }) => {
   const [showAddTask, setShowAddTask] = useState<string | number | null>(null);
 
@@ -95,7 +99,13 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
         />
       );
     case "Calendar":
-      return <CalendarView />;
+      return (
+        <CalendarView
+          tasks={tasks}
+          showNoDateTasks={showNoDateTasks}
+          setShowNoDateTasks={setShowNoDateTasks}
+        />
+      );
     default:
       return <div>Invalid view selected</div>;
   }

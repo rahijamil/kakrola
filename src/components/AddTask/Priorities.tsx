@@ -3,6 +3,7 @@ import React, {
   LegacyRef,
   ReactNode,
   SetStateAction,
+  useRef,
   useState,
 } from "react";
 
@@ -62,15 +63,18 @@ const Priorities = ({
     setIsOpen(false);
   };
 
+  const triggerRef = useRef(null);
+
   return (
     <Dropdown
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      Label={({ ref, onClick }) => (
+      triggerRef={triggerRef}
+      Label={({ onClick }) => (
         <>
           {forTaskItemModal ? (
             <div
-              ref={ref as LegacyRef<HTMLDivElement>}
+              ref={triggerRef}
               className={`flex items-center justify-between rounded-lg transition p-[6px] px-2 group cursor-pointer ${
                 isOpen ? "bg-indigo-100" : "hover:bg-indigo-100"
               }`}
@@ -92,7 +96,7 @@ const Priorities = ({
             </div>
           ) : (
             <div
-              ref={ref as LegacyRef<HTMLDivElement>}
+              ref={triggerRef}
               className={`flex items-center gap-1 cursor-pointer p-1 px-2 rounded-lg border border-gray-200 ${
                 isOpen ? "bg-gray-100" : "hover:bg-gray-100"
               }`}

@@ -7,9 +7,10 @@ import { TaskType } from "@/types/project";
 
 interface AddTaskModalProps {
   onClose: () => void;
+  dueDate?: Date | null;
 }
 
-const AddTaskModal = ({ onClose }: AddTaskModalProps) => {
+const AddTaskModal = ({ onClose, dueDate }: AddTaskModalProps) => {
   const { tasks, setTasks } = useTaskProjectDataProvider();
 
   const inboxTasks = useMemo(() => {
@@ -28,7 +29,7 @@ const AddTaskModal = ({ onClose }: AddTaskModalProps) => {
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 bottom-0 flex items-start pt-40 z-10 justify-center"
+      className="fixed top-0 left-0 right-0 bottom-0 flex items-start pt-40 z-20 justify-center"
       onClick={onClose}
     >
       <motion.div
@@ -44,6 +45,7 @@ const AddTaskModal = ({ onClose }: AddTaskModalProps) => {
           setTasks={setInboxTasks}
           tasks={inboxTasks}
           biggerTitle
+          dueDate={dueDate}
         />
       </motion.div>
     </div>

@@ -45,7 +45,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
+            <div className="flex items-center w-full">
               <Link href="/" className="flex-shrink-0 flex items-center">
                 <Image
                   src="/kakrola_text.svg"
@@ -56,7 +56,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
               </Link>
 
               {!forAuth && (
-                <div className="hidden lg:flex items-center ml-2 space-x-2">
+                <div className="hidden lg:flex items-center ml-8 space-x-2">
                   {menuItems.map((item) => (
                     <Link
                       key={item.id}

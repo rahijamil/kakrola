@@ -5,6 +5,7 @@ import React, {
   useRef,
   useEffect,
   LegacyRef,
+  ReactNode,
 } from "react";
 import { TaskType } from "@/types/project";
 import {
@@ -12,6 +13,7 @@ import {
   Calendar,
   CalendarArrowDown,
   CircleSlash,
+  Plus,
   Sun,
   X,
 } from "lucide-react";
@@ -28,15 +30,18 @@ import { Input } from "../ui/input";
 import MonthCalendar from "../ui/MonthCalendar";
 import Dropdown from "../ui/Dropdown";
 import { getDateInfo } from "@/utils/getDateInfo";
+import DueDateButton from "../TaskViewSwitcher/DueDateButton";
 
 const DueDateSelector = ({
   task,
   setTask,
   isSmall,
+  forTaskModal,
 }: {
   task: TaskType;
   setTask: Dispatch<SetStateAction<TaskType>>;
   isSmall?: boolean;
+  forTaskModal?: boolean;
 }) => {
   const [date, setDate] = useState<Date | undefined>(
     task.due_date ? new Date(task.due_date) : undefined
@@ -154,43 +159,82 @@ const DueDateSelector = ({
 
   const dateInfo = getDateInfo(task.due_date);
 
+  const triggerRef = useRef(null);
+
   return (
     <Dropdown
+      triggerRef={triggerRef}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      Label={({ ref, onClick }) => (
-        <div
-          ref={ref as LegacyRef<HTMLDivElement>}
-          className={`flex items-center gap-1 cursor-pointer p-1 text-xs rounded-lg border border-gray-200 ${
-            isOpen ? "bg-gray-100" : "hover:bg-gray-100"
-          }`}
-          onClick={onClick}
-        >
-          {task.due_date ? (
-            <>
-              <div className="flex items-center gap-1">
-                {dateInfo?.icon}
-                <span className={dateInfo?.color}>{dateInfo?.label}</span>
-              </div>
-
-              <button
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  setTask({ ...task, due_date: null });
-                }}
-                className="text-gray-500 hover:text-gray-700 p-[2px] hover:bg-gray-200 rounded-lg"
+      Label={({ onClick }) =>
+        forTaskModal ? (
+          <div>
+            <button
+              onClick={() => task.due_date == null && setIsOpen(true)}
+              className={`flex items-center justify-between rounded-lg transition p-[6px] px-2 group w-full ${
+                task.due_date == null
+                  ? isOpen
+                    ? "bg-indigo-100 cursor-pointer"
+                    : "hover:bg-indigo-100 cursor-pointer"
+                  : "cursor-default"
+              }`}
+            >
+              <p
+                className={`font-semibold text-xs ${
+                  task.due_date !== null && "cursor-text"
+                }`}
               >
-                <X strokeWidth={1.5} className="w-3 h-3 text-gray-500" />
-              </button>
-            </>
-          ) : (
-            <>
-              <Calendar strokeWidth={1.5} className="w-4 h-4 text-gray-500" />
-              {!isSmall && <span className="text-gray-700">Due date</span>}
-            </>
-          )}
-        </div>
-      )}
+                Due date
+              </p>
+
+              {task.due_date == null && (
+                <Plus strokeWidth={1.5} className="w-4 h-4" />
+              )}
+            </button>
+
+            {task.due_date !== null && (
+              <DueDateButton
+                taskData={task}
+                setTaskData={setTask}
+                setShowDueDateSelector={setIsOpen}
+                showDueDateSelector={isOpen}
+              />
+            )}
+          </div>
+        ) : (
+          <div
+            ref={triggerRef}
+            className={`flex items-center gap-1 cursor-pointer p-1 text-xs rounded-lg border border-gray-200 ${
+              isOpen ? "bg-gray-100" : "hover:bg-gray-100"
+            }`}
+            onClick={onClick}
+          >
+            {task.due_date ? (
+              <>
+                <div className="flex items-center gap-1">
+                  {dateInfo?.icon}
+                  <span className={dateInfo?.color}>{dateInfo?.label}</span>
+                </div>
+
+                <button
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    setTask({ ...task, due_date: null });
+                  }}
+                  className="text-gray-500 hover:text-gray-700 p-[2px] hover:bg-gray-200 rounded-lg"
+                >
+                  <X strokeWidth={1.5} className="w-3 h-3 text-gray-500" />
+                </button>
+              </>
+            ) : (
+              <>
+                <Calendar strokeWidth={1.5} className="w-4 h-4 text-gray-500" />
+                {!isSmall && <span className="text-gray-700">Due date</span>}
+              </>
+            )}
+          </div>
+        )
+      }
       content={
         <div>
           <div className="p-2 border-b border-gray-200">

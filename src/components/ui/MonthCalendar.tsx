@@ -45,7 +45,7 @@ const MonthCalendar = ({
             <div key={index} className="w-7 h-7">
               {isCurrentMonth ? (
                 <button
-                type="button"
+                  type="button"
                   onClick={() => onSelect(day)}
                   className={`rounded-full text-xs w-7 h-7 ${
                     selected && isSameDay(day, selected)
@@ -56,7 +56,13 @@ const MonthCalendar = ({
                   {format(day, "d")}
                 </button>
               ) : (
-                <div className="w-7 h-7"></div> // Empty div to maintain grid structure
+                <button
+                  type="button"
+                  disabled
+                  className={`rounded-full text-xs w-7 h-7 opacity-40`}
+                >
+                  {format(day, "d")}
+                </button>
               )}
             </div>
           );

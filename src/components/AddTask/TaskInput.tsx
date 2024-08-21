@@ -122,15 +122,11 @@ export const TaskInput: React.FC<{
       onKeyDown={(e) => {
         if (e.key === "Enter") {
           e.preventDefault();
-          e.currentTarget.innerHTML = ""
+          e.currentTarget.innerHTML = "";
           handleSubmit(e);
         }
       }}
-      aria-placeholder={`${
-        biggerTitle
-          ? "Task name (Try: Buy milk tomorrow +John #Groceries !1)"
-          : "Task name"
-      }`}
+      aria-placeholder="Task name"
     />
   );
 };

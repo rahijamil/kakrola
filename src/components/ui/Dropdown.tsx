@@ -6,13 +6,11 @@ import {
   LegacyRef,
   Dispatch,
   SetStateAction,
+  RefObject,
 } from "react";
 
 interface DropdownProps {
-  Label: (props: {
-    ref: LegacyRef<HTMLElement>;
-    onClick: () => void;
-  }) => ReactNode;
+  Label: (props: { onClick: () => void }) => ReactNode;
   items?: {
     id: number;
     label: string;
@@ -26,6 +24,7 @@ interface DropdownProps {
   className?: string;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  triggerRef: RefObject<HTMLElement> | null;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -36,56 +35,87 @@ const Dropdown: React.FC<DropdownProps> = ({
   contentWidthClass,
   isOpen,
   setIsOpen,
+  triggerRef,
 }) => {
-  const [position, setPosition] = useState({
+  const [position, setPosition] = useState<{
+    top: string;
+    bottom: string;
+    left: string;
+    right: string;
+    transform: string;
+  }>({
     top: "auto",
     bottom: "auto",
     left: "auto",
     right: "auto",
+    transform: "none",
   });
+
   const menuRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const updatePosition = () => {
-      if (menuRef.current && buttonRef.current) {
-        const buttonRect = buttonRef.current.getBoundingClientRect();
+      if (menuRef.current && triggerRef?.current) {
+        const buttonRect = triggerRef.current.getBoundingClientRect();
         const menuRect = menuRef.current.getBoundingClientRect();
+
         const spaceFromBottom = window.innerHeight - buttonRect.bottom;
         const spaceFromTop = buttonRect.top;
         const spaceFromLeft = buttonRect.left;
         const spaceFromRight = window.innerWidth - buttonRect.right;
 
-        setPosition({
-          top:
-            spaceFromBottom < menuRect.height && spaceFromTop > menuRect.height
-              ? "auto"
-              : `${buttonRect.bottom}px`,
-          bottom:
-            spaceFromBottom >= menuRect.height ? "auto" : `${spaceFromTop}px`,
-          left:
-            spaceFromRight < menuRect.width && spaceFromLeft > menuRect.width
-              ? "auto"
-              : `${buttonRect.left}px`,
-          right:
-            spaceFromRight >= menuRect.width ? "auto" : `${spaceFromLeft}px`,
-        });
+        let top = "auto";
+        let bottom = "auto";
+        let left = "auto";
+        let right = "auto";
+        let transform = "none";
+        
+        // Vertical positioning
+        if (spaceFromBottom >= menuRect.height) {
+          top = `${buttonRect.bottom}px`;
+        } else if (spaceFromTop >= menuRect.height) {
+          bottom = `${window.innerHeight - buttonRect.top}px`;
+        } else {
+          // Not enough space on either side; position below and scroll
+          top = `${buttonRect.bottom}px`;
+          transform = `translateY(${Math.min(
+            spaceFromBottom - menuRect.height,
+            0
+          )}px)`;
+        }
+
+        // Horizontal positioning
+        if (spaceFromRight >= menuRect.width) {
+          left = `${buttonRect.left}px`;
+        } else if (spaceFromLeft >= menuRect.width) {
+          right = `${window.innerWidth - buttonRect.right}px`;
+        } else {
+          // Not enough space on either side; position left and scroll
+          left = `${buttonRect.left}px`;
+          transform += ` translateX(${Math.min(
+            spaceFromRight - menuRect.width,
+            0
+          )}px)`;
+        }
+
+        setPosition({ top, bottom, left, right, transform });
       }
     };
 
-    // Update the position on mount and when the window is resized
-    updatePosition();
-    window.addEventListener("resize", updatePosition);
+    if (isOpen) {
+      updatePosition();
+      window.addEventListener("resize", updatePosition);
+    }
 
     return () => {
       window.removeEventListener("resize", updatePosition);
     };
-  }, [menuRef, buttonRef]);
+  }, [isOpen]);
 
   return (
     <>
-      <div className={`${className}`}>
-        <Label ref={buttonRef} onClick={() => setIsOpen(true)} />
+      <div className={className}>
+        <Label onClick={() => setIsOpen(true)} />
 
         {isOpen && (
           <div
@@ -95,11 +125,11 @@ const Dropdown: React.FC<DropdownProps> = ({
               bottom: position.bottom,
               left: position.left,
               right: position.right,
+              transform: position.transform,
             }}
-            className={`z-50 bg-white shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg w-72 fixed overflow-hidden text-xs ${
+            className={`z-50 bg-white shadow-lg rounded-lg fixed overflow-hidden text-xs ${
               contentWidthClass ? contentWidthClass : "w-72 py-1"
             }`}
-            id="fixed_dropdown"
           >
             {items.map((item) => (
               <button
@@ -113,7 +143,6 @@ const Dropdown: React.FC<DropdownProps> = ({
                 {item.icon} {item.label}
               </button>
             ))}
-
             {content}
           </div>
         )}

@@ -8,6 +8,7 @@ import React, {
   LegacyRef,
   ReactNode,
   SetStateAction,
+  useRef,
   useState,
 } from "react";
 import { Input } from "../ui/input";
@@ -55,13 +56,16 @@ const ProjectsSelector = ({
     setIsOpen(false);
   };
 
+  const triggerRef = useRef(null);
+
   return (
     <Dropdown
+    triggerRef={triggerRef}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      Label={({ ref, onClick }) => (
+      Label={({ onClick }) => (
         <div
-          ref={ref as LegacyRef<HTMLDivElement>}
+          ref={triggerRef}
           className={`flex items-center gap-2 cursor-pointer p-2 px-2 rounded-lg ${
             isOpen ? "bg-gray-100" : "hover:bg-gray-100"
           }`}
