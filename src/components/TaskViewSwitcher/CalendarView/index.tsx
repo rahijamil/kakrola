@@ -145,6 +145,7 @@ const CalendarView = ({
                             .sort((a, b) => a.order - b.order)
                             .map((task, taskIndex) => (
                               <Draggable
+                                key={task.id}
                                 draggableId={task.id?.toString()}
                                 index={taskIndex}
                               >

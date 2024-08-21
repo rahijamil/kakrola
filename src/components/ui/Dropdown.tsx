@@ -110,7 +110,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     return () => {
       window.removeEventListener("resize", updatePosition);
     };
-  }, [isOpen]);
+  }, [isOpen, triggerRef]);
 
   return (
     <>

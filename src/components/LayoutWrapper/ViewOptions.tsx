@@ -41,7 +41,7 @@ const ViewOptions = React.memo(
           setTasks(updatedTasks);
         }
       }
-    }, [showCompletedTasks, setTasks]);
+    }, [showCompletedTasks, setTasks, tasks]);
 
     return (
       <>

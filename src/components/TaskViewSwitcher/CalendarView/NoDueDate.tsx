@@ -39,6 +39,7 @@ const NoDueDate = ({
                   ?.filter((t) => !t.due_date)
                   .map((task: TaskType, index) => (
                     <li
+                    key={task.id}
                       className={`border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer`}
                     >
                       <TaskItem
