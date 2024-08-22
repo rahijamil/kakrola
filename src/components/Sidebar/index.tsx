@@ -11,6 +11,11 @@ import {
   ChevronDown,
   PanelLeft,
   LucideProps,
+  Search,
+  CalendarDays,
+  LayoutPanelTop,
+  MessageCircleMore,
+  FileText,
 } from "lucide-react";
 import AddTaskTextButton from "@/components/AddTaskTextButton";
 import AddTaskModal from "@/components/AddTask/AddTaskModal";
@@ -46,8 +51,11 @@ const Sidebar: React.FC = () => {
     path?: string;
     onClick?: () => void;
   }[] = [
+    { id: 1, icon: Search, text: "Search", path: "/app/search" },
     { id: 2, icon: Inbox, text: "Inbox", path: "/app/inbox" },
     { id: 3, icon: Calendar, text: "Today", path: "/app" },
+    { id: 4, icon: CalendarDays, text: "Upcoming", path: "/app/upcoming" },
+    { id: 5, icon: LayoutPanelTop, text: "Filters & Labels", path: "/app/filters-labels" },
   ];
 
   useEffect(() => {
@@ -125,7 +133,7 @@ const Sidebar: React.FC = () => {
       )}
 
       <div
-        className={`fixed md:relative z-20 flex bg-[#f5f7ff] transition-all duration-200 h-screen whitespace-nowrap ${
+        className={`fixed md:relative z-20 flex bg-[#f5f7ff]d bg-indigo-50 transition-all duration-300 h-screen whitespace-nowrap origin-left ${
           isCollapsed ? "-left-full" : "left-0"
         }`}
         style={{ width: `${sidebarWidth}px`, marginLeft: `${sidebarLeft}px` }}

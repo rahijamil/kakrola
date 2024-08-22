@@ -157,7 +157,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
         setMessage("Password reset link has been sent to your email.");
       }
 
-      if (result.success) {
+      if (result?.success) {
         router.push("/app");
       }
     } catch (error: any) {

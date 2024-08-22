@@ -36,7 +36,7 @@ const SectionAddTask = ({
     <>
       {isAddTaskVisible && (
         <button
-          className="mx-[6px] text-gray-500 hover:text-indigo-600 flex items-center gap-2 w-full group py-1"
+          className="mx-[6px] mt-2 text-gray-500 hover:text-indigo-600 flex items-center gap-2 w-full group py-1"
           onClick={() =>
             section
               ? setShowAddTask && setShowAddTask(section.id)

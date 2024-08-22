@@ -14,8 +14,7 @@ const poppins = Poppins({
 const nunito = Nunito({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Kakrola: Plan Your Tasks",
-  description: "Kakrola: Plan Your Tasks",
+  title: "Kakrola | All Your Work in One Place",
 };
 
 export default function RootLayout({

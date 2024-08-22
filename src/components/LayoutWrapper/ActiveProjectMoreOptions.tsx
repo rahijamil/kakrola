@@ -1,6 +1,5 @@
-import { CopyPlusIcon, Heart, HeartOffIcon, PencilLine } from "lucide-react";
-import React, { Dispatch, SetStateAction, useState } from "react";
-import ConfirmAlert from "../AlertBox/ConfirmAlert";
+import { BlocksIcon, Copy, PencilLine } from "lucide-react";
+import React, { Dispatch, SetStateAction } from "react";
 import { ProjectType } from "@/types/project";
 import DeleteOption from "../Sidebar/SidebarProjectMoreOptions/DeleteOption";
 import ArchiveOption from "../Sidebar/SidebarProjectMoreOptions/ArchiveOption";
@@ -15,6 +14,7 @@ import AddEditProject from "../AddEditProject";
 import ProjectDeleteConfirm from "../Sidebar/ProjectDeleteConfirm";
 import ProjectArchiveConfirm from "../Sidebar/ProjectArchiveConfirm";
 import FavoriteOption from "../Sidebar/SidebarProjectMoreOptions/FavoriteOption";
+import SaveTemplateOption from "./SaveTemplateOption";
 
 const ActiveProjectMoreOptions = ({
   onClose,
@@ -26,6 +26,7 @@ const ActiveProjectMoreOptions = ({
     setExportAsCSV,
     setImportFromCSV,
     setProjectEdit,
+    setSaveTemplate,
   },
 }: {
   onClose: () => void;
@@ -39,6 +40,7 @@ const ActiveProjectMoreOptions = ({
     setExportAsCSV: Dispatch<SetStateAction<boolean>>;
     setImportFromCSV: Dispatch<SetStateAction<boolean>>;
     setProjectEdit: Dispatch<SetStateAction<boolean>>;
+    setSaveTemplate: Dispatch<SetStateAction<boolean>>;
   };
 }) => {
   return (
@@ -82,7 +84,23 @@ const ActiveProjectMoreOptions = ({
             project_slug={project.slug}
           />
         </div>
-        {/* <div className="h-[1px] bg-gray-100 my-1"></div>
+        <div className="h-[1px] bg-gray-100 my-1"></div>
+        <div>
+          <SaveTemplateOption
+            onClick={() => {
+              setSaveTemplate(true);
+              onClose();
+            }}
+          />
+          {/* <button
+            // onClick={onClick}
+            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
+          >
+            <BlocksIcon strokeWidth={1.5} className="w-4 h-4 mr-2" />{" "}
+            Browse templates
+          </button> */}
+        </div>
+        <div className="h-[1px] bg-gray-100 my-1"></div>
         <div>
           <ImportCSVOption
             onClick={() => {
@@ -105,7 +123,7 @@ const ActiveProjectMoreOptions = ({
               onClose();
             }}
           />
-        </div> */}
+        </div>
         <div className="h-[1px] bg-gray-100 my-1"></div>
         <div>
           <ArchiveOption

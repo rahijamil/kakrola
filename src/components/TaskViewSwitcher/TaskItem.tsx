@@ -168,14 +168,22 @@ const TaskItem = ({
                   >
                     <Circle
                       size={20}
-                      strokeWidth={1.5}
-                      className={`${
+                      strokeWidth={
                         task.priority == "P1"
-                          ? "text-red-500"
+                          ? 2.5
                           : task.priority == "P2"
-                          ? "text-orange-500"
+                          ? 2.5
                           : task.priority == "P3"
-                          ? "text-indigo-500"
+                          ? 2.5
+                          : 1.5
+                      }
+                      className={`rounded-full ${
+                        task.priority == "P1"
+                          ? "text-red-500 bg-red-100"
+                          : task.priority == "P2"
+                          ? "text-orange-500 bg-orange-100"
+                          : task.priority == "P3"
+                          ? "text-indigo-500 bg-indigo-100"
                           : "text-gray-500"
                       } ${task.is_completed ? "hidden" : "group-hover:hidden"}`}
                     />

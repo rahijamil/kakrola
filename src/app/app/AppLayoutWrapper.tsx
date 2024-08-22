@@ -6,7 +6,15 @@ import Image from "next/image";
 const AppLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   const { profile } = useAuthProvider();
 
-  if (profile?.id) {
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    if (profile?.id) {
+      setLoading(false);
+    }
+  }, [profile]);
+
+  if (!loading) {
     return <>{children}</>;
   } else {
     return (

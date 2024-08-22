@@ -247,7 +247,7 @@ const BoardViewColumn = ({
             </Droppable>
 
             {!column.is_archived && (
-              <div className={`${!foundFixedDropdown && "sticky"} bottom-0 bg-gray-100 p-2`}>
+              <div className={`${!foundFixedDropdown && "sticky"} bottom-0 bg-gray-100 p-2 pt-0`}>
                 <SectionAddTask
                   section={
                     column.id === "ungrouped"

@@ -22,6 +22,7 @@ import ImportCSVModal from "../Sidebar/SidebarProjectMoreOptions/ImportCSVModal"
 import AddEditProject from "../AddEditProject";
 import NoDueDate from "../TaskViewSwitcher/CalendarView/NoDueDate";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
+import SaveTemplateModal from "../Sidebar/SidebarProjectMoreOptions/SaveTemplateModal";
 
 const LayoutWrapper = ({
   children,
@@ -50,6 +51,7 @@ const LayoutWrapper = ({
 }) => {
   const [modalState, setModalState] = useState({
     projectEdit: false,
+    saveTemplate: false,
     showImportFromCSV: false,
     showExportAsCSV: false,
     showCommentOrActivity: null as "comment" | "activity" | null,
@@ -131,7 +133,7 @@ const LayoutWrapper = ({
       <DragDropContext onDragEnd={onDragEnd}>
         <div className={`${view == "Calendar" && "flex overflow-x-hidden"}`}>
           <div
-            className={`flex flex-col h-full w-full flex-1 transition-all duration-200 ${
+            className={`flex flex-col h-full w-full flex-1 transition-all duration-300 ${
               view == "Board" && "overflow-y-hidden"
             }`}
           >
@@ -149,9 +151,7 @@ const LayoutWrapper = ({
               <h1 className="font-bold text-base">{project?.name}</h1>
             )} */}
 
-                <div
-                  className={`flex items-center justify-end flex-1`}
-                >
+                <div className={`flex items-center justify-end flex-1`}>
                   <ul className="flex items-center">
                     {typeof setShowShareOption === "function" &&
                       headline !== "Today" && (
@@ -219,8 +219,8 @@ const LayoutWrapper = ({
             >
               <div className="flex flex-col h-full">
                 <div
-                  className={`${
-                    project && view !== "List" ? "pb-4" : "pl-3.5"
+                  className={` ${
+                    project && view !== "List" ? "pb-4" : "pl-3.5 pb-2"
                   } ${
                     view == "Board" ? "mx-8" : view == "Calendar" && "mx-3"
                   } ${!setView && "pt-8"}`}
@@ -290,6 +290,8 @@ const LayoutWrapper = ({
           stateActions={{
             setProjectEdit: (value) =>
               toggleModal("projectEdit", value as boolean),
+            setSaveTemplate: (value) =>
+              toggleModal("saveTemplate", value as boolean),
             setImportFromCSV: (value) =>
               toggleModal("showImportFromCSV", value as boolean),
             setExportAsCSV: (value) =>
@@ -329,6 +331,13 @@ const LayoutWrapper = ({
           setShowCommentOrActivity={(value) =>
             toggleModal("showCommentOrActivity", value as null)
           }
+          project={project}
+        />
+      )}
+
+      {modalState.saveTemplate && project && (
+        <SaveTemplateModal
+          onClose={() => toggleModal("saveTemplate", false)}
           project={project}
         />
       )}

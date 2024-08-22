@@ -1,6 +1,7 @@
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import {
   Dispatch,
+  FormEvent,
   SetStateAction,
   useCallback,
   useMemo,
@@ -18,7 +19,7 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import { useAuthProvider } from "@/context/AuthContext";
 import ListViewSection from "./ListViewSection";
 import UngroupedTasks from "./UngroupedTasks";
-import { debounce } from "lodash";
+import { v4 as uuidv4 } from "uuid";
 
 interface ListViewProps {
   groupedTasks: Record<string, TaskType[]>;
@@ -77,6 +78,7 @@ const ListView: React.FC<ListViewProps> = ({
   );
 
   const { profile } = useAuthProvider();
+  const [sectionAddLoading, setSectionAddLoading] = useState(false);
 
   const columns = useMemo(() => {
     const columnsObj: Record<
@@ -113,150 +115,153 @@ const ListView: React.FC<ListViewProps> = ({
     return orderedColumns;
   }, [sections, groupedTasks, unGroupedTasks]);
 
-  const onDragEnd = useCallback(async (result: DropResult) => {
-    const { source, destination, type } = result;
+  const onDragEnd = useCallback(
+    async (result: DropResult) => {
+      const { source, destination, type } = result;
 
-    if (!destination) return;
+      if (!destination) return;
 
-    if (
-      source.droppableId === destination.droppableId &&
-      source.index === destination.index
-    ) {
-      return;
-    }
-
-    // Handle section reordering
-    if (type === "column") {
-      const reorderedSections = Array.from(sections);
-      const [movedSection] = reorderedSections.splice(source.index, 1);
-      reorderedSections.splice(destination.index, 0, movedSection);
-
-      // Update section order based on new positions
-      const updatedSections = reorderedSections.map((section, index) => ({
-        ...section,
-        order: index,
-      }));
-
-      setSections(updatedSections);
-
-      // Update section order in Supabase
-      try {
-        for (const section of updatedSections) {
-          const { error } = await supabaseBrowser
-            .from("sections")
-            .update({ order: section.order })
-            .eq("id", section.id);
-
-          if (error) throw error;
-        }
-      } catch (error) {
-        console.error("Error updating section order:", error);
+      if (
+        source.droppableId === destination.droppableId &&
+        source.index === destination.index
+      ) {
+        return;
       }
 
-      return;
-    }
+      // Handle section reordering
+      if (type === "column") {
+        const reorderedSections = Array.from(sections);
+        const [movedSection] = reorderedSections.splice(source.index, 1);
+        reorderedSections.splice(destination.index, 0, movedSection);
 
-    // Handle task reordering or moving between sections
-    if (type === "task") {
-      const newSectionId =
-        destination.droppableId !== "ungrouped"
-          ? parseInt(destination.droppableId)
-          : null;
+        // Update section order based on new positions
+        const updatedSections = reorderedSections.map((section, index) => ({
+          ...section,
+          order: index,
+        }));
 
-      const sourceSectionId =
-        source.droppableId !== "ungrouped"
-          ? parseInt(source.droppableId)
-          : null;
+        setSections(updatedSections);
 
-      // To store the updated tasks that need to be sent to the database
-      let tasksToUpdate: TaskType[] = [];
+        // Update section order in Supabase
+        try {
+          for (const section of updatedSections) {
+            const { error } = await supabaseBrowser
+              .from("sections")
+              .update({ order: section.order })
+              .eq("id", section.id);
 
-      const updateTasks = (prevTasks: TaskType[]) => {
-        // Find tasks in the source section
-        const sourceTasks = prevTasks.filter(
-          (task) => task.section_id === sourceSectionId
-        );
-
-        // Find the moved task
-        const movedTask = sourceTasks[source.index];
-
-        if (!movedTask) {
-          console.error("Moved task not found");
-          return prevTasks;
+            if (error) throw error;
+          }
+        } catch (error) {
+          console.error("Error updating section order:", error);
         }
 
-        // Remove the moved task from the source section
-        const tasksWithoutMoved = prevTasks.filter(
-          (task) => task.id !== movedTask.id
-        );
+        return;
+      }
 
-        // Update the moved task with new section and order
-        const updatedMovedTask: TaskType = {
-          ...movedTask,
-          section_id: newSectionId,
-          order: destination.index,
+      // Handle task reordering or moving between sections
+      if (type === "task") {
+        const newSectionId =
+          destination.droppableId !== "ungrouped"
+            ? parseInt(destination.droppableId)
+            : null;
+
+        const sourceSectionId =
+          source.droppableId !== "ungrouped"
+            ? parseInt(source.droppableId)
+            : null;
+
+        // To store the updated tasks that need to be sent to the database
+        let tasksToUpdate: TaskType[] = [];
+
+        const updateTasks = (prevTasks: TaskType[]) => {
+          // Find tasks in the source section
+          const sourceTasks = prevTasks.filter(
+            (task) => task.section_id === sourceSectionId
+          );
+
+          // Find the moved task
+          const movedTask = sourceTasks[source.index];
+
+          if (!movedTask) {
+            console.error("Moved task not found");
+            return prevTasks;
+          }
+
+          // Remove the moved task from the source section
+          const tasksWithoutMoved = prevTasks.filter(
+            (task) => task.id !== movedTask.id
+          );
+
+          // Update the moved task with new section and order
+          const updatedMovedTask: TaskType = {
+            ...movedTask,
+            section_id: newSectionId,
+            order: destination.index,
+          };
+
+          // Find tasks in the destination section
+          const destinationTasks = tasksWithoutMoved.filter(
+            (task) => task.section_id === newSectionId
+          );
+
+          // Insert the updated task at the new position
+          const updatedDestinationTasks = [
+            ...destinationTasks.slice(0, destination.index),
+            updatedMovedTask,
+            ...destinationTasks.slice(destination.index),
+          ];
+
+          // Combine all tasks back together, ensuring correct order
+          const updatedTasks = [
+            ...tasksWithoutMoved.filter(
+              (task) => task.section_id !== newSectionId
+            ),
+            ...updatedDestinationTasks,
+          ];
+
+          // Reorder tasks in the affected sections
+          const finalTasks = updatedTasks.map((task, index) => {
+            if (
+              task.section_id === newSectionId ||
+              task.section_id === movedTask.section_id
+            ) {
+              const updatedTask = { ...task, order: index };
+              tasksToUpdate.push(updatedTask); // Collect tasks to update in the database
+              return updatedTask;
+            }
+            return task;
+          });
+
+          return finalTasks;
         };
 
-        // Find tasks in the destination section
-        const destinationTasks = tasksWithoutMoved.filter(
-          (task) => task.section_id === newSectionId
-        );
+        setTasks(updateTasks(tasks));
 
-        // Insert the updated task at the new position
-        const updatedDestinationTasks = [
-          ...destinationTasks.slice(0, destination.index),
-          updatedMovedTask,
-          ...destinationTasks.slice(destination.index),
-        ];
-
-        // Combine all tasks back together, ensuring correct order
-        const updatedTasks = [
-          ...tasksWithoutMoved.filter(
-            (task) => task.section_id !== newSectionId
-          ),
-          ...updatedDestinationTasks,
-        ];
-
-        // Reorder tasks in the affected sections
-        const finalTasks = updatedTasks.map((task, index) => {
-          if (
-            task.section_id === newSectionId ||
-            task.section_id === movedTask.section_id
-          ) {
-            const updatedTask = { ...task, order: index };
-            tasksToUpdate.push(updatedTask); // Collect tasks to update in the database
-            return updatedTask;
-          }
-          return task;
-        });
-
-        return finalTasks;
-      };
-
-      setTasks(updateTasks(tasks));
-
-      // Update tasks in the database with correct orders within their sections
-      try {
-        const promises = tasksToUpdate.map((task) =>
-          supabaseBrowser
-            .from("tasks")
-            .update({
-              section_id: task.section_id,
-              order: task.order,
-              updated_at: new Date().toISOString(),
-            })
-            .eq("id", task.id)
-        );
-        const results = await Promise.all(promises);
-        results.forEach((result) => {
-          if (result.error) throw result.error;
-        });
-      } catch (error) {
-        console.error("Error updating tasks:", error);
-        // Optionally, implement a way to revert the state if the database update fails
+        // Update tasks in the database with correct orders within their sections
+        try {
+          const promises = tasksToUpdate.map((task) =>
+            supabaseBrowser
+              .from("tasks")
+              .update({
+                section_id: task.section_id,
+                order: task.order,
+                updated_at: new Date().toISOString(),
+              })
+              .eq("id", task.id)
+          );
+          const results = await Promise.all(promises);
+          results.forEach((result) => {
+            if (result.error) throw result.error;
+          });
+        } catch (error) {
+          console.error("Error updating tasks:", error);
+          // Optionally, implement a way to revert the state if the database update fails
+        }
       }
-    }
-  }, [sections, setSections, tasks, setTasks]);
+    },
+    [sections, setSections, tasks, setTasks]
+  );
 
   const toggleSection = async (
     section_id: string | number,
@@ -283,55 +288,98 @@ const ListView: React.FC<ListViewProps> = ({
   };
 
   const handleAddSection = async (
-    ev: React.FormEvent<HTMLFormElement>,
-    positionIndex: number | null
+    ev: FormEvent<HTMLFormElement>,
+    index: number
   ) => {
     ev.preventDefault();
 
-    if (!newSectionName.trim()) {
+    if (!profile?.id || !newSectionName.trim()) {
       return;
     }
 
-    const existingSections = sections.filter(
-      (s) => s.project_id == project?.id
-    );
+    setSectionAddLoading(true);
 
-    let newOrder;
-    if (positionIndex === null) {
-      newOrder =
-        existingSections.length > 0
-          ? existingSections[existingSections.length - 1].order + 1
-          : 0;
-    } else {
-      newOrder = existingSections[positionIndex].order + 1;
-      for (let i = positionIndex + 1; i < existingSections.length; i++) {
-        await supabaseBrowser
-          .from("sections")
-          .update({
-            order: existingSections[i].order + 1,
-          })
-          .eq("id", existingSections[i].id);
+    let newOrder: number;
+
+    if (sections.length > 0) {
+      if (index !== undefined && index < sections.length) {
+        // If inserting after an existing section
+        const currentOrder = sections[index].order;
+        const nextOrder =
+          index < sections.length - 1
+            ? sections[index + 1].order
+            : currentOrder + 1;
+        newOrder = (currentOrder + nextOrder) / 2;
+      } else {
+        // If adding to the end
+        newOrder = Math.max(...sections.map((s) => s.order)) + 1;
       }
+    } else {
+      // If it's the first section
+      newOrder = 1;
     }
 
-    const { error } = await supabaseBrowser.from("sections").insert([
-      {
-        name: newSectionName.trim(),
-        project_id: project?.id ?? null,
-        profile_id: profile?.id,
-        is_collapsed: false,
-        is_inbox: project?.id ? false : true,
-        order: newOrder,
-        updated_at: new Date().toISOString(),
-      },
-    ]);
+    console.log("Calculated newOrder:", newOrder);
 
-    if (error) {
-      console.error(error);
-    } else {
+    const newSection: SectionType = {
+      id: uuidv4(), // temporary placeholder ID
+      name: newSectionName.trim(),
+      project_id: project?.id || null,
+      profile_id: profile.id,
+      is_collapsed: false,
+      is_inbox: project ? false : true,
+      is_archived: false,
+      order: newOrder,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Optimistically update the state
+    const updatedSections = [
+      ...sections.slice(0, index ?? sections.length),
+      newSection,
+      ...sections.slice(index ?? sections.length),
+    ].sort((a, b) => a.order - b.order);
+
+    setSections(updatedSections);
+    setSectionAddLoading(false);
+    setShowAddSection(null);
+
+    try {
+      const { data, error } = await supabaseBrowser
+        .from("sections")
+        .insert([
+          {
+            name: newSection.name,
+            project_id: newSection.project_id,
+            profile_id: newSection.profile_id,
+            is_collapsed: newSection.is_collapsed,
+            is_inbox: newSection.is_inbox,
+            order: newOrder,
+            updated_at: newSection.updated_at,
+          },
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Update section with actual ID from database
+      setSections(
+        sections
+          .map((s) =>
+            s.id === newSection.id ? { ...newSection, id: data.id } : s
+          )
+          .sort((a, b) => a.order - b.order)
+      );
+    } catch (error) {
+      console.error("Error inserting section:", error);
+      // Revert the optimistic update if there's an error
+      setSections(sections);
+    } finally {
       setNewSectionName("");
       setShowAddSection(null);
       setShowUngroupedAddSection(false);
+      setSectionAddLoading(false);
     }
   };
 
@@ -430,6 +478,7 @@ const ListView: React.FC<ListViewProps> = ({
                   handleAddSection={handleAddSection}
                   setShowAddSection={setShowAddSection}
                   showAddSection={showAddSection}
+                  sectionAddLoading={sectionAddLoading}
                 />
               </div>
 
@@ -479,6 +528,7 @@ const ListView: React.FC<ListViewProps> = ({
                           handleAddSection={handleAddSection}
                           setShowAddSection={setShowAddSection}
                           showAddSection={showAddSection}
+                          sectionAddLoading={sectionAddLoading}
                         />
                       </div>
                     )}

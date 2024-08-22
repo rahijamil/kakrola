@@ -183,9 +183,9 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
           onClick: async () => {
             const response = await fetch("/api/auth/signout", { method: "POST" });
 
-            if (response.ok) {
-              router.push("/auth/login");
-            }
+            // if (response.ok) {
+            //   router.push("/auth/login");
+            // }
           },
         },
       ],

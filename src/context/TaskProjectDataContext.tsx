@@ -264,9 +264,7 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
       setProjects((prev) =>
         sortProjects(
           prev.map((project) =>
-            project.id == payload.new.id
-              ? project
-              : (payload.new as ProjectType)
+            project.id === payload.new.id ? payload.new : project
           )
         )
       );
@@ -289,7 +287,11 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
 
   const handleSectionChanges = (payload: any) => {
     if (payload.eventType === "INSERT") {
-      setSections((prev) => [...prev, payload.new as SectionType]);
+      setSections((prev) =>
+        prev.map((section) =>
+          section.id === payload.new.id ? payload.new : section
+        )
+      );
     } else if (payload.eventType === "UPDATE") {
       setSections((prev) =>
         prev.map((section) =>

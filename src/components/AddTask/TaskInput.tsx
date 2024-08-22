@@ -8,9 +8,17 @@ export const TaskInput: React.FC<{
   setTaskData: React.Dispatch<React.SetStateAction<TaskType>>;
   biggerTitle?: boolean;
   handleSubmit: (e: React.FormEvent) => void;
-}> = ({ projects, biggerTitle, taskData, setTaskData, handleSubmit }) => {
+  titleEditableRef: React.RefObject<HTMLDivElement>;
+}> = ({
+  projects,
+  biggerTitle,
+  taskData,
+  setTaskData,
+  handleSubmit,
+  titleEditableRef,
+}) => {
   const [inputValue, setInputValue] = useState(taskData.title);
-  const contentEditableRef = useRef<HTMLDivElement>(null);
+
   const cursorOffsetRef = useRef(0);
   const firstRenderRef = useRef(true); // Track if it's the first render
 
@@ -42,14 +50,14 @@ export const TaskInput: React.FC<{
     if (selection?.rangeCount) {
       const range = selection.getRangeAt(0);
       const preCaretRange = range.cloneRange();
-      preCaretRange.selectNodeContents(contentEditableRef.current!);
+      preCaretRange.selectNodeContents(titleEditableRef.current!);
       preCaretRange.setEnd(range.endContainer, range.endOffset);
       cursorOffsetRef.current = preCaretRange.toString().length;
     }
   };
 
   const restoreCursorPosition = () => {
-    const el = contentEditableRef.current;
+    const el = titleEditableRef.current;
     const selection = window.getSelection();
     if (el && selection) {
       let charIndex = 0;
@@ -90,7 +98,7 @@ export const TaskInput: React.FC<{
 
   useEffect(() => {
     saveCursorPosition();
-    const el = contentEditableRef.current;
+    const el = titleEditableRef.current;
 
     if (el) {
       // Highlight the commands and update the content
@@ -112,21 +120,25 @@ export const TaskInput: React.FC<{
   }, [inputValue]);
 
   return (
-    <div
-      ref={contentEditableRef}
-      contentEditable
-      className={`py-1 outline-none cursor-text font-medium ${
-        biggerTitle ? "text-lg" : "text-sm"
-      }`}
-      onInput={handleInput}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          e.currentTarget.innerHTML = "";
-          handleSubmit(e);
-        }
-      }}
-      aria-placeholder="Task name"
-    />
+    <>
+      <div
+        ref={titleEditableRef}
+        contentEditable
+        className={`py-1 outline-none cursor-text font-medium ${
+          biggerTitle ? "text-lg" : "text-sm"
+        }`}
+        onInput={handleInput}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            e.currentTarget.innerHTML = "";
+            handleSubmit(e);
+          }
+        }}
+        aria-placeholder="Task name"
+      />
+
+      {/* <TiptapBubbleMenu content={inputValue} /> */}
+    </>
   );
 };

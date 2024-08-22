@@ -3,6 +3,7 @@ import React, {
   LegacyRef,
   SetStateAction,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
@@ -76,7 +77,7 @@ const AddTaskForm = ({
       parent_task_id: null,
       profile_id: profile?.id || "",
       assigned_to_id: null,
-      due_date: dueDate ? dueDate.toISOString() : new Date().toISOString(),
+      due_date: dueDate ? dueDate.toISOString() : null,
       reminder_time: null,
       is_inbox: activeProject ? false : project ? false : true,
       is_completed: false,
@@ -94,6 +95,8 @@ const AddTaskForm = ({
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const titleEditableRef = useRef<HTMLDivElement>(null);
 
   // Helper functions
   const calculateNewOrder = (
@@ -131,12 +134,16 @@ const AddTaskForm = ({
       completed_at: null,
       updated_at: new Date().toISOString(),
     });
+
+    if (titleEditableRef.current) {
+      titleEditableRef.current.innerHTML = "";
+      titleEditableRef.current.focus();
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!taskData.title) {
-      setError("Task name is required.");
       return;
     }
 
@@ -242,6 +249,7 @@ const AddTaskForm = ({
             setTaskData={setTaskData}
             biggerTitle={biggerTitle}
             handleSubmit={handleSubmit}
+            titleEditableRef={titleEditableRef}
           />
 
           <Input

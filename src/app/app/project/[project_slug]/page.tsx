@@ -50,13 +50,13 @@ const ProjectDetails = ({
 
   const setProjectSections = useCallback(
     (updatedSections: SectionType[]) => {
-      setSections((prev) =>
-        prev.map((section) =>
-          section.project_id === currentProject?.id
-            ? updatedSections.find((s) => s.id === section.id) || section
-            : section
-        )
-      );
+      setSections((prev) => {
+        const allSections = prev.filter(
+          (s) => s.project_id !== currentProject?.id
+        );
+
+        return [...allSections, ...updatedSections];
+      });
     },
     [currentProject?.id, setSections]
   );
@@ -98,7 +98,7 @@ const ProjectDetails = ({
 
   useEffect(() => {
     if (currentProject?.name) {
-      document.title = `${currentProject.name} | Kakrola`;
+      document.title = `${currentProject.name} - Kakrola`;
     } else {
       document.title = "Kakrola";
     }

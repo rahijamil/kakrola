@@ -3,18 +3,25 @@ import { revalidatePath } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const supabaseServer = createClient();
-  // Check if a user's logged in
-  const {
-    data: { user },
-  } = await supabaseServer.auth.getUser();
+  try {
+    const supabaseServer = createClient();
+    // Check if a user's logged in
+    const {
+      data: { user },
+    } = await supabaseServer.auth.getUser();
 
-  if (user) {
-    await supabaseServer.auth.signOut();
+    if (user) {
+      await supabaseServer.auth.signOut();
+    }
+
+    revalidatePath("/", "layout");
+    return NextResponse.redirect(new URL("/auth/login", req.url), {
+      status: 302,
+    });
+  } catch (error) {
+    console.error("Error signing out:", error);
+    return NextResponse.redirect(new URL("/auth/error", req.url), {
+      status: 302,
+    });
   }
-
-  revalidatePath("/", "layout");
-  return NextResponse.redirect(new URL("/auth/login", req.url), {
-    status: 302,
-  });
 }

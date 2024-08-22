@@ -16,7 +16,7 @@ const NoDueDate = ({
 }) => {
   return (
     <div
-      className={`h-screen overflow-y-auto bg-white transition-all duration-200 sticky top-0 flex flex-col ${
+      className={`h-screen overflow-y-auto bg-white transition-all duration-300 sticky top-0 flex flex-col ${
         showNoDateTasks ? "w-80" : "w-0"
       }`}
     >

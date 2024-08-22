@@ -1,5 +1,6 @@
-import { SectionType, TaskType } from "@/types/project";
+import { TaskType } from "@/types/project";
 import React, { Dispatch, FormEvent, SetStateAction } from "react";
+import Spinner from "../ui/Spinner";
 
 const AddNewSectionListView = ({
   section,
@@ -9,6 +10,7 @@ const AddNewSectionListView = ({
   handleAddSection,
   setShowAddSection,
   showAddSection,
+  sectionAddLoading,
 }: {
   section: {
     id: string;
@@ -19,30 +21,26 @@ const AddNewSectionListView = ({
   index: number;
   newSectionName: string;
   setNewSectionName: Dispatch<SetStateAction<string>>;
-  handleAddSection: (
-    ev: FormEvent<HTMLFormElement>,
-    index: number | null
-  ) => void;
+  handleAddSection: (ev: FormEvent<HTMLFormElement>, index: number) => void;
   showAddSection: string | number | null;
   setShowAddSection: Dispatch<SetStateAction<string | number | null>>;
+  sectionAddLoading: boolean;
 }) => {
   return (
     <div>
-      {!showAddSection && (
-        <div
-          className={`flex items-center gap-2 pl-7 opacity-0 hover:opacity-100 cursor-pointer transition`}
-          onClick={() => setShowAddSection(section.id)}
-        >
-          <div className="flex-1 bg-indigo-400 h-[1px]"></div>
-          <div className="font-semibold text-indigo-600 text-sm">Add section</div>
-          <div className="flex-1 bg-indigo-500 h-[1px]"></div>
-        </div>
-      )}
+      <div
+        className={`flex items-center gap-2 pl-7 transition ${showAddSection ? "pointer-events-none opacity-0 cursor-default" : "cursor-pointer opacity-0 hover:opacity-100"}`}
+        onClick={() => setShowAddSection(section.id)}
+      >
+        <div className="flex-1 bg-indigo-400 h-[1px]"></div>
+        <div className="font-semibold text-indigo-600 text-sm">Add section</div>
+        <div className="flex-1 bg-indigo-500 h-[1px]"></div>
+      </div>
 
       {showAddSection == section.id && (
         <form
           className="space-y-2 pl-7"
-          onSubmit={(ev) => handleAddSection(ev, index + 1)}
+          onSubmit={(ev) => handleAddSection(ev, index)}
         >
           <input
             type="text"
@@ -57,15 +55,23 @@ const AddNewSectionListView = ({
             <button
               type="submit"
               className="px-2 py-[6px] text-xs text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-600 disabled:cursor-not-allowed transition disabled:opacity-50"
-              disabled={!newSectionName.trim()}
+              disabled={!newSectionName.trim() || sectionAddLoading}
             >
-              Add section
+              {sectionAddLoading ? (
+                <div className="flex items-center gap-2">
+                  <Spinner color="white" />
+                  Adding...
+                </div>
+              ) : (
+                "Add section"
+              )}
             </button>
 
             <button
               type="button"
               onClick={() => setShowAddSection(null)}
-              className="px-3 py-[6px] text-xs text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-lg"
+              className="px-3 py-[6px] text-xs text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-lg disabled:opacity-50 disabled:hover:bg-gray-100 disabled:cursor-not-allowed"
+              disabled={sectionAddLoading}
             >
               Cancel
             </button>
