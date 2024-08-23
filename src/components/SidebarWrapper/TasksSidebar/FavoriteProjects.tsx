@@ -3,6 +3,7 @@ import { ChevronRight } from "lucide-react";
 import React from "react";
 import ProjectItem from "./ProjectItem";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 
 const FavoriteProjects = ({
   setShowFavoritesProjects,
@@ -34,17 +35,28 @@ const FavoriteProjects = ({
       </div>
 
       {showFavoritesProjects && (
-        <ul className="ml-2">
-          {projects
-            .filter((project) => project.is_favorite)
-            .map((project) => (
-              <ProjectItem
-                key={project.id}
-                project={project}
-                pathname={pathname}
-              />
-            ))}
-        </ul>
+        <motion.div
+        initial={{ opacity: 0.5, height: 0, y: -10 }}
+        animate={{
+          opacity: 1,
+          height: "auto",
+          y: 0,
+          transition: { type: "spring" },
+        }}
+        exit={{ opacity: 0.5, height: 0, y: -10 }}
+        >
+          <ul className="ml-2">
+            {projects
+              .filter((project) => project.is_favorite)
+              .map((project) => (
+                <ProjectItem
+                  key={project.id}
+                  project={project}
+                  pathname={pathname}
+                />
+              ))}
+          </ul>
+        </motion.div>
       )}
     </div>
   );

@@ -278,7 +278,7 @@ const AddTaskForm = ({
             isSmall={isSmall}
           />
 
-          {/* <div className="relative">
+          <div className="relative">
             <div
               className="flex items-center gap-2 hover:bg-gray-100 cursor-pointer p-1 px-2 rounded-lg border border-gray-200"
               onClick={() => setShowReminder(!showReminder)}
@@ -364,7 +364,7 @@ const AddTaskForm = ({
                 ></div>
               </>
             )}
-          </div> */}
+          </div>
         </div>
       </div>
 

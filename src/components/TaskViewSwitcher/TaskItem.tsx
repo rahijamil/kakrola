@@ -189,14 +189,22 @@ const TaskItem = ({
                     />
                     <CircleCheck
                       size={20}
-                      strokeWidth={1.5}
+                      strokeWidth={
+                        task.priority == "P1"
+                          ? 2.5
+                          : task.priority == "P2"
+                          ? 2.5
+                          : task.priority == "P3"
+                          ? 2.5
+                          : 1.5
+                      }
                       className={`transition rounded-full ${
                         task.priority == "P1"
-                          ? "text-red-500"
+                          ? "text-red-500 bg-red-100"
                           : task.priority == "P2"
-                          ? "text-orange-500"
+                          ? "text-orange-500 bg-orange-100"
                           : task.priority == "P3"
-                          ? "text-indigo-500"
+                          ? "text-indigo-500 bg-indigo-100"
                           : "text-gray-500"
                       } ${
                         !task.is_completed
@@ -322,7 +330,7 @@ const TaskItem = ({
           }
           submitBtnText="Delete"
           onCancel={() => setShowDeleteConfirm(null)}
-          onSubmit={handleTaskDelete}
+          onConfirm={handleTaskDelete}
         />
       )}
     </div>

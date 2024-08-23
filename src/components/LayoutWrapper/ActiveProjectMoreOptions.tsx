@@ -1,19 +1,19 @@
 import { BlocksIcon, Copy, PencilLine } from "lucide-react";
 import React, { Dispatch, SetStateAction } from "react";
 import { ProjectType } from "@/types/project";
-import DeleteOption from "../Sidebar/SidebarProjectMoreOptions/DeleteOption";
-import ArchiveOption from "../Sidebar/SidebarProjectMoreOptions/ArchiveOption";
-import ActivityLogOption from "../Sidebar/SidebarProjectMoreOptions/ActivityLogOption";
-import ImportCSVOption from "../Sidebar/SidebarProjectMoreOptions/ImportCSVOption";
-import ExportCSVOption from "../Sidebar/SidebarProjectMoreOptions/ExportCSVOption";
-import CopyProjectLinkOption from "../Sidebar/SidebarProjectMoreOptions/CopyProjectLinkOption";
+import DeleteOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/DeleteOption";
+import ArchiveOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ArchiveOption";
+import ActivityLogOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ActivityLogOption";
+import ImportCSVOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ImportCSVOption";
+import ExportCSVOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ExportCSVOption";
+import CopyProjectLinkOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/CopyProjectLinkOption";
 import CommentOrActivityModal from "./CommentOrActivityModal";
-import ExportCSVModal from "../Sidebar/SidebarProjectMoreOptions/ExportCSVModal";
-import ImportCSVModal from "../Sidebar/SidebarProjectMoreOptions/ImportCSVModal";
+import ExportCSVModal from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ExportCSVModal";
+import ImportCSVModal from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ImportCSVModal";
 import AddEditProject from "../AddEditProject";
-import ProjectDeleteConfirm from "../Sidebar/ProjectDeleteConfirm";
-import ProjectArchiveConfirm from "../Sidebar/ProjectArchiveConfirm";
-import FavoriteOption from "../Sidebar/SidebarProjectMoreOptions/FavoriteOption";
+import ProjectDeleteConfirm from "../SidebarWrapper/TasksSidebar/ProjectDeleteConfirm";
+import ProjectArchiveConfirm from "../SidebarWrapper/TasksSidebar/ProjectArchiveConfirm";
+import FavoriteOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/FavoriteOption";
 import SaveTemplateOption from "./SaveTemplateOption";
 
 const ActiveProjectMoreOptions = ({

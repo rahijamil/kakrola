@@ -3,13 +3,13 @@ import React, { ReactNode } from "react";
 
 const ConfirmAlert = ({
   onCancel,
-  onSubmit,
+  onConfirm,
   title,
   description,
   submitBtnText,
 }: {
   onCancel: () => void;
-  onSubmit: () => void;
+  onConfirm: () => void;
   title?: string;
   description: ReactNode;
   submitBtnText: string;
@@ -32,7 +32,7 @@ const ConfirmAlert = ({
           <Button size="xs" variant="gray" onClick={onCancel}>
             Cancel
           </Button>
-          <Button size="xs" onClick={onSubmit}>
+          <Button size="xs" onClick={onConfirm}>
             {submitBtnText}
           </Button>
         </div>

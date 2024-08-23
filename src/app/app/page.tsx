@@ -10,6 +10,7 @@ import BoardViewForToday from "@/components/TaskViewSwitcher/BoardViewForToday";
 const Today = () => {
   const { tasks, setTasks } = useTaskProjectDataProvider();
   const [view, setView] = useState<ViewTypes["view"]>("List");
+  const [showShareOption, setShowShareOption] = useState<boolean>(false);
 
   const todayTasks = useMemo(() => {
     return tasks
@@ -20,9 +21,23 @@ const Today = () => {
   const renderTaskViewSwitcherForToday = () => {
     switch (view) {
       case "List":
-        return <ListViewForToday tasks={tasks} setTasks={setTasks} />;
+        return (
+          <ListViewForToday
+            tasks={tasks}
+            setTasks={setTasks}
+            showShareOption={showShareOption}
+            setShowShareOption={setShowShareOption}
+          />
+        );
       case "Board":
-        return <BoardViewForToday tasks={tasks} setTasks={setTasks} />;
+        return (
+          <BoardViewForToday
+            tasks={tasks}
+            setTasks={setTasks}
+            showShareOption={showShareOption}
+            setShowShareOption={setShowShareOption}
+          />
+        );
 
       default:
         return <div>Invalid view selected</div>;
@@ -32,9 +47,11 @@ const Today = () => {
   return (
     <LayoutWrapper
       headline="Today"
-      setView={setView}
       view={view}
+      setView={setView}
       hideCalendarView
+      showShareOption={showShareOption}
+      setShowShareOption={setShowShareOption}
     >
       {renderTaskViewSwitcherForToday()}
 

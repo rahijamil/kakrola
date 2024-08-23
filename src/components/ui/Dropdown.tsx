@@ -1,3 +1,4 @@
+import { ChevronDown } from "lucide-react";
 import {
   useState,
   useEffect,
@@ -18,6 +19,7 @@ interface DropdownProps {
     icon?: ReactNode;
     devide?: boolean;
     className?: string;
+    content?: ReactNode;
   }[];
   content?: ReactNode;
   contentWidthClass?: string;
@@ -26,6 +28,8 @@ interface DropdownProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   triggerRef: RefObject<HTMLElement> | null;
 }
+
+import { motion } from "framer-motion";
 
 const Dropdown: React.FC<DropdownProps> = ({
   Label,
@@ -69,7 +73,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         let left = "auto";
         let right = "auto";
         let transform = "none";
-        
+
         // Vertical positioning
         if (spaceFromBottom >= menuRect.height) {
           top = `${buttonRect.bottom}px`;
@@ -112,6 +116,11 @@ const Dropdown: React.FC<DropdownProps> = ({
     };
   }, [isOpen, triggerRef]);
 
+  const [showContent, setShowContent] = useState(false);
+  const toggleContent = () => {
+    setShowContent(!showContent);
+  };
+
   return (
     <>
       <div className={className}>
@@ -132,16 +141,56 @@ const Dropdown: React.FC<DropdownProps> = ({
             }`}
           >
             {items.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  item.onClick();
-                  setIsOpen(false);
-                }}
-                className={`w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center gap-4 ${item.className}`}
-              >
-                {item.icon} {item.label}
-              </button>
+              <>
+                <div>
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      if (item.onClick && !item.content) {
+                        item.onClick();
+                        setIsOpen(false);
+                      } else if (item.content) {
+                        toggleContent();
+                      }
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center justify-between ${item.className}`}
+                  >
+                    <div className="flex items-center gap-4">
+                      {item.icon} {item.label}
+                    </div>
+
+                    {item.content && (
+                      <div
+                        className={`transition-transform ${
+                          showContent ? "rotate-180" : "rotate-0"
+                        }`}
+                        onClick={toggleContent}
+                      >
+                        <ChevronDown strokeWidth={1.5} className="w-4 h-4" />
+                      </div>
+                    )}
+                  </button>
+
+                  {item.content && showContent && (
+                    <motion.div
+                      style={{ overflow: "hidden" }}
+                      initial={{ height: 0, opacity: 1 }}
+                      animate={{
+                        height: "auto",
+                        opacity: 1,
+                        transition: { type: "tween" },
+                      }}
+                      exit={{ height: 0, opacity: 1 }}
+                      className="px-4 pt-1"
+                    >
+                      {item.content}
+                    </motion.div>
+                  )}
+                </div>
+                {item.devide && (
+                  <div className="w-full h-px bg-gray-200 my-1"></div>
+                )}
+              </>
             ))}
             {content}
           </div>

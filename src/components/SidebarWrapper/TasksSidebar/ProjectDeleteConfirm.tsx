@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from "react";
-import ConfirmAlert from "../AlertBox/ConfirmAlert";
+import ConfirmAlert from "../../AlertBox/ConfirmAlert";
 import { ProjectType } from "@/types/project";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
@@ -12,7 +12,7 @@ const ProjectDeleteConfirm = ({
   setShowDeleteConfirm: Dispatch<SetStateAction<boolean>>;
 }) => {
   const { projects, setProjects } = useTaskProjectDataProvider();
-  
+
   const handleProjectDelete = async () => {
     const updatedProjects = projects.filter((proj) => proj.id !== project.id);
     setProjects(updatedProjects);
@@ -57,7 +57,7 @@ const ProjectDeleteConfirm = ({
       }
       submitBtnText="Delete"
       onCancel={() => setShowDeleteConfirm(false)}
-      onSubmit={handleProjectDelete}
+      onConfirm={handleProjectDelete}
     />
   );
 };

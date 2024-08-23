@@ -16,6 +16,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuthProvider } from "@/context/AuthContext";
+import Image from "next/image";
+import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
 
 type IconType = React.ForwardRefExoticComponent<
   React.SVGProps<SVGSVGElement> & { title?: string; titleId?: string }
@@ -110,14 +113,18 @@ const MenuItem: React.FC<MenuItemProps> = ({
 interface ProfileMoreOptionsProps {
   onClose: () => void;
   setShowAddTeam: React.Dispatch<React.SetStateAction<boolean | number>>;
+  setShowLogoutConfirm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
   onClose,
   setShowAddTeam,
+  setShowLogoutConfirm,
 }) => {
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
+
   const router = useRouter();
+  const { profile } = useAuthProvider();
 
   const menuItems: MenuGroup[] = [
     {
@@ -180,13 +187,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
         {
           icon: LogOut,
           label: "Log out",
-          onClick: async () => {
-            const response = await fetch("/api/auth/signout", { method: "POST" });
-
-            // if (response.ok) {
-            //   router.push("/auth/login");
-            // }
-          },
+          onClick: () => setShowLogoutConfirm(true),
         },
       ],
     },
@@ -202,7 +203,24 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
 
   return (
     <>
-      <div className="absolute bg-white shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg border border-gray-200 top-full mt-1 left-0 z-20 w-60 py-1">
+      <div className="absolute bg-white shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg border border-gray-200 bottom-[35%] mt-1 left-[85%] z-20 w-60 py-1">
+        {profile && (
+          <>
+            <div className="flex items-center gap-2 p-2">
+              <Image
+                src={profile.avatar_url || "/default-avatar.png"}
+                alt="profile"
+                width={32}
+                height={32}
+                className="rounded-lg"
+              />
+
+              <h2 className="font-bold">{profile.full_name}</h2>
+            </div>
+
+            <div className="h-[1px] bg-gray-100 my-1"></div>
+          </>
+        )}
         {menuItems.map((group, groupIndex) => (
           <React.Fragment key={groupIndex}>
             {group.items.map((item, itemIndex) => (

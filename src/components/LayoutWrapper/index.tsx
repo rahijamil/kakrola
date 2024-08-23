@@ -10,19 +10,19 @@ import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { ProjectType, TaskType } from "@/types/project";
 import { ViewTypes } from "@/types/viewTypes";
-import DocsSidebar from "../DocsSidebar";
+import DocsSidebar from "../SidebarWrapper/DocsSidebar";
 import ShareOption from "./ShareOption";
 import ViewOptions from "./ViewOptions";
 import ActiveProjectMoreOptions from "./ActiveProjectMoreOptions";
-import ProjectDeleteConfirm from "../Sidebar/ProjectDeleteConfirm";
-import ProjectArchiveConfirm from "../Sidebar/ProjectArchiveConfirm";
+import ProjectDeleteConfirm from "../SidebarWrapper/TasksSidebar/ProjectDeleteConfirm";
+import ProjectArchiveConfirm from "../SidebarWrapper/TasksSidebar/ProjectArchiveConfirm";
 import CommentOrActivityModal from "./CommentOrActivityModal";
-import ExportCSVModal from "../Sidebar/SidebarProjectMoreOptions/ExportCSVModal";
-import ImportCSVModal from "../Sidebar/SidebarProjectMoreOptions/ImportCSVModal";
+import ExportCSVModal from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ExportCSVModal";
+import ImportCSVModal from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ImportCSVModal";
 import AddEditProject from "../AddEditProject";
 import NoDueDate from "../TaskViewSwitcher/CalendarView/NoDueDate";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
-import SaveTemplateModal from "../Sidebar/SidebarProjectMoreOptions/SaveTemplateModal";
+import SaveTemplateModal from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/SaveTemplateModal";
 
 const LayoutWrapper = ({
   children,
@@ -128,17 +128,15 @@ const LayoutWrapper = ({
 
   return (
     <>
-      {headline === "Docs" && <DocsSidebar />}
-
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className={`${view == "Calendar" && "flex overflow-x-hidden"}`}>
+        <div
+          className={`${view == "Calendar" && "flex overflow-x-hidden"} h-full`}
+        >
           <div
-            className={`flex flex-col h-full w-full flex-1 transition-all duration-300 ${
-              view == "Board" && "overflow-y-hidden"
-            }`}
+            className={`flex flex-col h-full w-full flex-1 transition-all duration-300`}
           >
             {view && setView && (
-              <div className="flex items-center justify-between p-4 py-3 sticky top-0 bg-white/70 backdrop-blur-md z-10 mb-1 pl-14">
+              <div className="flex items-center justify-between p-4 py-3 sticky top-0 bg-white/70 backdrop-blur-md mb-1 z-10">
                 {!["Today", "Inbox"].includes(headline) && (
                   <div>
                     {teams.find((t) => t.id === project?.team_id)?.name ??
@@ -247,12 +245,18 @@ const LayoutWrapper = ({
                       </h1>
                     )
                   ) : (
-                    <h1 className="text-[26px] font-bold p-1 py-[14px]">
+                    <h1
+                      className={`text-[26px] font-bold p-1 py-[14px] ${
+                        (headline == "Filters & Labels" ||
+                          headline == "Upcoming") &&
+                        "mt-6"
+                      }`}
+                    >
                       {headline}
                     </h1>
                   )}
                 </div>
-                <div className="flex-1">{children}</div>
+                <div className={`flex-1`}>{children}</div>
               </div>
             </div>
           </div>

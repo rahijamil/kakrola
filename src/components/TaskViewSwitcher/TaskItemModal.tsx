@@ -170,15 +170,23 @@ const TaskItemModal = ({
 
               <CircleCheck
                 size={22}
-                strokeWidth={1.5}
+                strokeWidth={
+                  task.priority == "P1"
+                    ? 2.5
+                    : task.priority == "P2"
+                    ? 2.5
+                    : task.priority == "P3"
+                    ? 2.5
+                    : 1.5
+                }
                 className={`transition rounded-full ${
-                  taskData.priority == "P1"
-                    ? "text-red-500"
-                    : taskData.priority == "P2"
-                    ? "text-orange-500"
-                    : taskData.priority == "P3"
-                    ? "text-indigo-500"
-                    : "text-gray-500"
+                  task.priority == "P1"
+                  ? "text-red-500 bg-red-100"
+                  : task.priority == "P2"
+                  ? "text-orange-500 bg-orange-100"
+                  : task.priority == "P3"
+                  ? "text-indigo-500 bg-indigo-100"
+                  : "text-gray-500"
                 } ${
                   !taskData.is_completed
                     ? "hidden group-hover:block"
@@ -345,131 +353,22 @@ const TaskItemModal = ({
               <div className="space-y-2">
                 <p className="font-semibold text-xs pl-2">Project</p>
 
-                <div className="relative">
-                  <button
-                    onClick={() => setShowProjectsSelector(true)}
-                    className={`flex items-center justify-between rounded-lg cursor-pointer transition p-[6px] px-2 group w-full ${
-                      showProjectsSelector
-                        ? "bg-indigo-100"
-                        : "hover:bg-indigo-100"
-                    }`}
-                  >
-                    {taskData.is_inbox ? (
-                      <div className="flex items-center gap-2 text-xs">
-                        <Inbox strokeWidth={1.5} className="w-3 h-3" />
-                        Inbox
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2 text-xs">
-                        <div className="flex items-center gap-2">
-                          <Hash strokeWidth={1.5} className="w-3 h-3" />
-                          {
-                            projects.find((p) => p.id == taskData.project_id)
-                              ?.name
-                          }
-                        </div>
-                        <div>/</div>
-                        <div className="flex items-center gap-2">
-                          {
-                            sections.find((s) => s.id == taskData.section_id)
-                              ?.name
-                          }
-                        </div>
-                      </div>
-                    )}
-
-                    <ChevronDown
-                      strokeWidth={1.5}
-                      className="w-4 h-4 opacity-0 group-hover:opacity-100 transition"
-                    />
-                  </button>
-
-                  {showProjectsSelector && (
-                    <ProjectsSelector
-                      setTask={setTaskData}
-                      isInbox
-                      task={taskData}
-                    />
-                  )}
-                </div>
+                <ProjectsSelector
+                  setTask={setTaskData}
+                  isInbox
+                  task={taskData}
+                  forTaskModal
+                />
               </div>
               <div className="h-[1px] bg-gray-200 m-2"></div>
             </div>
             <div>
               <div className="space-y-2">
-                <div className="relative">
-                  <div>
-                    <button
-                      onClick={() =>
-                        taskData.assigned_to_id == null &&
-                        setShowAssigneeSelector(true)
-                      }
-                      className={`flex items-center justify-between rounded-lg transition p-[6px] px-2 group w-full ${
-                        taskData.assigned_to_id == null
-                          ? showAssigneeSelector
-                            ? "bg-indigo-100 cursor-pointer"
-                            : "hover:bg-indigo-100 cursor-pointer"
-                          : "cursor-default"
-                      }`}
-                    >
-                      <p
-                        className={`font-semibold text-xs ${
-                          taskData.assigned_to_id !== null && "cursor-text"
-                        }`}
-                      >
-                        Assignee
-                      </p>
-
-                      {taskData.assigned_to_id == null && (
-                        <Plus strokeWidth={1.5} className="w-4 h-4" />
-                      )}
-                    </button>
-
-                    {taskData.assigned_to_id !== null && (
-                      <button
-                        onClick={() => setShowAssigneeSelector(true)}
-                        className={`flex items-center relative rounded-lg transition py-[6px] px-2 group w-full text-xs ${
-                          taskData.assigned_to_id !== null
-                            ? showAssigneeSelector
-                              ? "bg-indigo-100 cursor-pointer"
-                              : "hover:bg-indigo-100 cursor-pointer"
-                            : "cursor-default"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <Image
-                            src={profile?.avatar_url || "/default_avatar.png"}
-                            width={18}
-                            height={18}
-                            alt={
-                              profile?.full_name ||
-                              profile?.username ||
-                              "avatar"
-                            }
-                            className="rounded-full"
-                          />
-                          {profile?.full_name.split(" ")[0]}{" "}
-                          {profile?.full_name.split(" ")[1][0] &&
-                            profile?.full_name.split(" ")[1][0] + "."}
-                        </div>
-
-                        <div
-                          onClick={(ev) => {
-                            ev.stopPropagation();
-                            setTaskData({ ...taskData, assigned_to_id: null });
-                          }}
-                          className="p-1 rounded-lg hover:bg-white absolute top-1/2 -translate-y-1/2 right-1"
-                        >
-                          <X strokeWidth={1.5} size={16} />
-                        </div>
-                      </button>
-                    )}
-                  </div>
-
-                  {showAssigneeSelector && (
-                    <AssigneeSelector task={taskData} setTask={setTaskData} />
-                  )}
-                </div>
+                <AssigneeSelector
+                  task={taskData}
+                  setTask={setTaskData}
+                  forTaskModal
+                />
               </div>
               <div className="h-[1px] bg-gray-200 m-2"></div>
             </div>

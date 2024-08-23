@@ -1,6 +1,12 @@
 import { Draggable, Droppable } from "@hello-pangea/dnd";
-import { Ellipsis } from "lucide-react";
-import React, { Dispatch, LegacyRef, SetStateAction, useEffect, useState } from "react";
+import { Ellipsis, FoldHorizontal, UnfoldHorizontal } from "lucide-react";
+import React, {
+  Dispatch,
+  LegacyRef,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import TaskItem from "../TaskItem";
 import SectionAddTask from "../SectionAddTask";
 import AddNewSectionBoardView from "../AddNewSectionBoardView";
@@ -73,6 +79,7 @@ const BoardViewColumn = ({
   setSections: (updatedSections: SectionType[]) => void;
 }) => {
   const [editColumnTitle, setEditColumnTitle] = useState(false);
+  const [collapseColumn, setCollapseColumn] = useState(false);
   const [columnTitle, setColumnTitle] = useState(column.title);
 
   const [showTaskItemModal, setShowTaskItemModal] = useState<string | null>(
@@ -128,6 +135,12 @@ const BoardViewColumn = ({
     return () => observer.disconnect();
   }, []);
 
+  const sectionColor = sections.find((s) => s.id == column.id)?.color || "gray";
+
+  // Tailwind doesn't generate all color classes by default, so we need to explicitly define them
+  const bgColorClass = `bg-${sectionColor}-100`;
+  const hoverBgColorClass = `hover:bg-${sectionColor}-200`;
+
   return (
     <>
       <Draggable
@@ -142,130 +155,183 @@ const BoardViewColumn = ({
         }
       >
         {(boardDraggaleProvided) => (
-          <div
-            ref={boardDraggaleProvided.innerRef}
-            {...boardDraggaleProvided.draggableProps}
-            {...boardDraggaleProvided.dragHandleProps}
-            className={`bg-gray-100 rounded-lg min-w-72 md:min-w-80 w-80 h-fit max-h-[93%] overflow-y-auto transition-colors cursor-default ${
-              column.is_archived && "opacity-70"
-            }`}
-          >
-            <div className={`flex justify-between ${!foundFixedDropdown && "sticky"} top-0 z-10 bg-gray-100 p-2 pb-1`}>
-              {!editColumnTitle && (
-                <div
-                  className={`flex items-center gap-2 w-full ${
-                    column.is_archived ? "" : "cursor-pointer"
-                  }`}
-                  onClick={() =>
-                    !column.is_archived &&
-                    column.id !== "ungrouped" &&
-                    setEditColumnTitle(true)
-                  }
-                >
-                  <h3 className="font-bold pl-[6px]">{column.title}</h3>
-                  <p className="text-sm text-gray-600">{column.tasks.length}</p>
-                </div>
-              )}
+          <>
+            {collapseColumn ? (
+              <div
+                ref={boardDraggaleProvided.innerRef}
+                {...boardDraggaleProvided.draggableProps}
+                {...boardDraggaleProvided.dragHandleProps}
+                onClick={() => setCollapseColumn(false)}
+                className={`${bgColorClass} ${hoverBgColorClass} flex flex-col py-4 px-2 h-fit items-center justify-center gap-4 rounded-lg hover:transition-colors cursor-pointer ${
+                  column.is_archived && "opacity-70"
+                }`}
+              >
+                <button className={`p-1 pointer-events-none`}>
+                  <UnfoldHorizontal
+                    strokeWidth={1.5}
+                    className="w-5 h-5 text-gray-700"
+                  />
+                </button>
 
-              {editColumnTitle && (
-                <input
-                  value={columnTitle}
-                  onChange={(ev) => setColumnTitle(ev.target.value)}
-                  className="font-bold rounded-lg px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-indigo-300 w-full"
-                  onKeyDown={(ev) => {
-                    if (ev.key === "Enter") {
-                      handleUpdateColumnTitle();
-                    }
-                  }}
-                  onBlur={handleUpdateColumnTitle}
-                  autoFocus
-                  onFocus={(ev) => ev.target.select()}
-                />
-              )}
+                <h3 className="font-bold vertical-text">{column.title}</h3>
 
-              <div>
-                <SectionMoreOptions
-                  key={column.id}
-                  column={column}
-                  setShowDeleteConfirm={setShowDeleteConfirm}
-                  setEditColumnTitle={setEditColumnTitle}
-                  setShowArchiveConfirm={setShowArchiveConfirm}
-                />
+                <p className="text-sm text-gray-600 vertical-text">
+                  {column.tasks.length}
+                </p>
               </div>
-            </div>
-
-            <Droppable droppableId={column.id} type="task">
-              {(provided, snapshot) => (
+            ) : (
+              <div
+                ref={boardDraggaleProvided.innerRef}
+                {...boardDraggaleProvided.draggableProps}
+                {...boardDraggaleProvided.dragHandleProps}
+                className={`${bgColorClass} rounded-lg min-w-72 md:min-w-80 w-80 h-fit max-h-[calc(100vh-150px)] overflow-y-auto cursor-default ${
+                  column.is_archived && "opacity-70"
+                }`}
+              >
                 <div
-                  key={column.id}
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className="space-y-2 min-h-1 p-2 pt-1"
+                  className={`flex justify-between ${
+                    !foundFixedDropdown && "sticky"
+                  } top-0 z-10 ${bgColorClass} p-2 pb-1`}
                 >
-                  {column.tasks
-                    .filter((t) => !t.parent_task_id)
-                    .sort((a, b) => {
-                      // Sort by is_completed: false (incomplete) comes before true (completed)
-                      if (a.is_completed !== b.is_completed) {
-                        return a.is_completed ? 1 : -1;
+                  {!editColumnTitle && (
+                    <div
+                      className={`flex items-center gap-2 w-full ${
+                        column.is_archived
+                          ? ""
+                          : column.id !== "ungrouped" && "cursor-pointer"
+                      }`}
+                      onClick={() =>
+                        !column.is_archived &&
+                        column.id !== "ungrouped" &&
+                        setEditColumnTitle(true)
                       }
-                      // Then sort by order within each completion status
-                      return a.order - b.order;
-                    })
-                    .map((task, taskIndex) => (
-                      <>
-                        <div
-                          key={task.id}
-                          className={`rounded shadow-sm hover:ring-2 hover:ring-indigo-300 transition ring-1 ring-gray-200`}
-                        >
-                          <TaskItem
-                            key={task.id}
-                            task={task}
-                            setTasks={setTasks}
-                            tasks={tasks}
-                            subTasks={column.tasks.filter(
-                              (t) => t.parent_task_id == task.id
-                            )}
-                            setShowShareOption={setShowShareOption}
-                            showShareOption={showShareOption}
-                            index={taskIndex}
-                            project={project}
-                            setShowDeleteConfirm={setShowTaskDeleteConfirm}
-                            setShowModal={setShowTaskItemModal}
-                            showModal={showTaskItemModal}
-                            showDeleteConfirm={showTaskDeleteConfirm}
-                            column={column}
-                            smallAddTask
-                          />
-                        </div>
-                      </>
-                    ))}
+                    >
+                      <h3 className="font-bold pl-[6px]">{column.title}</h3>
+                      <p className="text-sm text-gray-600">
+                        {column.tasks.length}
+                      </p>
+                    </div>
+                  )}
 
-                  {provided.placeholder}
+                  {editColumnTitle && (
+                    <input
+                      value={columnTitle}
+                      onChange={(ev) => setColumnTitle(ev.target.value)}
+                      className="font-bold rounded-lg px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-indigo-300 w-full"
+                      onKeyDown={(ev) => {
+                        if (ev.key === "Enter") {
+                          handleUpdateColumnTitle();
+                        }
+                      }}
+                      onBlur={handleUpdateColumnTitle}
+                      autoFocus
+                      onFocus={(ev) => ev.target.select()}
+                    />
+                  )}
+
+                  <div className="flex items-center">
+                    <button
+                      className={`p-1 hover:transition rounded-lg ${hoverBgColorClass}`}
+                      onClick={() => setCollapseColumn(true)}
+                    >
+                      <FoldHorizontal
+                        strokeWidth={1.5}
+                        className="w-5 h-5 text-gray-700"
+                      />
+                    </button>
+
+                    {column.id !== "ungrouped" && (
+                      <SectionMoreOptions
+                        key={column.id}
+                        column={column}
+                        setShowDeleteConfirm={setShowDeleteConfirm}
+                        setEditColumnTitle={setEditColumnTitle}
+                        setShowArchiveConfirm={setShowArchiveConfirm}
+                        setSections={setSections}
+                        sections={sections}
+                      />
+                    )}
+                  </div>
                 </div>
-              )}
-            </Droppable>
 
-            {!column.is_archived && (
-              <div className={`${!foundFixedDropdown && "sticky"} bottom-0 bg-gray-100 p-2 pt-0`}>
-                <SectionAddTask
-                  section={
-                    column.id === "ungrouped"
-                      ? undefined
-                      : sections.find((s) => s.id.toString() === column.id)
-                  }
-                  showAddTask={showAddTask}
-                  setShowAddTask={setShowAddTask}
-                  isSmall
-                  showUngroupedAddTask={showUngroupedAddTask}
-                  setShowUngroupedAddTask={setShowUngroupedAddTask}
-                  project={project}
-                  setTasks={setTasks}
-                  tasks={tasks}
-                />
+                <Droppable droppableId={column.id} type="task">
+                  {(provided, snapshot) => (
+                    <div
+                      key={column.id}
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                      className="space-y-2 min-h-1 p-2 pt-1"
+                    >
+                      {column.tasks
+                        .filter((t) => !t.parent_task_id)
+                        .sort((a, b) => {
+                          // Sort by is_completed: false (incomplete) comes before true (completed)
+                          if (a.is_completed !== b.is_completed) {
+                            return a.is_completed ? 1 : -1;
+                          }
+                          // Then sort by order within each completion status
+                          return a.order - b.order;
+                        })
+                        .map((task, taskIndex) => (
+                          <>
+                            <div
+                              key={task.id}
+                              className={`rounded shadow-sm hover:ring-2 hover:ring-indigo-300 hover:transition ring-1 ring-gray-200`}
+                            >
+                              <TaskItem
+                                key={task.id}
+                                task={task}
+                                setTasks={setTasks}
+                                tasks={tasks}
+                                subTasks={column.tasks.filter(
+                                  (t) => t.parent_task_id == task.id
+                                )}
+                                setShowShareOption={setShowShareOption}
+                                showShareOption={showShareOption}
+                                index={taskIndex}
+                                project={project}
+                                setShowDeleteConfirm={setShowTaskDeleteConfirm}
+                                setShowModal={setShowTaskItemModal}
+                                showModal={showTaskItemModal}
+                                showDeleteConfirm={showTaskDeleteConfirm}
+                                column={column}
+                                smallAddTask
+                              />
+                            </div>
+                          </>
+                        ))}
+
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+
+                {!column.is_archived && (
+                  <div
+                    className={`${
+                      !foundFixedDropdown && "sticky"
+                    } bottom-0 ${bgColorClass} p-2 pt-0`}
+                  >
+                    <SectionAddTask
+                      section={
+                        column.id === "ungrouped"
+                          ? undefined
+                          : sections.find((s) => s.id.toString() === column.id)
+                      }
+                      showAddTask={showAddTask}
+                      setShowAddTask={setShowAddTask}
+                      isSmall
+                      showUngroupedAddTask={showUngroupedAddTask}
+                      setShowUngroupedAddTask={setShowUngroupedAddTask}
+                      project={project}
+                      setTasks={setTasks}
+                      tasks={tasks}
+                    />
+                  </div>
+                )}
               </div>
             )}
-          </div>
+          </>
         )}
       </Draggable>
 

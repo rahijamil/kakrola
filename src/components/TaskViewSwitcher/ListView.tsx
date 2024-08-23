@@ -556,7 +556,7 @@ const ListView: React.FC<ListViewProps> = ({
           }
           submitBtnText="Delete"
           onCancel={() => setShowDeleteConfirm(null)}
-          onSubmit={() =>
+          onConfirm={() =>
             handleSectionDelete(
               showDeleteConfirm.id == "ungrouped"
                 ? null
@@ -607,7 +607,7 @@ const ListView: React.FC<ListViewProps> = ({
             showArchiveConfirm.is_archived ? "Unarchive" : "Archive"
           }
           onCancel={() => setShowArchiveConfirm(null)}
-          onSubmit={() =>
+          onConfirm={() =>
             handleSectionArchive(
               showArchiveConfirm.id == "ungrouped"
                 ? null

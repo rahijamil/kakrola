@@ -1,18 +1,10 @@
 import { useAuthProvider } from "@/context/AuthContext";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { SectionType, TaskType } from "@/types/project";
+import { TaskType } from "@/types/project";
 import { Check, ChevronDown, Hash, Inbox } from "lucide-react";
 import Image from "next/image";
-import React, {
-  Dispatch,
-  LegacyRef,
-  ReactNode,
-  SetStateAction,
-  useRef,
-  useState,
-} from "react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Input } from "../ui/input";
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import Dropdown from "../ui/Dropdown";
 
@@ -21,11 +13,13 @@ const ProjectsSelector = ({
   task,
   setTask,
   isSmall,
+  forTaskModal,
 }: {
   isInbox?: boolean;
   task: TaskType;
   setTask: Dispatch<SetStateAction<TaskType>>;
   isSmall?: boolean;
+  forTaskModal?: boolean;
 }) => {
   const { profile } = useAuthProvider();
   const { projects, teams, sections } = useTaskProjectDataProvider();
@@ -60,37 +54,69 @@ const ProjectsSelector = ({
 
   return (
     <Dropdown
-    triggerRef={triggerRef}
+      triggerRef={triggerRef}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      Label={({ onClick }) => (
-        <div
-          ref={triggerRef}
-          className={`flex items-center gap-2 cursor-pointer p-2 px-2 rounded-lg ${
-            isOpen ? "bg-gray-100" : "hover:bg-gray-100"
-          }`}
-          onClick={onClick}
-        >
+      Label={({ onClick }) =>
+        forTaskModal ? (
           <button
-            type="button"
-            className={`w-full flex items-center text-xs transition-colors text-gray-700 gap-2 ${
-              isSmall && "max-w-[100px]"
+            onClick={() => setIsOpen(true)}
+            className={`flex items-center justify-between rounded-lg cursor-pointer transition p-[6px] px-2 group w-full ${
+              isOpen ? "bg-indigo-100" : "hover:bg-indigo-100"
             }`}
           >
             {task.is_inbox ? (
-              <Inbox strokeWidth={1.5} className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-xs">
+                <Inbox strokeWidth={1.5} className="w-3 h-3" />
+                Inbox
+              </div>
             ) : (
-              <Hash strokeWidth={1.5} className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-xs">
+                <div className="flex items-center gap-2">
+                  <Hash strokeWidth={1.5} className="w-3 h-3" />
+                  {projects.find((p) => p.id == task.project_id)?.name}
+                </div>
+                <div>/</div>
+                <div className="flex items-center gap-2">
+                  {sections.find((s) => s.id == task.section_id)?.name}
+                </div>
+              </div>
             )}
-            <span className="font-bold text-xs truncate">
-              {task.project_id
-                ? projects.find((p) => p.id === task.project_id)?.name
-                : "Inbox"}
-            </span>
+
+            <ChevronDown
+              strokeWidth={1.5}
+              className="w-4 h-4 opacity-0 group-hover:opacity-100 transition"
+            />
           </button>
-          <ChevronDown strokeWidth={1.5} className="w-4 h-4" />
-        </div>
-      )}
+        ) : (
+          <div
+            ref={triggerRef}
+            className={`flex items-center gap-2 cursor-pointer p-2 px-2 rounded-lg ${
+              isOpen ? "bg-gray-100" : "hover:bg-gray-100"
+            }`}
+            onClick={onClick}
+          >
+            <button
+              type="button"
+              className={`w-full flex items-center text-xs transition-colors text-gray-700 gap-2 ${
+                isSmall && "max-w-[100px]"
+              }`}
+            >
+              {task.is_inbox ? (
+                <Inbox strokeWidth={1.5} className="w-4 h-4" />
+              ) : (
+                <Hash strokeWidth={1.5} className="w-4 h-4" />
+              )}
+              <span className="font-bold text-xs truncate">
+                {task.project_id
+                  ? projects.find((p) => p.id === task.project_id)?.name
+                  : "Inbox"}
+              </span>
+            </button>
+            <ChevronDown strokeWidth={1.5} className="w-4 h-4" />
+          </div>
+        )
+      }
       content={
         <div>
           <div className="p-2 border-b border-gray-200">

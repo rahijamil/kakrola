@@ -153,6 +153,8 @@ const ListViewSection = ({
               setShowDeleteConfirm={setShowDeleteConfirm}
               setEditColumnTitle={setEditColumnTitle}
               setShowArchiveConfirm={setShowArchiveConfirm}
+              sections={sections}
+              setSections={setSections}
             />
           </div>
         </div>

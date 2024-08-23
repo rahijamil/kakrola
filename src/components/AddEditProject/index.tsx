@@ -3,91 +3,16 @@ import React, { FormEvent, useEffect, useState } from "react";
 import { Dialog, DialogHeader, DialogTitle } from "../ui";
 import { ProjectType } from "@/types/project";
 import LayoutView from "../LayoutView";
-import {
-  Check,
-  ChevronDown,
-  CircleHelp,
-  SquareGanttChart,
-  User,
-} from "lucide-react";
+import { CircleHelp, SquareGanttChart, User } from "lucide-react";
 import { ToggleSwitch } from "../ui/ToggleSwitch";
 import { Input } from "../ui/input";
-import { Select } from "../ui/select";
 import { useAuthProvider } from "@/context/AuthContext";
 import Spinner from "../ui/Spinner";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import WorkspaceSelector from "./WorkspaceSelector";
 import CustomSelect from "../ui/CustomSelect";
-
-const colors = [
-  {
-    id: 1,
-    label: "Red",
-    value: "red-500",
-    color: "#ef4444",
-  },
-  {
-    id: 2,
-    label: "Orange",
-    value: "orange-500",
-    color: "#f97316",
-  },
-  {
-    id: 3,
-    label: "Yellow",
-    value: "yellow-500",
-    color: "#eab308",
-  },
-  {
-    id: 4,
-    label: "Green",
-    value: "green-500",
-    color: "#22c55e",
-  },
-  {
-    id: 5,
-    label: "Blue",
-    value: "blue-500",
-    color: "#3b82f6",
-  },
-  {
-    id: 6,
-    label: "Indigo",
-    value: "indigo-500",
-    color: "#6366f1",
-  },
-  {
-    id: 7,
-    label: "Violet",
-    value: "violet-500",
-    color: "#8b5cf6",
-  },
-  {
-    id: 8,
-    label: "Purple",
-    value: "purple-500",
-    color: "#a855f7",
-  },
-  {
-    id: 9,
-    label: "Pink",
-    value: "pink-500",
-    color: "#ec4899",
-  },
-  {
-    id: 10,
-    label: "Teal",
-    value: "teal-500",
-    color: "#14b8a6",
-  },
-  {
-    id: 11,
-    label: "Gray",
-    value: "gray-500",
-    color: "#64748b",
-  },
-];
+import ColorSelector from "./ColorSelector";
 
 const AddEditProject = ({
   workspaceId,
@@ -329,15 +254,9 @@ const AddEditProject = ({
               placeholder="Project name"
             />
 
-            <CustomSelect
-              id="color"
-              label="Color"
-              options={colors}
-              value={projectData?.color}
-              onChange={({ target: { value } }) =>
-                setProjectData({ ...projectData, color: value })
-              }
-              placeholder="Select a color"
+            <ColorSelector
+              value={projectData.color}
+              onChange={(color) => setProjectData({ ...projectData, color })}
             />
 
             <WorkspaceSelector

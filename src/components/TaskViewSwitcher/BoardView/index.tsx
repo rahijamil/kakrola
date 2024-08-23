@@ -416,7 +416,7 @@ const BoardView: React.FC<{
           }
           submitBtnText="Delete"
           onCancel={() => setShowDeleteConfirm(null)}
-          onSubmit={() =>
+          onConfirm={() =>
             handleSectionDelete(
               showDeleteConfirm.id == "ungrouped"
                 ? null
@@ -467,7 +467,7 @@ const BoardView: React.FC<{
             showArchiveConfirm.is_archived ? "Unarchive" : "Archive"
           }
           onCancel={() => setShowArchiveConfirm(null)}
-          onSubmit={() =>
+          onConfirm={() =>
             handleSectionArchive(
               showArchiveConfirm.id == "ungrouped"
                 ? null

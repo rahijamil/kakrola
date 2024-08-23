@@ -87,6 +87,43 @@ const config: Config = {
       },
     },
   },
+  safelist: [
+    "bg-indigo-100",
+    "bg-indigo-200",
+    "bg-indigo-500",
+
+    "bg-purple-100",
+    "bg-purple-200",
+    "bg-purple-500",
+
+    "bg-green-100",
+    "bg-green-200",
+    "bg-green-500",
+
+    "bg-yellow-100",
+    "bg-yellow-200",
+    "bg-yellow-500",
+
+    "bg-orange-100",
+    "bg-orange-200",
+    "bg-orange-500",
+
+    "bg-teal-100",
+    "bg-teal-200",
+    "bg-teal-500",
+
+    "bg-lime-100",
+    "bg-lime-200",
+    "bg-lime-500",
+
+    "bg-pink-100",
+    "bg-pink-200",
+    "bg-pink-500",
+
+    "bg-gray-100",
+    "bg-gray-200",
+    "bg-gray-500",
+  ],
   plugins: [],
 };
 

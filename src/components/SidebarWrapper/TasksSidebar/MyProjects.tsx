@@ -1,14 +1,20 @@
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ChevronRight, Plus } from "lucide-react";
-import React, { Dispatch, SetStateAction, useState } from "react";
-import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+import React, { useState } from "react";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "@hello-pangea/dnd";
 import ProjectItem from "./ProjectItem";
 import { usePathname } from "next/navigation";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import Image from "next/image";
 import { useAuthProvider } from "@/context/AuthContext";
-import AddEditProject from "../AddEditProject";
+import AddEditProject from "../../AddEditProject";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
   const { profile } = useAuthProvider();
@@ -136,45 +142,58 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
         </div>
 
         {showProjects && (
-          <DragDropContext onDragEnd={handleOnDragEnd}>
-            <Droppable droppableId="projects">
-              {(provided) => {
-                return (
-                  <ul
-                    className="ml-2"
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
-                    {projects.map((project, index) => (
-                      <Draggable
-                        key={project.id}
-                        draggableId={project.id.toString()}
-                        index={index}
-                      >
-                        {(provided, snapshot) => {
-                          return (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              className={`${snapshot.isDragging && "bg-white"}`}
-                            >
-                              <ProjectItem
-                                project={project}
-                                pathname={pathname}
-                                isDragging={snapshot.isDragging}
-                              />
-                            </div>
-                          );
-                        }}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </ul>
-                );
-              }}
-            </Droppable>
-          </DragDropContext>
+          <motion.div
+            initial={{ opacity: 0.5, height: 0, y: -10 }}
+            animate={{
+              opacity: 1,
+              height: "auto",
+              y: 0,
+              transition: { type: "spring" },
+            }}
+            exit={{ opacity: 0.5, height: 0, y: -10 }}
+          >
+            <DragDropContext onDragEnd={handleOnDragEnd}>
+              <Droppable droppableId="projects">
+                {(provided) => {
+                  return (
+                    <ul
+                      className="ml-2"
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                    >
+                      {projects.map((project, index) => (
+                        <Draggable
+                          key={project.id}
+                          draggableId={project.id.toString()}
+                          index={index}
+                        >
+                          {(provided, snapshot) => {
+                            return (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className={`${
+                                  snapshot.isDragging && "bg-white"
+                                }`}
+                              >
+                                <ProjectItem
+                                  project={project}
+                                  pathname={pathname}
+                                  isDragging={snapshot.isDragging}
+                                />
+                              </div>
+                            );
+                          }}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </ul>
+                  );
+                }}
+              </Droppable>
+            </DragDropContext>
+          </motion.div>
         )}
       </div>
 

@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from "react";
-import ConfirmAlert from "../AlertBox/ConfirmAlert";
+import ConfirmAlert from "../../AlertBox/ConfirmAlert";
 import { ProjectType } from "@/types/project";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
@@ -43,7 +43,7 @@ const ProjectArchiveConfirm = ({
       }
       submitBtnText="Archive"
       onCancel={() => setShowArchiveConfirm(false)}
-      onSubmit={handleArchive}
+      onConfirm={handleArchive}
     />
   );
 };

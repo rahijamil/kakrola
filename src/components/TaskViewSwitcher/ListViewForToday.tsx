@@ -8,11 +8,23 @@ import { Droppable } from "@hello-pangea/dnd";
 const ListViewForToday = ({
   tasks,
   setTasks,
+  showShareOption,
+  setShowShareOption,
 }: {
   tasks: TaskType[];
   setTasks: (updatedTasks: TaskType[]) => void;
+  showShareOption: boolean;
+  setShowShareOption: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const [showAddTask, setShowAddTask] = useState<string | number | null>(null);
+  const [showUngroupedAddTask, setShowUngroupedAddTask] = useState(false);
+  const [showTaskItemModal, setShowTaskItemModal] = useState<string | null>(
+    null
+  );
+
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(
+    null
+  );
+
   const { projects } = useTaskProjectDataProvider();
 
   return (
@@ -47,15 +59,15 @@ const ListViewForToday = ({
                       subTasks={tasks.filter(
                         (t) => t.parent_task_id == task.id
                       )}
-                      //   showShareOption={showShareOption}
-                      //   setShowShareOption={setShowShareOption}
+                      showShareOption={showShareOption}
+                      setShowShareOption={setShowShareOption}
                       index={index}
                       project={projects.find((p) => p.id === task.project_id)!}
                       tasks={tasks}
-                      //   setShowModal={setShowTaskItemModal}
-                      //   showModal={showTaskItemModal}
-                      //   showDeleteConfirm={showTaskDeleteConfirm}
-                      //   setShowDeleteConfirm={setShowTaskDeleteConfirm}
+                      setShowModal={setShowTaskItemModal}
+                      showModal={showTaskItemModal}
+                      showDeleteConfirm={showDeleteConfirm}
+                      setShowDeleteConfirm={setShowDeleteConfirm}
                     />
                   </li>
 
@@ -77,8 +89,8 @@ const ListViewForToday = ({
                               subTasks={tasks.filter(
                                 (t) => t.parent_task_id == childTask.id
                               )}
-                              //   showShareOption={showShareOption}
-                              //   setShowShareOption={setShowShareOption}
+                              showShareOption={showShareOption}
+                              setShowShareOption={setShowShareOption}
                               index={childIndex}
                               project={
                                 projects.find(
@@ -98,8 +110,8 @@ const ListViewForToday = ({
           </ul>
 
           <SectionAddTask
-            showAddTask={showAddTask}
-            setShowAddTask={setShowAddTask}
+            showUngroupedAddTask={showUngroupedAddTask}
+            setShowUngroupedAddTask={setShowUngroupedAddTask}
             project={null}
             setTasks={setTasks}
             tasks={tasks}

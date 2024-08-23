@@ -52,4 +52,9 @@
   .check-animation {
     animation: checkAnimation 0.3s ease-out;
   }
+
+  .vertical-text {
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+  }
 }

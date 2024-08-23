@@ -28,6 +28,18 @@ export interface SectionType {
   is_archived: boolean;
   updated_at: string;
   created_at?: string;
+  color?: string;
+}
+
+// Task Label types
+export interface TaskLabelType {
+  id: string | number;
+  name: string;
+  slug: string;
+  color: string;
+  profile_id: string;
+  created_at?: string;
+  is_favorite: boolean;
 }
 
 // Task types
@@ -49,4 +61,5 @@ export interface TaskType {
   order: number;
   updated_at?: string;
   created_at?: string;
+  labels?: TaskLabelType[];
 }

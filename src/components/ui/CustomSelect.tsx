@@ -17,6 +17,7 @@ interface CustomSelectProps {
   onChange: (e: { target: { id: string; value: string, label?: string } }) => void;
   options: Option[];
   placeholder?: string;
+  height?: string;
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -27,6 +28,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   onChange,
   options,
   placeholder,
+  height
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -77,7 +79,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         {label}
       </label>
       <div
-        className="flex items-center justify-between w-full h-10 border border-gray-300 rounded-lg cursor-pointer bg-white hover:border-gray-400 px-3 py-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-indigo-300 focus:border-gray-300"
+        className={`flex items-center justify-between w-full h-10 border border-gray-300 rounded-lg cursor-pointer bg-white hover:border-gray-400 px-3 py-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-indigo-300 focus:border-gray-300 ${height}`}
         onClick={() => setIsOpen(!isOpen)}
         onKeyDown={handleKeyDown}
         tabIndex={0}
@@ -114,7 +116,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           {options.map((option, index) => (
             <li
               key={option.value}
-              className={`px-4 py-2 cursor-pointer flex items-center justify-between ${
+              className={`px-4 cursor-pointer flex items-center justify-between ${height ? height : "py-2"} ${
                 index === highlightedIndex
                   ? "bg-indigo-100"
                   : "hover:bg-gray-100"
