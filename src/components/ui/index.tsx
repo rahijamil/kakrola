@@ -31,7 +31,7 @@ export const Dialog: React.FC<DialogProps> = ({
       onClick={onClose}
     >
       <div
-        className={`bg-white rounded-lg shadow-xl w-11/12 flex flex-col ${
+        className={`bg-surface rounded-lg shadow-xl w-11/12 flex flex-col ${
           size === "xs"
             ? "max-w-md"
             : size === "sm"
@@ -55,7 +55,7 @@ interface DialogHeaderProps {
 }
 
 export const DialogHeader: React.FC<DialogHeaderProps> = ({ children }) => (
-  <div className="flex items-center justify-between gap-8 border-b border-gray-200 p-4 py-2">
+  <div className="flex items-center justify-between gap-8 border-b border-text-200 p-4 py-2">
     {children}
   </div>
 );
@@ -95,7 +95,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <input
           className={`w-full transition py-1 outline-none ${
             label &&
-            "px-2 border rounded-lg border-gray-200 focus:border-gray-400"
+            "px-2 border rounded-lg border-text-200 focus:border-text-400"
           } ${className}`}
           ref={ref}
           id={id}
@@ -122,7 +122,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="space-y-1 w-full">
         {label && (
-          <label htmlFor={id} className="font-bold text-gray-700">
+          <label htmlFor={id} className="font-bold text-text-700">
             {label}
           </label>
         )}
@@ -131,13 +131,11 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           {Icon && (
             <Icon
               strokeWidth={1.5}
-              className="h-5 w-5 text-gray-400 absolute top-1/2 left-3 -translate-y-1/2"
+              className="h-5 w-5 text-text-400 absolute top-1/2 left-3 -translate-y-1/2"
             />
           )}
           <textarea
-            className={`rounded-lg border-none outline-none placeholder:text-muted-foreground ${
-              fullWidth ? "w-full" : ""
-            } ${className} ${Icon && "pl-10"}`}
+            className={`outline-none border-none placeholder:text-muted-foreground w-full resize-none overflow-hidden ${className} ${Icon && "pl-10"}`}
             ref={ref}
             id={id}
             rows={rows ? rows : 2}
@@ -159,7 +157,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = "", ...props }, ref) => (
     <button
-      className={`px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${className}`}
+      className={`px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${className}`}
       ref={ref}
       {...props}
     />
@@ -185,13 +183,13 @@ export const Select: React.FC<SelectProps> = ({
       <select
         onChange={(e) => onValueChange(e.target.value)}
         defaultValue={defaultValue}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none"
+        className="w-full px-3 py-2 border border-text-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none"
       >
         {children}
       </select>
       <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
         <svg
-          className="w-5 h-5 text-gray-400"
+          className="w-5 h-5 text-text-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -240,5 +238,5 @@ interface SelectValueProps {
 }
 
 export const SelectValue: React.FC<SelectValueProps> = ({ placeholder }) => (
-  <span className="text-gray-500">{placeholder}</span>
+  <span className="text-text-500">{placeholder}</span>
 );

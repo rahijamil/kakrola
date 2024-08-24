@@ -136,7 +136,7 @@ const Dropdown: React.FC<DropdownProps> = ({
               right: position.right,
               transform: position.transform,
             }}
-            className={`z-50 bg-white shadow-lg rounded-lg fixed overflow-hidden text-xs ${
+            className={`z-50 bg-surface shadow-lg rounded-lg fixed overflow-hidden text-xs ${
               contentWidthClass ? contentWidthClass : "w-72 py-1"
             }`}
           >
@@ -153,7 +153,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                         toggleContent();
                       }
                     }}
-                    className={`w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center justify-between ${item.className}`}
+                    className={`w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-background transition flex items-center justify-between ${item.className}`}
                   >
                     <div className="flex items-center gap-4">
                       {item.icon} {item.label}
@@ -188,7 +188,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                   )}
                 </div>
                 {item.devide && (
-                  <div className="w-full h-px bg-gray-200 my-1"></div>
+                  <div className="w-full h-px bg-text-200 my-1"></div>
                 )}
               </>
             ))}

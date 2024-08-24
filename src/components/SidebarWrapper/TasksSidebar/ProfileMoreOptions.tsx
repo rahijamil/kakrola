@@ -59,8 +59,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
   <>
     {path ? (
       <Link
-        className={`w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center justify-between ${
-          isActive ? "bg-gray-100" : ""
+        className={`w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center justify-between ${
+          isActive ? "bg-text-50" : ""
         }`}
         href={path}
         onMouseEnter={onMouseEnter}
@@ -84,8 +84,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
       </Link>
     ) : (
       <button
-        className={`w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center justify-between ${
-          isActive ? "bg-gray-100" : ""
+        className={`w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center justify-between ${
+          isActive ? "bg-text-50" : ""
         }`}
         onClick={onClick}
         onMouseEnter={onMouseEnter}
@@ -203,7 +203,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
 
   return (
     <>
-      <div className="absolute bg-white shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg border border-gray-200 bottom-[35%] mt-1 left-[85%] z-20 w-60 py-1">
+      <div className="absolute bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg border border-text-200 bottom-[35%] mt-1 left-[85%] z-20 w-60 py-1">
         {profile && (
           <>
             <div className="flex items-center gap-2 p-2">
@@ -218,7 +218,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
               <h2 className="font-bold">{profile.full_name}</h2>
             </div>
 
-            <div className="h-[1px] bg-gray-100 my-1"></div>
+            <div className="h-[1px] bg-text-50 my-1"></div>
           </>
         )}
         {menuItems.map((group, groupIndex) => (
@@ -239,7 +239,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
                 />
 
                 {item.subMenu && activeSubmenu === item.label && (
-                  <div className="absolute bg-white shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg border border-gray-200 top-0 left-full z-20 w-60 py-1">
+                  <div className="absolute bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg border border-text-200 top-0 left-full z-20 w-60 py-1">
                     {item.subMenu.map((subItem, subIndex) => (
                       <MenuItem
                         key={subIndex}
@@ -256,7 +256,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
               </div>
             ))}
             {groupIndex < menuItems.length - 1 && (
-              <div className="h-[1px] bg-gray-100 my-1"></div>
+              <div className="h-[1px] bg-text-50 my-1"></div>
             )}
           </React.Fragment>
         ))}

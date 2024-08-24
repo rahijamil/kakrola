@@ -8,6 +8,11 @@ import DocsSidebar from "./DocsSidebar";
 
 const SidebarWrapper = () => {
   const pathname = usePathname();
+
+  if (pathname.startsWith("/app/onboard")) {
+    return null;
+  }
+
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [afterCollapse, setAfterCollapse] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(260);
@@ -82,6 +87,82 @@ const SidebarWrapper = () => {
     }
   }, [isCollapsed]);
 
+  const ThemeSwitcher = () => {
+    const switchTheme = (
+      theme:
+        | "kakrola"
+        | "dark"
+        | "moonstone"
+        | "tangerine"
+        | "kale"
+        | "blueberry"
+        | "lavender"
+        | "raspberry"
+    ) => {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem("theme", theme); // Save theme preference in local storage
+    };
+
+    React.useEffect(() => {
+      // Load the saved theme from local storage on initial load
+      const savedTheme = localStorage.getItem("theme") || "kakrola";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+    }, []);
+
+    return (
+      <div className="flex flex-col gap-3">
+        <button
+          onClick={() => switchTheme("kakrola")}
+          className="px-3 py-1.5 hover:bg-primary-50"
+        >
+          Kakrola Light
+        </button>
+        <button
+          onClick={() => switchTheme("dark")}
+          className="px-3 py-1.5 hover:bg-primary-50"
+        >
+          Dark
+        </button>
+        <button
+          onClick={() => switchTheme("moonstone")}
+          className="px-3 py-1.5 hover:bg-primary-50"
+        >
+          Moonstone
+        </button>
+        <button
+          onClick={() => switchTheme("tangerine")}
+          className="px-3 py-1.5 hover:bg-primary-50"
+        >
+          Tangerine
+        </button>
+        <button
+          onClick={() => switchTheme("kale")}
+          className="px-3 py-1.5 hover:bg-primary-50"
+        >
+          Kale
+        </button>
+        <button
+          onClick={() => switchTheme("blueberry")}
+          className="px-3 py-1.5 hover:bg-primary-50"
+        >
+          Blueberry
+        </button>
+        <button
+          onClick={() => switchTheme("lavender")}
+          className="px-3 py-1.5 hover:bg-primary-50"
+        >
+          Lavender
+        </button>
+        <button
+          onClick={() => switchTheme("raspberry")}
+          className="px-3 py-1.5 hover:bg-primary-50"
+        >
+          Raspberry
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div className="flex h-screen">
       <MainSidebar toggleSidebar={toggleSidebar} />
@@ -95,11 +176,13 @@ const SidebarWrapper = () => {
         )}
 
         <div
-          className={`fixed md:relative flex bg-indigo-50 transition-all duration-300 h-screen whitespace-nowrap origin-left ${
+          className={`fixed md:relative flex bg-primary-25 transition-all duration-300 h-screen whitespace-nowrap origin-left z-20 md:z-[auto] ${
             isCollapsed ? "-left-full" : "left-0"
           }`}
           style={{ width: `${sidebarWidth}px`, marginLeft: `${sidebarLeft}px` }}
         >
+          <ThemeSwitcher />
+
           {pathname.startsWith("/app") &&
           !pathname.startsWith("/app/threads") &&
           !pathname.startsWith("/app/docs") ? (
@@ -113,8 +196,8 @@ const SidebarWrapper = () => {
           <div
             className={`w-1 min-w-1 min-h-full h-full cursor-col-resize hidden md:block z-10 ${
               isResizing
-                ? "bg-indigo-200"
-                : "hover:bg-indigo-200 bg-transparent"
+                ? "bg-primary-200"
+                : "hover:bg-primary-200 bg-transparent"
             }`}
             onMouseDown={handleMouseDown}
           ></div>

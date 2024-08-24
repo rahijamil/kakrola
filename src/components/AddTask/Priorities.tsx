@@ -14,8 +14,8 @@ import Dropdown from "../ui/Dropdown";
 const priorities = [
   { value: "P1", label: "Priority 1", color: "text-red-500" },
   { value: "P2", label: "Priority 2", color: "text-orange-500" },
-  { value: "P3", label: "Priority 3", color: "text-indigo-500" },
-  { value: "Priority", label: "Priority 4", color: "text-gray-500" },
+  { value: "P3", label: "Priority 3", color: "text-primary-500" },
+  { value: "Priority", label: "Priority 4", color: "text-text-500" },
 ];
 
 const PriorityIcon = ({ priority }: { priority: string }) => {
@@ -76,7 +76,7 @@ const Priorities = ({
             <div
               ref={triggerRef}
               className={`flex items-center justify-between rounded-lg transition p-[6px] px-2 group cursor-pointer ${
-                isOpen ? "bg-indigo-100" : "hover:bg-indigo-100"
+                isOpen ? "bg-primary-100" : "hover:bg-primary-100"
               }`}
               onClick={onClick}
             >
@@ -97,8 +97,8 @@ const Priorities = ({
           ) : (
             <div
               ref={triggerRef}
-              className={`flex items-center gap-1 cursor-pointer p-1 px-2 rounded-lg border border-gray-200 ${
-                isOpen ? "bg-gray-100" : "hover:bg-gray-100"
+              className={`flex items-center gap-1 cursor-pointer p-1 px-2 rounded-lg border border-text-200 ${
+                isOpen ? "bg-text-50" : "hover:bg-primary-50"
               }`}
               onClick={onClick}
             >
@@ -107,7 +107,7 @@ const Priorities = ({
               {isSmall ? (
                 <>
                   {taskData.priority !== "Priority" && (
-                    <span className="text-xs text-gray-700">
+                    <span className="text-xs text-text-700">
                       {
                         priorities.find((p) => p.value === taskData.priority)
                           ?.value
@@ -116,7 +116,7 @@ const Priorities = ({
                   )}
                 </>
               ) : (
-                <span className="text-xs text-gray-700">
+                <span className="text-xs text-text-700">
                   {priorities.find((p) => p.value === taskData.priority)?.value}
                 </span>
               )}
@@ -128,9 +128,9 @@ const Priorities = ({
                     ev.stopPropagation();
                     setTaskData({ ...taskData, priority: "Priority" });
                   }}
-                  className="text-gray-500 hover:text-gray-700 p-[2px] hover:bg-gray-200 rounded-lg"
+                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-primary-50 rounded-lg"
                 >
-                  <X strokeWidth={1.5} className="w-3 h-3 text-gray-500" />
+                  <X strokeWidth={1.5} className="w-3 h-3 text-text-500" />
                 </button>
               )}
             </div>
@@ -142,7 +142,7 @@ const Priorities = ({
           {priorities.map((priority) => (
             <li
               key={priority.value}
-              className={`flex items-center px-2 py-2 transition-colors hover:bg-gray-100 cursor-pointer text-gray-700`}
+              className={`flex items-center px-2 py-2 transition-colors hover:bg-primary-50 cursor-pointer text-text-700`}
               onClick={() => {
                 setTaskData({
                   ...taskData,
@@ -156,7 +156,7 @@ const Priorities = ({
               {taskData.priority === priority.value && (
                 <Check
                   strokeWidth={2}
-                  className="w-4 h-4 ml-auto text-indigo-600"
+                  className="w-4 h-4 ml-auto text-primary-600"
                 />
               )}
             </li>

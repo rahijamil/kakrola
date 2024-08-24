@@ -32,9 +32,9 @@ const AddNewSectionListView = ({
         className={`flex items-center gap-2 pl-7 transition ${showAddSection ? "pointer-events-none opacity-0 cursor-default" : "cursor-pointer opacity-0 hover:opacity-100"}`}
         onClick={() => setShowAddSection(section.id)}
       >
-        <div className="flex-1 bg-indigo-400 h-[1px]"></div>
-        <div className="font-semibold text-indigo-600 text-sm">Add section</div>
-        <div className="flex-1 bg-indigo-500 h-[1px]"></div>
+        <div className="flex-1 bg-primary-400 h-[1px]"></div>
+        <div className="font-semibold text-primary-600 text-sm">Add section</div>
+        <div className="flex-1 bg-primary-500 h-[1px]"></div>
       </div>
 
       {showAddSection == section.id && (
@@ -47,14 +47,14 @@ const AddNewSectionListView = ({
             value={newSectionName}
             onChange={(e) => setNewSectionName(e.target.value)}
             placeholder="Name this section"
-            className="border border-gray-200 focus:outline-none focus:border-gray-400 w-full rounded px-2 py-1 font-semibold"
+            className="border border-text-200 focus:outline-none focus:border-text-400 w-full rounded px-2 py-1 font-semibold"
             autoFocus
           />
 
           <div className="flex items-center gap-2">
             <button
               type="submit"
-              className="px-2 py-[6px] text-xs text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-600 disabled:cursor-not-allowed transition disabled:opacity-50"
+              className="px-2 py-[6px] text-xs text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:bg-primary-600 disabled:cursor-not-allowed transition disabled:opacity-50"
               disabled={!newSectionName.trim() || sectionAddLoading}
             >
               {sectionAddLoading ? (
@@ -70,7 +70,7 @@ const AddNewSectionListView = ({
             <button
               type="button"
               onClick={() => setShowAddSection(null)}
-              className="px-3 py-[6px] text-xs text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-lg disabled:opacity-50 disabled:hover:bg-gray-100 disabled:cursor-not-allowed"
+              className="px-3 py-[6px] text-xs text-text-600 transition bg-text-50 hover:bg-primary-50 rounded-lg disabled:opacity-50 disabled:hover:bg-primary-50 disabled:cursor-not-allowed"
               disabled={sectionAddLoading}
             >
               Cancel

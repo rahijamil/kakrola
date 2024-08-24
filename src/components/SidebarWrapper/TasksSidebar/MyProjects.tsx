@@ -75,7 +75,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
   return (
     <>
       <div className="mt-4 px-2">
-        <div className="relative text-gray-700 hover:bg-gray-200 rounded-lg transition">
+        <div className="relative text-text-700 hover:bg-primary-50 rounded-lg transition">
           <Link
             href={`/app/projects`}
             className={`w-full flex items-center justify-between pl-2 py-[6px] gap-1`}
@@ -110,7 +110,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
                 </span>
               </div>
               {projects.length > 3 && (
-                <span className="bg-gray-300 text-gray-700 px-1 py-[1px] rounded-lg uppercase text-[11px] whitespace-nowrap font-medium">
+                <span className="bg-text-300 text-text-700 px-1 py-[1px] rounded-lg uppercase text-[11px] whitespace-nowrap font-medium">
                   Used: {projects.length}/{5}
                 </span>
               )}
@@ -119,7 +119,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
 
           <div className="opacity-0 group-hover:opacity-100 transition flex items-center absolute right-0 top-1/2 -translate-y-1/2">
             <button
-              className="p-1 hover:bg-gray-100 rounded-lg transition"
+              className="p-1 hover:bg-primary-50 rounded-lg transition"
               onClick={() => setShowAddProjectModal(true)}
             >
               <Plus
@@ -128,7 +128,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
               />
             </button>
             <button
-              className="p-1 hover:bg-gray-100 rounded-lg transition"
+              className="p-1 hover:bg-primary-50 rounded-lg transition"
               onClick={() => setShowProjects(!showProjects)}
             >
               <ChevronRight
@@ -174,7 +174,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 className={`${
-                                  snapshot.isDragging && "bg-white"
+                                  snapshot.isDragging && "bg-surface"
                                 }`}
                               >
                                 <ProjectItem

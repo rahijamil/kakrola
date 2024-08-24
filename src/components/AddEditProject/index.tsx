@@ -219,8 +219,8 @@ const AddEditProject = ({
       <>
         <DialogHeader>
           <DialogTitle>Add project</DialogTitle>
-          <button className="p-2 rounded-lg hover:bg-gray-100 transition">
-            <CircleHelp strokeWidth={1.5} className="w-5 h-5 text-gray-500" />
+          <button className="p-2 rounded-lg hover:bg-primary-50 transition">
+            <CircleHelp strokeWidth={1.5} className="w-5 h-5 text-text-500" />
           </button>
         </DialogHeader>
 
@@ -299,7 +299,7 @@ const AddEditProject = ({
                   setProjectData({ ...projectData, view: value })
                 }
               />
-              <p className="text-gray-500 text-xs">
+              <p className="text-text-500 text-xs">
                 Layout is synced between teammates in shared projects. Learn
                 more.
               </p>
@@ -310,18 +310,18 @@ const AddEditProject = ({
             <p className="text-red-500 p-4 pt-0 text-center text-xs">{error}</p>
           )}
 
-          <div className="flex justify-end gap-4 select-none border-t border-gray-200 p-4">
+          <div className="flex justify-end gap-4 select-none border-t border-text-200 p-4">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-600 bg-gray-200 rounded hover:bg-gray-300 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-gray-200"
+              className="px-4 py-2 text-text-600 bg-text-200 rounded hover:bg-text-300 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-primary-50"
               disabled={loading}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-white bg-indigo-600 rounded hover:bg-indigo-700 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-indigo-600"
+              className="px-4 py-2 text-white bg-primary-600 rounded hover:bg-primary-700 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-primary-600"
               disabled={loading}
             >
               {loading ? (

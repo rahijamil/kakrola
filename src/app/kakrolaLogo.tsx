@@ -22,12 +22,12 @@ const KakrolaLogo = ({
 
       {isTitle && (
         <span
-          className={`font-bold text-indigo-600 ${
+          className={`font-semibold text-[#0076A3] ${
             size === "sm"
               ? "text-xl"
               : size === "md"
-              ? "text-3xl"
-              : "text-4xl"
+              ? "text-2xl"
+              : "text-3xl"
           }`}
         >
           Kakrola

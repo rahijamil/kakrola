@@ -15,23 +15,23 @@ const LandingPage = () => {
 
       <main>
         <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-white via-indigo-50 to-white z-0"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-white viaindigo50 to-white z-0"></div>
           <HeroSection />
           <SectionsLayout />
         </div>
 
         <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-white via-indigo-50 to-white z-0"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-white viaindigo50 to-white z-0"></div>
           <section className="min-h-screen"></section>
         </div>
 
         {/* CTA Section */}
-        <section className="bg-gradient-to-r from-indigo-600 to-purple-600 py-20 sm:py-32">
+        <section className="bg-gradient-to-r fromindigo600 to-purple-600 py-20 sm:py-32">
           <div className="wrapper">
             <div className="lg:flex lg:items-center lg:justify-between">
               <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
                 <span className="block">Ready to boost your productivity?</span>
-                <span className="block text-indigo-200">
+                <span className="block textindigo200">
                   Start using Kakrola today.
                 </span>
               </h2>
@@ -52,7 +52,7 @@ const LandingPage = () => {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="text-lg px-8 py-4 bg-white text-indigo-600 hover:bg-indigo-50"
+                    className="text-lg px-8 py-4 bg-surface textindigo600 hover:bgindigo50"
                   >
                     Learn more
                   </Button>

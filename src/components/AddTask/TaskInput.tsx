@@ -39,7 +39,7 @@ export const TaskInput: React.FC<{
     return parts
       .map((part, index) =>
         regex.test(part)
-          ? `<span class="bg-indigo-200 rounded px-1 py-0.5 text-indigo-700">${part}</span>`
+          ? `<span class="bg-primary-200 rounded px-1 py-0.5 text-primary-700">${part}</span>`
           : part
       )
       .join("");

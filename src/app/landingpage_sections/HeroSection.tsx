@@ -18,7 +18,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-3xl font-extrabold text-gray-900 sm:text-4xl md:text-5xl lg:text-6xl"
+            className="text-3xl font-extrabold text-text-900 sm:text-4xl md:text-5xl lg:text-6xl"
           >
             Tasks. Projects. Ideas.
           </motion.h1>
@@ -26,7 +26,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="mt-4 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-6 md:max-w-2xl lg:text-xl"
+            className="mt-4 max-w-md mx-auto text-base text-text-500 sm:text-lg md:mt-6 md:max-w-2xl lg:text-xl"
           >
             Simplify your workflow and collaborate with ease. Achieve more with
             less effort.

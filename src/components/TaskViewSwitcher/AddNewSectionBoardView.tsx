@@ -129,9 +129,9 @@ const AddNewSectionBoardView = ({
       {(columnId ? showAddSection !== columnId : !showUngroupedAddSection) && (
         <>
           {(columns ? columns.length - 1 == index : true) ? (
-            <div className="bg-gray-100 p-3 py-2 rounded-lg min-w-[300px] h-fit ml-5">
+            <div className="bg-text-50 p-3 py-2 rounded-lg min-w-[300px] h-fit ml-5">
               <button
-                className="text-gray-500 hover:text-indigo-600 flex items-center gap-2 w-full group py-1 whitespace-nowrap"
+                className="text-text-500 hover:text-primary-600 flex items-center gap-2 w-full group py-1 whitespace-nowrap"
                 onClick={() =>
                   columnId
                     ? setShowAddSection(columnId)
@@ -179,11 +179,11 @@ const AddNewSectionBoardView = ({
                     : setShowUngroupedAddSection(true)
                 }
               >
-                <div className="flex-1 bg-indigo-400 w-[1px]"></div>
-                <div className="font-medium text-indigo-600 text-sm">
+                <div className="flex-1 bg-primary-400 w-[1px]"></div>
+                <div className="font-medium text-primary-600 text-sm">
                   Add section
                 </div>
-                <div className="flex-1 bg-indigo-500 w-[1px]"></div>
+                <div className="flex-1 bg-primary-500 w-[1px]"></div>
               </div>
             </div>
           )}
@@ -200,14 +200,14 @@ const AddNewSectionBoardView = ({
             value={newSectionName}
             onChange={(e) => setNewSectionName(e.target.value)}
             placeholder="Name this section"
-            className="border border-gray-200 focus:outline-none focus:border-gray-400 w-full rounded px-2 py-1 font-semibold"
+            className="border border-text-200 focus:outline-none focus:border-text-400 w-full rounded px-2 py-1 font-semibold"
             autoFocus
           />
 
           <div className="flex items-center gap-2">
             <button
               type="submit"
-              className="px-2 py-[6px] text-xs text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-600 disabled:cursor-not-allowed transition disabled:opacity-50"
+              className="px-2 py-[6px] text-xs text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:bg-primary-600 disabled:cursor-not-allowed transition disabled:opacity-50"
               disabled={!newSectionName.trim() || loading}
             >
               {loading ? (
@@ -226,7 +226,7 @@ const AddNewSectionBoardView = ({
                 setShowAddSection(null);
                 setShowUngroupedAddSection(false);
               }}
-              className="px-3 py-[6px] text-xs text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-lg disabled:opacity-50 disabled:hover:bg-gray-100 disabled:cursor-not-allowed"
+              className="px-3 py-[6px] text-xs text-text-600 transition bg-text-50 hover:bg-primary-50 rounded-lg disabled:opacity-50 disabled:hover:bg-primary-50 disabled:cursor-not-allowed"
               disabled={loading}
             >
               Cancel

@@ -74,12 +74,12 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     <div className="relative" ref={selectRef}>
       <label
         htmlFor={id}
-        className="block font-bold text-gray-700 mb-1"
+        className="block font-bold text-text-700 mb-1"
       >
         {label}
       </label>
       <div
-        className={`flex items-center justify-between w-full h-10 border border-gray-300 rounded-lg cursor-pointer bg-white hover:border-gray-400 px-3 py-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-indigo-300 focus:border-gray-300 ${height}`}
+        className={`flex items-center justify-between w-full h-10 border border-text-300 rounded-lg cursor-pointer bg-surface hover:border-text-400 px-3 py-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-indigo-300 focus:border-text-300 ${height}`}
         onClick={() => setIsOpen(!isOpen)}
         onKeyDown={handleKeyDown}
         tabIndex={0}
@@ -96,21 +96,21 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
               style={{ backgroundColor: selectedOption.color }}
             ></div>
           )}
-          {Icon && <Icon className="w-5 h-5 text-gray-400 flex-shrink-0" />}
+          {Icon && <Icon className="w-5 h-5 text-text-400 flex-shrink-0" />}
           <span
             className={`truncate ${
-              selectedOption ? "text-gray-900" : "text-gray-400"
+              selectedOption ? "text-text-900" : "text-text-400"
             }`}
           >
             {selectedOption ? selectedOption.label : placeholder}
           </span>
         </div>
-        <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0 ml-2" />
+        <ChevronDown className="w-5 h-5 text-text-400 flex-shrink-0 ml-2" />
       </div>
 
       {isOpen && (
         <ul
-          className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto"
+          className="absolute z-10 w-full mt-1 bg-surface border border-text-300 rounded-lg shadow-lg max-h-60 overflow-auto"
           role="listbox"
         >
           {options.map((option, index) => (
@@ -118,8 +118,8 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
               key={option.value}
               className={`px-4 cursor-pointer flex items-center justify-between ${height ? height : "py-2"} ${
                 index === highlightedIndex
-                  ? "bg-indigo-100"
-                  : "hover:bg-gray-100"
+                  ? "bg-primary-100"
+                  : "hover:bg-primary-50"
               }`}
               onClick={() => {
                 onChange({ target: { id, value: option.value, label: option.label } });
@@ -141,7 +141,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
               {value === option.value && (
                 <Check
                   strokeWidth={1.5}
-                  className="w-4 h-4 text-indigo-600 flex-shrink-0 ml-2"
+                  className="w-4 h-4 text-primary-600 flex-shrink-0 ml-2"
                 />
               )}
             </li>

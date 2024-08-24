@@ -33,7 +33,7 @@ const MonthCalendar = ({
 
   return (
     <div className="p-2">
-      {/* <div className="font-semibold mb-2 pb-2 border-b border-gray-200 text-xs">
+      {/* <div className="font-semibold mb-2 pb-2 border-b border-text-200 text-xs">
         {format(month, "MMM")}
       </div> */}
       <div className="grid grid-cols-7 place-items-center gap-1">
@@ -49,8 +49,8 @@ const MonthCalendar = ({
                   onClick={() => onSelect(day)}
                   className={`rounded-full text-xs w-7 h-7 ${
                     selected && isSameDay(day, selected)
-                      ? "bg-indigo-500 text-white"
-                      : "hover:bg-indigo-50"
+                      ? "bg-primary-500 text-white"
+                      : "hover:bg-primary-50"
                   }`}
                 >
                   {format(day, "d")}

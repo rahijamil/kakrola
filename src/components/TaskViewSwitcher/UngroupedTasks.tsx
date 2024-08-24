@@ -44,7 +44,7 @@ const UngroupedTasks: React.FC<UngroupedTasksProps> = ({
               .filter((t) => !t.parent_task_id)
               .map((task, index) => (
                 <Fragment key={task.id}>
-                  <li className="border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer">
+                  <li className="border-b border-text-200 p-1 pl-0 flex items-center gap-3 cursor-pointer">
                     <TaskItem
                       showDeleteConfirm={showTaskDeleteConfirm}
                       setShowDeleteConfirm={setShowTaskDeleteConfirm}
@@ -71,7 +71,7 @@ const UngroupedTasks: React.FC<UngroupedTasksProps> = ({
                         .map((childTask, childIndex) => (
                           <li
                             key={childTask.id}
-                            className="border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer"
+                            className="border-b border-text-200 p-1 pl-0 flex items-center gap-3 cursor-pointer"
                           >
                             <TaskItem
                               task={childTask}

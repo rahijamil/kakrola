@@ -365,10 +365,10 @@ const ListView: React.FC<ListViewProps> = ({
 
       // Update section with actual ID from database
       setSections(
-        sections
-          .map((s) =>
-            s.id === newSection.id ? { ...newSection, id: data.id } : s
-          )
+        updatedSections
+          .map((s) => {
+            return s.id == newSection.id ? { ...newSection, id: data.id } : s;
+          })
           .sort((a, b) => a.order - b.order)
       );
     } catch (error) {

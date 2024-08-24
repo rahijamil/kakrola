@@ -36,7 +36,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <div className="flex items-center justify-between">
           {label && (
             <>
-              <label htmlFor={id} className="font-bold text-gray-700">
+              <label htmlFor={id} className="font-bold text-text-700">
                 {label}
               </label>
 
@@ -49,11 +49,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {Icon && (
             <Icon
               strokeWidth={1.5}
-              className="h-5 w-5 text-gray-400 absolute top-1/2 left-3 -translate-y-1/2 pointer-events-none"
+              className="h-5 w-5 text-text-400 absolute top-1/2 left-3 -translate-y-1/2 pointer-events-none"
             />
           )}
           <input
-            className={`flex w-full rounded-lg border border-gray-300 hover:border-gray-400 focus-visible:border-gray-300 bg-background ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ring-indigo-300 disabled:cursor-not-allowed disabled:opacity-50 read-only:bg-indigo-50 read-only:cursor-default ${
+            className={`flex w-full rounded-lg border border-text-300 hover:border-text-400 focus-visible:border-text-300 bg-background ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ring-indigo-300 disabled:cursor-not-allowed disabled:opacity-50 read-only:bg-primary-50 read-only:cursor-default ${
               howBig == "sm"
                 ? "px-2 h-8"
                 : howBig == "md"

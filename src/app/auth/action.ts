@@ -43,7 +43,7 @@ export async function signup({
   }
 
   revalidatePath("/", "layout");
-  redirect("/app");
+  redirect("/app/onboarding");
 }
 
 export async function forgotPassword(email: string) {
@@ -108,5 +108,40 @@ export async function signInWithProvider(provider: "google" | "github") {
 
   if (data.url) {
     redirect(data.url);
+  }
+
+  // After redirect and successful OAuth flow, handle user session check
+  const { data: sessionData, error: sessionError } =
+    await supabaseServer.auth.getSession();
+
+  if (sessionError || !sessionData?.session?.user) {
+    return {
+      success: false,
+      error: sessionError?.message || "Unable to retrieve user session.",
+    };
+  }
+
+  const user = sessionData.session.user;
+
+  // Check if the user is onboarded by checking the is_onboarded flag in the profiles table
+  const { data: profile, error: profileError } = await supabaseServer
+    .from("profiles")
+    .select("is_onboarded")
+    .eq("email", user.email)
+    .single();
+
+  if (profileError) {
+    // Handle the case where there is an error checking the profile table
+    return { success: false, error: profileError.message || "Unknown error" };
+  }
+
+  if (profile && profile.is_onboarded === false) {
+    // If the user is not onboarded, redirect to the onboarding page
+    revalidatePath("/", "layout");
+    redirect("/app/onboarding");
+  } else {
+    // If the user is onboarded, proceed with normal login
+    revalidatePath("/", "layout");
+    redirect("/app");
   }
 }

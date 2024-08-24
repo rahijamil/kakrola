@@ -4,7 +4,7 @@ import Image from "next/image";
 
 const LandingPageFooter = () => {
   return (
-    <footer className="bg-white" aria-labelledby="footer-heading">
+    <footer className="bg-surface" aria-labelledby="footer-heading">
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
@@ -12,7 +12,7 @@ const LandingPageFooter = () => {
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
             <Image src="/kakrola_text.svg" width={130} height={0} alt="Kakrola" />
-            <p className="text-gray-700 ">
+            <p className="text-text-700 ">
               Making the world more productive, one task at a time.
             </p>
             {/* <div className="flex space-x-6">
@@ -20,7 +20,7 @@ const LandingPageFooter = () => {
                 <Link
                   key={social}
                   href="#"
-                  className="text-gray-700 hover:text-gray-600"
+                  className="text-text-700 hover:text-text-600"
                 >
                   <span className="sr-only">{social}</span>
                   <svg
@@ -42,7 +42,7 @@ const LandingPageFooter = () => {
           {/* <div className="mt-12 grid grid-cols-2 gap-8 xl:mt-0 xl:col-span-2">
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 className="text-sm font-semibold text-gray-800 tracking-wider uppercase">
+                <h3 className="text-sm font-semibold text-text-800 tracking-wider uppercase">
                   Product
                 </h3>
                 <ul className="mt-4 space-y-4">
@@ -56,7 +56,7 @@ const LandingPageFooter = () => {
                     <li key={item}>
                       <Link
                         href="#"
-                        className=" text-gray-700 hover:text-gray-900"
+                        className=" text-text-700 hover:text-text-900"
                       >
                         {item}
                       </Link>
@@ -65,7 +65,7 @@ const LandingPageFooter = () => {
                 </ul>
               </div>
               <div className="mt-12 md:mt-0">
-                <h3 className="text-sm font-semibold text-gray-800 tracking-wider uppercase">
+                <h3 className="text-sm font-semibold text-text-800 tracking-wider uppercase">
                   Support
                 </h3>
                 <ul className="mt-4 space-y-4">
@@ -79,7 +79,7 @@ const LandingPageFooter = () => {
                     <li key={item}>
                       <Link
                         href="#"
-                        className=" text-gray-700 hover:text-gray-900"
+                        className=" text-text-700 hover:text-text-900"
                       >
                         {item}
                       </Link>
@@ -90,7 +90,7 @@ const LandingPageFooter = () => {
             </div>
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 className="text-sm font-semibold text-gray-800 tracking-wider uppercase">
+                <h3 className="text-sm font-semibold text-text-800 tracking-wider uppercase">
                   Company
                 </h3>
                 <ul className="mt-4 space-y-4">
@@ -99,7 +99,7 @@ const LandingPageFooter = () => {
                       <li key={item}>
                         <Link
                           href="#"
-                          className=" text-gray-700 hover:text-gray-900"
+                          className=" text-text-700 hover:text-text-900"
                         >
                           {item}
                         </Link>
@@ -109,7 +109,7 @@ const LandingPageFooter = () => {
                 </ul>
               </div>
               <div className="mt-12 md:mt-0">
-                <h3 className="text-sm font-semibold text-gray-800 tracking-wider uppercase">
+                <h3 className="text-sm font-semibold text-text-800 tracking-wider uppercase">
                   Legal
                 </h3>
                 <ul className="mt-4 space-y-4">
@@ -123,7 +123,7 @@ const LandingPageFooter = () => {
                     <li key={item}>
                       <Link
                         href="#"
-                        className=" text-gray-700 hover:text-gray-900"
+                        className=" text-text-700 hover:text-text-900"
                       >
                         {item}
                       </Link>
@@ -134,8 +134,8 @@ const LandingPageFooter = () => {
             </div>
           </div> */}
         </div>
-        <div className="mt-12 border-t border-gray-400 pt-8">
-          <p className=" text-gray-700 text-center sm:text-left xl:text-center">
+        <div className="mt-12 border-t border-text-400 pt-8">
+          <p className=" text-text-700 text-center sm:text-left xl:text-center">
             &copy; 2024 Kakrola, Inc. All rights reserved.
           </p>
         </div>

@@ -10,10 +10,10 @@ const AppNotifications = () => {
     <LayoutWrapper headline="Notifications">
       <div>
         <div>
-          <ul className="flex items-center p-1 rounded-full bg-gray-100 w-fit">
+          <ul className="flex items-center p-1 rounded-full bg-text-50 w-fit">
             <li
               className={`p-1 px-4 rounded-full font-medium cursor-pointer transition ${
-                allUnread === "all" ? "bg-white" : ""
+                allUnread === "all" ? "bg-surface" : ""
               }`}
               onClick={() => setAllUnread("all")}
             >
@@ -21,7 +21,7 @@ const AppNotifications = () => {
             </li>
             <li
               className={`p-1 px-4 rounded-full font-medium cursor-pointer transition ${
-                allUnread === "unread" ? "bg-white" : ""
+                allUnread === "unread" ? "bg-surface" : ""
               }`}
               onClick={() => setAllUnread("unread")}
             >
@@ -44,7 +44,7 @@ const AppNotifications = () => {
             {allUnread === "all" && (
               <h3 className="font-medium text-base">Stay in the loop</h3>
             )}
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-text-600">
               {allUnread === "all"
                 ? `Here, you’ll find notifications for any changes that happen in
               your shared projects.`

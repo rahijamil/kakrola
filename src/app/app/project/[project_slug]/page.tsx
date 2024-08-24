@@ -63,13 +63,13 @@ const ProjectDetails = ({
 
   const setProjectTasks = useCallback(
     (updatedTasks: TaskType[]) => {
-      setTasks((prev) =>
-        prev.map((task) =>
-          task.project_id === currentProject?.id
-            ? updatedTasks.find((t) => t.id === task.id) || task
-            : task
-        )
-      );
+      setTasks((prev) => {
+        const allTasks = prev.filter(
+          (t) => t.project_id !== currentProject?.id
+        );
+
+        return [...allTasks, ...updatedTasks];
+      });
     },
     [currentProject?.id, setTasks]
   );
@@ -136,7 +136,7 @@ const ProjectDetails = ({
 
         <div className="text-center space-y-2 w-72">
           <h3 className="font-bold text-base">Project not found</h3>
-          <p className="text-sm text-gray-600 pb-4">
+          <p className="text-sm text-text-600 pb-4">
             The project doesn&apos;t seem to exist or you don&apos;t have
             permission to access it.
           </p>
@@ -189,7 +189,7 @@ const ProjectDetails = ({
               <h3 className="font-medium text-base">
                 Start small (or dream big)...
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-text-600">
                 Add your tasks or find a template to get started with your
                 project.
               </p>

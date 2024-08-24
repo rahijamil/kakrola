@@ -49,7 +49,7 @@ const SidebarProjectMoreOptions = ({
     <div>
       <div
         ref={dropdownRef}
-        className="fixed z-20 w-60 bg-white rounded-lg shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] border border-gray-200 py-1"
+        className="fixed z-20 w-60 bg-surface rounded-lg shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] border border-text-200 py-1"
         style={{
           top: `${dropdownPosition.top}px`,
           left: `${dropdownPosition.left}px`,
@@ -61,7 +61,7 @@ const SidebarProjectMoreOptions = ({
               setAboveBellow("above");
               onClose();
             }}
-            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
+            className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center"
           >
             <ArrowUp strokeWidth={1.5} className="w-4 h-4 mr-2" /> Add project
             above
@@ -71,42 +71,42 @@ const SidebarProjectMoreOptions = ({
               setAboveBellow("below");
               onClose();
             }}
-            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
+            className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center"
           >
             <ArrowDown strokeWidth={1.5} className="w-4 h-4 mr-2" /> Add project
             below
           </button>
         </div>
-        <div className="h-[1px] bg-gray-100 my-1"></div>
+        <div className="h-[1px] bg-text-50 my-1"></div>
         <div>
           <button
             onClick={() => {
               setProjectEdit(true);
               onClose();
             }}
-            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
+            className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center"
           >
             <Pencil strokeWidth={1.5} className="w-4 h-4 mr-2" /> Edit
           </button>
           <FavoriteOption project={project} />
-          {/* <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
+          {/* <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center">
             <CopyPlusIcon className="w-4 h-4 mr-2" /> Duplicate
           </button> */}
         </div>
-        <div className="h-[1px] bg-gray-100 my-1"></div>
+        <div className="h-[1px] bg-text-50 my-1"></div>
         {/* <div>
-          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
+          <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center">
             <UserPlusIcon className="w-4 h-4 mr-2" /> Share
           </button>
         </div>
-        <div className="h-[1px] bg-gray-100 my-1"></div> */}
+        <div className="h-[1px] bg-text-50 my-1"></div> */}
         <div>
           <CopyProjectLinkOption
             onClose={onClose}
             project_slug={project.slug}
           />
         </div>
-        {/* <div className="h-[1px] bg-gray-100 my-1"></div>
+        {/* <div className="h-[1px] bg-text-50 my-1"></div>
         <div>
           <ImportCSVOption
             onClick={() => {
@@ -121,7 +121,7 @@ const SidebarProjectMoreOptions = ({
             }}
           />
         </div>
-        <div className="h-[1px] bg-gray-100 my-1"></div>
+        <div className="h-[1px] bg-text-50 my-1"></div>
         <div>
           <ActivityLogOption
             onClick={() => {
@@ -130,7 +130,7 @@ const SidebarProjectMoreOptions = ({
             }}
           />
         </div>
-        <div className="h-[1px] bg-gray-100 my-1"></div> */}
+        <div className="h-[1px] bg-text-50 my-1"></div> */}
         <div>
           <ArchiveOption
             onClick={() => {

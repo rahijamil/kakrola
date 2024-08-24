@@ -58,12 +58,12 @@ const CalendarView = ({
             <span>{format(month, "yyyy")}</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="font-medium rounded-lg border border-gray-200 text-xs flex items-center gap-1 text-gray-600">
-              <button className="hover:bg-gray-100 transition p-0.5">
+            <div className="font-medium rounded-lg border border-text-200 text-xs flex items-center gap-1 text-text-600">
+              <button className="hover:bg-primary-50 transition p-0.5">
                 <ChevronLeft strokeWidth={1.5} size={20} />
               </button>
               <span>Today</span>
-              <button className="hover:bg-gray-100 transition p-0.5">
+              <button className="hover:bg-primary-50 transition p-0.5">
                 <ChevronRight strokeWidth={1.5} size={20} />
               </button>
             </div>
@@ -71,10 +71,10 @@ const CalendarView = ({
             {setShowNoDateTasks && (
               <button
                 onClick={() => setShowNoDateTasks((prev) => !prev)}
-                className={`p-2 py-0.5 transition rounded-lg border border-gray-200 text-xs flex items-center gap-1 ${
+                className={`p-2 py-0.5 transition rounded-lg border border-text-200 text-xs flex items-center gap-1 ${
                   showNoDateTasks
-                    ? "bg-gray-100 text-gray-700 font-bold"
-                    : "text-gray-600 hover:bg-gray-100 font-medium"
+                    ? "bg-text-50 text-text-700 font-bold"
+                    : "text-text-600 hover:bg-primary-50 font-medium"
                 }`}
               >
                 <span>
@@ -82,7 +82,7 @@ const CalendarView = ({
                 </span>
 
                 <div
-                  className={`${showNoDateTasks && "bg-gray-300 rounded-lg"}`}
+                  className={`${showNoDateTasks && "bg-text-300 rounded-lg"}`}
                 >
                   <PanelRight strokeWidth={1.5} size={20} />
                 </div>
@@ -94,13 +94,13 @@ const CalendarView = ({
         <div className="px-3">
           <div className="grid grid-cols-7 place-items-center mb-2">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-              <div key={day} className="text-center text-gray-500">
+              <div key={day} className="text-center text-text-500">
                 {day}
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-7 border-t border-l border-gray-200">
+          <div className="grid grid-cols-7 border-t border-l border-text-200">
             {calendarDays.map((day, index) => {
               // Check if the day belongs to the current month
               const isCurrentMonth = isSameMonth(day, month);
@@ -123,13 +123,13 @@ const CalendarView = ({
                           onClick={() => setSelectedDay(day)}
                           className={`h-full w-full p-2 text-right border-r border-b cursor-default transition space-y-1 ${
                             selectedDay?.getDate() == day.getDate() &&
-                            "bg-indigo-50"
+                            "bg-primary-50"
                           }`}
                         >
                           <span
                             className={`${
                               isToday(day) &&
-                              "bg-indigo-600 text-white rounded-lg w-6 h-6 inline-flex items-center justify-center"
+                              "bg-primary-600 text-white rounded-lg w-6 h-6 inline-flex items-center justify-center"
                             }`}
                           >
                             {format(day, "d")}
@@ -156,7 +156,7 @@ const CalendarView = ({
                                       {...draggableProvided.draggableProps}
                                       {...draggableProvided.dragHandleProps}
                                       key={task.id}
-                                      className="bg-gray-100 hover:bg-gray-200 transition p-1 flex items-center gap-1 border rounded-lg"
+                                      className="bg-text-50 hover:bg-primary-50 transition p-1 flex items-center gap-1 border rounded-lg"
                                       onClick={(ev) => ev.stopPropagation()}
                                     >
                                       <div
@@ -180,8 +180,8 @@ const CalendarView = ({
                                               : task.priority == "P2"
                                               ? "text-orange-500 bg-orange-100"
                                               : task.priority == "P3"
-                                              ? "text-indigo-500 bg-indigo-100"
-                                              : "text-gray-500"
+                                              ? "text-primary-500 bg-primary-100"
+                                              : "text-text-500"
                                           } ${
                                             task.is_completed
                                               ? "hidden"
@@ -197,8 +197,8 @@ const CalendarView = ({
                                               : task.priority == "P2"
                                               ? "text-orange-500"
                                               : task.priority == "P3"
-                                              ? "text-indigo-500"
-                                              : "text-gray-500"
+                                              ? "text-primary-500"
+                                              : "text-text-500"
                                           } ${
                                             !task.is_completed
                                               ? "hidden group-hover:block"
@@ -208,8 +208,8 @@ const CalendarView = ({
                                                     : task.priority == "P2"
                                                     ? "bg-orange-500"
                                                     : task.priority == "P3"
-                                                    ? "bg-indigo-500"
-                                                    : "bg-gray-500"
+                                                    ? "bg-primary-500"
+                                                    : "bg-text-500"
                                                 }`
                                           }`}
                                         />

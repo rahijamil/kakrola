@@ -28,7 +28,7 @@ const CommentOrActivityModal = ({
         </div>
 
         <button
-          className="p-1 hover:bg-gray-100 transition rounded-lg"
+          className="p-1 hover:bg-primary-50 transition rounded-lg"
           onClick={onClose}
         >
           <XMarkIcon className="w-6 h-6" />
@@ -36,10 +36,10 @@ const CommentOrActivityModal = ({
       </div>
 
       <div className="px-4">
-        <ul className="flex items-center p-1 rounded-full bg-gray-100 w-fit">
+        <ul className="flex items-center p-1 rounded-full bg-text-50 w-fit">
           <li
             className={`p-1 px-4 rounded-full font-medium cursor-pointer transition ${
-              showCommentOrActivity === "comment" ? "bg-white" : ""
+              showCommentOrActivity === "comment" ? "bg-surface" : ""
             }`}
             onClick={() => setShowCommentOrActivity("comment")}
           >
@@ -47,7 +47,7 @@ const CommentOrActivityModal = ({
           </li>
           <li
             className={`p-1 px-4 rounded-full font-medium cursor-pointer transition ${
-              showCommentOrActivity === "activity" ? "bg-white" : ""
+              showCommentOrActivity === "activity" ? "bg-surface" : ""
             }`}
             onClick={() => setShowCommentOrActivity("activity")}
           >
@@ -69,14 +69,14 @@ const CommentOrActivityModal = ({
                   className="rounded-full object-cover"
                   draggable={false}
                 />
-                <p className="text-sm text-gray-500 font-normal text-center">
+                <p className="text-sm text-text-500 font-normal text-center">
                   Centralize your project&apos;s high-level discussions in
                   project comments.
                 </p>
               </div>
             </div>
           ) : (
-            <p className="text-gray-700">Activity</p>
+            <p className="text-text-700">Activity</p>
           )}
         </div>
 

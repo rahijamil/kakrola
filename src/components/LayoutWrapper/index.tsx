@@ -136,12 +136,12 @@ const LayoutWrapper = ({
             className={`flex flex-col h-full w-full flex-1 transition-all duration-300`}
           >
             {view && setView && (
-              <div className="flex items-center justify-between p-4 py-3 sticky top-0 bg-white/70 backdrop-blur-md mb-1 z-10">
+              <div className="flex items-center justify-between p-4 py-3 sticky top-0 bg-backgrouond mb-1 z-10">
                 {!["Today", "Inbox"].includes(headline) && (
                   <div>
                     {teams.find((t) => t.id === project?.team_id)?.name ??
                       "My Projects"}{" "}
-                    /
+                    / {project?.name}
                   </div>
                 )}
 
@@ -157,14 +157,14 @@ const LayoutWrapper = ({
                           <button
                             className={`${
                               showShareOption
-                                ? "bg-gray-100"
-                                : "hover:bg-gray-100"
-                            } transition p-1 pr-3 rounded-lg cursor-pointer flex items-center gap-1`}
+                                ? "bg-text-50"
+                                : "hover:bg-primary-50"
+                            } transition p-1 md:pr-3 rounded-lg cursor-pointer flex items-center gap-1`}
                             onClick={() => setShowShareOption(true)}
                           >
                             <UserPlus
                               strokeWidth={1.5}
-                              className="w-5 h-5 text-gray-500"
+                              className="w-5 h-5 text-text-500"
                             />
                             <span className="hidden md:inline-block">
                               Share
@@ -176,14 +176,14 @@ const LayoutWrapper = ({
                       <button
                         className={`${
                           modalState.showViewOptions
-                            ? "bg-gray-100"
-                            : "hover:bg-gray-100"
-                        } transition p-1 pr-3 rounded-lg cursor-pointer flex items-center gap-1`}
+                            ? "bg-text-50"
+                            : "hover:bg-primary-50"
+                        } transition p-1 md:pr-3 rounded-lg cursor-pointer flex items-center gap-1`}
                         onClick={() => toggleModal("showViewOptions", true)}
                       >
                         <SlidersHorizontal
                           strokeWidth={1.5}
-                          className="w-5 h-5 text-gray-500"
+                          className="w-5 h-5 text-text-500"
                         />
                         <span className="hidden md:inline-block">View</span>
                       </button>
@@ -193,14 +193,14 @@ const LayoutWrapper = ({
                         <button
                           className={`${
                             modalState.showMoreOptions
-                              ? "bg-gray-100"
-                              : "hover:bg-gray-100"
+                              ? "bg-text-50"
+                              : "hover:bg-primary-50"
                           } transition p-1 rounded-lg cursor-pointer`}
                           onClick={() => toggleModal("showMoreOptions", true)}
                         >
                           <Ellipsis
                             strokeWidth={1.5}
-                            className="w-5 h-5 text-gray-500"
+                            className="w-5 h-5 text-text-500"
                           />
                         </button>
                       </li>
@@ -227,7 +227,7 @@ const LayoutWrapper = ({
                     modalState.editTitle ? (
                       <input
                         type="text"
-                        className="text-[26px] font-bold border border-gray-300 w-full rounded-lg p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+                        className="text-[26px] font-bold border border-text-300 w-full rounded-lg p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
                         value={projectTitle}
                         onBlur={handleEditTitle}
                         autoFocus
@@ -238,7 +238,7 @@ const LayoutWrapper = ({
                       />
                     ) : (
                       <h1
-                        className="text-[26px] font-bold border border-transparent w-fit hover:w-full hover:border-gray-200 rounded-lg p-1 py-[14px] cursor-text"
+                        className="text-[26px] font-bold border border-transparent w-fit hover:w-full hover:border-text-200 rounded-lg p-1 py-[14px] cursor-text"
                         onClick={() => toggleModal("editTitle", true)}
                       >
                         {project.name}

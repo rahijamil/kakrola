@@ -23,8 +23,8 @@ const DueDateButton = ({
       className={`flex items-center relative rounded-lg transition py-[6px] px-2 group w-full text-xs ${
         taskData.due_date !== null
           ? showDueDateSelector
-            ? "bg-indigo-100 cursor-pointer"
-            : "hover:bg-indigo-100 cursor-pointer"
+            ? "bg-primary-100 cursor-pointer"
+            : "hover:bg-primary-100 cursor-pointer"
           : "cursor-default"
       }`}
     >
@@ -38,7 +38,7 @@ const DueDateButton = ({
       ) : (
         <div className="flex items-center justify-between w-full">
           <p className="font-semibold text-xs">Due date</p>
-          <span className="text-gray-400">+</span>
+          <span className="text-text-400">+</span>
         </div>
       )}
 
@@ -48,7 +48,7 @@ const DueDateButton = ({
             ev.stopPropagation();
             setTaskData({ ...taskData, due_date: null });
           }}
-          className="p-1 rounded-lg hover:bg-white absolute top-1/2 -translate-y-1/2 right-1"
+          className="p-1 rounded-lg hover:bg-surface absolute top-1/2 -translate-y-1/2 right-1"
         >
           <X strokeWidth={1.5} size={16} />
         </div>

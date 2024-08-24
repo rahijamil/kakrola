@@ -1,4 +1,4 @@
-import { BlocksIcon, Copy, PencilLine } from "lucide-react";
+import { BlocksIcon, Copy, PencilLine, SwatchBook } from "lucide-react";
 import React, { Dispatch, SetStateAction } from "react";
 import { ProjectType } from "@/types/project";
 import DeleteOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/DeleteOption";
@@ -45,22 +45,22 @@ const ActiveProjectMoreOptions = ({
 }) => {
   return (
     <>
-      <div className="absolute bg-white rounded-lg border border-gray-200 top-11 right-4 z-20 w-60 py-1 shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)]">
+      <div className="absolute bg-surface rounded-lg border border-text-200 top-11 right-4 z-20 w-60 py-1 shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)]">
         <div>
           <button
             onClick={() => {
               setProjectEdit(true);
               onClose();
             }}
-            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
+            className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center"
           >
             <PencilLine strokeWidth={1.5} className="w-4 h-4 mr-2" /> Edit
           </button>
           <FavoriteOption project={project} />
-          {/* <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
+          {/* <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center">
             <CopyPlusIcon className="w-4 h-4 mr-4" /> Duplicate
           </button> */}
-          {/* <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
+          {/* <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center">
             <span className="w-5 h-5 mr-4 flex items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -77,14 +77,14 @@ const ActiveProjectMoreOptions = ({
             Add section
           </button> */}
         </div>
-        <div className="h-[1px] bg-gray-100 my-1"></div>
+        <div className="h-[1px] bg-text-50 my-1"></div>
         <div>
           <CopyProjectLinkOption
             onClose={onClose}
             project_slug={project.slug}
           />
         </div>
-        <div className="h-[1px] bg-gray-100 my-1"></div>
+        <div className="h-[1px] bg-text-50 my-1"></div>
         <div>
           <SaveTemplateOption
             onClick={() => {
@@ -92,15 +92,18 @@ const ActiveProjectMoreOptions = ({
               onClose();
             }}
           />
-          {/* <button
-            // onClick={onClick}
-            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
+          <button
+            onClick={() => {
+              
+              onClose();
+            }}
+            className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center"
           >
-            <BlocksIcon strokeWidth={1.5} className="w-4 h-4 mr-2" />{" "}
-            Browse templates
-          </button> */}
+            <SwatchBook strokeWidth={1.5} className="w-4 h-4 mr-2" /> Browse
+            templates
+          </button>
         </div>
-        <div className="h-[1px] bg-gray-100 my-1"></div>
+        <div className="h-[1px] bg-text-50 my-1"></div>
         <div>
           <ImportCSVOption
             onClick={() => {
@@ -115,7 +118,7 @@ const ActiveProjectMoreOptions = ({
             }}
           />
         </div>
-        <div className="h-[1px] bg-gray-100 my-1"></div>
+        <div className="h-[1px] bg-text-50 my-1"></div>
         <div>
           <ActivityLogOption
             onClick={() => {
@@ -124,7 +127,7 @@ const ActiveProjectMoreOptions = ({
             }}
           />
         </div>
-        <div className="h-[1px] bg-gray-100 my-1"></div>
+        <div className="h-[1px] bg-text-50 my-1"></div>
         <div>
           <ArchiveOption
             onClick={() => {

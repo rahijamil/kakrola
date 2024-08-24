@@ -79,7 +79,7 @@ const SectionsLayout = () => {
                 <div
                   className={`p-2 sm::p-4 ${
                     index == 0
-                      ? "text-white bg-indigo-600 rounded-lg"
+                      ? "text-white bg-primary-600 rounded-lg"
                       : index == 1
                       ? "text-white bg-purple-600 rounded-lg"
                       : index == 2
@@ -89,11 +89,11 @@ const SectionsLayout = () => {
                 >
                   <section.icon className="w-5 h-5 md:w-6 md:h-6" />
                 </div>
-                <h3 className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+                <h3 className="text-xl sm:text-3xl md:text-4xl font-bold text-text-900 tracking-tight">
                   {section.label}
                 </h3>
               </div>
-              <p className="text-base sm:text-lg text-gray-700">{section.content}</p>
+              <p className="text-base sm:text-lg text-text-700">{section.content}</p>
             </div>
 
             <div
@@ -103,7 +103,7 @@ const SectionsLayout = () => {
                   : "pr-3 sm:pr-8 rounded-r-3xl"
               } ${
                 index == 0
-                  ? "bg-indigo-600 border-indigo-600"
+                  ? "bg-primary-600 border-indigo-600"
                   : index == 1
                   ? "bg-purple-600 border-purple-600"
                   : index == 2

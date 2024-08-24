@@ -66,7 +66,7 @@ const InboxPage = () => {
             <h3 className="font-medium text-base">
               Your peace of mind is priceless
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-text-600">
               By default, tasks added here will be due today.
             </p>
           </div>

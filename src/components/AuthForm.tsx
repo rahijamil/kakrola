@@ -178,18 +178,18 @@ const AuthForm: React.FC<AuthFormProps> = ({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full sm:max-w-md h-full sm:h-auto space-y-8 bg-white p-6 sm:p-10 rounded-xl shadow-2xl"
+          className="w-full sm:max-w-md h-full sm:h-auto space-y-8 bg-surface p-6 sm:p-10 rounded-xl shadow-2xl"
         >
           <div className="text-center space-y-6">
             <KakrolaLogo size="md" isTitle />
             <div>
-              <h2 className="text-3xl font-extrabold text-gray-900">
+              <h2 className="text-3xl font-extrabold text-text-900">
                 {type === "signup" && "Join Kakrola Today"}
                 {type === "login" && "Welcome back"}
                 {type === "forgotPassword" && "Forgot your password?"}
                 {type === "updatePassword" && "Update your password"}
               </h2>
-              <p className="mt-2 text-sm text-gray-600">
+              <p className="mt-2 text-sm text-text-600">
                 {type === "signup" &&
                   "Create your Kakrola account and start collaborating"}
                 {type === "login" && "Log in to your Kakrola account"}
@@ -247,7 +247,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
                             <div className="text-xs text-right">
                               <Link
                                 href="/auth/forgot-password"
-                                className="font-medium text-indigo-600 hover:text-indigo-500 transition"
+                                className="font-medium text-primary-600 hover:text-primary-500 transition"
                               >
                                 Forgot your password?
                               </Link>
@@ -276,7 +276,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
               <div className="flex items-center justify-center">
                 <Button
                   type="submit"
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:hover:bg-indigo-600 text-white disabled:cursor-not-allowed"
+                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:hover:bg-primary-600 text-white disabled:cursor-not-allowed"
                   disabled={loading}
                 >
                   {loading ? (

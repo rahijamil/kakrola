@@ -40,14 +40,14 @@ export const getDateInfo = (dateString: string | null) => {
   else if (differenceInCalendarDays(date, new Date()) <= 7) {
     return {
       label: format(date, "EEEE"), // "EEEE" gives the full day name (e.g., "Monday")
-      icon: <Calendar strokeWidth={1.5} className="w-4 h-4 text-indigo-600" />,
-      color: "text-indigo-600",
+      icon: <Calendar strokeWidth={1.5} className="w-4 h-4 text-primary-600" />,
+      color: "text-primary-600",
     };
   } else {
     return {
       label: format(date, "d MMM"),
-      icon: <Calendar strokeWidth={1.5} className="w-4 h-4 text-gray-600" />,
-      color: "text-gray-600",
+      icon: <Calendar strokeWidth={1.5} className="w-4 h-4 text-text-600" />,
+      color: "text-text-600",
     };
   }
 };

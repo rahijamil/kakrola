@@ -63,14 +63,14 @@ const AddLabelModal = ({ onClose }: { onClose: () => void }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4"
+        className="bg-surface rounded-lg shadow-xl w-full max-w-md mx-4"
         onClick={(ev) => ev.stopPropagation()}
       >
-        <div className="flex justify-between items-center p-4 border-b border-gray-200">
+        <div className="flex justify-between items-center p-4 border-b border-text-200">
           <h2 className="text-xl font-semibold">Add label</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition p-1 rounded-lg"
+            className="text-text-500 hover:text-text-700 hover:bg-primary-50 transition p-1 rounded-lg"
           >
             <X size={20} />
           </button>
@@ -130,7 +130,7 @@ const AddLabelModal = ({ onClose }: { onClose: () => void }) => {
 
           {error && <p className="text-red-500 text-xs text-center">{error}</p>}
 
-          <div className="flex items-center justify-end gap-4 border-t border-gray-200 p-4">
+          <div className="flex items-center justify-end gap-4 border-t border-text-200 p-4">
             <Button
               type="button"
               variant="gray"

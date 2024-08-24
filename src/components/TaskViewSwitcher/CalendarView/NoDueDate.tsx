@@ -16,7 +16,7 @@ const NoDueDate = ({
 }) => {
   return (
     <div
-      className={`h-screen overflow-y-auto bg-white transition-all duration-300 sticky top-0 flex flex-col ${
+      className={`h-screen overflow-y-auto bg-surface transition-all duration-300 sticky top-0 flex flex-col ${
         showNoDateTasks ? "w-80" : "w-0"
       }`}
     >
@@ -40,7 +40,7 @@ const NoDueDate = ({
                   .map((task: TaskType, index) => (
                     <li
                     key={task.id}
-                      className={`border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer`}
+                      className={`border-b border-text-200 p-1 pl-0 flex items-center gap-3 cursor-pointer`}
                     >
                       <TaskItem
                         key={task.id}

@@ -165,7 +165,7 @@ const Password = () => {
         </Button>
         <Button
           type="submit"
-          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:hover:bg-indigo-600 text-white disabled:cursor-not-allowed"
+          className="w-full bgindigo600 hover:bgindigo700 disabled:hover:bgindigo600 text-white disabled:cursor-not-allowed"
           disabled={loading}
         >
           {loading ? <Spinner color="white" /> : <>Update Password</>}

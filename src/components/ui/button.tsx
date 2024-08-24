@@ -25,28 +25,28 @@ const getButtonClasses = (
       indigo:
         "text-white bg-gradient-to-r from-indigo-600 to-indigo-500 hover:to-indigo-600",
       red: "text-white bg-gradient-to-r from-red-700 to-red-600 hover:to-red-700",
-      gray: ""
+      gray: "",
     },
     outline: {
-      indigo: "border border-indigo-600 text-indigo-600 hover:bg-indigo-50",
+      indigo: "border border-indigo-600 text-primary-600 hover:bg-primary-50",
       red: "border border-red-600 text-red-600 hover:bg-red-50",
-      gray: "border border-gray-300 hover:border-gray-400 focus:border-gray-300",
+      gray: "border border-text-300 hover:border-text-400 focus:border-text-300",
     },
     ghost: {
-      indigo: "text-indigo-600 hover:bg-indigo-50",
+      indigo: "text-primary-600 hover:bg-primary-50",
       red: "text-red-600 hover:bg-red-50",
-      gray: ""
+      gray: "",
     },
     secondary: {
-      indigo: "bg-white text-indigo-600 hover:bg-gray-100",
-      red: "bg-white text-red-600 hover:bg-gray-100",
-      gray: ""
+      indigo: "bg-surface text-primary-600 hover:bg-primary-50",
+      red: "bg-surface text-red-600 hover:bg-primary-50",
+      gray: "",
     },
     gray: {
       indigo:
-        "bg-gradient-to-r from-gray-300 to-gray-200 text-gray-600 hover:to-gray-300",
-      red: "bg-gradient-to-r from-gray-300 to-gray-200 text-gray-600 hover:to-gray-300",
-      gray: ""
+        "bg-gradient-to-r from-text-300 to-text-200 text-text-600 hover:to-text-300",
+      red: "bg-gradient-to-r from-text-300 to-text-200 text-text-600 hover:to-text-300",
+      gray: "",
     },
   };
 

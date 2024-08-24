@@ -46,26 +46,26 @@ const FiltersLabelsPage = () => {
         <div className="space-y-8">
           <div className="flex items-start gap-1">
             <button
-              className={`p-1 hover:bg-gray-100 transition rounded-lg mt-1 ${
+              className={`p-1 hover:bg-primary-50 transition rounded-lg mt-1 ${
                 !isFilterCollapse && "rotate-90"
               }`}
               onClick={() => setIsFilterCollapse(!isFilterCollapse)}
             >
               <ChevronRightIcon
-                className="w-4 h-4 text-gray-700"
+                className="w-4 h-4 text-text-700"
                 strokeWidth={1.5}
               />
             </button>
 
             <div className="w-full">
-              <div className="flex items-center justify-between gap-8 border-b border-gray-200 w-full p-1">
+              <div className="flex items-center justify-between gap-8 border-b border-text-200 w-full p-1">
                 <h3 className="font-bold">Filters</h3>
 
                 <button
-                  className={`p-1 hover:bg-gray-100 transition rounded-lg`}
+                  className={`p-1 hover:bg-primary-50 transition rounded-lg`}
                   onClick={() => setShowAddFilterModal(true)}
                 >
-                  <Plus className="w-4 h-4 text-gray-700" strokeWidth={1.5} />
+                  <Plus className="w-4 h-4 text-text-700" strokeWidth={1.5} />
                 </button>
               </div>
 
@@ -82,20 +82,20 @@ const FiltersLabelsPage = () => {
                 >
                   <ul>
                     <li
-                      className={`border-b border-gray-200 flex items-center gap-2 cursor-pointer py-2`}
+                      className={`border-b border-text-200 flex items-center gap-2 cursor-pointer py-2`}
                     >
                       <Droplet
                         strokeWidth={1.5}
-                        className="w-4 h-4 text-gray-500"
+                        className="w-4 h-4 text-text-500"
                       />
                       Assigned to me
                     </li>
                     <li
-                      className={`border-b border-gray-200 flex items-center gap-2 cursor-pointer py-2`}
+                      className={`border-b border-text-200 flex items-center gap-2 cursor-pointer py-2`}
                     >
                       <Droplet
                         strokeWidth={1.5}
-                        className="w-4 h-4 text-gray-500"
+                        className="w-4 h-4 text-text-500"
                       />
                       Priority 1
                     </li>
@@ -107,26 +107,26 @@ const FiltersLabelsPage = () => {
 
           <div className="flex items-start gap-1">
             <button
-              className={`p-1 hover:bg-gray-100 transition rounded-lg mt-1 ${
+              className={`p-1 hover:bg-primary-50 transition rounded-lg mt-1 ${
                 !isLabelCollapse && "rotate-90"
               }`}
               onClick={() => setIsLabelCollapse(!isLabelCollapse)}
             >
               <ChevronRightIcon
-                className="w-4 h-4 text-gray-700"
+                className="w-4 h-4 text-text-700"
                 strokeWidth={1.5}
               />
             </button>
 
             <div className="w-full">
-              <div className="flex items-center justify-between gap-8 border-b border-gray-200 w-full p-1">
+              <div className="flex items-center justify-between gap-8 border-b border-text-200 w-full p-1">
                 <h3 className="font-bold">Labels</h3>
 
                 <button
-                  className={`p-1 hover:bg-gray-100 transition rounded-lg`}
+                  className={`p-1 hover:bg-primary-50 transition rounded-lg`}
                   onClick={() => setShowAddLabelModal(true)}
                 >
-                  <Plus className="w-4 h-4 text-gray-700" strokeWidth={1.5} />
+                  <Plus className="w-4 h-4 text-text-700" strokeWidth={1.5} />
                 </button>
               </div>
 
@@ -144,11 +144,11 @@ const FiltersLabelsPage = () => {
                   <ul>
                     {labels.map((label) => (
                       <li
-                        className={`border-b border-gray-200 flex items-center gap-2 cursor-pointer py-2`}
+                        className={`border-b border-text-200 flex items-center gap-2 cursor-pointer py-2`}
                       >
                         <Tag
                           strokeWidth={1.5}
-                          className="w-4 h-4 text-gray-500"
+                          className="w-4 h-4 text-text-500"
                         />
                         {label.name}
                       </li>

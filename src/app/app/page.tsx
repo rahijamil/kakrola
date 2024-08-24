@@ -70,7 +70,7 @@ const Today = () => {
             <h3 className="font-medium text-base">
               What do you need to get done today?
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-text-600">
               By default, tasks added here will be due today.
             </p>
           </div>

@@ -62,7 +62,7 @@ const ProjectsSelector = ({
           <button
             onClick={() => setIsOpen(true)}
             className={`flex items-center justify-between rounded-lg cursor-pointer transition p-[6px] px-2 group w-full ${
-              isOpen ? "bg-indigo-100" : "hover:bg-indigo-100"
+              isOpen ? "bg-primary-100" : "hover:bg-primary-100"
             }`}
           >
             {task.is_inbox ? (
@@ -92,13 +92,13 @@ const ProjectsSelector = ({
           <div
             ref={triggerRef}
             className={`flex items-center gap-2 cursor-pointer p-2 px-2 rounded-lg ${
-              isOpen ? "bg-gray-100" : "hover:bg-gray-100"
+              isOpen ? "bg-text-50" : "hover:bg-primary-50"
             }`}
             onClick={onClick}
           >
             <button
               type="button"
-              className={`w-full flex items-center text-xs transition-colors text-gray-700 gap-2 ${
+              className={`w-full flex items-center text-xs transition-colors text-text-700 gap-2 ${
                 isSmall && "max-w-[100px]"
               }`}
             >
@@ -119,7 +119,7 @@ const ProjectsSelector = ({
       }
       content={
         <div>
-          <div className="p-2 border-b border-gray-200">
+          <div className="p-2 border-b border-text-200">
             <Input
               howBig="sm"
               fullWidth
@@ -133,7 +133,7 @@ const ProjectsSelector = ({
           {/* Show Inbox if it matches the search query */}
           {isInbox && inboxMatches && (
             <div
-              className="flex items-center p-2 transition-colors text-gray-700 hover:bg-gray-100 cursor-pointer"
+              className="flex items-center p-2 transition-colors text-text-700 hover:bg-primary-50 cursor-pointer"
               onClick={() => {
                 setTask({
                   ...task,
@@ -168,7 +168,7 @@ const ProjectsSelector = ({
             {personalProjects.map((project) => (
               <div key={project.id}>
                 <li
-                  className="flex items-center pl-6 p-2 transition-colors text-gray-700 hover:bg-gray-100 cursor-pointer"
+                  className="flex items-center pl-6 p-2 transition-colors text-text-700 hover:bg-primary-50 cursor-pointer"
                   onClick={() => {
                     setTask({
                       ...task,
@@ -185,7 +185,7 @@ const ProjectsSelector = ({
                     task.section_id == null && (
                       <Check
                         strokeWidth={2}
-                        className="w-4 h-4 ml-auto text-indigo-600"
+                        className="w-4 h-4 ml-auto text-primary-600"
                       />
                     )}
                 </li>
@@ -196,7 +196,7 @@ const ProjectsSelector = ({
                     .map((section) => (
                       <li
                         key={section.id}
-                        className="flex items-center justify-between pl-8 p-2 transition-colors text-gray-700 hover:bg-gray-100 cursor-pointer"
+                        className="flex items-center justify-between pl-8 p-2 transition-colors text-text-700 hover:bg-primary-50 cursor-pointer"
                         onClick={() => {
                           setTask({
                             ...task,
@@ -225,7 +225,7 @@ const ProjectsSelector = ({
                         {task.section_id === section.id && (
                           <Check
                             strokeWidth={2}
-                            className="w-4 h-4 ml-auto text-indigo-600"
+                            className="w-4 h-4 ml-auto text-primary-600"
                           />
                         )}
                       </li>
@@ -250,7 +250,7 @@ const ProjectsSelector = ({
                         className="rounded-lg"
                       />
                     ) : (
-                      <div className="w-5 h-5 min-w-5 min-h-5 bg-indigo-500 rounded-lg flex items-center justify-center">
+                      <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-lg flex items-center justify-center">
                         <span className="text-white text-[10px] font-medium">
                           {team.name?.slice(0, 1).toUpperCase()}
                         </span>
@@ -263,7 +263,7 @@ const ProjectsSelector = ({
                   {projects.map((project) => (
                     <div key={project.id}>
                       <li
-                        className="flex items-center pl-6 px-2 py-2 transition-colors text-gray-700 hover:bg-gray-100 cursor-pointer"
+                        className="flex items-center pl-6 px-2 py-2 transition-colors text-text-700 hover:bg-primary-50 cursor-pointer"
                         onClick={() => {
                           setTask({
                             ...task,
@@ -279,7 +279,7 @@ const ProjectsSelector = ({
                         {task.project_id === project.id && (
                           <Check
                             strokeWidth={2}
-                            className="w-4 h-4 ml-auto text-indigo-600"
+                            className="w-4 h-4 ml-auto text-primary-600"
                           />
                         )}
                       </li>
@@ -292,7 +292,7 @@ const ProjectsSelector = ({
                           .map((section) => (
                             <li
                               key={section.id}
-                              className="flex items-center justify-between pl-8 p-2 transition-colors text-gray-700 hover:bg-gray-100 cursor-pointer"
+                              className="flex items-center justify-between pl-8 p-2 transition-colors text-text-700 hover:bg-primary-50 cursor-pointer"
                               onClick={() => {
                                 setTask({
                                   ...task,
@@ -306,7 +306,7 @@ const ProjectsSelector = ({
                               {task.section_id === section.id && (
                                 <Check
                                   strokeWidth={2}
-                                  className="w-4 h-4 ml-auto text-indigo-600"
+                                  className="w-4 h-4 ml-auto text-primary-600"
                                 />
                               )}
                             </li>

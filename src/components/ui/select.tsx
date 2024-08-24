@@ -12,13 +12,13 @@ export const Select: FC<SelectProps> = ({ value, onChange, children }) => {
       <select
         value={value}
         onChange={onChange}
-        className="block w-full px-3 py-2 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        className="block w-full px-3 py-2 border border-text-300 bg-surface rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
       >
         {children}
       </select>
       <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
         <svg
-          className="w-5 h-5 text-gray-400"
+          className="w-5 h-5 text-text-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

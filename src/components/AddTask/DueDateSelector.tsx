@@ -99,14 +99,14 @@ const DueDateSelector = ({
       icon: (
         <CalendarArrowDown
           strokeWidth={1.5}
-          className="w-4 h-4 text-indigo-600"
+          className="w-4 h-4 text-primary-600"
         />
       ),
     },
     {
       label: "No Date",
       date: undefined,
-      icon: <CircleSlash strokeWidth={1.5} className="w-4 h-4 text-gray-600" />,
+      icon: <CircleSlash strokeWidth={1.5} className="w-4 h-4 text-text-600" />,
     },
   ];
 
@@ -174,8 +174,8 @@ const DueDateSelector = ({
               className={`flex items-center justify-between rounded-lg transition p-[6px] px-2 group w-full ${
                 task.due_date == null
                   ? isOpen
-                    ? "bg-indigo-100 cursor-pointer"
-                    : "hover:bg-indigo-100 cursor-pointer"
+                    ? "bg-primary-100 cursor-pointer"
+                    : "hover:bg-primary-100 cursor-pointer"
                   : "cursor-default"
               }`}
             >
@@ -204,8 +204,8 @@ const DueDateSelector = ({
         ) : (
           <div
             ref={triggerRef}
-            className={`flex items-center gap-1 cursor-pointer p-1 text-xs rounded-lg border border-gray-200 ${
-              isOpen ? "bg-gray-100" : "hover:bg-gray-100"
+            className={`flex items-center gap-1 cursor-pointer p-1 text-xs rounded-lg border border-text-200 ${
+              isOpen ? "bg-text-50" : "hover:bg-primary-50"
             }`}
             onClick={onClick}
           >
@@ -221,15 +221,15 @@ const DueDateSelector = ({
                     ev.stopPropagation();
                     setTask({ ...task, due_date: null });
                   }}
-                  className="text-gray-500 hover:text-gray-700 p-[2px] hover:bg-gray-200 rounded-lg"
+                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-primary-50 rounded-lg"
                 >
-                  <X strokeWidth={1.5} className="w-3 h-3 text-gray-500" />
+                  <X strokeWidth={1.5} className="w-3 h-3 text-text-500" />
                 </button>
               </>
             ) : (
               <>
-                <Calendar strokeWidth={1.5} className="w-4 h-4 text-gray-500" />
-                {!isSmall && <span className="text-gray-700">Due date</span>}
+                <Calendar strokeWidth={1.5} className="w-4 h-4 text-text-500" />
+                {!isSmall && <span className="text-text-700">Due date</span>}
               </>
             )}
           </div>
@@ -237,7 +237,7 @@ const DueDateSelector = ({
       }
       content={
         <div>
-          <div className="p-2 border-b border-gray-200">
+          <div className="p-2 border-b border-text-200">
             <Input
               howBig="sm"
               type="text"
@@ -254,7 +254,7 @@ const DueDateSelector = ({
             {predefinedDates.map((item, index) => (
               <li
                 key={index}
-                className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer text-xs"
+                className="flex items-center justify-between p-2 hover:bg-primary-50 cursor-pointer text-xs"
                 onClick={() => handleDateSelect(item.date)}
               >
                 <div className="flex items-center gap-2">
@@ -262,7 +262,7 @@ const DueDateSelector = ({
                   <span>{item.label}</span>
                 </div>
                 {item.date && (
-                  <span className="text-gray-500">
+                  <span className="text-text-500">
                     {format(item.date, "EEE")}{" "}
                     {item.label == "Next Week" &&
                       format(addWeeks(today, 1), "d MMM")}
@@ -281,7 +281,7 @@ const DueDateSelector = ({
           >
             {months.map((month, index) => (
               <div key={index}>
-                <div className="border-t border-b py-1 px-2 border-gray-200 space-y-2 sticky top-0 bg-white">
+                <div className="border-t border-b py-1 px-2 border-text-200 space-y-2 sticky top-0 bg-surface">
                   <div className="flex justify-between items-center">
                     <span className="font-semibold">
                       {format(month, "MMM yyyy")}
@@ -292,7 +292,7 @@ const DueDateSelector = ({
                       (day) => (
                         <div
                           key={day}
-                          className="text-center font-medium text-gray-500 text-[11px]"
+                          className="text-center font-medium text-text-500 text-[11px]"
                         >
                           {day}
                         </div>

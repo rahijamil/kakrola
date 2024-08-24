@@ -8,7 +8,7 @@ import {Textarea} from "../ui";
 
 const AddComentForm = ({ onCancelClick }: { onCancelClick?: () => void }) => {
   return (
-    <div className="border border-gray-200 rounded-lg p-4 focus-within:border-gray-400">
+    <div className="border border-text-200 rounded-lg p-4 focus-within:border-text-400">
       <Textarea
         placeholder="Comment"
         className="resize-none"
@@ -19,16 +19,16 @@ const AddComentForm = ({ onCancelClick }: { onCancelClick?: () => void }) => {
 
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-1">
-          <button className="p-[5px] rounded-lg hover:bg-gray-100 transition">
+          <button className="p-[5px] rounded-lg hover:bg-primary-50 transition">
             <PaperClipIcon className="w-5 h-5" />
           </button>
-          <button className="p-[5px] rounded-lg hover:bg-gray-100 transition">
+          <button className="p-[5px] rounded-lg hover:bg-primary-50 transition">
             <MicrophoneIcon className="w-5 h-5" />
           </button>
-          <button className="p-[5px] rounded-lg hover:bg-gray-100 transition">
+          <button className="p-[5px] rounded-lg hover:bg-primary-50 transition">
             <FaceSmileIcon className="w-5 h-5" />
           </button>
-          <button className="p-[5px] rounded-lg hover:bg-gray-100 transition">
+          <button className="p-[5px] rounded-lg hover:bg-primary-50 transition">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -50,14 +50,14 @@ const AddComentForm = ({ onCancelClick }: { onCancelClick?: () => void }) => {
             <button
               type="button"
               onClick={onCancelClick}
-              className="px-4 py-2 text-gray-600 rounded hover:bg-gray-100 text-xs font-semibold"
+              className="px-4 py-2 text-text-600 rounded hover:bg-primary-50 text-xs font-semibold"
             >
               Cancel
             </button>
           )}
           <button
             type="button"
-            className="px-4 py-2 text-white bg-indigo-600 rounded hover:bg-indigo-700 text-xs font-semibold"
+            className="px-4 py-2 text-white bg-primary-600 rounded hover:bg-primary-700 text-xs font-semibold"
           >
             Comment
           </button>

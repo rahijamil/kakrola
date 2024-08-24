@@ -43,7 +43,7 @@ const TaskItemMoreDropdown = ({
         <button
           ref={triggerRef}
           className={`p-1 transition rounded-lg ${
-            isOpen ? "bg-gray-100" : "hover:bg-gray-100"
+            isOpen ? "bg-text-50" : "hover:bg-primary-50"
           }`}
           onClick={onClick}
         >
@@ -60,7 +60,7 @@ const TaskItemMoreDropdown = ({
                     setAddTaskAboveBellow({ position: "above", task });
                     onClose();
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
+                  className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center"
                 >
                   <ArrowUp strokeWidth={1.5} className="w-4 h-4 mr-4" /> Add
                   task above
@@ -70,65 +70,65 @@ const TaskItemMoreDropdown = ({
                     setAddTaskAboveBellow({ position: "below", task });
                     onClose();
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
+                  className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center"
                 >
                   <ArrowDown strokeWidth={1.5} className="w-4 h-4 mr-4" /> Add
                   task below
                 </button>
               </div>
-              <div className="h-[1px] bg-gray-100 my-1"></div>
+              <div className="h-[1px] bg-text-50 my-1"></div>
               <div>
                 <button
                   onClick={() => {
                     setEditTaskId(task.id);
                     onClose();
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center"
+                  className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center"
                 >
                   <Pencil strokeWidth={1.5} className="w-4 h-4 mr-4" /> Edit
                 </button>
               </div>
-              {/* <div className="h-[1px] bg-gray-100 my-1"></div>
+              {/* <div className="h-[1px] bg-text-50 my-1"></div>
           <div>
-            <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
+            <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center">
               <Calendar strokeWidth={1.5} className="w-4 h-4 mr-4" /> Due date
             </button>
-            <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
+            <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center">
               <Flag strokeWidth={1.5} className="w-4 h-4 mr-4" /> Priority
             </button>
           </div>
-          <div className="h-[1px] bg-gray-100 my-1"></div>
+          <div className="h-[1px] bg-text-50 my-1"></div>
           <div>
-            <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
+            <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center">
               <AlarmClockIcon strokeWidth={1.5} className="w-4 h-4 mr-4" />{" "}
               Reminders
             </button>
           </div>
-          <div className="h-[1px] bg-gray-100 my-1"></div> */}
+          <div className="h-[1px] bg-text-50 my-1"></div> */}
             </>
           )}
 
           {/* <div>
         {!column?.is_archived && (
-          <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
+          <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center">
             <CopyPlusIcon strokeWidth={1.5} className="w-4 h-4 mr-4" />{" "}
             Duplicate
           </button>
         )}
-        <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition flex items-center">
+        <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center">
           <Link strokeWidth={1.5} className="w-4 h-4 mr-4" /> Copy link to
           task
         </button>
       </div> */}
 
-          <div className="h-[1px] bg-gray-100 my-1"></div>
+          <div className="h-[1px] bg-text-50 my-1"></div>
           <div>
             <button
               onClick={() => {
                 setShowDeleteConfirm(task.id.toString());
                 onClose();
               }}
-              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition flex items-center"
+              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-primary-50 transition flex items-center"
             >
               <Trash2 strokeWidth={1.5} className="w-4 h-4 mr-4" /> Delete
             </button>

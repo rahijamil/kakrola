@@ -156,7 +156,7 @@ const TaskItem = ({
               className="transition w-full"
             >
               <div
-                className="flex items-start justify-between gap-2 taskitem_group bg-white p-1 w-full rounded-lg cursor-pointer relative"
+                className="flex items-start justify-between gap-2 taskitem_group bg-surface p-1 w-full rounded-lg cursor-pointer relative"
                 onClick={() => setShowModal && setShowModal(task.id.toString())}
               >
                 <div className="flex items-center gap-1">
@@ -183,8 +183,8 @@ const TaskItem = ({
                           : task.priority == "P2"
                           ? "text-orange-500 bg-orange-100"
                           : task.priority == "P3"
-                          ? "text-indigo-500 bg-indigo-100"
-                          : "text-gray-500"
+                          ? "text-primary-500 bg-primary-100"
+                          : "text-text-500"
                       } ${task.is_completed ? "hidden" : "group-hover:hidden"}`}
                     />
                     <CircleCheck
@@ -204,8 +204,8 @@ const TaskItem = ({
                           : task.priority == "P2"
                           ? "text-orange-500 bg-orange-100"
                           : task.priority == "P3"
-                          ? "text-indigo-500 bg-indigo-100"
-                          : "text-gray-500"
+                          ? "text-primary-500 bg-primary-100"
+                          : "text-text-500"
                       } ${
                         !task.is_completed
                           ? "hidden group-hover:block"
@@ -215,8 +215,8 @@ const TaskItem = ({
                                 : task.priority == "P2"
                                 ? "bg-orange-500"
                                 : task.priority == "P3"
-                                ? "bg-indigo-500"
-                                : "bg-gray-500"
+                                ? "bg-primary-500"
+                                : "bg-text-500"
                             }`
                       }`}
                     />
@@ -226,14 +226,14 @@ const TaskItem = ({
                     <div className="space-y-[2px]">
                       <p
                         className={`text-sm ${
-                          task.is_completed ? "line-through text-gray-500" : ""
+                          task.is_completed ? "line-through text-text-500" : ""
                         } line-clamp-3`}
                       >
                         {task.title}
                       </p>
 
                       {task.description && (
-                        <p className="text-xs text-gray-500 line-clamp-1">
+                        <p className="text-xs text-text-500 line-clamp-1">
                           {task.description}
                         </p>
                       )}
@@ -242,7 +242,7 @@ const TaskItem = ({
                     {(subTasks.length > 0 || dateInfo) && (
                       <div className="flex items-center gap-2">
                         {subTasks.length > 0 ? (
-                          <div className="flex items-center gap-[2px] text-gray-500">
+                          <div className="flex items-center gap-[2px] text-text-500">
                             <Workflow strokeWidth={1.5} className="w-3 h-3" />
                             <span className="text-xs">0/{subTasks.length}</span>
                           </div>
@@ -262,7 +262,7 @@ const TaskItem = ({
                 </div>
 
                 <div
-                  className={`flex items-center gap-[2px] taskitem_group_hover transition absolute top-1 right-1 bg-white ${
+                  className={`flex items-center gap-[2px] taskitem_group_hover transition absolute top-1 right-1 bg-surface ${
                     !showMoreDropdown ? "opacity-0" : ""
                   }`}
                 >
@@ -280,7 +280,7 @@ const TaskItem = ({
                   </div>
 
                   <button
-                    className="p-1 hover:bg-gray-100 transition rounded-lg"
+                    className="p-1 hover:bg-primary-50 transition rounded-lg"
                     onClick={(ev) => {
                       ev.stopPropagation();
                       typeof setShowShareOption == "function" &&

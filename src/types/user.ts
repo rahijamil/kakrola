@@ -8,6 +8,7 @@ export interface ProfileType {
   created_at?: Date;
   updated_at?: Date;
   last_login_at?: Date;
+  is_onboarded?: boolean;
 }
 
 // Comment structure

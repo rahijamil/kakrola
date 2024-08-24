@@ -1,22 +1,10 @@
-import React, {
-  Dispatch,
-  LegacyRef,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useRef, useState } from "react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import {
   AtSignIcon,
   Bell,
-  Calendar,
-  Check,
-  ChevronDown,
   Ellipsis,
-  Hash,
-  Inbox,
   MapPin,
   MapPinIcon,
   SendHorizonal,
@@ -29,14 +17,42 @@ import Priorities from "./Priorities";
 import { useAuthProvider } from "@/context/AuthContext";
 import Spinner from "../ui/Spinner";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import { Input } from "../ui";
+import { Textarea } from "../ui";
 import { v4 as uuidv4 } from "uuid";
 import ProjectsSelector from "./ProjectsSelector";
 import DueDateSelector from "./DueDateSelector";
 import AssigneeSelector from "./AssigneeSelector";
-import { getDateInfo } from "@/utils/getDateInfo";
-import Image from "next/image";
 import { TaskInput } from "./TaskInput";
+import DescriptionInput from "./DescriptionInput";
+
+const getInitialTaskData = ({
+  project,
+  section_id,
+  profile,
+  dueDate,
+}: {
+  project: ProjectType | null;
+  section_id?: SectionType["id"] | null;
+  profile: { id: string } | null;
+  dueDate?: Date | null;
+}): TaskType => ({
+  id: uuidv4(),
+  title: "",
+  description: "",
+  priority: "Priority",
+  project_id: project?.id || null,
+  section_id: section_id || null,
+  parent_task_id: null,
+  profile_id: profile?.id || "",
+  assigned_to_id: null,
+  due_date: dueDate ? dueDate.toISOString() : null,
+  reminder_time: null,
+  is_inbox: project ? false : true,
+  is_completed: false,
+  order: 0,
+  completed_at: null,
+  updated_at: new Date().toISOString(),
+});
 
 const AddTaskForm = ({
   onClose,
@@ -67,24 +83,13 @@ const AddTaskForm = ({
   const { profile } = useAuthProvider();
 
   const [taskData, setTaskData] = useState<TaskType>(
-    taskForEdit || {
-      id: uuidv4(),
-      title: "",
-      description: "",
-      priority: "Priority",
-      project_id: activeProject ? activeProject.id : project?.id || null,
-      section_id: section_id || null,
-      parent_task_id: null,
-      profile_id: profile?.id || "",
-      assigned_to_id: null,
-      due_date: dueDate ? dueDate.toISOString() : null,
-      reminder_time: null,
-      is_inbox: activeProject ? false : project ? false : true,
-      is_completed: false,
-      order: Math.max(...tasks.map((task) => task.order), 0) + 1,
-      completed_at: null,
-      updated_at: new Date().toISOString(),
-    }
+    taskForEdit ||
+      getInitialTaskData({
+        project: activeProject ? activeProject : project,
+        section_id,
+        profile,
+        dueDate,
+      })
   );
 
   const [showAssignee, setShowAssignee] = useState<boolean>(false);
@@ -116,24 +121,14 @@ const AddTaskForm = ({
   };
 
   const resetTaskData = () => {
-    setTaskData({
-      id: uuidv4(),
-      title: "",
-      description: "",
-      priority: "Priority",
-      project_id: project?.id || null,
-      section_id: section_id || null,
-      parent_task_id: null,
-      profile_id: profile?.id || "",
-      assigned_to_id: null,
-      due_date: new Date().toISOString(),
-      reminder_time: null,
-      is_inbox: project ? false : true,
-      is_completed: false,
-      order: 0,
-      completed_at: null,
-      updated_at: new Date().toISOString(),
-    });
+    setTaskData(
+      getInitialTaskData({
+        project: activeProject ? activeProject : project,
+        section_id,
+        profile,
+        dueDate,
+      })
+    );
 
     if (titleEditableRef.current) {
       titleEditableRef.current.innerHTML = "";
@@ -251,16 +246,7 @@ const AddTaskForm = ({
             handleSubmit={handleSubmit}
             titleEditableRef={titleEditableRef}
           />
-
-          <Input
-            type="text"
-            placeholder="Description"
-            value={taskData.description}
-            onChange={(e) =>
-              setTaskData({ ...taskData, description: e.target.value })
-            }
-            className="text-xs"
-          />
+          <DescriptionInput taskData={taskData} setTaskData={setTaskData} />
         </div>
 
         <div className="flex items-center flex-wrap gap-2 whitespace-nowrap">
@@ -280,20 +266,20 @@ const AddTaskForm = ({
 
           <div className="relative">
             <div
-              className="flex items-center gap-2 hover:bg-gray-100 cursor-pointer p-1 px-2 rounded-lg border border-gray-200"
+              className="flex items-center gap-2 hover:bg-primary-50 cursor-pointer p-1 px-2 rounded-lg border border-text-200"
               onClick={() => setShowReminder(!showReminder)}
             >
-              <Bell strokeWidth={1.5} className="w-4 h-4 text-gray-500" />
+              <Bell strokeWidth={1.5} className="w-4 h-4 text-text-500" />
               {!isSmall && (
-                <span className="text-xs text-gray-700">Reminders</span>
+                <span className="text-xs text-text-700">Reminders</span>
               )}
             </div>
             {showReminder && (
               <>
-                <div className="absolute bg-white border top-full -left-1/2 rounded-lg overflow-hidden z-20 p-2">
+                <div className="absolute bg-surface border top-full -left-1/2 rounded-lg overflow-hidden z-20 p-2">
                   <input
                     type="datetime-local"
-                    className="p-2 border border-gray-300 rounded"
+                    className="p-2 border border-text-300 rounded"
                     onChange={(e) =>
                       console.log("Set reminder:", e.target.value)
                     }
@@ -310,17 +296,17 @@ const AddTaskForm = ({
 
           <div className="relative">
             <div
-              className="flex items-center gap-2 hover:bg-gray-100 cursor-pointer p-1 px-2 rounded-lg border border-gray-200"
+              className="flex items-center gap-2 hover:bg-primary-50 cursor-pointer p-1 px-2 rounded-lg border border-text-200"
               onClick={() => setShowMore(!showMore)}
             >
-              <Ellipsis strokeWidth={1.5} className="w-5 h-5 text-gray-500" />
+              <Ellipsis strokeWidth={1.5} className="w-5 h-5 text-text-500" />
             </div>
 
             {showMore && (
               <>
-                <div className="shadow-xl border border-gray-200 rounded-lg w-[250px] absolute bg-white right-0 top-full mt-1 z-20 text-xs">
+                <div className="shadow-xl border border-text-200 rounded-lg w-[250px] absolute bg-surface right-0 top-full mt-1 z-20 text-xs">
                   <ul className="p-2">
-                    <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-gray-100 cursor-pointer text-gray-700 rounded-lg">
+                    <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-primary-50 cursor-pointer text-text-700 rounded-lg">
                       <div className="flex items-center gap-2">
                         <Tag strokeWidth={1.5} className="w-4 h-4" />
                         <span>Labels</span>
@@ -328,11 +314,11 @@ const AddTaskForm = ({
 
                       <AtSignIcon className="w-4 h-4" />
                     </li>
-                    <li className="flex items-center gap-2 px-2 py-2 transition-colors hover:bg-gray-100 cursor-pointer text-gray-700 rounded-lg">
+                    <li className="flex items-center gap-2 px-2 py-2 transition-colors hover:bg-primary-50 cursor-pointer text-text-700 rounded-lg">
                       <MapPin strokeWidth={1.5} className="w-4 h-4" />
                       <p className="space-x-1">
                         <span>Location</span>
-                        <span className="uppercase text-[10px] tracking-widest font-bold text-indigo-800 bg-indigo-100 p-[2px] px-1 rounded-lg">
+                        <span className="uppercase text-[10px] tracking-widest font-bold text-primary-800 bg-primary-100 p-[2px] px-1 rounded-lg">
                           Upgrade
                         </span>
                       </p>
@@ -340,7 +326,7 @@ const AddTaskForm = ({
                   </ul>
                   <hr />
                   <ul className="p-2">
-                    <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-gray-100 cursor-pointer text-gray-700 rounded-lg">
+                    <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-primary-50 cursor-pointer text-text-700 rounded-lg">
                       <div className="flex items-center gap-2">
                         <TagIcon className="w-4 h-4" />
                         <span>Labels</span>
@@ -348,7 +334,7 @@ const AddTaskForm = ({
 
                       <AtSignIcon className="w-4 h-4" />
                     </li>
-                    <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-gray-100 cursor-pointer text-gray-700 rounded-lg">
+                    <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-primary-50 cursor-pointer text-text-700 rounded-lg">
                       <div className="flex items-center gap-2">
                         <MapPinIcon className="w-4 h-4" />
                         <span>Location</span>
@@ -368,7 +354,7 @@ const AddTaskForm = ({
         </div>
       </div>
 
-      <div className="border-t border-gray-200">
+      <div className="border-t border-text-200">
         {error && (
           <p className="text-red-500 pt-3 text-center text-xs">{error}</p>
         )}
@@ -384,15 +370,18 @@ const AddTaskForm = ({
           <div className="flex justify-end gap-2 select-none">
             <button
               type="button"
-              onClick={onClose}
-              className="px-3 py-[6px] text-[13px] text-gray-600 transition bg-gray-100 hover:bg-gray-200 rounded-lg"
+              onClick={() => {
+                resetTaskData();
+                onClose();
+              }}
+              className="px-3 py-[6px] text-[13px] text-text-600 transition bg-text-50 hover:bg-primary-50 rounded-lg"
               disabled={loading}
             >
               {isSmall ? <X strokeWidth={1.5} className="w-5 h-5" /> : "Cancel"}
             </button>
             <button
               type="submit"
-              className="px-3 py-[6px] text-[13px] text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-600 disabled:cursor-not-allowed transition disabled:opacity-50"
+              className="px-3 py-[6px] text-[13px] text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:bg-primary-600 disabled:cursor-not-allowed transition disabled:opacity-50"
               disabled={!taskData.title.trim() || loading}
             >
               {loading ? (

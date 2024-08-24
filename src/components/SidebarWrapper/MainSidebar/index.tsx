@@ -46,13 +46,13 @@ const MainSidebar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
 
   return (
     <>
-      <div className="w-[4.5rem] bg-[#f5f7ff] border-r relative z-20 flex flex-col">
+      <div className="w-[4.5rem] bg-primary-25 border-r relative z-20 flex flex-col">
         <div className="flex-1">
           <ul>
             <li className="aspect-square flex items-center justify-center">
               <button
                 onClick={toggleSidebar}
-                className={`hover:bg-gray-200 rounded-lg transition-colors w-9 h-9 flex items-center justify-center`}
+                className={`hover:bg-primary-50 rounded-lg transition-colors w-9 h-9 flex items-center justify-center`}
               >
                 <PanelLeft strokeWidth={1.5} width={20} />
               </button>
@@ -68,8 +68,8 @@ const MainSidebar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
                     className={`p-2 rounded-lg transition-colors ${
                       pathname.startsWith(item.path) &&
                       !pathname.startsWith(item.pathNotStartsWith!)
-                        ? "bg-indigo-100 text-indigo-700"
-                        : "group-hover:bg-gray-200 text-gray-700"
+                        ? "bg-primary-100 text-primary-700"
+                        : "group-hover:bg-primary-50 text-text-700"
                     }`}
                   >
                     <item.icon strokeWidth={1.5} className="w-5 h-5" />

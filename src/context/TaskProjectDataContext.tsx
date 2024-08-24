@@ -287,11 +287,11 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
 
   const handleSectionChanges = (payload: any) => {
     if (payload.eventType === "INSERT") {
-      setSections((prev) =>
-        prev.map((section) =>
-          section.id === payload.new.id ? payload.new : section
-        )
-      );
+      // setSections((prev) =>
+      //   prev.map((section) =>
+      //     section.id === payload.new.id ? payload.new : section
+      //   )
+      // );
     } else if (payload.eventType === "UPDATE") {
       setSections((prev) =>
         prev.map((section) =>
@@ -307,7 +307,9 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
 
   const handleTaskChanges = (payload: any) => {
     if (payload.eventType === "INSERT") {
-      setTasks((prev) => [...prev, payload.new as TaskType]);
+      // setTasks((prev) =>
+      //   prev.map((task) => (task.id == payload.new.id ? payload.new : task))
+      // );
     } else if (payload.eventType === "UPDATE") {
       setTasks((prev) =>
         prev.map((task) =>

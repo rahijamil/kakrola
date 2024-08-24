@@ -32,12 +32,12 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
         onCheckedChange(!checked);
       }}
       className={`${
-        checked ? "bg-indigo-600" : "bg-gray-200"
+        checked ? "bg-primary-600" : "bg-text-200"
       } relative inline-flex ${switchClasses} items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2`}
     >
       <span className="sr-only">Enable feature</span>
       <span
-        className={`inline-block ${dotClasses} transform rounded-full bg-white transition-transform ${translateClasses}`}
+        className={`inline-block ${dotClasses} transform rounded-full bg-surface transition-transform ${translateClasses}`}
       />
     </button>
   );

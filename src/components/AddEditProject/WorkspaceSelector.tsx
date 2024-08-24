@@ -63,12 +63,12 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
     <div className="relative" ref={selectRef}>
       <label
         htmlFor={"workspace"}
-        className="block font-bold text-gray-700 mb-1"
+        className="block font-bold text-text-700 mb-1"
       >
         Workspace
       </label>
       <div
-        className="flex items-center justify-between w-full h-10 border border-gray-300 rounded-lg cursor-pointer bg-white hover:border-gray-400 px-3 py-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-indigo-300 focus:border-gray-300"
+        className="flex items-center justify-between w-full h-10 border border-text-300 rounded-lg cursor-pointer bg-surface hover:border-text-400 px-3 py-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-indigo-300 focus:border-text-300"
         onClick={() => setIsOpen(!isOpen)}
         onKeyDown={handleKeyDown}
         tabIndex={0}
@@ -79,7 +79,7 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
         aria-controls="listbox"
       >
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <div className="w-5 h-5 min-w-5 min-h-5 bg-indigo-500 rounded-lg flex items-center justify-center">
+          <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-lg flex items-center justify-center">
             {currentWorkspace?.team_id == null ? (
               <Image
                 src={profile?.avatar_url || ""}
@@ -106,16 +106,16 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
               </>
             )}
           </div>
-          <span className="truncate text-gray-900">
+          <span className="truncate text-text-900">
             {currentWorkspace?.name}
           </span>
         </div>
-        <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0 ml-2" />
+        <ChevronDown className="w-5 h-5 text-text-400 flex-shrink-0 ml-2" />
       </div>
 
       {isOpen && (
         <ul
-          className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto"
+          className="absolute z-10 w-full mt-1 bg-surface border border-text-300 rounded-lg shadow-lg max-h-60 overflow-auto"
           role="listbox"
         >
           {workspaces.map((workspace, index) => (
@@ -123,8 +123,8 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
               key={workspace.team_id}
               className={`px-4 py-2 cursor-pointer flex items-center justify-between ${
                 index === highlightedIndex
-                  ? "bg-indigo-100"
-                  : "hover:bg-gray-100"
+                  ? "bg-primary-100"
+                  : "hover:bg-primary-50"
               }`}
               onClick={() => {
                 onSelect(workspace);
@@ -135,7 +135,7 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
               aria-selected={currentWorkspace?.team_id === workspace.team_id}
             >
               <div className="flex items-center gap-2 flex-1 min-w-0">
-                <div className="w-5 h-5 min-w-5 min-h-5 bg-indigo-500 rounded-lg flex items-center justify-center">
+                <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-lg flex items-center justify-center">
                   {workspace?.team_id == null ? (
                     <Image
                       src={profile?.avatar_url || ""}
@@ -167,7 +167,7 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
               {currentWorkspace?.team_id === workspace.team_id && (
                 <Check
                   strokeWidth={1.5}
-                  className="w-4 h-4 text-indigo-600 flex-shrink-0 ml-2"
+                  className="w-4 h-4 text-primary-600 flex-shrink-0 ml-2"
                 />
               )}
             </li>

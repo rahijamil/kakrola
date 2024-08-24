@@ -52,12 +52,12 @@ const LayoutView = ({
       <div className="flex items-center justify-between gap-8 font-bold mb-3">
         <h5 className="font-bold">View</h5>
         {showHelper && (
-          <CircleHelp strokeWidth={1.5} className="w-5 h-5 text-gray-500" />
+          <CircleHelp strokeWidth={1.5} className="w-5 h-5 text-text-500" />
         )}
       </div>
 
       <div>
-        <ul className="bg-gray-100 text-gray-700 rounded-lg overflow-hidden flex items-center gap-1 p-1">
+        <ul className="bg-text-50 text-text-700 rounded-lg overflow-hidden flex items-center gap-1 p-1">
           {views.map(
             (v) =>
               !(v.name === "Calendar" && hideCalendarView) && (
@@ -65,8 +65,8 @@ const LayoutView = ({
                   key={v.id}
                   className={`flex flex-col items-center justify-center gap-1 py-1 rounded-lg cursor-pointer flex-1 transition border ${
                     v.name === view
-                      ? "bg-white border-gray-200"
-                      : "hover:bg-gray-200 border-transparent"
+                      ? "bg-surface border-text-200"
+                      : "hover:bg-primary-50 border-transparent"
                   }`}
                   onClick={() => setView(v.name)}
                 >

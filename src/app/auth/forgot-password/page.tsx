@@ -11,11 +11,11 @@ const ForgotPassword = () => (
     }}
     additionalFooter={
       <div className="mt-6 text-center">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-text-600">
           Remember your password?{" "}
           <a
             href="/auth/login"
-            className="font-medium text-indigo-600 hover:text-indigo-500"
+            className="font-medium textindigo600 hover:textindigo500"
           >
             Log in
           </a>

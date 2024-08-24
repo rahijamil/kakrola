@@ -169,13 +169,13 @@ const BoardViewColumn = ({
                 <button className={`p-1 pointer-events-none`}>
                   <UnfoldHorizontal
                     strokeWidth={1.5}
-                    className="w-5 h-5 text-gray-700"
+                    className="w-5 h-5 text-text-700"
                   />
                 </button>
 
                 <h3 className="font-bold vertical-text">{column.title}</h3>
 
-                <p className="text-sm text-gray-600 vertical-text">
+                <p className="text-sm text-text-600 vertical-text">
                   {column.tasks.length}
                 </p>
               </div>
@@ -207,7 +207,7 @@ const BoardViewColumn = ({
                       }
                     >
                       <h3 className="font-bold pl-[6px]">{column.title}</h3>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-text-600">
                         {column.tasks.length}
                       </p>
                     </div>
@@ -236,7 +236,7 @@ const BoardViewColumn = ({
                     >
                       <FoldHorizontal
                         strokeWidth={1.5}
-                        className="w-5 h-5 text-gray-700"
+                        className="w-5 h-5 text-text-700"
                       />
                     </button>
 
@@ -276,7 +276,7 @@ const BoardViewColumn = ({
                           <>
                             <div
                               key={task.id}
-                              className={`rounded shadow-sm hover:ring-2 hover:ring-indigo-300 hover:transition ring-1 ring-gray-200`}
+                              className={`rounded shadow-sm hover:ring-2 hover:ring-indigo-300 hover:transition ring-1 ring-text-200`}
                             >
                               <TaskItem
                                 key={task.id}

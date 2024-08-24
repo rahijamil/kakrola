@@ -17,11 +17,11 @@ const SignUpPage = () => (
     socialButtons={<SocialLogin />}
     additionalFooter={
       <div className="text-center">
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-sm text-text-600">
           Already have an account?{" "}
           <a
             href="/auth/login"
-            className="font-medium text-indigo-600 hover:text-indigo-500"
+            className="font-medium text-primary-600 hover:text-primary-500"
           >
             Log in
           </a>

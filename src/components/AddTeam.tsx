@@ -232,10 +232,10 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4"
+        className="bg-surface rounded-lg shadow-xl w-full max-w-md mx-4"
         onClick={(ev) => ev.stopPropagation()}
       >
-        <div className="flex justify-between items-center p-4 border-b border-gray-200">
+        <div className="flex justify-between items-center p-4 border-b border-text-200">
           <h2 className="text-xl font-semibold">
             {step === 1
               ? "Add a team"
@@ -245,7 +245,7 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition p-1 rounded-lg"
+            className="text-text-500 hover:text-text-700 hover:bg-primary-50 transition p-1 rounded-lg"
           >
             <X size={20} />
           </button>
@@ -266,7 +266,7 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
                 autoComplete="off"
                 autoFocus
               />
-              <p className="text-gray-500 text-[13px]">
+              <p className="text-text-500 text-[13px]">
                 Keep it something simple your teammates will recognize.
               </p>
             </div>
@@ -317,7 +317,7 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
                 rows={3}
               />
 
-              <p className="text-gray-500 text-[13px]">
+              <p className="text-text-500 text-[13px]">
                 Gather your team and dive into collaboration together!
               </p>
             </div>
@@ -350,7 +350,7 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
           </div>
         </form>
 
-        <div className="px-6 pb-6 text-xs text-gray-500">
+        <div className="px-6 pb-6 text-xs text-text-500">
           By creating a team, you agree to our{" "}
           <a href="#" className="text-blue-600 hover:underline">
             Terms of Service

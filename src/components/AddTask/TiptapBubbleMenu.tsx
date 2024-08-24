@@ -23,7 +23,7 @@ const TiptapBubbleMenu: React.FC<{ content: Content }> = ({ content }) => {
                 type="button"
                 onClick={() => editor.chain().focus().toggleBold().run()}
                 className={`${
-                  editor.isActive("bold") ? "bg-white/30" : "hover:bg-white/30"
+                  editor.isActive("bold") ? "bg-surface/30" : "hover:bg-surface/30"
                 } w-6 h-6 flex items-center justify-center rounded-md transition duration-200`}
                 title="Bold"
               >
@@ -34,8 +34,8 @@ const TiptapBubbleMenu: React.FC<{ content: Content }> = ({ content }) => {
                 onClick={() => editor.chain().focus().toggleItalic().run()}
                 className={`${
                   editor.isActive("italic")
-                    ? "bg-white/30"
-                    : "hover:bg-white/30"
+                    ? "bg-surface/30"
+                    : "hover:bg-surface/30"
                 } w-6 h-6 flex items-center justify-center rounded-md transition duration-200`}
                 title="Italic"
               >
@@ -45,7 +45,7 @@ const TiptapBubbleMenu: React.FC<{ content: Content }> = ({ content }) => {
                 type="button"
                 onClick={() => editor.chain().focus().toggleCode().run()}
                 className={`${
-                  editor.isActive("code") ? "bg-white/30" : "hover:bg-white/30"
+                  editor.isActive("code") ? "bg-surface/30" : "hover:bg-surface/30"
                 } w-6 h-6 flex items-center justify-center rounded-md transition duration-200`}
                 title="Code"
               >
@@ -53,14 +53,14 @@ const TiptapBubbleMenu: React.FC<{ content: Content }> = ({ content }) => {
               </button>
             </div>
 
-            <div className="w-[1px] h-7 bg-white/40"></div>
+            <div className="w-[1px] h-7 bg-surface/40"></div>
 
             <div className="flex items-center justify-center gap-1 p-1">
               <button
                 type="button"
                 onClick={() => editor.chain().focus().toggleBlockquote().run()}
                 className={`${
-                  editor.isActive("link") ? "bg-white/30" : "hover:bg-white/30"
+                  editor.isActive("link") ? "bg-surface/30" : "hover:bg-surface/30"
                 } p-1 flex items-center justify-center gap-1 rounded-md transition duration-200`}
                 title="Link"
               >

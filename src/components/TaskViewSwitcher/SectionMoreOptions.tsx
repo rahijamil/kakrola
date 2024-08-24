@@ -12,7 +12,7 @@ import { Archive, Ellipsis, Palette, Pencil, Trash2 } from "lucide-react";
 import { SectionType, TaskType } from "@/types/project";
 
 const colors = [
-  "indigo",
+  "-indigo-",
   "purple",
   "green",
   "yellow",
@@ -111,7 +111,7 @@ const SectionMoreOptions = ({
           }`}
           onClick={onClick}
         >
-          <Ellipsis strokeWidth={1.5} className="w-5 h-5 text-gray-700" />
+          <Ellipsis strokeWidth={1.5} className="w-5 h-5 text-text-700" />
         </button>
       )}
       items={[

@@ -94,10 +94,10 @@ const TaskItemModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg w-11/12 max-w-[52rem] min-h-full h-fit flex flex-col"
+        className="bg-surface rounded-lg w-11/12 max-w-[52rem] min-h-full h-fit flex flex-col"
         onClick={(ev) => ev.stopPropagation()}
       >
-        <div className="p-2 px-4 flex items-center justify-between border-b border-gray-200">
+        <div className="p-2 px-4 flex items-center justify-between border-b border-text-200">
           {taskData.is_inbox ? (
             <div className="flex items-center gap-2">
               <Inbox className="w-4 h-4" />
@@ -128,11 +128,11 @@ const TaskItemModal = ({
           )}
 
           <div className="flex items-center gap-2">
-            {/* <button className="p-1 hover:bg-gray-100 transition rounded-lg">
+            {/* <button className="p-1 hover:bg-primary-50 transition rounded-lg">
               <Ellipsis strokeWidth={1.5} className="w-6 h-6" />
             </button> */}
             <button
-              className="p-1 hover:bg-gray-100 transition rounded-lg"
+              className="p-1 hover:bg-primary-50 transition rounded-lg"
               onClick={onClose}
             >
               <X strokeWidth={1.5} className="w-6 h-6" />
@@ -141,7 +141,7 @@ const TaskItemModal = ({
         </div>
 
         <div className="flex flex-[.99]">
-          <div className="flex gap-1 bg-white p-4 flex-1">
+          <div className="flex gap-1 bg-surface p-4 flex-1">
             <div
               onClick={onCheckClick}
               className="p-1 group cursor-pointer h-fit"
@@ -163,8 +163,8 @@ const TaskItemModal = ({
                     : task.priority == "P2"
                     ? "text-orange-500 bg-orange-100"
                     : task.priority == "P3"
-                    ? "text-indigo-500 bg-indigo-100"
-                    : "text-gray-500"
+                    ? "text-primary-500 bg-primary-100"
+                    : "text-text-500"
                 } ${task.is_completed ? "hidden" : "group-hover:hidden"}`}
               />
 
@@ -185,8 +185,8 @@ const TaskItemModal = ({
                   : task.priority == "P2"
                   ? "text-orange-500 bg-orange-100"
                   : task.priority == "P3"
-                  ? "text-indigo-500 bg-indigo-100"
-                  : "text-gray-500"
+                  ? "text-primary-500 bg-primary-100"
+                  : "text-text-500"
                 } ${
                   !taskData.is_completed
                     ? "hidden group-hover:block"
@@ -196,8 +196,8 @@ const TaskItemModal = ({
                           : taskData.priority == "P2"
                           ? "bg-orange-500"
                           : taskData.priority == "P3"
-                          ? "bg-indigo-500"
-                          : "bg-gray-500"
+                          ? "bg-primary-500"
+                          : "bg-text-500"
                       }`
                 }`}
               />
@@ -208,11 +208,11 @@ const TaskItemModal = ({
                 <div
                   className={`${
                     contentEditable && "border"
-                  } rounded-lg overflow-hidden border-gray-200 focus-within:border-gray-400`}
+                  } rounded-lg overflow-hidden border-text-200 focus-within:border-text-400`}
                 >
                   <Input
                     className={`${
-                      taskData.is_completed ? "line-through text-gray-500" : ""
+                      taskData.is_completed ? "line-through text-text-500" : ""
                     } text-lg font-bold w-full p-2 pb-[10px]`}
                     value={taskData.title}
                     onClick={() => setContentEditable(true)}
@@ -233,7 +233,7 @@ const TaskItemModal = ({
                   >
                     <Text
                       strokeWidth={1.5}
-                      className="w-4 h-4 mt-[2px] text-gray-400"
+                      className="w-4 h-4 mt-[2px] text-text-400"
                     />
                     <Textarea
                       fullWidth
@@ -257,14 +257,14 @@ const TaskItemModal = ({
                     <button
                       type="button"
                       onClick={() => setContentEditable(false)}
-                      className="px-4 py-2 text-gray-600 bg-gray-200 rounded hover:bg-gray-300 text-xs font-semibold"
+                      className="px-4 py-2 text-text-600 bg-text-200 rounded hover:bg-text-300 text-xs font-semibold"
                     >
                       Cancel
                     </button>
                     <button
                       type="button"
                       onClick={handleSaveTitleDesc}
-                      className="px-4 py-2 text-white bg-indigo-600 rounded hover:bg-indigo-700 text-xs font-semibold"
+                      className="px-4 py-2 text-white bg-primary-600 rounded hover:bg-primary-700 text-xs font-semibold"
                     >
                       Save
                     </button>
@@ -275,7 +275,7 @@ const TaskItemModal = ({
               <div className="mt-6">
                 {!showAddSubtask && (
                   <button
-                    className="text-xs hover:bg-gray-100 transition rounded-lg flex items-center gap-2 px-2 py-[6px] text-gray-600"
+                    className="text-xs hover:bg-primary-50 transition rounded-lg flex items-center gap-2 px-2 py-[6px] text-text-600"
                     onClick={() => setShowAddSubtask(true)}
                   >
                     <Plus strokeWidth={1.5} className="w-4 h-4" />
@@ -284,7 +284,7 @@ const TaskItemModal = ({
                   </button>
                 )}
                 {showAddSubtask && (
-                  <div className="rounded-lg border border-gray-200 focus-within:border-gray-400 bg-white">
+                  <div className="rounded-lg border border-text-200 focus-within:border-text-400 bg-surface">
                     <AddTaskForm
                       onClose={() => setShowAddSubtask(false)}
                       parentTaskIdForSubTask={task.id}
@@ -316,7 +316,7 @@ const TaskItemModal = ({
                 ))}
               </ul>
 
-              <div className="my-4 bg-gray-100 h-[1px]" />
+              <div className="my-4 bg-text-50 h-[1px]" />
 
               {/* {!showCommentForm && (
                 <div className="flex items-center gap-2">
@@ -329,13 +329,13 @@ const TaskItemModal = ({
                   />
 
                   <div
-                    className="flex items-center justify-between w-full border border-gray-100 rounded-full py-1 px-4 hover:bg-gray-50 cursor-pointer transition"
+                    className="flex items-center justify-between w-full border border-text-50 rounded-full py-1 px-4 hover:bg-primary-50 cursor-pointer transition"
                     onClick={() => setShowCommentForm(true)}
                   >
                     <p className="">Comment</p>
                     <Paperclip
                       strokeWidth={1.5}
-                      className="w-4 h-4 text-gray-700"
+                      className="w-4 h-4 text-text-700"
                     />
                   </div>
                 </div>
@@ -348,7 +348,7 @@ const TaskItemModal = ({
               )} */}
             </div>
           </div>
-          <div className="bg-indigo-50/50 p-4 w-64">
+          <div className="bg-primary-50/50 p-4 w-64">
             <div>
               <div className="space-y-2">
                 <p className="font-semibold text-xs pl-2">Project</p>
@@ -360,7 +360,7 @@ const TaskItemModal = ({
                   forTaskModal
                 />
               </div>
-              <div className="h-[1px] bg-gray-200 m-2"></div>
+              <div className="h-[1px] bg-text-200 m-2"></div>
             </div>
             <div>
               <div className="space-y-2">
@@ -370,7 +370,7 @@ const TaskItemModal = ({
                   forTaskModal
                 />
               </div>
-              <div className="h-[1px] bg-gray-200 m-2"></div>
+              <div className="h-[1px] bg-text-200 m-2"></div>
             </div>
             <div>
               <div className="space-y-2">
@@ -380,7 +380,7 @@ const TaskItemModal = ({
                   setTask={setTaskData}
                 />
               </div>
-              <div className="h-[1px] bg-gray-200 m-2"></div>
+              <div className="h-[1px] bg-text-200 m-2"></div>
             </div>
             <div>
               <div className="space-y-2">
@@ -392,40 +392,40 @@ const TaskItemModal = ({
                   forTaskItemModal
                 />
               </div>
-              <div className="h-[1px] bg-gray-200 m-2"></div>
+              <div className="h-[1px] bg-text-200 m-2"></div>
             </div>
 
             {/* <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-indigo-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-primary-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Labels</p>
                   <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
               </div>
-              <div className="h-[1px] bg-gray-200 m-2"></div>
+              <div className="h-[1px] bg-text-200 m-2"></div>
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-indigo-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-primary-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Reminders</p>
                   <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
               </div>
-              <div className="h-[1px] bg-gray-200 m-2"></div>
+              <div className="h-[1px] bg-text-200 m-2"></div>
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-indigo-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-primary-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
                   <p className="space-x-1 font-semibold text-xs">
                     <span>Location</span>
-                    <span className="uppercase text-[10px] tracking-widest font-bold text-indigo-800 bg-indigo-100 p-[2px] px-1 rounded-lg">
+                    <span className="uppercase text-[10px] tracking-widest font-bold text-primary-800 bg-primary-100 p-[2px] px-1 rounded-lg">
                       Upgrade
                     </span>
                   </p>
                   <LockKeyhole strokeWidth={1.5} className="w-4 h-4" />
                 </div>
               </div>
-              <div className="h-[1px] bg-gray-200 m-2"></div>
+              <div className="h-[1px] bg-text-200 m-2"></div>
             </div> */}
           </div>
         </div>

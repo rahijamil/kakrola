@@ -133,14 +133,14 @@ export default function AccountSettingsPage() {
         {/* <section className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Plan</h2>
-          <p className="text-sm text-gray-500">Beginner</p>
+          <p className="text-sm text-text-500">Beginner</p>
         </div>
         <Button variant="outline" size="sm">
           Manage plan
         </Button>
       </section>
 
-      <div className="h-[1px] bg-gray-100"></div> */}
+      <div className="h-[1px] bg-text-50"></div> */}
 
         {error && <p className="text-red-500">{error}</p>}
 
@@ -149,7 +149,7 @@ export default function AccountSettingsPage() {
             <label className="font-bold">Profile</label>
 
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 min-w-16 min-h-16 rounded-full relative bg-gray-100 overflow-hidden">
+              <div className="w-16 h-16 min-w-16 min-h-16 rounded-full relative bg-text-50 overflow-hidden">
                 <Image
                   src={avatarUrl || "/default-avatar.png"}
                   alt="Profile Picture"
@@ -170,8 +170,8 @@ export default function AccountSettingsPage() {
                   />
                   <label
                     htmlFor="avatar-upload"
-                    className={`border cursor-pointer h-9 inline-flex items-center justify-center gap-2 rounded-lg px-3 border-indigo-600 text-indigo-600 ${
-                      uploadLoading ? "opacity-50" : "hover:bg-indigo-50"
+                    className={`border cursor-pointer h-9 inline-flex items-center justify-center gap-2 rounded-lg px-3 borderindigo600 textindigo600 ${
+                      uploadLoading ? "opacity-50" : "hover:bgindigo50"
                     }`}
                   >
                     {uploadLoading ? (
@@ -199,7 +199,7 @@ export default function AccountSettingsPage() {
                     )}
                   </Button>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-text-500 mt-1">
                   Pick a photo up to 4MB. Your avatar photo will be public.
                 </p>
               </div>
@@ -266,26 +266,26 @@ export default function AccountSettingsPage() {
             checked={twoFactorAuth}
             onCheckedChange={() => setTwoFactorAuth(!twoFactorAuth)}
           />
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-text-500">
             2FA is {twoFactorAuth ? "enabled" : "disabled"} on your Todoist
             account.
           </p>
         </div> */}
         </section>
 
-        {/* <div className="h-[1px] bg-gray-100"></div> */}
+        {/* <div className="h-[1px] bg-text-50"></div> */}
 
         {/* <section className="space-y-3">
         <div className="space-y-1">
           <h3 className="font-bold">Connected accounts</h3>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-text-500">
             Log in to Todoist with your Google, Facebook, or Apple account.
           </p>
         </div>
-        <p className="text-sm text-gray-700">
+        <p className="text-sm text-text-700">
           You can log in to Todoist with your Google account {email}.
         </p>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-text-500">
           Your password is not set, so we cannot disconnect you from your Google
           account. If you want to disconnect, please{" "}
           <a href="#" className="text-blue-500">
@@ -311,13 +311,13 @@ export default function AccountSettingsPage() {
         </div>
       </section>
 
-      <div className="h-[1px] bg-gray-100"></div> */}
+      <div className="h-[1px] bg-text-50"></div> */}
 
         {/* <section className="space-y-3">
         <div className="space-y-1">
           {" "}
           <h3 className="font-bold">Delete account</h3>
-          <p className="text-gray-500 text-xs">
+          <p className="text-text-500 text-xs">
             This will immediately delete all of your data including tasks,
             projects, comments, and more. This can’t be undone.
           </p>

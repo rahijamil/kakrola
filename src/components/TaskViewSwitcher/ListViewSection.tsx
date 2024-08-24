@@ -102,15 +102,15 @@ const ListViewSection = ({
     <div>
       <div className="flex items-center gap-1 py-2">
         <button
-          className={`p-1 hover:bg-gray-100 transition rounded-lg ${
+          className={`p-1 hover:bg-primary-50 transition rounded-lg ${
             !section.is_collapsed && "rotate-90"
           }`}
           onClick={() => toggleSection(section.id, !section.is_collapsed)}
         >
-          <ChevronRightIcon className="w-4 h-4 text-gray-700" />
+          <ChevronRightIcon className="w-4 h-4 text-text-700" />
         </button>
 
-        <div className="flex items-center justify-between gap-8 border-b border-gray-200 w-full">
+        <div className="flex items-center justify-between gap-8 border-b border-text-200 w-full">
           <div className="flex items-center gap-2">
             {!editColumnTitle ? (
               <h3
@@ -136,7 +136,7 @@ const ListViewSection = ({
             )}
 
             {(groupedTasks[section.id] || []).length > 0 && (
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-text-600">
                 {(groupedTasks[section.id] || []).length}
               </p>
             )}
@@ -186,7 +186,7 @@ const ListViewSection = ({
                   .map((task, index) => (
                     <Fragment key={task.id}>
                       <li
-                        className={`border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer ${
+                        className={`border-b border-text-200 p-1 pl-0 flex items-center gap-3 cursor-pointer ${
                           task.parent_task_id && "ml-8"
                         }`}
                       >
@@ -217,7 +217,7 @@ const ListViewSection = ({
                             .map((childTask, childIndex) => (
                               <li
                                 key={childTask.id}
-                                className={`border-b border-gray-200 p-1 pl-0 flex items-center gap-3 cursor-pointer ${
+                                className={`border-b border-text-200 p-1 pl-0 flex items-center gap-3 cursor-pointer ${
                                   childTask.parent_task_id && "ml-8"
                                 }`}
                               >
