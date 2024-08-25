@@ -49,8 +49,8 @@ const MonthCalendar = ({
                   onClick={() => onSelect(day)}
                   className={`rounded-full text-xs w-7 h-7 ${
                     selected && isSameDay(day, selected)
-                      ? "bg-primary-500 text-white"
-                      : "hover:bg-primary-50"
+                      ? "bg-primary-500 text-surface"
+                      : "hover:bg-text-100"
                   }`}
                 >
                   {format(day, "d")}

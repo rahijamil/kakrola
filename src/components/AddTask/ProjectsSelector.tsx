@@ -62,7 +62,7 @@ const ProjectsSelector = ({
           <button
             onClick={() => setIsOpen(true)}
             className={`flex items-center justify-between rounded-lg cursor-pointer transition p-[6px] px-2 group w-full ${
-              isOpen ? "bg-primary-100" : "hover:bg-primary-100"
+              isOpen ? "bg-primary-100" : "hover:bg-text-100"
             }`}
           >
             {task.is_inbox ? (
@@ -92,7 +92,7 @@ const ProjectsSelector = ({
           <div
             ref={triggerRef}
             className={`flex items-center gap-2 cursor-pointer p-2 px-2 rounded-lg ${
-              isOpen ? "bg-text-50" : "hover:bg-primary-50"
+              isOpen ? "bg-text-50" : "hover:bg-text-100"
             }`}
             onClick={onClick}
           >
@@ -133,7 +133,7 @@ const ProjectsSelector = ({
           {/* Show Inbox if it matches the search query */}
           {isInbox && inboxMatches && (
             <div
-              className="flex items-center p-2 transition-colors text-text-700 hover:bg-primary-50 cursor-pointer"
+              className="flex items-center p-2 transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
               onClick={() => {
                 setTask({
                   ...task,
@@ -168,7 +168,7 @@ const ProjectsSelector = ({
             {personalProjects.map((project) => (
               <div key={project.id}>
                 <li
-                  className="flex items-center pl-6 p-2 transition-colors text-text-700 hover:bg-primary-50 cursor-pointer"
+                  className="flex items-center pl-6 p-2 transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
                   onClick={() => {
                     setTask({
                       ...task,
@@ -196,7 +196,7 @@ const ProjectsSelector = ({
                     .map((section) => (
                       <li
                         key={section.id}
-                        className="flex items-center justify-between pl-8 p-2 transition-colors text-text-700 hover:bg-primary-50 cursor-pointer"
+                        className="flex items-center justify-between pl-8 p-2 transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
                         onClick={() => {
                           setTask({
                             ...task,
@@ -263,7 +263,7 @@ const ProjectsSelector = ({
                   {projects.map((project) => (
                     <div key={project.id}>
                       <li
-                        className="flex items-center pl-6 px-2 py-2 transition-colors text-text-700 hover:bg-primary-50 cursor-pointer"
+                        className="flex items-center pl-6 px-2 py-2 transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
                         onClick={() => {
                           setTask({
                             ...task,
@@ -292,7 +292,7 @@ const ProjectsSelector = ({
                           .map((section) => (
                             <li
                               key={section.id}
-                              className="flex items-center justify-between pl-8 p-2 transition-colors text-text-700 hover:bg-primary-50 cursor-pointer"
+                              className="flex items-center justify-between pl-8 p-2 transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
                               onClick={() => {
                                 setTask({
                                   ...task,

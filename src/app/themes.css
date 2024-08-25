@@ -1,19 +1,24 @@
 :root {
-  /* Default Theme (Kakrola Light) */
-  --color-primary-25: #f2fbff; /* Very light blue */
-  --color-primary-50: #e6f7ff;
-  --color-primary-100: #b3e0ff;
-  --color-primary-200: #80c6ff;
-  --color-primary-300: #4dafff;
-  --color-primary-400: #1a99ff;
-  --color-primary-500: #005c83; /* Darker base color for light theme */
-  --color-primary-600: #004e6f;
-  --color-primary-700: #00384f;
-  --color-primary-800: #002a3c;
-  --color-primary-900: #001723;
+  /* Kakrola Light Theme - adjusted */
+  /* --color-primary-25: #f5f5f5; */
+
+  --color-primary-10: #f7fbfd;
+  --color-primary-25: #f0f7fa;
+  --color-primary-50: #e1eff5;
+  --color-primary-100: #c3dfeb;
+  --color-primary-200: #a5cfe1;
+  --color-primary-300: #87bfd7;
+  --color-primary-400: #69afcd;
+  --color-primary-500: #005c83; /* Base color */
+  --color-primary-600: #004d6e;
+  --color-primary-700: #003e59;
+  --color-primary-800: #002f44;
+  --color-primary-900: #00202f;
+
+  --color-primary2: #0076a3;
+
   --color-secondary: #ff7d36; /* Light orange for secondary highlights */
   --color-accent: #ff4081; /* Vivid pink accent color */
-  /* --color-background: #f4f4f9; Soft off-white background for main content areas */
   --color-background: #ffffff; /* Soft off-white background for main content areas */
   --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
   --color-text-50: #f5f5f5; /* Very light grey for muted text */
@@ -29,149 +34,157 @@
 }
 
 [data-theme="dark"] {
-  --color-primary-25: #0a2a5f; /* Very dark blue */
-  --color-primary-50: #1e3a8a;
-  --color-primary-100: #1e40af;
-  --color-primary-200: #1d4ed8;
-  --color-primary-300: #2563eb;
-  --color-primary-400: #3b82f6;
-  --color-primary-500: #4a90e2; /* Lighter base color for dark theme */
-  --color-primary-600: #5a9be5;
-  --color-primary-700: #6aa4e8;
-  --color-primary-800: #7baceb;
-  --color-primary-900: #8bb5ef;
+  --color-primary-10: #191c20;
+  --color-primary-25: #1e1e1e; /* Darkest shade */
+  --color-primary-50: #23282f;
+  --color-primary-100: #2d3642;
+  --color-primary-200: #374455;
+  --color-primary-300: #415268;
+  --color-primary-400: #4b607b;
+  --color-primary-500: #8698c2; /* Base color */
+  --color-primary-600: #96a6ca;
+  --color-primary-700: #a7b4d2;
+  --color-primary-800: #b7c2da;
+  --color-primary-900: #c8d0e2; /* Lightest shade */
+
   --color-secondary: #bb86fc; /* Lavender for secondary highlights */
   --color-accent: #ff4081; /* Vivid pink for notifications, success messages */
-  --color-background: #121212; /* Dark background for main content areas */
-  --color-surface: #1e1e1e; /* Darker shade for cards, modals, etc. */
-  --color-text-50: #ffffff; /* White for main text */
-  --color-text-100: #e6e6e6;
-  --color-text-200: #cccccc;
-  --color-text-300: #b3b3b3;
-  --color-text-400: #999999;
-  --color-text-500: #e0e0e0; /* Lighter text color for dark theme */
-  --color-text-600: #f5f5f5;
-  --color-text-700: #fafafa;
-  --color-text-800: #fbfbfb;
-  --color-text-900: #fdfdfd; /* Very light grey for main text */
+  --color-background: #222; /* Dark background for main content areas */
+  --color-surface: #252525; /* Slightly lighter shade for cards, modals, etc. */
+  --color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
+  --color-text-100: #2a2a2a; /* Dark grey */
+  --color-text-200: #333333; /* Darker grey for less subtle text */
+  --color-text-300: #4d4d4d; /* Medium-dark grey */
+  --color-text-400: #666666; /* Slightly lighter grey */
+  --color-text-500: #808080; /* Neutral grey */
+  --color-text-600: #999999; /* Light grey for general text */
+  --color-text-700: #b3b3b3; /* Lighter grey */
+  --color-text-800: #cccccc; /* Light grey */
+  --color-text-900: #ffffff; /* White for main text */
 }
 
 [data-theme="moonstone"] {
-  --color-primary-25: #d8e9f4; /* Very light blue */
-  --color-primary-50: #edf8ff;
-  --color-primary-100: #d1f0ff;
-  --color-primary-200: #a3e1ff;
-  --color-primary-300: #74d3ff;
-  --color-primary-400: #45c4ff;
-  --color-primary-500: #0084bf; /* Darker base color for light theme */
-  --color-primary-600: #0074a3;
-  --color-primary-700: #005982;
-  --color-primary-800: #004161;
-  --color-primary-900: #002b3e;
+  --color-primary-10: #f2f7fa; 
+  --color-primary-25: #e6f0f5;
+  --color-primary-50: #cde1eb;
+  --color-primary-100: #9bc3d7;
+  --color-primary-200: #69a5c3;
+  --color-primary-300: #3787af;
+  --color-primary-400: #05699b;
+  --color-primary-500: #0084bf; /* Base color */
+  --color-primary-600: #006fa0;
+  --color-primary-700: #005a81;
+  --color-primary-800: #004562;
+  --color-primary-900: #003043;
+
   --color-secondary: #ab47bc; /* Soft purple for highlights or accents */
   --color-accent: #ffab40; /* Orange accent for contrast */
   /* --color-background: #fafafa; Very light grey for main content areas */
   --color-background: #ffffff; /* Very light grey for main content areas */
   --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
- 
 }
 
 [data-theme="tangerine"] {
-  --color-primary-25: #ffecd7; /* Very light cream */
-  --color-primary-50: #fff8e1;
-  --color-primary-100: #ffecb3;
-  --color-primary-200: #ffe082;
-  --color-primary-300: #ffd54f;
-  --color-primary-400: #ffca28;
-  --color-primary-500: #d17c00; /* Darker base color for light theme */
-  --color-primary-600: #b26a00;
-  --color-primary-700: #8a5200;
-  --color-primary-800: #623a00;
-  --color-primary-900: #3b2300;
+  --color-primary-10: #fcf8f2;
+  --color-primary-25: #faf2e6;
+  --color-primary-50: #f5e5cd;
+  --color-primary-100: #ebcb9b;
+  --color-primary-200: #e1b169;
+  --color-primary-300: #d79737;
+  --color-primary-400: #cd7d05;
+  --color-primary-500: #d17c00; /* Base color */
+  --color-primary-600: #af6800;
+  --color-primary-700: #8d5400;
+  --color-primary-800: #6b4000;
+  --color-primary-900: #492c00;
+
   --color-secondary: #ff7043; /* Bright coral for highlights */
   --color-accent: #ffeb3b; /* Yellow accent for notifications, success messages */
   /* --color-background: #fff3e0; Light creamy background */
   --color-background: #ffffff; /* Light creamy background */
   --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
-
 }
 
 [data-theme="kale"] {
-  --color-primary-25: #ffecd7; /* Very light cream */
-  --color-primary-50: #e6f2e6;
-  --color-primary-100: #cce5cc;
-  --color-primary-200: #99cc99;
-  --color-primary-300: #66b266;
-  --color-primary-400: #339933;
-  --color-primary-500: #007326; /* Darker base color for light theme */
-  --color-primary-600: #005a1e;
-  --color-primary-700: #004515;
-  --color-primary-800: #00310d;
-  --color-primary-900: #001b06;
+  --color-primary-10: #f3f7f3;
+  --color-primary-25: #e8efe8;
+  --color-primary-50: #d1dfd1;
+  --color-primary-100: #a3bfa3;
+  --color-primary-200: #759f75;
+  --color-primary-300: #477f47;
+  --color-primary-400: #195f19;
+  --color-primary-500: #297b2d; /* Base color */
+  --color-primary-600: #226726;
+  --color-primary-700: #1b531f;
+  --color-primary-800: #143f18;
+  --color-primary-900: #0d2b11;
+
   --color-secondary: #558b2f; /* Olive green for secondary highlights */
   --color-accent: #ffd700; /* Gold accent for contrast */
   /* --color-background: #f1f8f6; Light greenish-grey background */
   --color-background: #ffffff; /* Light greenish-grey background */
   --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
-
 }
 
 [data-theme="blueberry"] {
-  --color-primary-25: #e0f7ff; /* Very light blue */
-  --color-primary-50: #e3f2fd;
-  --color-primary-100: #bbdefb;
-  --color-primary-200: #90caf9;
-  --color-primary-300: #64b5f6;
-  --color-primary-400: #42a5f5;
-  --color-primary-500: #1e88e5; /* Darker base color for light theme */
-  --color-primary-600: #1976d2;
-  --color-primary-700: #1565c0;
-  --color-primary-800: #0d47a1;
-  --color-primary-900: #09357a;
+  --color-primary-10: #f3f9fd;
+  --color-primary-25: #e7f3fb;
+  --color-primary-50: #cfe7f7;
+  --color-primary-100: #9fcfef;
+  --color-primary-200: #6fb7e7;
+  --color-primary-300: #3f9fdf;
+  --color-primary-400: #1f87d7;
+  --color-primary-500: #1e88e5; /* Base color */
+  --color-primary-600: #1972c1;
+  --color-primary-700: #145c9d;
+  --color-primary-800: #0f4679;
+  --color-primary-900: #0a3055;
+
   --color-secondary: #4a90e2; /* Light blue for secondary highlights */
   --color-accent: #ff4081; /* Vivid pink for notifications, success messages */
   /* --color-background: #e3f2fd; Light blue background */
   --color-background: #ffffff; /* Light blue background */
   --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
-
 }
 
 [data-theme="lavender"] {
-  --color-primary-25: #f9f2ff; /* Very light lavender */
-  --color-primary-50: #f5f0ff;
-  --color-primary-100: #e0d7ff;
-  --color-primary-200: #c2aaff;
-  --color-primary-300: #a585ff;
-  --color-primary-400: #8a65ff;
-  --color-primary-500: #6c40ff; /* Darker base color for light theme */
-  --color-primary-600: #5a34cc;
-  --color-primary-700: #472999;
-  --color-primary-800: #341e66;
-  --color-primary-900: #241433;
+  --color-primary-10: #f8f6ff;
+  --color-primary-25: #f1edff;
+  --color-primary-50: #e3dbff;
+  --color-primary-100: #c7b7ff;
+  --color-primary-200: #ab93ff;
+  --color-primary-300: #8f6fff;
+  --color-primary-400: #734bff;
+  --color-primary-500: #6c40ff; /* Base color */
+  --color-primary-600: #5b36d6;
+  --color-primary-700: #4a2cad;
+  --color-primary-800: #392284;
+  --color-primary-900: #28185b;
+
   --color-secondary: #ff8e72; /* Soft coral for highlights */
   --color-accent: #ffd700; /* Gold accent for contrast */
   /* --color-background: #f7f5fa; Light lavender background */
   --color-background: #ffffff; /* Light lavender background */
   --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
-
 }
 
 [data-theme="raspberry"] {
-  --color-primary-25: #ffe6e9; /* Very light pink */
-  --color-primary-50: #fff0f2;
-  --color-primary-100: #ffc1cc;
-  --color-primary-200: #ff8ba5;
-  --color-primary-300: #ff547e;
-  --color-primary-400: #ff1d57;
-  --color-primary-500: #d1003b; /* Darker base color for light theme */
-  --color-primary-600: #aa0030;
-  --color-primary-700: #830025;
-  --color-primary-800: #5c001a;
-  --color-primary-900: #34000f;
+  --color-primary-10: #fef2f5;
+  --color-primary-25: #fce6eb;
+  --color-primary-50: #f9cdd7;
+  --color-primary-100: #f39bb0;
+  --color-primary-200: #ed6988;
+  --color-primary-300: #e73760;
+  --color-primary-400: #e10538;
+  --color-primary-500: #d1003b; /* Base color */
+  --color-primary-600: #af0032;
+  --color-primary-700: #8d0029;
+  --color-primary-800: #6b0020;
+  --color-primary-900: #490017;
+
   --color-secondary: #e91e63; /* Pink for secondary highlights */
   --color-accent: #ffeb3b; /* Bright yellow accent for contrast */
   /* --color-background: #fff0f2; Light pinkish background */
   --color-background: #ffffff; /* Light pinkish background */
   --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
-
 }

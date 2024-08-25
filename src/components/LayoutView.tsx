@@ -66,7 +66,7 @@ const LayoutView = ({
                   className={`flex flex-col items-center justify-center gap-1 py-1 rounded-lg cursor-pointer flex-1 transition border ${
                     v.name === view
                       ? "bg-surface border-text-200"
-                      : "hover:bg-primary-50 border-transparent"
+                      : "hover:bg-text-100 border-transparent"
                   }`}
                   onClick={() => setView(v.name)}
                 >

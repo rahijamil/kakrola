@@ -130,13 +130,15 @@ const LayoutWrapper = ({
     <>
       <DragDropContext onDragEnd={onDragEnd}>
         <div
-          className={`${view == "Calendar" && "flex overflow-x-hidden"} h-full`}
+          className={`${
+            view == "Calendar" && "flex overflow-x-hidden"
+          } h-full`}
         >
           <div
             className={`flex flex-col h-full w-full flex-1 transition-all duration-300`}
           >
             {view && setView && (
-              <div className="flex items-center justify-between p-4 py-3 sticky top-0 bg-backgrouond mb-1 z-10">
+              <div className="flex items-center justify-between p-4 py-3 sticky top-0 bg-background mb-1 z-10">
                 {!["Today", "Inbox"].includes(headline) && (
                   <div>
                     {teams.find((t) => t.id === project?.team_id)?.name ??
@@ -158,7 +160,7 @@ const LayoutWrapper = ({
                             className={`${
                               showShareOption
                                 ? "bg-text-50"
-                                : "hover:bg-primary-50"
+                                : "hover:bg-text-100"
                             } transition p-1 md:pr-3 rounded-lg cursor-pointer flex items-center gap-1`}
                             onClick={() => setShowShareOption(true)}
                           >
@@ -177,7 +179,7 @@ const LayoutWrapper = ({
                         className={`${
                           modalState.showViewOptions
                             ? "bg-text-50"
-                            : "hover:bg-primary-50"
+                            : "hover:bg-text-100"
                         } transition p-1 md:pr-3 rounded-lg cursor-pointer flex items-center gap-1`}
                         onClick={() => toggleModal("showViewOptions", true)}
                       >
@@ -194,7 +196,7 @@ const LayoutWrapper = ({
                           className={`${
                             modalState.showMoreOptions
                               ? "bg-text-50"
-                              : "hover:bg-primary-50"
+                              : "hover:bg-text-100"
                           } transition p-1 rounded-lg cursor-pointer`}
                           onClick={() => toggleModal("showMoreOptions", true)}
                         >
@@ -227,7 +229,7 @@ const LayoutWrapper = ({
                     modalState.editTitle ? (
                       <input
                         type="text"
-                        className="text-[26px] font-bold border border-text-300 w-full rounded-lg p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+                        className="text-[26px] font-bold border border-text-300 w-full rounded-lg p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300"
                         value={projectTitle}
                         onBlur={handleEditTitle}
                         autoFocus
@@ -256,7 +258,9 @@ const LayoutWrapper = ({
                     </h1>
                   )}
                 </div>
-                <div className={`flex-1`}>{children}</div>
+                <div className={`flex-1 ${view == "List" && "pb-80"}`}>
+                  {children}
+                </div>
               </div>
             </div>
           </div>

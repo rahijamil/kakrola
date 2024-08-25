@@ -59,11 +59,11 @@ const CalendarView = ({
           </div>
           <div className="flex items-center gap-2">
             <div className="font-medium rounded-lg border border-text-200 text-xs flex items-center gap-1 text-text-600">
-              <button className="hover:bg-primary-50 transition p-0.5">
+              <button className="hover:bg-text-100 transition p-0.5">
                 <ChevronLeft strokeWidth={1.5} size={20} />
               </button>
               <span>Today</span>
-              <button className="hover:bg-primary-50 transition p-0.5">
+              <button className="hover:bg-text-100 transition p-0.5">
                 <ChevronRight strokeWidth={1.5} size={20} />
               </button>
             </div>
@@ -74,7 +74,7 @@ const CalendarView = ({
                 className={`p-2 py-0.5 transition rounded-lg border border-text-200 text-xs flex items-center gap-1 ${
                   showNoDateTasks
                     ? "bg-text-50 text-text-700 font-bold"
-                    : "text-text-600 hover:bg-primary-50 font-medium"
+                    : "text-text-600 hover:bg-text-100 font-medium"
                 }`}
               >
                 <span>
@@ -129,7 +129,7 @@ const CalendarView = ({
                           <span
                             className={`${
                               isToday(day) &&
-                              "bg-primary-600 text-white rounded-lg w-6 h-6 inline-flex items-center justify-center"
+                              "bg-primary-500 text-surface rounded-lg w-6 h-6 inline-flex items-center justify-center"
                             }`}
                           >
                             {format(day, "d")}
@@ -156,7 +156,7 @@ const CalendarView = ({
                                       {...draggableProvided.draggableProps}
                                       {...draggableProvided.dragHandleProps}
                                       key={task.id}
-                                      className="bg-text-50 hover:bg-primary-50 transition p-1 flex items-center gap-1 border rounded-lg"
+                                      className="bg-text-50 hover:bg-text-100 transition p-1 flex items-center gap-1 border rounded-lg"
                                       onClick={(ev) => ev.stopPropagation()}
                                     >
                                       <div
@@ -180,7 +180,7 @@ const CalendarView = ({
                                               : task.priority == "P2"
                                               ? "text-orange-500 bg-orange-100"
                                               : task.priority == "P3"
-                                              ? "text-primary-500 bg-primary-100"
+                                              ? "text-primary-600 bg-primary-100"
                                               : "text-text-500"
                                           } ${
                                             task.is_completed
@@ -197,7 +197,7 @@ const CalendarView = ({
                                               : task.priority == "P2"
                                               ? "text-orange-500"
                                               : task.priority == "P3"
-                                              ? "text-primary-500"
+                                              ? "text-primary-600"
                                               : "text-text-500"
                                           } ${
                                             !task.is_completed
@@ -208,7 +208,7 @@ const CalendarView = ({
                                                     : task.priority == "P2"
                                                     ? "bg-orange-500"
                                                     : task.priority == "P3"
-                                                    ? "bg-primary-500"
+                                                    ? "bg-primary-600"
                                                     : "bg-text-500"
                                                 }`
                                           }`}

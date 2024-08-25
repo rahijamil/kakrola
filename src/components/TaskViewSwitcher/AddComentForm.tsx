@@ -19,16 +19,16 @@ const AddComentForm = ({ onCancelClick }: { onCancelClick?: () => void }) => {
 
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-1">
-          <button className="p-[5px] rounded-lg hover:bg-primary-50 transition">
+          <button className="p-[5px] rounded-lg hover:bg-text-100 transition">
             <PaperClipIcon className="w-5 h-5" />
           </button>
-          <button className="p-[5px] rounded-lg hover:bg-primary-50 transition">
+          <button className="p-[5px] rounded-lg hover:bg-text-100 transition">
             <MicrophoneIcon className="w-5 h-5" />
           </button>
-          <button className="p-[5px] rounded-lg hover:bg-primary-50 transition">
+          <button className="p-[5px] rounded-lg hover:bg-text-100 transition">
             <FaceSmileIcon className="w-5 h-5" />
           </button>
-          <button className="p-[5px] rounded-lg hover:bg-primary-50 transition">
+          <button className="p-[5px] rounded-lg hover:bg-text-100 transition">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -50,14 +50,14 @@ const AddComentForm = ({ onCancelClick }: { onCancelClick?: () => void }) => {
             <button
               type="button"
               onClick={onCancelClick}
-              className="px-4 py-2 text-text-600 rounded hover:bg-primary-50 text-xs font-semibold"
+              className="px-4 py-2 text-text-600 rounded hover:bg-text-100 text-xs font-semibold"
             >
               Cancel
             </button>
           )}
           <button
             type="button"
-            className="px-4 py-2 text-white bg-primary-600 rounded hover:bg-primary-700 text-xs font-semibold"
+            className="px-4 py-2 text-white bg-primary-500 rounded hover:bg-primary-700 text-xs font-semibold"
           >
             Comment
           </button>

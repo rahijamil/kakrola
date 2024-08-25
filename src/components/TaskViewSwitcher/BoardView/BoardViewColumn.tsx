@@ -13,6 +13,7 @@ import AddNewSectionBoardView from "../AddNewSectionBoardView";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import SectionMoreOptions from "../SectionMoreOptions";
+import useTheme from "@/hooks/useTheme";
 
 const BoardViewColumn = ({
   column,
@@ -135,11 +136,14 @@ const BoardViewColumn = ({
     return () => observer.disconnect();
   }, []);
 
+  const { theme } = useTheme();
+
   const sectionColor = sections.find((s) => s.id == column.id)?.color || "gray";
 
   // Tailwind doesn't generate all color classes by default, so we need to explicitly define them
-  const bgColorClass = `bg-${sectionColor}-100`;
-  const hoverBgColorClass = `hover:bg-${sectionColor}-200`;
+  const bgColorClass =
+    theme == "dark" ? `bg-${sectionColor}-900` : `bg-${sectionColor}-100`;
+  const hoverBgColorClass = theme == "dark" ? `hover:bg-${sectionColor}-800` : `hover:bg-${sectionColor}-200`;
 
   return (
     <>
@@ -217,7 +221,7 @@ const BoardViewColumn = ({
                     <input
                       value={columnTitle}
                       onChange={(ev) => setColumnTitle(ev.target.value)}
-                      className="font-bold rounded-lg px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-indigo-300 w-full"
+                      className="font-bold rounded-lg px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 w-full"
                       onKeyDown={(ev) => {
                         if (ev.key === "Enter") {
                           handleUpdateColumnTitle();
@@ -276,7 +280,7 @@ const BoardViewColumn = ({
                           <>
                             <div
                               key={task.id}
-                              className={`rounded shadow-sm hover:ring-2 hover:ring-indigo-300 hover:transition ring-1 ring-text-200`}
+                              className={`rounded shadow-sm hover:ring-2 hover:ring-primary-300 hover:transition ring-1 ring-text-200`}
                             >
                               <TaskItem
                                 key={task.id}

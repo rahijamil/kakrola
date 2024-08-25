@@ -53,7 +53,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             />
           )}
           <input
-            className={`flex w-full rounded-lg border border-text-300 hover:border-text-400 focus-visible:border-text-300 bg-background ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ring-indigo-300 disabled:cursor-not-allowed disabled:opacity-50 read-only:bg-primary-50 read-only:cursor-default ${
+            className={`flex w-full rounded-lg border border-text-300 hover:border-text-400 focus-visible:border-text-300 bg-background ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ring-primary-300 disabled:cursor-not-allowed disabled:opacity-50 read-only:bg-primary-10 read-only:cursor-default ${
               howBig == "sm"
                 ? "px-2 h-8"
                 : howBig == "md"

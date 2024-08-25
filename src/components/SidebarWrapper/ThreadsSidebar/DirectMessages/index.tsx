@@ -33,7 +33,7 @@ const DirectMessagees = ({ sidebarWidth }: { sidebarWidth: number }) => {
 
           <div className="opacity-0 group-hover:opacity-100 transition flex items-center absolute right-0 top-1/2 -translate-y-1/2">
             <button
-              className="p-1 hover:bg-primary-50 rounded-lg transition"
+              className="p-1 hover:bg-text-100 rounded-lg transition"
               //   onClick={() => setShowAddProjectModal(true)}
             >
               <Plus
@@ -42,7 +42,7 @@ const DirectMessagees = ({ sidebarWidth }: { sidebarWidth: number }) => {
               />
             </button>
             <button
-              className="p-1 hover:bg-primary-50 rounded-lg transition"
+              className="p-1 hover:bg-text-100 rounded-lg transition"
               onClick={() => setShowDMs(!showDMs)}
             >
               <ChevronRight

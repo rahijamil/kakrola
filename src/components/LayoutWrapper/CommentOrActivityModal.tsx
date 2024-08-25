@@ -28,7 +28,7 @@ const CommentOrActivityModal = ({
         </div>
 
         <button
-          className="p-1 hover:bg-primary-50 transition rounded-lg"
+          className="p-1 hover:bg-text-100 transition rounded-lg"
           onClick={onClose}
         >
           <XMarkIcon className="w-6 h-6" />
@@ -36,7 +36,7 @@ const CommentOrActivityModal = ({
       </div>
 
       <div className="px-4">
-        <ul className="flex items-center p-1 rounded-full bg-text-50 w-fit">
+        <ul className="flex items-center p-1 rounded-full bg-text-200 w-fit">
           <li
             className={`p-1 px-4 rounded-full font-medium cursor-pointer transition ${
               showCommentOrActivity === "comment" ? "bg-surface" : ""

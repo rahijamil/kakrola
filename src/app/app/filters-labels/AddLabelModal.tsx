@@ -70,7 +70,7 @@ const AddLabelModal = ({ onClose }: { onClose: () => void }) => {
           <h2 className="text-xl font-semibold">Add label</h2>
           <button
             onClick={onClose}
-            className="text-text-500 hover:text-text-700 hover:bg-primary-50 transition p-1 rounded-lg"
+            className="text-text-500 hover:text-text-700 hover:bg-text-100 transition p-1 rounded-lg"
           >
             <X size={20} />
           </button>

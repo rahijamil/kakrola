@@ -54,7 +54,7 @@ const sections: {
 const SectionsLayout = () => {
   return (
     <section
-      className="py-20 sm:py-32 z-10 sm:z-0 relative bg-[#E6E6FA]"
+      className="py-20 sm:py-32 z-10 sm:z-0 relative bg-primary-50"
       id="top-features"
     >
       <div className="lg:wrapper space-y-4 sm:space-y-8 md:space-y-16 lg:space-y-32">
@@ -79,7 +79,7 @@ const SectionsLayout = () => {
                 <div
                   className={`p-2 sm::p-4 ${
                     index == 0
-                      ? "text-white bg-primary-600 rounded-lg"
+                      ? "text-white bg-primary-500 rounded-lg"
                       : index == 1
                       ? "text-white bg-purple-600 rounded-lg"
                       : index == 2
@@ -103,7 +103,7 @@ const SectionsLayout = () => {
                   : "pr-3 sm:pr-8 rounded-r-3xl"
               } ${
                 index == 0
-                  ? "bg-primary-600 border-indigo-600"
+                  ? "bg-primary-600 border-primary-600"
                   : index == 1
                   ? "bg-purple-600 border-purple-600"
                   : index == 2

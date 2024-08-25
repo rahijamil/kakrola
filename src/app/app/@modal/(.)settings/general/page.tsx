@@ -42,7 +42,7 @@ export default function GeneralSettingsPage() {
         </div>
       </section>
 
-      <div className="h-[1px] bg-text-50"></div>
+      <div className="h-[1px] bg-text-200"></div>
 
       <section className="space-y-4 max-w-sm">
         <h2 className="text-base font-bold">Date & time</h2>
@@ -138,7 +138,7 @@ export default function GeneralSettingsPage() {
         </div>
       </section>
 
-      <div className="h-[1px] bg-text-50"></div>
+      <div className="h-[1px] bg-text-200"></div>
 
       <section className="space-y-4 max-w-sm">
         <h2 className="text-base font-bold">Sound & appearance</h2>

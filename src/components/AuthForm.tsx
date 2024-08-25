@@ -172,7 +172,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 relative">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary-50 to-background relative">
       <div className="flex items-center justify-center h-screen sm:h-[calc(100vh-64px)]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -247,7 +247,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
                             <div className="text-xs text-right">
                               <Link
                                 href="/auth/forgot-password"
-                                className="font-medium text-primary-600 hover:text-primary-500 transition"
+                                className="font-medium text-primary-600 hover:text-primary-600 transition"
                               >
                                 Forgot your password?
                               </Link>
@@ -276,7 +276,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
               <div className="flex items-center justify-center">
                 <Button
                   type="submit"
-                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:hover:bg-primary-600 text-white disabled:cursor-not-allowed"
+                  className="w-full bg-primary-500 hover:bg-primary-700 disabled:hover:bg-primary-500 text-surface disabled:cursor-not-allowed"
                   disabled={loading}
                 >
                   {loading ? (

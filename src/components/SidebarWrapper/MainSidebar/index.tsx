@@ -46,7 +46,7 @@ const MainSidebar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
 
   return (
     <>
-      <div className="w-[4.5rem] bg-primary-25 border-r relative z-20 flex flex-col">
+      <div className="w-[4.5rem] bg-primary-10 border-r border-text-200 relative z-20 flex flex-col">
         <div className="flex-1">
           <ul>
             <li className="aspect-square flex items-center justify-center">
@@ -65,11 +65,11 @@ const MainSidebar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
                   className={`flex flex-col items-center justify-center gap-1 w-full aspect-square transition-colors text-xs group`}
                 >
                   <span
-                    className={`p-2 rounded-lg transition-colors ${
+                    className={`p-2 rounded-lg transition-colors text-text-900 ${
                       pathname.startsWith(item.path) &&
                       !pathname.startsWith(item.pathNotStartsWith!)
-                        ? "bg-primary-100 text-primary-700"
-                        : "group-hover:bg-primary-50 text-text-700"
+                        ? "bg-primary-100"
+                        : "group-hover:bg-primary-50"
                     }`}
                   >
                     <item.icon strokeWidth={1.5} className="w-5 h-5" />

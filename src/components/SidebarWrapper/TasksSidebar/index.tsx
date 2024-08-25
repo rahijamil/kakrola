@@ -92,10 +92,10 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
                 {item.path ? (
                   <Link
                     href={item.path}
-                    className={`flex items-center p-2 rounded-lg transition-colors ${
+                    className={`flex items-center p-2 rounded-lg transition-colors text-text-900 ${
                       item.path === pathname
-                        ? "bg-primary-100 text-primary-700"
-                        : "hover:bg-primary-50 text-text-700"
+                        ? "bg-primary-100"
+                        : "hover:bg-primary-50"
                     }`}
                   >
                     <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3" />
@@ -105,7 +105,7 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
                   <button
                     className={`flex items-center p-2 rounded-lg transition-colors w-full ${
                       item.path === pathname
-                        ? "bg-primary-100 text-primary-700"
+                        ? "bg-primary-500 text-surface"
                         : "hover:bg-primary-50 text-text-700"
                     }`}
                     onClick={item.onClick}

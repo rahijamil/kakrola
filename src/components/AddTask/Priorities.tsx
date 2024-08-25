@@ -14,7 +14,7 @@ import Dropdown from "../ui/Dropdown";
 const priorities = [
   { value: "P1", label: "Priority 1", color: "text-red-500" },
   { value: "P2", label: "Priority 2", color: "text-orange-500" },
-  { value: "P3", label: "Priority 3", color: "text-primary-500" },
+  { value: "P3", label: "Priority 3", color: "text-primary-600" },
   { value: "Priority", label: "Priority 4", color: "text-text-500" },
 ];
 
@@ -76,7 +76,7 @@ const Priorities = ({
             <div
               ref={triggerRef}
               className={`flex items-center justify-between rounded-lg transition p-[6px] px-2 group cursor-pointer ${
-                isOpen ? "bg-primary-100" : "hover:bg-primary-100"
+                isOpen ? "bg-primary-100" : "hover:bg-text-100"
               }`}
               onClick={onClick}
             >
@@ -98,7 +98,7 @@ const Priorities = ({
             <div
               ref={triggerRef}
               className={`flex items-center gap-1 cursor-pointer p-1 px-2 rounded-lg border border-text-200 ${
-                isOpen ? "bg-text-50" : "hover:bg-primary-50"
+                isOpen ? "bg-text-50" : "hover:bg-text-100"
               }`}
               onClick={onClick}
             >
@@ -128,7 +128,7 @@ const Priorities = ({
                     ev.stopPropagation();
                     setTaskData({ ...taskData, priority: "Priority" });
                   }}
-                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-primary-50 rounded-lg"
+                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-lg"
                 >
                   <X strokeWidth={1.5} className="w-3 h-3 text-text-500" />
                 </button>
@@ -142,7 +142,7 @@ const Priorities = ({
           {priorities.map((priority) => (
             <li
               key={priority.value}
-              className={`flex items-center px-2 py-2 transition-colors hover:bg-primary-50 cursor-pointer text-text-700`}
+              className={`flex items-center px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700`}
               onClick={() => {
                 setTaskData({
                   ...taskData,

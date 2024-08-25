@@ -17,7 +17,7 @@ interface DropdownProps {
     label: string;
     onClick: () => void;
     icon?: ReactNode;
-    devide?: boolean;
+    divide?: boolean;
     className?: string;
     content?: ReactNode;
   }[];
@@ -187,7 +187,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                     </motion.div>
                   )}
                 </div>
-                {item.devide && (
+                {item.divide && (
                   <div className="w-full h-px bg-text-200 my-1"></div>
                 )}
               </>

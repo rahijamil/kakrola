@@ -51,7 +51,7 @@ const AssigneeSelector = ({
                 task.assigned_to_id == null
                   ? isOpen
                     ? "bg-primary-100 cursor-pointer"
-                    : "hover:bg-primary-100 cursor-pointer"
+                    : "hover:bg-text-100 cursor-pointer"
                   : "cursor-default"
               }`}
             >
@@ -75,7 +75,7 @@ const AssigneeSelector = ({
                   task.assigned_to_id !== null
                     ? isOpen
                       ? "bg-primary-100 cursor-pointer"
-                      : "hover:bg-primary-100 cursor-pointer"
+                      : "hover:bg-text-100 cursor-pointer"
                     : "cursor-default"
                 }`}
               >
@@ -108,7 +108,7 @@ const AssigneeSelector = ({
           <div
             ref={triggerRef}
             className={`flex items-center gap-1 cursor-pointer text-xs p-1 rounded-lg border border-text-200 ${
-              isOpen ? "bg-text-50" : "hover:bg-primary-50"
+              isOpen ? "bg-text-50" : "hover:bg-text-100"
             }`}
             onClick={onClick}
           >
@@ -132,7 +132,7 @@ const AssigneeSelector = ({
                     ev.stopPropagation();
                     setTask({ ...task, assigned_to_id: null });
                   }}
-                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-primary-50 rounded-lg"
+                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-lg"
                 >
                   <X strokeWidth={1.5} className="w-3 h-3 text-text-500" />
                 </button>
@@ -161,7 +161,7 @@ const AssigneeSelector = ({
 
           <ul>
             <li
-              className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-primary-50 cursor-pointer"
+              className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
               onClick={() => {
                 setTask({
                   ...task,
@@ -180,7 +180,7 @@ const AssigneeSelector = ({
               )}
             </li>
             <li
-              className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-primary-50 cursor-pointer"
+              className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
               onClick={() => {
                 setTask({
                   ...task,
@@ -208,7 +208,7 @@ const AssigneeSelector = ({
               )}
             </li>
             <li
-              className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-primary-50 cursor-pointer"
+              className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
               onClick={() => {
                 onClose();
               }}

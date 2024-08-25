@@ -59,14 +59,14 @@ const ViewOptions = React.memo(
             </div>
 
             {/* <div
-              className="flex justify-between items-center hover:bg-primary-50 transition cursor-pointer py-[6px] px-3 mx-1 rounded-lg"
+              className="flex justify-between items-center hover:bg-text-100 transition cursor-pointer py-[6px] px-3 mx-1 rounded-lg"
               onClick={toggleShowCompletedTasks}
             >
               <div className="flex items-center gap-3">
                 <div
                   className={`border w-5 h-5 rounded-full flex items-center justify-center ${
                     showCompletedTasks
-                      ? "border-indigo-600 bg-primary-600"
+                      ? "border-primary-600 bg-primary-500"
                       : "border-text-400 bg-surface"
                   }`}
                 >

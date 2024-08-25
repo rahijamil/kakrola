@@ -52,15 +52,15 @@ const ActiveProjectMoreOptions = ({
               setProjectEdit(true);
               onClose();
             }}
-            className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center"
+            className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center"
           >
             <PencilLine strokeWidth={1.5} className="w-4 h-4 mr-2" /> Edit
           </button>
           <FavoriteOption project={project} />
-          {/* <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center">
+          {/* <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center">
             <CopyPlusIcon className="w-4 h-4 mr-4" /> Duplicate
           </button> */}
-          {/* <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center">
+          {/* <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center">
             <span className="w-5 h-5 mr-4 flex items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -77,14 +77,14 @@ const ActiveProjectMoreOptions = ({
             Add section
           </button> */}
         </div>
-        <div className="h-[1px] bg-text-50 my-1"></div>
+        <div className="h-[1px] bg-text-200 my-1"></div>
         <div>
           <CopyProjectLinkOption
             onClose={onClose}
             project_slug={project.slug}
           />
         </div>
-        <div className="h-[1px] bg-text-50 my-1"></div>
+        <div className="h-[1px] bg-text-200 my-1"></div>
         <div>
           <SaveTemplateOption
             onClick={() => {
@@ -97,13 +97,13 @@ const ActiveProjectMoreOptions = ({
               
               onClose();
             }}
-            className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center"
+            className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center"
           >
             <SwatchBook strokeWidth={1.5} className="w-4 h-4 mr-2" /> Browse
             templates
           </button>
         </div>
-        <div className="h-[1px] bg-text-50 my-1"></div>
+        <div className="h-[1px] bg-text-200 my-1"></div>
         <div>
           <ImportCSVOption
             onClick={() => {
@@ -118,7 +118,7 @@ const ActiveProjectMoreOptions = ({
             }}
           />
         </div>
-        <div className="h-[1px] bg-text-50 my-1"></div>
+        <div className="h-[1px] bg-text-200 my-1"></div>
         <div>
           <ActivityLogOption
             onClick={() => {
@@ -127,7 +127,7 @@ const ActiveProjectMoreOptions = ({
             }}
           />
         </div>
-        <div className="h-[1px] bg-text-50 my-1"></div>
+        <div className="h-[1px] bg-text-200 my-1"></div>
         <div>
           <ArchiveOption
             onClick={() => {

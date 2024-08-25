@@ -78,12 +78,12 @@ const ProjectItem = ({
     <li>
       <div
         ref={moreRef}
-        className={`relative sidebar_project_item flex-1 flex items-center justify-between transition-colors rounded-lg ${
+        className={`relative sidebar_project_item flex-1 flex items-center justify-between transition-colors rounded-lg text-text-900 ${
           isDragging
             ? "bg-surface shadow-[0_0_8px_1px_rgba(0,0,0,0.2)]"
             : pathname === `/app/project/${project.slug}`
-            ? "bg-primary-100 text-primary-700"
-            : "hover:bg-primary-50 text-text-700"
+            ? "bg-primary-100"
+            : "hover:bg-primary-50"
         }`}
       >
         <Link
@@ -106,7 +106,7 @@ const ProjectItem = ({
           <div className="relative w-7 h-7 flex items-center justify-center">
             {tasks.filter((task) => task.project_id == project.id).length >
               0 && (
-              <p className="text-text-400">
+              <p className="text-text-500">
                 {tasks.filter((task) => task.project_id == project.id).length}
               </p>
             )}
@@ -117,10 +117,10 @@ const ProjectItem = ({
                 setShowProjectMoreDropdown(true);
               }}
               className={`flex items-center justify-center absolute left-0 top-0 right-0 bottom-0 z-10 cursor-pointer ${
-                pathname === `/app/project/${project.slug}`
-                  ? "bg-text-300"
-                  : "bg-text-200"
-              } hover:bg-primary-50 rounded-lg opacity-0 sidebar_project_item_options w-7 h-7`}
+                (pathname === `/app/project/${project.slug}`)
+                  ? "bg-primary-100"
+                  : "bg-primary-100"
+              } hover:bg-primary-200 rounded-lg sidebar_project_item_options w-7 h-7 ${!showProjectMoreDropdown && "opacity-0"}`}
             >
               <Ellipsis className="w-5 h-5 text-text-700" strokeWidth={1.5} />
             </div>

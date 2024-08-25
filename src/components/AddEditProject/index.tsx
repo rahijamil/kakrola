@@ -219,7 +219,7 @@ const AddEditProject = ({
       <>
         <DialogHeader>
           <DialogTitle>Add project</DialogTitle>
-          <button className="p-2 rounded-lg hover:bg-primary-50 transition">
+          <button className="p-2 rounded-lg hover:bg-text-100 transition">
             <CircleHelp strokeWidth={1.5} className="w-5 h-5 text-text-500" />
           </button>
         </DialogHeader>
@@ -314,14 +314,14 @@ const AddEditProject = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-text-600 bg-text-200 rounded hover:bg-text-300 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-primary-50"
+              className="px-4 py-2 text-text-600 bg-text-200 rounded hover:bg-text-300 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-text-100"
               disabled={loading}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-white bg-primary-600 rounded hover:bg-primary-700 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-primary-600"
+              className="px-4 py-2 text-white bg-primary-500 rounded hover:bg-primary-700 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-primary-600"
               disabled={loading}
             >
               {loading ? (

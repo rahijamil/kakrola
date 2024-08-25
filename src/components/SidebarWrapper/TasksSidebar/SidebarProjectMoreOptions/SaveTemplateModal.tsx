@@ -284,8 +284,8 @@ const SaveTemplateModal = ({
                     href={"item.path"}
                     className={`flex items-center p-2 rounded-lg transition-colors gap-2 ${
                       "item.path" === pathname
-                        ? "bg-primary-100 text-primary-700"
-                        : "hover:bg-primary-50 text-text-700"
+                        ? "bg-primary-500 text-surface"
+                        : "hover:bg-text-100 text-text-700"
                     }`}
                   >
                     <UserCircle strokeWidth={1.5} className="w-5 h-5" />
@@ -307,8 +307,8 @@ const SaveTemplateModal = ({
                       href={category.path}
                       className={`flex items-center p-2 rounded-lg transition-colors gap-2 ${
                         category.path === pathname
-                          ? "bg-primary-100 text-primary-700"
-                          : "hover:bg-primary-50 text-text-700"
+                          ? "bg-primary-500 text-surface"
+                          : "hover:bg-text-100 text-text-700"
                       }`}
                     >
                       <category.icon strokeWidth={1.5} className="w-5 h-5" />
@@ -322,10 +322,10 @@ const SaveTemplateModal = ({
         </aside>
 
         <div className="flex-1">
-          <div className="flex items-center justify-between p-4 py-3 border-b border-text-50">
+          <div className="flex items-center justify-between p-4 py-3 border-b border-text-200">
             <h3 className="font-semibold text-[15px]">My templates</h3>
 
-            <button className="p-1 rounded-lg hover:bg-primary-50 transition" onClick={onClose}>
+            <button className="p-1 rounded-lg hover:bg-text-100 transition" onClick={onClose}>
               <X strokeWidth={1.5} size={20} />
             </button>
           </div>

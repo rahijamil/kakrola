@@ -24,7 +24,7 @@ const LoginPage = () => (
           Don&apos;t have an account?{" "}
           <a
             href="/auth/signup"
-            className="font-medium textindigo600 hover:textindigo500"
+            className="font-medium text-primary-600 hover:text-primary-600"
           >
             Sign up for free
           </a>

@@ -1,14 +1,9 @@
-import Image from "next/image";
 import React from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
-import { ChevronsRight } from "lucide-react";
 import CompaniesSection from "./CompaniesSection";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import HeroSectionEmailCollector from "./HeroSectionEmailCollector";
+import SignupCTA from "./SignupCTA";
+import Image from "next/image";
 
-// Hero Section
 const HeroSection = () => {
   return (
     <section className="pt-16 sm:pt-24 relative z-10">
@@ -36,25 +31,16 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-6 max-w-md mx-auto flex justify-center items-center"
+            className="mt-6 max-w-md mx-auto"
           >
-            <Link
-              href="/auth/signup"
-              className="group transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              <Button size="lg">
-                Start for Free
-                <ChevronsRight className="ml-2 w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
-              </Button>
-            </Link>
+            <SignupCTA />
           </motion.div>
         </div>
 
-        {/* Companies Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
         >
           <CompaniesSection />
         </motion.div>
@@ -64,20 +50,18 @@ const HeroSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
-          className="w-full max-w-6xl bg-gradient-to-br from-indigo-200 to-pink-200 rounded-xl pt-4 pl-4 aspect-video shadow-xl overflow-hidden z-10"
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="relative aspect-video border w-full max-w-5xl z-10 rounded-lg overflow-hidden shadow-2xl"
         >
-          <div className="relative aspect-video border w-full max-w-5xl z-10 rounded-lg overflow-hidden">
-            <Image
-              src="/images/feature1.png"
-              objectFit="cover"
-              fill
-              alt="feature1"
-            />
-          </div>
+          <Image
+            src="/images/feature1.png"
+            objectFit="cover"
+            fill
+            alt="feature1"
+          />
         </motion.div>
 
-        <div className="absolute top-1/2 bg-[#E6E6FA] h-[20vh] sm:h-[25vh] md:h-[32vh] lg:h-[35vh] w-full z-0"></div>
+        <div className="absolute top-1/2 bg-primary-50 h-[20vh] sm:h-[25vh] md:h-[32vh] lg:h-[35vh] w-full z-0"></div>
       </div>
     </section>
   );

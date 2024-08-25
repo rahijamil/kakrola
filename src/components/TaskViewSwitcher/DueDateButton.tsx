@@ -24,7 +24,7 @@ const DueDateButton = ({
         taskData.due_date !== null
           ? showDueDateSelector
             ? "bg-primary-100 cursor-pointer"
-            : "hover:bg-primary-100 cursor-pointer"
+            : "hover:bg-text-100 cursor-pointer"
           : "cursor-default"
       }`}
     >

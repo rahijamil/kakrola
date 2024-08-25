@@ -156,7 +156,7 @@ const TaskItem = ({
               className="transition w-full"
             >
               <div
-                className="flex items-start justify-between gap-2 taskitem_group bg-surface p-1 w-full rounded-lg cursor-pointer relative"
+                className="flex items-start justify-between gap-2 taskitem_group bg-background p-1 w-full rounded-lg cursor-pointer relative"
                 onClick={() => setShowModal && setShowModal(task.id.toString())}
               >
                 <div className="flex items-center gap-1">
@@ -183,7 +183,7 @@ const TaskItem = ({
                           : task.priority == "P2"
                           ? "text-orange-500 bg-orange-100"
                           : task.priority == "P3"
-                          ? "text-primary-500 bg-primary-100"
+                          ? "text-primary-600 bg-primary-100"
                           : "text-text-500"
                       } ${task.is_completed ? "hidden" : "group-hover:hidden"}`}
                     />
@@ -204,7 +204,7 @@ const TaskItem = ({
                           : task.priority == "P2"
                           ? "text-orange-500 bg-orange-100"
                           : task.priority == "P3"
-                          ? "text-primary-500 bg-primary-100"
+                          ? "text-primary-600 bg-primary-100"
                           : "text-text-500"
                       } ${
                         !task.is_completed
@@ -215,7 +215,7 @@ const TaskItem = ({
                                 : task.priority == "P2"
                                 ? "bg-orange-500"
                                 : task.priority == "P3"
-                                ? "bg-primary-500"
+                                ? "bg-primary-600"
                                 : "bg-text-500"
                             }`
                       }`}
@@ -262,7 +262,7 @@ const TaskItem = ({
                 </div>
 
                 <div
-                  className={`flex items-center gap-[2px] taskitem_group_hover transition absolute top-1 right-1 bg-surface ${
+                  className={`flex items-center gap-[2px] taskitem_group_hover transition absolute top-1 right-1 bg-background ${
                     !showMoreDropdown ? "opacity-0" : ""
                   }`}
                 >
@@ -280,7 +280,7 @@ const TaskItem = ({
                   </div>
 
                   <button
-                    className="p-1 hover:bg-primary-50 transition rounded-lg"
+                    className="p-1 hover:bg-text-100 transition rounded-lg"
                     onClick={(ev) => {
                       ev.stopPropagation();
                       typeof setShowShareOption == "function" &&

@@ -30,7 +30,7 @@ const BoardViewForToday = ({
         className={`bg-text-50 rounded-lg min-w-72 md:min-w-80 w-80 h-fit max-h-[calc(100vh-150px)] overflow-y-auto transition-colors cursor-default `}
       >
         <div
-          className={`flex justify-between sticky top-0 z-10 bg-text-50 p-2 pb-1`}
+          className={`flex justify-between sticky top-0 z-10 bg-text-200 p-2 pb-1`}
         >
           <div className={`flex items-center gap-2 w-full`}>
             <h3 className="font-bold pl-[6px]">
@@ -62,7 +62,7 @@ const BoardViewForToday = ({
                   <>
                     <div
                       key={task.id}
-                      className={`rounded shadow-sm hover:ring-2 hover:ring-indigo-300 transition ring-1 ring-text-200`}
+                      className={`rounded shadow-sm hover:ring-2 hover:ring-primary-300 transition ring-1 ring-text-200`}
                     >
                       <TaskItem
                         key={task.id}
@@ -91,7 +91,7 @@ const BoardViewForToday = ({
           )}
         </Droppable>
 
-        <div className={`sticky bottom-0 bg-text-50 p-2 pt-0`}>
+        <div className={`sticky bottom-0 bg-text-200 p-2 pt-0`}>
           <SectionAddTask
             isSmall
             project={null}

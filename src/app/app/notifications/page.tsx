@@ -10,7 +10,7 @@ const AppNotifications = () => {
     <LayoutWrapper headline="Notifications">
       <div>
         <div>
-          <ul className="flex items-center p-1 rounded-full bg-text-50 w-fit">
+          <ul className="flex items-center p-1 rounded-full bg-text-200 w-fit">
             <li
               className={`p-1 px-4 rounded-full font-medium cursor-pointer transition ${
                 allUnread === "all" ? "bg-surface" : ""

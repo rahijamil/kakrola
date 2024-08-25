@@ -33,7 +33,7 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       }}
       className={`${
         checked ? "bg-primary-600" : "bg-text-200"
-      } relative inline-flex ${switchClasses} items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2`}
+      } relative inline-flex ${switchClasses} items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2`}
     >
       <span className="sr-only">Enable feature</span>
       <span

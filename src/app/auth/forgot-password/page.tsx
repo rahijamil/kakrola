@@ -15,7 +15,7 @@ const ForgotPassword = () => (
           Remember your password?{" "}
           <a
             href="/auth/login"
-            className="font-medium textindigo600 hover:textindigo500"
+            className="font-medium text-primary-600 hover:text-primary-600"
           >
             Log in
           </a>

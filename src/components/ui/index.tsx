@@ -93,7 +93,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           </label>
         )}
         <input
-          className={`w-full transition py-1 outline-none ${
+          className={`w-full transition py-1 bg-transparent outline-none ${
             label &&
             "px-2 border rounded-lg border-text-200 focus:border-text-400"
           } ${className}`}
@@ -135,7 +135,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             />
           )}
           <textarea
-            className={`outline-none border-none placeholder:text-muted-foreground w-full resize-none overflow-hidden ${className} ${Icon && "pl-10"}`}
+            className={`outline-none border-none bg-transparent placeholder:text-text-400 w-full resize-none overflow-hidden ${className} ${Icon && "pl-10"}`}
             ref={ref}
             id={id}
             rows={rows ? rows : 2}
@@ -157,7 +157,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = "", ...props }, ref) => (
     <button
-      className={`px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${className}`}
+      className={`px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 ${className}`}
       ref={ref}
       {...props}
     />
@@ -183,7 +183,7 @@ export const Select: React.FC<SelectProps> = ({
       <select
         onChange={(e) => onValueChange(e.target.value)}
         defaultValue={defaultValue}
-        className="w-full px-3 py-2 border border-text-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none"
+        className="w-full px-3 py-2 border border-text-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600 appearance-none"
       >
         {children}
       </select>

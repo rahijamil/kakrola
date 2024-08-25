@@ -68,7 +68,7 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
         Workspace
       </label>
       <div
-        className="flex items-center justify-between w-full h-10 border border-text-300 rounded-lg cursor-pointer bg-surface hover:border-text-400 px-3 py-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-indigo-300 focus:border-text-300"
+        className="flex items-center justify-between w-full h-10 border border-text-300 rounded-lg cursor-pointer bg-surface hover:border-text-400 px-3 py-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-primary-300 focus:border-text-300"
         onClick={() => setIsOpen(!isOpen)}
         onKeyDown={handleKeyDown}
         tabIndex={0}
@@ -124,7 +124,7 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
               className={`px-4 py-2 cursor-pointer flex items-center justify-between ${
                 index === highlightedIndex
                   ? "bg-primary-100"
-                  : "hover:bg-primary-50"
+                  : "hover:bg-text-100"
               }`}
               onClick={() => {
                 onSelect(workspace);

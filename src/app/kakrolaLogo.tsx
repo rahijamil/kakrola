@@ -11,7 +11,7 @@ const KakrolaLogo = ({
   const sizeClasses = {
     sm: "w-8 h-8",
     md: "w-10 h-10",
-    lg: "w-20 h-20",
+    lg: "w-16 h-16",
   };
 
   return (
@@ -22,7 +22,7 @@ const KakrolaLogo = ({
 
       {isTitle && (
         <span
-          className={`font-semibold text-[#0076A3] ${
+          className={`font-semibold text-primary2 ${
             size === "sm"
               ? "text-xl"
               : size === "md"

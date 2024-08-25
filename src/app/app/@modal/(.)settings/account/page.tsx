@@ -140,7 +140,7 @@ export default function AccountSettingsPage() {
         </Button>
       </section>
 
-      <div className="h-[1px] bg-text-50"></div> */}
+      <div className="h-[1px] bg-text-200"></div> */}
 
         {error && <p className="text-red-500">{error}</p>}
 
@@ -149,7 +149,7 @@ export default function AccountSettingsPage() {
             <label className="font-bold">Profile</label>
 
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 min-w-16 min-h-16 rounded-full relative bg-text-50 overflow-hidden">
+              <div className="w-16 h-16 min-w-16 min-h-16 rounded-full relative bg-text-200 overflow-hidden">
                 <Image
                   src={avatarUrl || "/default-avatar.png"}
                   alt="Profile Picture"
@@ -170,8 +170,8 @@ export default function AccountSettingsPage() {
                   />
                   <label
                     htmlFor="avatar-upload"
-                    className={`border cursor-pointer h-9 inline-flex items-center justify-center gap-2 rounded-lg px-3 borderindigo600 textindigo600 ${
-                      uploadLoading ? "opacity-50" : "hover:bgindigo50"
+                    className={`border cursor-pointer h-9 inline-flex items-center justify-center gap-2 rounded-lg px-3 border-primary-600 text-primary-600 ${
+                      uploadLoading ? "opacity-50" : "hover:bg-text-100"
                     }`}
                   >
                     {uploadLoading ? (
@@ -273,7 +273,7 @@ export default function AccountSettingsPage() {
         </div> */}
         </section>
 
-        {/* <div className="h-[1px] bg-text-50"></div> */}
+        {/* <div className="h-[1px] bg-text-200"></div> */}
 
         {/* <section className="space-y-3">
         <div className="space-y-1">
@@ -311,7 +311,7 @@ export default function AccountSettingsPage() {
         </div>
       </section>
 
-      <div className="h-[1px] bg-text-50"></div> */}
+      <div className="h-[1px] bg-text-200"></div> */}
 
         {/* <section className="space-y-3">
         <div className="space-y-1">

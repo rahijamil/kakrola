@@ -1,18 +1,17 @@
 import React, {
   Dispatch,
-  LegacyRef,
-  ReactNode,
   SetStateAction,
-  useEffect,
-  useRef,
   useState,
+  useRef,
+  useEffect,
 } from "react";
 import Dropdown from "../ui/Dropdown";
 import { Archive, Ellipsis, Palette, Pencil, Trash2 } from "lucide-react";
 import { SectionType, TaskType } from "@/types/project";
+import useTheme from "@/hooks/useTheme";
 
 const colors = [
-  "-indigo-",
+  "primary",
   "purple",
   "green",
   "yellow",
@@ -62,6 +61,8 @@ const SectionMoreOptions = ({
 
   const triggerRef = useRef(null);
 
+  const { theme } = useTheme();
+
   const handleColor = (color: string) => {
     setSections(
       sections.map((section) => {
@@ -77,20 +78,28 @@ const SectionMoreOptions = ({
   };
 
   const ColorButton = ({ color }: { color: string }) => {
-    const bgClassName = `bg-${color}-500`;
+    const bgClassName =
+      theme === "dark" ? `bg-${color}-400` : `bg-${color}-500`; // Adjusted class based on theme
 
     return (
       <button
         onClick={() => handleColor(color)}
         type="button"
         className={`${bgClassName} aspect-video w-full cursor-pointer hover:opacity-80 transition rounded-lg ${
-          sections.find((s) => s.id == column.id)?.color === color &&
-          "border-2 border-black"
+          sections.find((s) => s.id === column.id)?.color === color &&
+          "border-2 border-text-900"
         }`}
         title={color}
       ></button>
     );
   };
+
+  const sectionColor = sections.find((s) => s.id == column.id)?.color || "gray";
+
+  // Tailwind doesn't generate all color classes by default, so we need to explicitly define them
+  const bgColorClass =
+    theme == "dark" ? `bg-${sectionColor}-600` : `bg-${sectionColor}-100`;
+  const hoverBgColorClass = theme == "dark" ? `hover:bg-${sectionColor}-400` : `hover:bg-${sectionColor}-200`;
 
   return (
     <Dropdown
@@ -102,12 +111,8 @@ const SectionMoreOptions = ({
           ref={triggerRef}
           className={`p-1 transition rounded-lg ${
             isOpen
-              ? `bg-${
-                  sections.find((s) => s.id == column.id)?.color || "gray"
-                }-100`
-              : `hover:bg-${
-                  sections.find((s) => s.id == column.id)?.color || "gray"
-                }-200`
+              ? bgColorClass
+              : hoverBgColorClass
           }`}
           onClick={onClick}
         >
@@ -123,14 +128,14 @@ const SectionMoreOptions = ({
             onClose();
           },
           icon: <Pencil strokeWidth={1.5} size={16} />,
-          devide: true,
+          divide: true,
         },
         {
           id: 2,
           label: "Section color",
           onClick: () => {},
           icon: <Palette strokeWidth={1.5} size={16} />,
-          devide: true,
+          divide: true,
           content: (
             <div className="grid grid-cols-4 gap-2">
               {colors.map((color) => (

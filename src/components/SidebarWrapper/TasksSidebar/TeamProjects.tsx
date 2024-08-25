@@ -130,7 +130,7 @@ const TeamProjects = ({
 
           <div className="opacity-0 group-hover:opacity-100 transition flex items-center absolute right-0 top-1/2 -translate-y-1/2">
             <button
-              className="p-1 hover:bg-primary-50 rounded-lg transition"
+              className="p-1 hover:bg-primary-100 rounded-lg transition"
               onClick={() => setTeamId(team.id)}
             >
               <Plus
@@ -139,7 +139,7 @@ const TeamProjects = ({
               />
             </button>
             <button
-              className="p-1 hover:bg-primary-50 rounded-lg transition"
+              className="p-1 hover:bg-primary-100 rounded-lg transition"
               onClick={() => setShowProjects(!showProjects)}
             >
               <ChevronRight

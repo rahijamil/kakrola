@@ -20,7 +20,7 @@ const ExportCSVModal = ({ onClose }: { onClose: () => void }) => {
 
           <button
             onClick={onClose}
-            className="p-1 hover:bg-primary-50 transition rounded-lg"
+            className="p-1 hover:bg-text-100 transition rounded-lg"
           >
             <X strokeWidth={1.5} size={20} />
           </button>

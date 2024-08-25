@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MenuIcon, XIcon } from "lucide-react";
+import { ChevronsRight, MenuIcon, XIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthProvider } from "@/context/AuthContext";
 import Image from "next/image";
@@ -86,8 +86,15 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
                         Log in
                       </Button>
                     </Link>
-                    <Link href="/auth/signup">
-                      <Button size="sm">Start free trial</Button>
+
+                    <Link
+                      href="/auth/signup"
+                      className="group"
+                    >
+                      <Button size="sm">
+                        Start for Free
+                        <ChevronsRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-all duration-300" />
+                      </Button>
                     </Link>
                   </>
                 )}
@@ -125,7 +132,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
                   <Link
                     key={item.id}
                     href={item.path}
-                    className="block px-3 py-2 rounded-lg text-base font-medium text-text-700 hover:textindigo600 hover:bg-primary-50 transition"
+                    className="block px-3 py-2 rounded-lg text-base font-medium text-text-700 hover:text-primary-600 hover:bg-primary-50 transition"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {item.label}
@@ -149,7 +156,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
                 ) : (
                   <>
                     <Link href="/auth/login" className="block flex-1">
-                      <Button variant="gray" className="w-full justify-center">
+                      <Button variant="ghost" className="w-full justify-center">
                         Log in
                       </Button>
                     </Link>

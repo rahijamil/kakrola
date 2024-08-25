@@ -33,9 +33,8 @@ const AddTaskModal = ({ onClose, dueDate }: AddTaskModalProps) => {
       onClick={onClose}
     >
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2 }}
+        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
         className="bg-surface rounded-lg shadow-[1px_1px_32px_1px_rgba(0,0,0,0.3)] p-2 w-[550px]"
         onClick={(ev) => ev.stopPropagation()}
       >

@@ -175,7 +175,7 @@ const DueDateSelector = ({
                 task.due_date == null
                   ? isOpen
                     ? "bg-primary-100 cursor-pointer"
-                    : "hover:bg-primary-100 cursor-pointer"
+                    : "hover:bg-text-100 cursor-pointer"
                   : "cursor-default"
               }`}
             >
@@ -205,7 +205,7 @@ const DueDateSelector = ({
           <div
             ref={triggerRef}
             className={`flex items-center gap-1 cursor-pointer p-1 text-xs rounded-lg border border-text-200 ${
-              isOpen ? "bg-text-50" : "hover:bg-primary-50"
+              isOpen ? "bg-text-50" : "hover:bg-text-100"
             }`}
             onClick={onClick}
           >
@@ -221,7 +221,7 @@ const DueDateSelector = ({
                     ev.stopPropagation();
                     setTask({ ...task, due_date: null });
                   }}
-                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-primary-50 rounded-lg"
+                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-lg"
                 >
                   <X strokeWidth={1.5} className="w-3 h-3 text-text-500" />
                 </button>
@@ -254,7 +254,7 @@ const DueDateSelector = ({
             {predefinedDates.map((item, index) => (
               <li
                 key={index}
-                className="flex items-center justify-between p-2 hover:bg-primary-50 cursor-pointer text-xs"
+                className="flex items-center justify-between p-2 hover:bg-text-100 cursor-pointer text-xs"
                 onClick={() => handleDateSelect(item.date)}
               >
                 <div className="flex items-center gap-2">

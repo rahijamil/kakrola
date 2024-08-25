@@ -59,7 +59,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
   <>
     {path ? (
       <Link
-        className={`w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center justify-between ${
+        className={`w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center justify-between ${
           isActive ? "bg-text-50" : ""
         }`}
         href={path}
@@ -84,7 +84,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
       </Link>
     ) : (
       <button
-        className={`w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center justify-between ${
+        className={`w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center justify-between ${
           isActive ? "bg-text-50" : ""
         }`}
         onClick={onClick}
@@ -218,7 +218,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
               <h2 className="font-bold">{profile.full_name}</h2>
             </div>
 
-            <div className="h-[1px] bg-text-50 my-1"></div>
+            <div className="h-[1px] bg-text-200 my-1"></div>
           </>
         )}
         {menuItems.map((group, groupIndex) => (
@@ -256,7 +256,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
               </div>
             ))}
             {groupIndex < menuItems.length - 1 && (
-              <div className="h-[1px] bg-text-50 my-1"></div>
+              <div className="h-[1px] bg-text-200 my-1"></div>
             )}
           </React.Fragment>
         ))}

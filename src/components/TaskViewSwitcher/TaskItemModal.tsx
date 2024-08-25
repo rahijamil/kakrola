@@ -94,7 +94,7 @@ const TaskItemModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-surface rounded-lg w-11/12 max-w-[52rem] min-h-full h-fit flex flex-col"
+        className="bg-background rounded-lg w-11/12 max-w-[52rem] min-h-full h-fit flex flex-col"
         onClick={(ev) => ev.stopPropagation()}
       >
         <div className="p-2 px-4 flex items-center justify-between border-b border-text-200">
@@ -128,11 +128,11 @@ const TaskItemModal = ({
           )}
 
           <div className="flex items-center gap-2">
-            {/* <button className="p-1 hover:bg-primary-50 transition rounded-lg">
+            {/* <button className="p-1 hover:bg-text-100 transition rounded-lg">
               <Ellipsis strokeWidth={1.5} className="w-6 h-6" />
             </button> */}
             <button
-              className="p-1 hover:bg-primary-50 transition rounded-lg"
+              className="p-1 hover:bg-text-100 transition rounded-lg"
               onClick={onClose}
             >
               <X strokeWidth={1.5} className="w-6 h-6" />
@@ -141,7 +141,7 @@ const TaskItemModal = ({
         </div>
 
         <div className="flex flex-[.99]">
-          <div className="flex gap-1 bg-surface p-4 flex-1">
+          <div className="flex gap-1 bg-background p-4 flex-1">
             <div
               onClick={onCheckClick}
               className="p-1 group cursor-pointer h-fit"
@@ -163,7 +163,7 @@ const TaskItemModal = ({
                     : task.priority == "P2"
                     ? "text-orange-500 bg-orange-100"
                     : task.priority == "P3"
-                    ? "text-primary-500 bg-primary-100"
+                    ? "text-primary-600 bg-primary-100"
                     : "text-text-500"
                 } ${task.is_completed ? "hidden" : "group-hover:hidden"}`}
               />
@@ -185,7 +185,7 @@ const TaskItemModal = ({
                   : task.priority == "P2"
                   ? "text-orange-500 bg-orange-100"
                   : task.priority == "P3"
-                  ? "text-primary-500 bg-primary-100"
+                  ? "text-primary-600 bg-primary-100"
                   : "text-text-500"
                 } ${
                   !taskData.is_completed
@@ -196,7 +196,7 @@ const TaskItemModal = ({
                           : taskData.priority == "P2"
                           ? "bg-orange-500"
                           : taskData.priority == "P3"
-                          ? "bg-primary-500"
+                          ? "bg-primary-600"
                           : "bg-text-500"
                       }`
                 }`}
@@ -264,7 +264,7 @@ const TaskItemModal = ({
                     <button
                       type="button"
                       onClick={handleSaveTitleDesc}
-                      className="px-4 py-2 text-white bg-primary-600 rounded hover:bg-primary-700 text-xs font-semibold"
+                      className="px-4 py-2 text-white bg-primary-500 rounded hover:bg-primary-700 text-xs font-semibold"
                     >
                       Save
                     </button>
@@ -275,7 +275,7 @@ const TaskItemModal = ({
               <div className="mt-6">
                 {!showAddSubtask && (
                   <button
-                    className="text-xs hover:bg-primary-50 transition rounded-lg flex items-center gap-2 px-2 py-[6px] text-text-600"
+                    className="text-xs hover:bg-text-100 transition rounded-lg flex items-center gap-2 px-2 py-[6px] text-text-600"
                     onClick={() => setShowAddSubtask(true)}
                   >
                     <Plus strokeWidth={1.5} className="w-4 h-4" />
@@ -316,7 +316,7 @@ const TaskItemModal = ({
                 ))}
               </ul>
 
-              <div className="my-4 bg-text-50 h-[1px]" />
+              <div className="my-4 bg-text-200 h-[1px]" />
 
               {/* {!showCommentForm && (
                 <div className="flex items-center gap-2">
@@ -329,7 +329,7 @@ const TaskItemModal = ({
                   />
 
                   <div
-                    className="flex items-center justify-between w-full border border-text-50 rounded-full py-1 px-4 hover:bg-primary-50 cursor-pointer transition"
+                    className="flex items-center justify-between w-full border border-text-200 rounded-full py-1 px-4 hover:bg-text-100 cursor-pointer transition"
                     onClick={() => setShowCommentForm(true)}
                   >
                     <p className="">Comment</p>
@@ -348,7 +348,7 @@ const TaskItemModal = ({
               )} */}
             </div>
           </div>
-          <div className="bg-primary-50/50 p-4 w-64">
+          <div className="bg-primary-10 p-4 w-64">
             <div>
               <div className="space-y-2">
                 <p className="font-semibold text-xs pl-2">Project</p>
@@ -397,7 +397,7 @@ const TaskItemModal = ({
 
             {/* <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-primary-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-text-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Labels</p>
                   <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
@@ -406,7 +406,7 @@ const TaskItemModal = ({
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-primary-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-text-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Reminders</p>
                   <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
@@ -415,7 +415,7 @@ const TaskItemModal = ({
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-primary-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-text-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
                   <p className="space-x-1 font-semibold text-xs">
                     <span>Location</span>
                     <span className="uppercase text-[10px] tracking-widest font-bold text-primary-800 bg-primary-100 p-[2px] px-1 rounded-lg">

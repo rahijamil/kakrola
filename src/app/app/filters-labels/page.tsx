@@ -46,7 +46,7 @@ const FiltersLabelsPage = () => {
         <div className="space-y-8">
           <div className="flex items-start gap-1">
             <button
-              className={`p-1 hover:bg-primary-50 transition rounded-lg mt-1 ${
+              className={`p-1 hover:bg-text-100 transition rounded-lg mt-1 ${
                 !isFilterCollapse && "rotate-90"
               }`}
               onClick={() => setIsFilterCollapse(!isFilterCollapse)}
@@ -62,7 +62,7 @@ const FiltersLabelsPage = () => {
                 <h3 className="font-bold">Filters</h3>
 
                 <button
-                  className={`p-1 hover:bg-primary-50 transition rounded-lg`}
+                  className={`p-1 hover:bg-text-100 transition rounded-lg`}
                   onClick={() => setShowAddFilterModal(true)}
                 >
                   <Plus className="w-4 h-4 text-text-700" strokeWidth={1.5} />
@@ -107,7 +107,7 @@ const FiltersLabelsPage = () => {
 
           <div className="flex items-start gap-1">
             <button
-              className={`p-1 hover:bg-primary-50 transition rounded-lg mt-1 ${
+              className={`p-1 hover:bg-text-100 transition rounded-lg mt-1 ${
                 !isLabelCollapse && "rotate-90"
               }`}
               onClick={() => setIsLabelCollapse(!isLabelCollapse)}
@@ -123,7 +123,7 @@ const FiltersLabelsPage = () => {
                 <h3 className="font-bold">Labels</h3>
 
                 <button
-                  className={`p-1 hover:bg-primary-50 transition rounded-lg`}
+                  className={`p-1 hover:bg-text-100 transition rounded-lg`}
                   onClick={() => setShowAddLabelModal(true)}
                 >
                   <Plus className="w-4 h-4 text-text-700" strokeWidth={1.5} />

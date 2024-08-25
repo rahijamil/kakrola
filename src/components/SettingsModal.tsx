@@ -67,12 +67,12 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
     //   path: "/app/settings/subscription",
     //   icon: WalletIcon,
     // },
-    // {
-    //   id: 5,
-    //   name: "Theme",
-    //   path: "/app/settings/theme",
-    //   icon: PaletteIcon,
-    // },
+    {
+      id: 5,
+      name: "Theme",
+      path: "/app/settings/theme",
+      icon: PaletteIcon,
+    },
     // {
     //   id: 6,
     //   name: "Sidebar",
@@ -127,7 +127,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
     <Dialog size="lg" onClose={closeSettings}>
       <>
         <div className="flex h-full rounded-lg overflow-hidden">
-          <div className="w-56 flex flex-col bg-primary-50/50">
+          <div className="w-56 flex flex-col bg-primary-10">
             <div className="flex-1">
               <div className="p-3">
                 <h2 className="font-bold text-base">Settings</h2>
@@ -140,12 +140,12 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                       {item.path && (
                         <Link
                           href={item.path}
-                          className={`flex items-center px-2 py-2 rounded-lg transition-colors ${
+                          className={`flex items-center px-2 py-2 rounded-lg transition-colors text-text-900 ${
                             item.path === pathname ||
                             (item.path == "/app/settings/account" &&
                               pathname == "/app/settings/account/password")
-                              ? "bg-primary-100 text-primary-700"
-                              : "hover:bg-primary-50 text-text-700"
+                              ? "bg-primary-100"
+                              : "hover:bg-primary-50"
                           }`}
                         >
                           <item.icon
@@ -169,11 +169,11 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                         <li>
                           <Link
                             href={`/app/settings/workspaces/${team.id}/settings`}
-                            className={`flex items-center gap-2 p-2 rounded-lg transition-colors ${
+                            className={`flex items-center gap-2 p-2 rounded-lg transition-colors text-text-900 ${
                               pathname ==
                               `/app/settings/workspaces/${team.id}/settings`
-                                ? "bg-primary-100 text-primary-700"
-                                : "hover:bg-primary-100 text-text-700"
+                                ? "bg-primary-100"
+                                : "hover:bg-primary-50"
                             }`}
                           >
                             {team.avatar_url ? (
@@ -199,11 +199,11 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                         <li>
                           <Link
                             href={`/app/settings/workspaces/${team.id}/members`}
-                            className={`flex items-center gap-2 p-2 rounded-lg transition-colors ${
+                            className={`flex items-center gap-2 p-2 rounded-lg transition-colors text-text-900 ${
                               pathname ==
                               `/app/settings/workspaces/${team.id}/members`
-                                ? "bg-primary-100 text-primary-700"
-                                : "hover:bg-primary-100 text-text-700"
+                                ? "bg-primary-100"
+                                : "hover:bg-primary-50"
                             }`}
                           >
                             <Users strokeWidth={1.5} size={20} />
@@ -214,11 +214,11 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                         <li>
                           <Link
                             href={`/app/settings/workspaces/${team.id}/billing`}
-                            className={`flex items-center gap-2 p-2 rounded-lg transition-colors ${
+                            className={`flex items-center gap-2 p-2 rounded-lg transition-colors text-text-900 ${
                               pathname ==
                               `/app/settings/workspaces/${team.id}/billing`
-                                ? "bg-primary-100 text-primary-700"
-                                : "hover:bg-primary-100 text-text-700"
+                                ? "bg-primary-100"
+                                : "hover:bg-primary-50"
                             }`}
                           >
                             <WalletIcon strokeWidth={1.5} size={20} />
@@ -235,7 +235,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
             <div className="border-t border-text-200 p-1 px-3">
               <button
                 onClick={() => setShowAddTeam(true)}
-                className={`flex items-center px-2 py-2 rounded-lg transition-colors hover:bg-primary-100 text-text-700 w-full`}
+                className={`flex items-center px-2 py-2 rounded-lg transition-colors hover:bg-primary-50 text-text-700 w-full`}
               >
                 <Plus className="w-5 h-5 mr-3" strokeWidth={1.5} />
                 Add team
@@ -244,7 +244,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
           </div>
 
           <div className="flex-1">
-            <div className="p-3 flex items-center justify-between border-b border-text-50">
+            <div className="p-3 flex items-center justify-between border-b border-text-200">
               <div className="flex items-center gap-2">
                 {pathname === "/app/settings/account/password" && (
                   <button

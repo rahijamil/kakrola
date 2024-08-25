@@ -44,7 +44,7 @@ export default function GeneralSettingsPage() {
         </div>
       </section>
 
-      <div className="h-[1px] bg-text-50"></div>
+      <div className="h-[1px] bg-text-200"></div>
 
       <section className="space-y-4 max-w-sm">
         <h2 className="text-2xl font-bold">Date & time</h2>
@@ -117,7 +117,7 @@ export default function GeneralSettingsPage() {
         </div>
       </section>
 
-      <div className="h-[1px] bg-text-50"></div>
+      <div className="h-[1px] bg-text-200"></div>
 
       <section className="space-y-4 max-w-sm">
         <h2 className="text-2xl font-bold">Smart date recognition</h2>
@@ -132,7 +132,7 @@ export default function GeneralSettingsPage() {
         </div>
       </section>
 
-      <div className="h-[1px] bg-text-50"></div>
+      <div className="h-[1px] bg-text-200"></div>
 
       <section className="space-y-4 max-w-sm">
         <h2 className="text-2xl font-bold">Reset sub-tasks</h2>

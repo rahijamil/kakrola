@@ -1,6 +1,7 @@
 
 import React from "react";
 import Image from "next/image";
+import KakrolaLogo from "./kakrolaLogo";
 
 const LandingPageFooter = () => {
   return (
@@ -11,7 +12,7 @@ const LandingPageFooter = () => {
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
-            <Image src="/kakrola_text.svg" width={130} height={0} alt="Kakrola" />
+            <KakrolaLogo size="lg" isTitle />
             <p className="text-text-700 ">
               Making the world more productive, one task at a time.
             </p>

@@ -30,7 +30,7 @@ const FavoriteOption = ({ project }: { project: ProjectType }) => {
   return (
     <button
       onClick={handleFavorite}
-      className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-primary-50 transition flex items-center"
+      className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center"
     >
       {project.is_favorite ? (
         <HeartOff className="w-4 h-4 mr-4" />

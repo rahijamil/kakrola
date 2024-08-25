@@ -18,17 +18,17 @@ const getButtonClasses = (
   className?: string
 ) => {
   const baseClasses =
-    "inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
+    "inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 whitespace-nowrap";
 
   const variantClasses = {
     default: {
       indigo:
-        "text-white bg-gradient-to-r from-indigo-600 to-indigo-500 hover:to-indigo-600",
+        "text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:to-primary-600",
       red: "text-white bg-gradient-to-r from-red-700 to-red-600 hover:to-red-700",
       gray: "",
     },
     outline: {
-      indigo: "border border-indigo-600 text-primary-600 hover:bg-primary-50",
+      indigo: "border border-primary-600 text-primary-600 hover:bg-primary-50",
       red: "border border-red-600 text-red-600 hover:bg-red-50",
       gray: "border border-text-300 hover:border-text-400 focus:border-text-300",
     },
@@ -38,8 +38,8 @@ const getButtonClasses = (
       gray: "",
     },
     secondary: {
-      indigo: "bg-surface text-primary-600 hover:bg-primary-50",
-      red: "bg-surface text-red-600 hover:bg-primary-50",
+      indigo: "bg-surface text-primary-600 hover:bg-text-100",
+      red: "bg-surface text-red-600 hover:bg-text-100",
       gray: "",
     },
     gray: {

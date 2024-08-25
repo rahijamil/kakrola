@@ -20,13 +20,13 @@ const ImportCSVModal = ({ onClose }: { onClose: () => void }) => {
 
           <button
             onClick={onClose}
-            className="p-1 hover:bg-primary-50 transition rounded-lg"
+            className="p-1 hover:bg-text-100 transition rounded-lg"
           >
             <X strokeWidth={1.5} size={20} />
           </button>
         </div>
 
-        <div className="border border-dashed border-text-500 rounded-lg space-y-6 p-10 flex flex-col items-center justify-center">
+        <div className="border border-dashed border-text-2000 rounded-lg space-y-6 p-10 flex flex-col items-center justify-center">
           <p>Drag and drop a CSV file</p>
 
           <p className="font-bold text-xs">Upload from your computer</p>
