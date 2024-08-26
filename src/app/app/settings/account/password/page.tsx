@@ -129,7 +129,7 @@ const Password = () => {
     <form className="space-y-6 mt-6 ml-6 max-w-sm" onSubmit={handleSubmit}>
       <div className="space-y-4">
         <div className="space-y-1">
-          <label htmlFor="password" className="font-bold">
+          <label htmlFor="password" className="font-semibold">
             New password
           </label>
           <PasswordInput
@@ -140,7 +140,7 @@ const Password = () => {
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="confirmPassword" className="font-bold">
+          <label htmlFor="confirmPassword" className="font-semibold">
             Confirm new password
           </label>
           <PasswordInput

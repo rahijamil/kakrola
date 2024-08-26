@@ -123,8 +123,8 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
               key={workspace.team_id}
               className={`px-4 py-2 cursor-pointer flex items-center justify-between ${
                 index === highlightedIndex
-                  ? "bg-primary-100"
-                  : "hover:bg-text-100"
+                  ? "bg-primary-50"
+                  : "hover:primary-50"
               }`}
               onClick={() => {
                 onSelect(workspace);

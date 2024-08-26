@@ -65,7 +65,7 @@ interface DialogTitleProps {
 }
 
 export const DialogTitle: React.FC<DialogTitleProps> = ({ children }) => (
-  <h2 className="text-xl font-bold">{children}</h2>
+  <h2 className="text-xl font-semibold">{children}</h2>
 );
 
 interface DialogFooterProps {
@@ -88,7 +88,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="space-y-1">
         {label && (
-          <label htmlFor={id} className="font-bold">
+          <label htmlFor={id} className="font-semibold">
             {label}
           </label>
         )}
@@ -122,7 +122,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="space-y-1 w-full">
         {label && (
-          <label htmlFor={id} className="font-bold text-text-700">
+          <label htmlFor={id} className="font-semibold text-text-700">
             {label}
           </label>
         )}

@@ -15,7 +15,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="space-y-1">
         {label && (
-          <label htmlFor={id} className="font-bold text-text-700">
+          <label htmlFor={id} className="font-semibold text-text-700">
             {label}
           </label>
         )}

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Check, ChevronDown, LucideProps } from "lucide-react";
 
-interface Option {
+export interface SelectorOption {
   value: string;
   label: string;
   color?: string;
@@ -15,7 +15,7 @@ interface CustomSelectProps {
   >;
   value?: string;
   onChange: (e: { target: { id: string; value: string, label?: string } }) => void;
-  options: Option[];
+  options: SelectorOption[];
   placeholder?: string;
   height?: string;
 }
@@ -74,7 +74,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     <div className="relative" ref={selectRef}>
       <label
         htmlFor={id}
-        className="block font-bold text-text-700 mb-1"
+        className="block font-semibold text-text-700 mb-1"
       >
         {label}
       </label>
@@ -119,7 +119,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
               className={`px-4 cursor-pointer flex items-center justify-between ${height ? height : "py-2"} ${
                 index === highlightedIndex
                   ? "bg-primary-100"
-                  : "hover:bg-text-100"
+                  : "hover:bg-text-50"
               }`}
               onClick={() => {
                 onChange({ target: { id, value: option.value, label: option.label } });

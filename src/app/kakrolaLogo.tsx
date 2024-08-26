@@ -22,7 +22,7 @@ const KakrolaLogo = ({
 
       {isTitle && (
         <span
-          className={`font-semibold text-primary2 ${
+          className={`font-semibold text-primary-600 ${
             size === "sm"
               ? "text-xl"
               : size === "md"

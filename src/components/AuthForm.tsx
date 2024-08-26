@@ -178,12 +178,12 @@ const AuthForm: React.FC<AuthFormProps> = ({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full sm:max-w-md h-full sm:h-auto space-y-8 bg-surface p-6 sm:p-10 rounded-xl shadow-2xl"
+          className="w-full sm:max-w-md h-full sm:h-auto space-y-8 p-6 sm:p-10 bg-surface rounded-xl shadow-2xl"
         >
           <div className="text-center space-y-6">
             <KakrolaLogo size="md" isTitle />
             <div>
-              <h2 className="text-3xl font-extrabold text-text-900">
+              <h2 className="text-3xl font-bold text-text-900">
                 {type === "signup" && "Join Kakrola Today"}
                 {type === "login" && "Welcome back"}
                 {type === "forgotPassword" && "Forgot your password?"}

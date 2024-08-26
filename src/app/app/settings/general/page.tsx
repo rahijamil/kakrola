@@ -22,7 +22,7 @@ export default function GeneralSettingsPage() {
         <h2 className="text-2xl font-bold">General</h2>
 
         <div>
-          <label className="block font-bold">Language</label>
+          <label className="block font-semibold">Language</label>
           <Select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
@@ -33,7 +33,7 @@ export default function GeneralSettingsPage() {
         </div>
 
         <div>
-          <label className="block font-bold">Home view</label>
+          <label className="block font-semibold">Home view</label>
           <Select
             value={homeView}
             onChange={(e) => setHomeView(e.target.value)}
@@ -50,7 +50,7 @@ export default function GeneralSettingsPage() {
         <h2 className="text-2xl font-bold">Date & time</h2>
 
         <div>
-          <label className="block font-bold">Time zone</label>
+          <label className="block font-semibold">Time zone</label>
           <Select
             value={timeZone}
             onChange={(e) => setTimeZone(e.target.value)}
@@ -61,7 +61,7 @@ export default function GeneralSettingsPage() {
         </div>
 
         <div>
-          <label className="block font-bold">Time format</label>
+          <label className="block font-semibold">Time format</label>
           <Select
             value={timeFormat}
             onChange={(e) => setTimeFormat(e.target.value)}
@@ -72,7 +72,7 @@ export default function GeneralSettingsPage() {
         </div>
 
         <div>
-          <label className="block font-bold">Date format</label>
+          <label className="block font-semibold">Date format</label>
           <Select
             value={dateFormat}
             onChange={(e) => setDateFormat(e.target.value)}
@@ -84,7 +84,7 @@ export default function GeneralSettingsPage() {
         </div>
 
         <div>
-          <label className="block font-bold">Week start</label>
+          <label className="block font-semibold">Week start</label>
           <Select
             value={weekStart}
             onChange={(e) => setWeekStart(e.target.value)}
@@ -95,7 +95,7 @@ export default function GeneralSettingsPage() {
         </div>
 
         <div>
-          <label className="block font-bold">Next week</label>
+          <label className="block font-semibold">Next week</label>
           <Select
             value={nextWeek}
             onChange={(e) => setNextWeek(e.target.value)}
@@ -106,7 +106,7 @@ export default function GeneralSettingsPage() {
         </div>
 
         <div>
-          <label className="block font-bold">Weekend</label>
+          <label className="block font-semibold">Weekend</label>
           <Select
             value={weekend}
             onChange={(e) => setWeekend(e.target.value)}

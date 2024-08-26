@@ -35,6 +35,7 @@ import ProjectsSelector from "../AddTask/ProjectsSelector";
 import AssigneeSelector from "../AddTask/AssigneeSelector";
 import DueDateSelector from "../AddTask/DueDateSelector";
 import DueDateButton from "./DueDateButton";
+import AnimatedCircleCheck from "./AnimatedCircleCheck";
 
 const TaskItemModal = ({
   task,
@@ -48,9 +49,7 @@ const TaskItemModal = ({
   task: TaskType;
   subTasks: TaskType[];
   onClose: () => void;
-  onCheckClick: (
-    ev: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
-  ) => Promise<void>;
+  onCheckClick: () => void;
   project: ProjectType | null;
   setTasks: (updatedTasks: TaskType[]) => void;
   tasks: TaskType[];
@@ -142,66 +141,11 @@ const TaskItemModal = ({
 
         <div className="flex flex-[.99]">
           <div className="flex gap-1 bg-background p-4 flex-1">
-            <div
-              onClick={onCheckClick}
-              className="p-1 group cursor-pointer h-fit"
-            >
-              <Circle
-                size={22}
-                strokeWidth={
-                  task.priority == "P1"
-                    ? 2.5
-                    : task.priority == "P2"
-                    ? 2.5
-                    : task.priority == "P3"
-                    ? 2.5
-                    : 1.5
-                }
-                className={`rounded-full ${
-                  task.priority == "P1"
-                    ? "text-red-500 bg-red-100"
-                    : task.priority == "P2"
-                    ? "text-orange-500 bg-orange-100"
-                    : task.priority == "P3"
-                    ? "text-primary-600 bg-primary-100"
-                    : "text-text-500"
-                } ${task.is_completed ? "hidden" : "group-hover:hidden"}`}
-              />
-
-              <CircleCheck
-                size={22}
-                strokeWidth={
-                  task.priority == "P1"
-                    ? 2.5
-                    : task.priority == "P2"
-                    ? 2.5
-                    : task.priority == "P3"
-                    ? 2.5
-                    : 1.5
-                }
-                className={`transition rounded-full ${
-                  task.priority == "P1"
-                  ? "text-red-500 bg-red-100"
-                  : task.priority == "P2"
-                  ? "text-orange-500 bg-orange-100"
-                  : task.priority == "P3"
-                  ? "text-primary-600 bg-primary-100"
-                  : "text-text-500"
-                } ${
-                  !taskData.is_completed
-                    ? "hidden group-hover:block"
-                    : `text-white ${
-                        taskData.priority == "P1"
-                          ? "bg-red-500"
-                          : taskData.priority == "P2"
-                          ? "bg-orange-500"
-                          : taskData.priority == "P3"
-                          ? "bg-primary-600"
-                          : "bg-text-500"
-                      }`
-                }`}
-              />
-            </div>
+            <AnimatedCircleCheck
+              handleCheckSubmit={onCheckClick}
+              is_completed={taskData.is_completed}
+              priority={task.priority}
+            />
 
             <div className="w-full">
               <div className="w-full space-y-2">

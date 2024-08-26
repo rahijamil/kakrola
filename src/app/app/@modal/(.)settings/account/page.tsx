@@ -132,7 +132,7 @@ export default function AccountSettingsPage() {
       <div className="flex-1">
         {/* <section className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Plan</h2>
+          <h2 className="text-2xl font-semibold">Plan</h2>
           <p className="text-sm text-text-500">Beginner</p>
         </div>
         <Button variant="outline" size="sm">
@@ -146,7 +146,7 @@ export default function AccountSettingsPage() {
 
         <section className="space-y-4 max-w-sm">
           <div>
-            <label className="font-bold">Profile</label>
+            <label className="font-semibold">Profile</label>
 
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 min-w-16 min-h-16 rounded-full relative bg-text-200 overflow-hidden">
@@ -250,7 +250,7 @@ export default function AccountSettingsPage() {
           </div>
 
           <div className="flex flex-col space-y-1">
-            <label className="font-bold">Password</label>
+            <label className="font-semibold">Password</label>
             <Link href="/app/settings/account/password" className="w-fit">
               <Button variant="outline" size="sm" className="w-fit">
                 Add Password
@@ -259,7 +259,7 @@ export default function AccountSettingsPage() {
           </div>
 
           {/* <div className="space-y-1">
-          <p className="font-bold">Two-factor authentication</p>
+          <p className="font-semibold">Two-factor authentication</p>
           <ToggleSwitch
             id="2fa"
             size="sm"
@@ -277,7 +277,7 @@ export default function AccountSettingsPage() {
 
         {/* <section className="space-y-3">
         <div className="space-y-1">
-          <h3 className="font-bold">Connected accounts</h3>
+          <h3 className="font-semibold">Connected accounts</h3>
           <p className="text-xs text-text-500">
             Log in to Todoist with your Google, Facebook, or Apple account.
           </p>
@@ -316,7 +316,7 @@ export default function AccountSettingsPage() {
         {/* <section className="space-y-3">
         <div className="space-y-1">
           {" "}
-          <h3 className="font-bold">Delete account</h3>
+          <h3 className="font-semibold">Delete account</h3>
           <p className="text-text-500 text-xs">
             This will immediately delete all of your data including tasks,
             projects, comments, and more. This can’t be undone.

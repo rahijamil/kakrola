@@ -20,7 +20,7 @@ export default function GeneralSettingsPage() {
     <div className="space-y-6">
       <section className="space-y-4 max-w-sm">
         <div>
-          <label className="block font-bold">Language</label>
+          <label className="block font-semibold">Language</label>
           <Select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
@@ -31,7 +31,7 @@ export default function GeneralSettingsPage() {
         </div>
 
         <div>
-          <label className="block font-bold">Home view</label>
+          <label className="block font-semibold">Home view</label>
           <Select
             value={homeView}
             onChange={(e) => setHomeView(e.target.value)}
@@ -45,10 +45,10 @@ export default function GeneralSettingsPage() {
       <div className="h-[1px] bg-text-200"></div>
 
       <section className="space-y-4 max-w-sm">
-        <h2 className="text-base font-bold">Date & time</h2>
+        <h2 className="text-base font-semibold">Date & time</h2>
 
         <div>
-          <label className="block font-bold">Time zone</label>
+          <label className="block font-semibold">Time zone</label>
           <Select
             value={timeZone}
             onChange={(e) => setTimeZone(e.target.value)}
@@ -59,7 +59,7 @@ export default function GeneralSettingsPage() {
         </div>
 
         <div>
-          <label className="block font-bold">Time format</label>
+          <label className="block font-semibold">Time format</label>
           <Select
             value={timeFormat}
             onChange={(e) => setTimeFormat(e.target.value)}
@@ -70,7 +70,7 @@ export default function GeneralSettingsPage() {
         </div>
 
         <div>
-          <label className="block font-bold">Date format</label>
+          <label className="block font-semibold">Date format</label>
           <Select
             value={dateFormat}
             onChange={(e) => setDateFormat(e.target.value)}
@@ -82,7 +82,7 @@ export default function GeneralSettingsPage() {
         </div>
 
         <div>
-          <label className="block font-bold">Week start</label>
+          <label className="block font-semibold">Week start</label>
           <Select
             value={weekStart}
             onChange={(e) => setWeekStart(e.target.value)}
@@ -93,7 +93,7 @@ export default function GeneralSettingsPage() {
         </div>
 
         <div>
-          <label className="block font-bold">Next week</label>
+          <label className="block font-semibold">Next week</label>
           <Select
             value={nextWeek}
             onChange={(e) => setNextWeek(e.target.value)}
@@ -104,7 +104,7 @@ export default function GeneralSettingsPage() {
         </div>
 
         <div>
-          <label className="block font-bold">Weekend</label>
+          <label className="block font-semibold">Weekend</label>
           <Select value={weekend} onChange={(e) => setWeekend(e.target.value)}>
             <option value="Saturday">Saturday</option>
             <option value="Sunday">Sunday</option>
@@ -112,7 +112,7 @@ export default function GeneralSettingsPage() {
         </div>
 
         <div>
-          <label className="block font-bold">Smart date recognition</label>
+          <label className="block font-semibold">Smart date recognition</label>
           <div>
             <ToggleSwitch
               size="sm"
@@ -126,7 +126,7 @@ export default function GeneralSettingsPage() {
         </div>
 
         <div>
-          <label className="block font-bold">Reset sub-tasks</label>
+          <label className="block font-semibold">Reset sub-tasks</label>
           <div>
             <ToggleSwitch
               size="sm"
@@ -141,10 +141,10 @@ export default function GeneralSettingsPage() {
       <div className="h-[1px] bg-text-200"></div>
 
       <section className="space-y-4 max-w-sm">
-        <h2 className="text-base font-bold">Sound & appearance</h2>
+        <h2 className="text-base font-semibold">Sound & appearance</h2>
 
         <div className="space-y-1">
-          <p className="block font-bold">Task complete tone</p>
+          <p className="block font-semibold">Task complete tone</p>
           <div className="flex items-center gap-2">
             <ToggleSwitch
               size="sm"

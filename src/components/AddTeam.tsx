@@ -16,46 +16,19 @@ import {
   TeamMemberType,
   TeamRole,
   TeamType,
+  Industry,
+  WorkType,
+  WorkRole,
+  OrganizationSize,
+  roleOptions,
+  industryOptions,
+  workTypeOptions,
+  organizationSizeOptions,
 } from "@/types/team";
 import { useAuthProvider } from "@/context/AuthContext";
 import CustomSelect from "./ui/CustomSelect";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import Textarea from "./ui/textarea";
-
-// Enums for predefined options
-enum Industry {
-  Technology = "technology",
-  Healthcare = "healthcare",
-  Finance = "finance",
-  Education = "education",
-  Retail = "retail",
-  Manufacturing = "manufacturing",
-  Other = "other",
-}
-
-enum WorkType {
-  SoftwareDevelopment = "software_development",
-  Marketing = "marketing",
-  Sales = "sales",
-  CustomerSupport = "customer_support",
-  HumanResources = "human_resources",
-  Other = "other",
-}
-
-enum WorkRole {
-  Owner = "owner",
-  TeamLead = "team_lead",
-  TeamMember = "team_member",
-}
-
-enum OrganizationSize {
-  One = "1",
-  Small = "2-10",
-  Medium = "11-50",
-  Large = "51-100",
-  VeryLarge = "101-250",
-  Enterprise = "250+",
-}
 
 // Updated TeamData type
 interface TeamData extends BaseTeamType {
@@ -202,29 +175,6 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
       onClose();
     }
   };
-
-  const industryOptions = Object.values(Industry).map((value) => ({
-    value,
-    label: value.charAt(0).toUpperCase() + value.slice(1).replace("_", " "),
-  }));
-
-  const workTypeOptions = Object.values(WorkType).map((value) => ({
-    value,
-    label: value.charAt(0).toUpperCase() + value.slice(1).replace("_", " "),
-  }));
-
-  const roleOptions = [
-    { value: WorkRole.Owner, label: "I own or run the company" },
-    { value: WorkRole.TeamLead, label: "I lead a team within the company" },
-    { value: WorkRole.TeamMember, label: "I'm a team member" },
-  ];
-
-  const organizationSizeOptions = Object.values(OrganizationSize).map(
-    (value) => ({
-      value,
-      label: value,
-    })
-  );
 
   return (
     <div

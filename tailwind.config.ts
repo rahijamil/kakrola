@@ -46,6 +46,7 @@ const config: Config = {
   safelist: [
     "bg-primary-100",
     "bg-primary-200",
+    "bg-primary-300",
     "bg-primary-400",
     "bg-primary-500",
     "bg-primary-600",

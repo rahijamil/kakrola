@@ -1,4 +1,5 @@
 import React from "react";
+import { LucideIcon, LucideProps } from "lucide-react";
 
 // Simplified utility function to combine class names
 const cn = (...classes: (string | undefined)[]) => {
@@ -15,16 +16,16 @@ const getButtonClasses = (
   color: ButtonColor = "indigo",
   size: ButtonSize = "default",
   fullWidth: boolean = false,
-  className?: string
+  className?: string,
+  leftAlign?: boolean
 ) => {
-  const baseClasses =
-    "inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 whitespace-nowrap";
+  const baseClasses = `inline-flex items-center gap-2 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ${leftAlign ? "justify-start text-left" : "justify-center"}`;
 
   const variantClasses = {
     default: {
       indigo:
-        "text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:to-primary-600",
-      red: "text-white bg-gradient-to-r from-red-700 to-red-600 hover:to-red-700",
+        "text-surface bg-gradient-to-r from-primary-600 to-primary-500 hover:to-primary-600 disabled:hover:to-primary-500",
+      red: "text-surface bg-gradient-to-r from-red-700 to-red-600 hover:to-red-700",
       gray: "",
     },
     outline: {
@@ -72,6 +73,10 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   color?: ButtonColor;
   size?: ButtonSize;
   fullWidth?: boolean;
+  icon?: React.ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+  >;
+  leftAlign?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -82,17 +87,30 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       color = "indigo",
       size = "default",
       fullWidth = false,
+      icon: Icon,
+      children,
+      leftAlign,
       ...props
     },
     ref
   ) => {
     return (
       <button
-        className={getButtonClasses(variant, color, size, fullWidth, className)}
+        className={getButtonClasses(
+          variant,
+          color,
+          size,
+          fullWidth,
+          className,
+          leftAlign
+        )}
         ref={ref}
         tabIndex={0}
         {...props}
-      />
+      >
+        {Icon && <Icon className="h-5 w-5" />}
+        {children}
+      </button>
     );
   }
 );

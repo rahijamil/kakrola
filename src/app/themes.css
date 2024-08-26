@@ -64,23 +64,22 @@
 }
 
 [data-theme="moonstone"] {
-  --color-primary-10: #f2f7fa; 
-  --color-primary-25: #e6f0f5;
-  --color-primary-50: #cde1eb;
-  --color-primary-100: #9bc3d7;
-  --color-primary-200: #69a5c3;
-  --color-primary-300: #3787af;
-  --color-primary-400: #05699b;
-  --color-primary-500: #0084bf; /* Base color */
-  --color-primary-600: #006fa0;
-  --color-primary-700: #005a81;
-  --color-primary-800: #004562;
-  --color-primary-900: #003043;
+  --color-primary-10: #f2f4f8; /* Very light, cool grey */
+  --color-primary-25: #e6e9ef; /* Light cool grey */
+  --color-primary-50: #ccd3df; /* Soft light grey with blue undertones */
+  --color-primary-100: #99a7bf; /* Light grey-blue */
+  --color-primary-200: #66799f; /* Muted blue-grey */
+  --color-primary-300: #445a7f; /* Soft blue-grey */
+  --color-primary-400: #3c506e; /* Slightly darker blue-grey */
+  --color-primary-500: #39485e; /* Base color - dark blue-grey */
+  --color-primary-600: #313e54; /* Darker shade of blue-grey */
+  --color-primary-700: #2a3547; /* Even darker shade */
+  --color-primary-800: #222b3a; /* Deep navy blue */
+  --color-primary-900: #1b2230; /* Darkest navy shade */
 
-  --color-secondary: #ab47bc; /* Soft purple for highlights or accents */
-  --color-accent: #ffab40; /* Orange accent for contrast */
-  /* --color-background: #fafafa; Very light grey for main content areas */
-  --color-background: #ffffff; /* Very light grey for main content areas */
+  --color-secondary: #6e5e9e; /* Muted purple for secondary highlights */
+  --color-accent: #ffb84d; /* Warm golden orange accent for contrast */
+  --color-background: #f5f7fa; /* Very light grey-blue background for main content areas */
   --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
 }
 

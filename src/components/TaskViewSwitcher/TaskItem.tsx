@@ -15,6 +15,7 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import AddTask from "../AddTask";
 import { debounce } from "lodash";
 import { getDateInfo } from "@/utils/getDateInfo";
+import AnimatedCircleCheck from "./AnimatedCircleCheck";
 
 const TaskItem = ({
   task,
@@ -58,8 +59,6 @@ const TaskItem = ({
     task: TaskType;
   } | null>(null);
 
-  const [isAnimating, setIsAnimating] = useState<boolean>(false);
-
   const handleTaskDelete = async () => {
     const updatedTasks = tasks.filter((t) => t.id !== task.id);
 
@@ -98,24 +97,6 @@ const TaskItem = ({
       console.log(error);
     }
   }, 300);
-
-  const handleCheckClick = async (
-    ev: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
-  ) => {
-    ev.stopPropagation();
-
-    if (!task.is_completed) {
-      // Play sound
-      const audio = new Audio("/sounds/done.wav");
-      audio.play();
-    }
-
-    // Trigger animation
-    setIsAnimating(true);
-    setTimeout(() => setIsAnimating(false), 300); // Duration of animation
-
-    handleCheckClickDebounced();
-  };
 
   const [editTaskId, setEditTaskId] = useState<TaskType["id"] | null>(null);
 
@@ -160,67 +141,11 @@ const TaskItem = ({
                 onClick={() => setShowModal && setShowModal(task.id.toString())}
               >
                 <div className="flex items-center gap-1">
-                  <div
-                    onClick={handleCheckClick}
-                    className={`p-1 self-start group cursor-pointer h-fit ${
-                      isAnimating ? "check-animation" : ""
-                    }`}
-                  >
-                    <Circle
-                      size={20}
-                      strokeWidth={
-                        task.priority == "P1"
-                          ? 2.5
-                          : task.priority == "P2"
-                          ? 2.5
-                          : task.priority == "P3"
-                          ? 2.5
-                          : 1.5
-                      }
-                      className={`rounded-full ${
-                        task.priority == "P1"
-                          ? "text-red-500 bg-red-100"
-                          : task.priority == "P2"
-                          ? "text-orange-500 bg-orange-100"
-                          : task.priority == "P3"
-                          ? "text-primary-600 bg-primary-100"
-                          : "text-text-500"
-                      } ${task.is_completed ? "hidden" : "group-hover:hidden"}`}
-                    />
-                    <CircleCheck
-                      size={20}
-                      strokeWidth={
-                        task.priority == "P1"
-                          ? 2.5
-                          : task.priority == "P2"
-                          ? 2.5
-                          : task.priority == "P3"
-                          ? 2.5
-                          : 1.5
-                      }
-                      className={`transition rounded-full ${
-                        task.priority == "P1"
-                          ? "text-red-500 bg-red-100"
-                          : task.priority == "P2"
-                          ? "text-orange-500 bg-orange-100"
-                          : task.priority == "P3"
-                          ? "text-primary-600 bg-primary-100"
-                          : "text-text-500"
-                      } ${
-                        !task.is_completed
-                          ? "hidden group-hover:block"
-                          : `text-white ${
-                              task.priority == "P1"
-                                ? "bg-red-500"
-                                : task.priority == "P2"
-                                ? "bg-orange-500"
-                                : task.priority == "P3"
-                                ? "bg-primary-600"
-                                : "bg-text-500"
-                            }`
-                      }`}
-                    />
-                  </div>
+                  <AnimatedCircleCheck
+                    handleCheckSubmit={handleCheckClickDebounced}
+                    priority={task.priority}
+                    is_completed={task.is_completed}
+                  />
 
                   <div className="space-y-2 py-1 pr-1 flex-1">
                     <div className="space-y-[2px]">
@@ -244,7 +169,7 @@ const TaskItem = ({
                         {subTasks.length > 0 ? (
                           <div className="flex items-center gap-[2px] text-text-500">
                             <Workflow strokeWidth={1.5} className="w-3 h-3" />
-                            <span className="text-xs">0/{subTasks.length}</span>
+                            <span className="text-xs">{subTasks.filter((t) => t.is_completed).length}/{subTasks.length}</span>
                           </div>
                         ) : null}
 
@@ -315,7 +240,7 @@ const TaskItem = ({
           setTasks={setTasks}
           tasks={tasks}
           onClose={() => setShowModal(null)}
-          onCheckClick={handleCheckClick}
+          onCheckClick={handleCheckClickDebounced}
           project={project}
         />
       )}

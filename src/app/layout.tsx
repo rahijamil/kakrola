@@ -15,6 +15,9 @@ const nunito = Nunito({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Kakrola | All Your Work in One Place",
+  icons: {
+    shortcut: "/kakrola.svg",
+  }
 };
 
 export default function RootLayout({

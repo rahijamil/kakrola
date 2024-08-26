@@ -34,8 +34,8 @@ const colors = [
   },
   {
     id: 6,
-    label: "-primary-",
-    value: "-primary--500",
+    label: "Indigo",
+    value: "indigo-500",
     color: "#6366f1",
   },
   {
