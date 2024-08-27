@@ -57,18 +57,18 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
       <aside className="h-full flex flex-col group w-full">
         {/* here will notification icons */}
         <div className="p-4 px-2 flex items-center justify-between relative">
-          <div className="font-bold">Organization</div>
+          <div className="font-bold text-primary-500">Kakrola</div>
 
           <div
-            className={`flex items-center transition ${
+            className={`flex items-center justify-end w-full transition ${
               sidebarWidth > 220 ? "gap-2" : "gap-1"
             }`}
           >
-            <button
+            {/* <button
               className={`text-text-700 hover:bg-primary-50 rounded-lg transition-colors z-10 w-8 h-8 flex items-center justify-center`}
             >
               <Bell strokeWidth={1.5} width={20} />
-            </button>
+            </button> */}
             <button
               className={`text-text-700 hover:bg-primary-50 rounded-lg transition-colors z-10 w-8 h-8 flex items-center justify-center `}
             >

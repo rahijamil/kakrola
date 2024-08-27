@@ -21,7 +21,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
   const { projects: allProjects, setProjects } = useTaskProjectDataProvider();
   const pathname = usePathname();
   const [showProjects, setShowProjects] = useState(true);
-  const projects = allProjects.filter((p) => !p.team_id);
+  const projects = allProjects.filter((p) => !p.team_id && !p.slug.startsWith("test-"));
 
   const handleOnDragEnd = async (result: DropResult) => {
     const { source, destination } = result;

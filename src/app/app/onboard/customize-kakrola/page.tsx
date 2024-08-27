@@ -2,10 +2,11 @@
 import React, { useState } from "react";
 import OnboardWrapper from "../OnboardWrapper";
 import { Button } from "@/components/ui/button";
-import createPorfileImage from "../create-profile/create-profile.png";
+import customizeKakrolaImage from "./customize_kakrola.png";
 import { useRouter } from "next/navigation";
 import CustomSelect from "@/components/ui/CustomSelect";
 import { roleOptions, WorkRole } from "@/types/team";
+import Image from "next/image";
 
 const Step2CustomizeKakrola = () => {
   const router = useRouter();
@@ -51,7 +52,15 @@ const Step2CustomizeKakrola = () => {
           </div>
         </>
       }
-      imageSrc={createPorfileImage}
+      rightSide={
+        <Image
+          src={customizeKakrolaImage}
+          width={300}
+          height={300}
+          alt="Use Case"
+          className="object-cover rounded-lg"
+        />
+      }
       useWithTeam={true}
       currentStep={2}
     />

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import OnboardWrapper from "../OnboardWrapper";
 import { Button } from "@/components/ui/button";
-import createPorfileImage from "../create-profile/create-profile.png";
+import workspaceProfileImage from "./workspace_profile.png";
 import { useRouter } from "next/navigation";
 import CustomSelect from "@/components/ui/CustomSelect";
 import {
@@ -13,6 +13,7 @@ import {
   WorkType,
   workTypeOptions,
 } from "@/types/team";
+import Image from "next/image";
 
 const Step4ProfileWorkspace = () => {
   const router = useRouter();
@@ -78,12 +79,19 @@ const Step4ProfileWorkspace = () => {
               placeholder="Select your answer"
               options={organizationSizeOptions}
               onChange={({ target: { value, label } }) =>
-                setOrganizationSize({ value: value as OrganizationSize, label: label! })
+                setOrganizationSize({
+                  value: value as OrganizationSize,
+                  label: label!,
+                })
               }
               value={organizationSize?.value}
             />
 
-            <Button onClick={handleSubmit} disabled={!industry || !WorkType || !organizationSize} fullWidth>
+            <Button
+              onClick={handleSubmit}
+              disabled={!industry || !WorkType || !organizationSize}
+              fullWidth
+            >
               Continue
             </Button>
 
@@ -95,7 +103,15 @@ const Step4ProfileWorkspace = () => {
           </div>
         </>
       }
-      imageSrc={createPorfileImage}
+      rightSide={
+        <Image
+          src={workspaceProfileImage}
+          width={300}
+          height={300}
+          alt="Use Case"
+          className="object-cover rounded-lg"
+        />
+      }
       useWithTeam={true}
       currentStep={4}
     />

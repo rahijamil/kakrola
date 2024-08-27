@@ -14,6 +14,7 @@ const FavoriteProjects = ({
 }) => {
   const { projects } = useTaskProjectDataProvider();
   const pathname = usePathname();
+  
   return (
     <div className="mt-4 px-2">
       <div className="w-full flex items-center justify-between p-1 text-text-700 rounded-lg transition-colors">

@@ -83,6 +83,7 @@ const TeamProjects = ({
       // setProjects(projects); // or handle error state
     }
   };
+  
   return (
     <>
       <div className="mt-4 px-2">

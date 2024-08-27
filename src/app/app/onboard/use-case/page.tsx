@@ -2,10 +2,12 @@
 import React, { useState } from "react";
 import OnboardWrapper from "../OnboardWrapper";
 import { Button } from "@/components/ui/button";
-import createPorfileImage from "../create-profile/create-profile.png";
+import useCaseImage from "./use_case.png";
 import { BriefcaseBusiness, Lightbulb, User } from "lucide-react";
 import AnimatedCircleCheck from "@/components/TaskViewSwitcher/AnimatedCircleCheck";
 import { useRouter } from "next/navigation";
+import MyProjects from "@/components/SidebarWrapper/TasksSidebar/MyProjects";
+import Image from "next/image";
 
 const useCases = [
   {
@@ -102,7 +104,15 @@ const Step2UseCase = () => {
           </div>
         </>
       }
-      imageSrc={createPorfileImage}
+      rightSide={
+        <Image
+          src={useCaseImage}
+          width={300}
+          height={300}
+          alt="Use Case"
+          className="object-cover rounded-lg"
+        />
+      }
       useWithTeam={false}
       currentStep={2}
     />

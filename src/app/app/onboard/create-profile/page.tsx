@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { ToggleSwitch } from "@/components/ui/ToggleSwitch";
 import { Upload } from "@/components/ui/Upload";
 import { Input } from "@/components/ui/input";
-import createPorfileImage from "./create-profile.png";
+import createPorfileImage from "./create_profile.png";
 import { useRouter } from "next/navigation";
 import OnboardWrapper from "../OnboardWrapper";
+import Image from "next/image";
 
 const Step1CreateProfile = () => {
   const [name, setName] = useState("");
@@ -87,7 +88,15 @@ const Step1CreateProfile = () => {
           </div>
         </>
       }
-      imageSrc={createPorfileImage}
+      rightSide={
+        <Image
+          src={createPorfileImage}
+          width={300}
+          height={300}
+          alt="Use Case"
+          className="object-cover rounded-lg"
+        />
+      }
       useWithTeam={useWithTeam}
       currentStep={1}
     />

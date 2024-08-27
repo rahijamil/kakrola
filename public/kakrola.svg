@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080">
   <defs>
-    <!-- Elegant Gradient Background -->
+    <!-- Gradient Background -->
     <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#003B56;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#0076A3;stop-opacity:1" />
@@ -8,21 +8,20 @@
 
     <!-- Drop Shadow Filter -->
     <filter id="f1" x="-10%" y="-10%" width="120%" height="120%">
-      <feOffset result="offOut" in="SourceGraphic" dx="4" dy="4" />
-      <feGaussianBlur in="offOut" result="blurred" stdDeviation="4" />
+      <feOffset result="offOut" in="SourceGraphic" dx="10" dy="10" />
+      <feGaussianBlur in="offOut" result="blurred" stdDeviation="10" />
       <feBlend in="SourceGraphic" in2="blurred" mode="normal" />
     </filter>
   </defs>
 
   <!-- Background with Gradient -->
-  <rect width="220" height="220" rx="40" ry="40" fill="url(#grad)" />
+  <rect width="1080" height="1080" rx="196" ry="196" fill="url(#grad)" />
 
-  <!-- Enhanced Chat Bubble without Tail -->
-  <g filter="url(#f1)" transform="translate(0, -20)">
-    <!-- Rounded Chat Bubble -->
-    <path d="M70 60 Q90 30 130 30 Q170 30 190 60 Q210 90 210 130 Q210 170 190 200 Q170 230 130 230 Q100 230 80 200 Q70 190 60 180 Q50 170 50 160 Q50 150 60 140 Q70 130 80 120 L70 60 Z" fill="#FFFFFF" stroke="#003B56" stroke-width="2" />
+  <!-- Chat Bubble with Shadow -->
+  <g filter="url(#f1)" transform="translate(0, -98)">
+    <path d="M343 294 Q441 147 637 147 Q833 147 931 294 Q1029 441 1029 637 Q1029 833 931 980 Q833 1127 637 1127 Q490 1127 392 980 Q343 931 294 882 Q245 833 245 784 Q245 735 294 686 Q343 637 392 588 L343 294 Z" fill="#FFFFFF" stroke="#003B56" stroke-width="10" />
     
-    <!-- Central Hash Symbol -->
-    <text x="110" y="120" font-family="fantasy, Arial, sans-serif" font-size="80" fill="#0076A3" text-anchor="middle" alignment-baseline="middle" dy="0.3em">#</text>
+    <!-- Subtly Pulsing Hash Symbol -->
+    <text x="539" y="588" font-family="fantasy, Arial, sans-serif" font-size="392" fill="#0076A3" text-anchor="middle" alignment-baseline="middle" dy="0.3em" >#</text>
   </g>
 </svg>

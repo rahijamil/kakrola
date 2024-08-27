@@ -2,10 +2,11 @@
 import React from "react";
 import OnboardWrapper from "../OnboardWrapper";
 import { Button } from "@/components/ui/button";
-import createPorfileImage from "../create-profile/create-profile.png";
+import inviteMemberImage from "./invite_members.png";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const Step5InviteMembers = () => {
   const router = useRouter();
@@ -97,7 +98,15 @@ const Step5InviteMembers = () => {
           </div>
         </>
       }
-      imageSrc={createPorfileImage}
+      rightSide={
+        <Image
+          src={inviteMemberImage}
+          width={300}
+          height={300}
+          alt="Use Case"
+          className="object-cover rounded-lg"
+        />
+      }
       useWithTeam={true}
       currentStep={5}
     />
