@@ -17,11 +17,11 @@
   <!-- Background with Gradient -->
   <rect width="1080" height="1080" rx="196" ry="196" fill="url(#grad)" />
 
-  <!-- Chat Bubble with Shadow -->
-  <g filter="url(#f1)" transform="translate(0, -98)">
-    <path d="M343 294 Q441 147 637 147 Q833 147 931 294 Q1029 441 1029 637 Q1029 833 931 980 Q833 1127 637 1127 Q490 1127 392 980 Q343 931 294 882 Q245 833 245 784 Q245 735 294 686 Q343 637 392 588 L343 294 Z" fill="#FFFFFF" stroke="#003B56" stroke-width="10" />
-    
-    <!-- Subtly Pulsing Hash Symbol -->
-    <text x="539" y="588" font-family="fantasy, Arial, sans-serif" font-size="392" fill="#0076A3" text-anchor="middle" alignment-baseline="middle" dy="0.3em" >#</text>
+  <!-- Creative Chat Bubble -->
+  <g filter="url(#f1)" transform="translate(200, 110) scale(.9)">
+    <path d="M243 194 Q341 47 537 47 Q733 47 831 194 Q929 341 929 537 Q929 733 831 880 Q733 1027 537 1027 Q390 1027 292 880 Q243 831 194 782 Q145 733 145 684 Q145 635 194 586 Q243 537 292 488 L243 194 Z" fill="#FFFFFF" stroke="#003B56" stroke-width="10" />
+
+    <!-- Adjusted Hash Symbols -->
+    <text x="590" y="700" font-family="fantasy, Arial, sans-serif" font-size="500" fill="#005c83" text-anchor="middle" dy="0.3em">#</text>
   </g>
 </svg>
