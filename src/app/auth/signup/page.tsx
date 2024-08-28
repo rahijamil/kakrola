@@ -2,6 +2,7 @@ import React from "react";
 import AuthForm from "@/components/AuthForm";
 import { signup } from "@/app/auth/action";
 import SocialLogin from "../SocialLogin";
+import Link from "next/link";
 
 const SignUpPage = () => (
   <AuthForm
@@ -19,12 +20,12 @@ const SignUpPage = () => (
       <div className="text-center">
         <p className="mt-2 text-sm text-text-600">
           Already have an account?{" "}
-          <a
+          <Link
             href="/auth/login"
             className="font-medium text-primary-600 hover:text-primary-600"
           >
             Log in
-          </a>
+          </Link>
         </p>
       </div>
     }

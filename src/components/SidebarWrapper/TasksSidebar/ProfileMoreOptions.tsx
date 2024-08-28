@@ -208,7 +208,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
           <>
             <div className="flex items-center gap-2 p-2">
               <Image
-                src={profile.avatar_url || "/default-avatar.png"}
+                src={profile?.avatar_url || "/default-avatar.png"}
                 alt="profile"
                 width={32}
                 height={32}

@@ -3,6 +3,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 export async function login({
   email,
@@ -33,7 +34,7 @@ export async function signup({
   password: string;
 }) {
   const supabaseServer = createClient();
-  const { error } = await supabaseServer.auth.signUp({
+  const { error, data } = await supabaseServer.auth.signUp({
     email,
     password,
   });
@@ -42,8 +43,28 @@ export async function signup({
     return { success: false, error: error.message || "Unknown error" };
   }
 
+  if (data.user) {
+    // Store userId and email in cookies (or session)
+    const userId = data.user.id;
+    cookies().set("userId", userId, {
+      path: "/",
+      httpOnly: true, // Makes the cookie inaccessible to JavaScript
+      secure: true, // Sends the cookie only over HTTPS
+      maxAge: 60 * 60 * 24, // 1 day
+    });
+
+    cookies().set("email", email, {
+      path: "/",
+      httpOnly: true, // Makes the cookie inaccessible to JavaScript
+      secure: true, // Sends the cookie only over HTTPS
+      maxAge: 60 * 60 * 24, // 1 day
+    });
+  }
+
+  console.log({ user: data.user });
+
   revalidatePath("/", "layout");
-  redirect("/app/onboarding");
+  redirect("/confirmation");
 }
 
 export async function forgotPassword(email: string) {

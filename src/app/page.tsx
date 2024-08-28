@@ -14,11 +14,8 @@ const LandingPage = () => {
       <LandingPageHeader />
 
       <main>
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-white via-primary-50 to-white z-0"></div>
-          <HeroSection />
-          <SectionsLayout />
-        </div>
+        <HeroSection />
+        <SectionsLayout />
 
         <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-br from-white via-primary-50 to-white z-0"></div>

@@ -8,7 +8,11 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get("type") as EmailOtpType | null;
   const next = searchParams.get("next") ?? "/app";
 
+  // Log the incoming parameters for debugging
+  console.log("Received query parameters:", { token_hash, type, next });
+
   if (!token_hash || !type) {
+    console.error("Missing token_hash or type in query parameters");
     return NextResponse.redirect(new URL("/auth/error", request.url), {
       status: 302,
     });
@@ -20,6 +24,7 @@ export async function GET(request: NextRequest) {
     token_hash,
   });
 
+  // Log the response from verifyOtp
   if (error) {
     console.error('Error verifying OTP:', error);
     return NextResponse.redirect(new URL("/auth/error", request.url), {
@@ -27,17 +32,21 @@ export async function GET(request: NextRequest) {
     });
   }
 
+  console.log("OTP verification successful:", data);
+
   if (data.session && type == "recovery") {
-    // Set the session using Supabase's setSession method
+    // Log the session before setting it
+    console.log("Setting session:", data.session);
     await supabaseServer.auth.setSession(data.session);
   }
 
-  // For both email confirmation and password reset, redirect to the next page
+  // Log the redirect path
   const redirectTo = request.nextUrl.clone();
   redirectTo.pathname = next;
   redirectTo.searchParams.delete("token_hash");
   redirectTo.searchParams.delete("type");
   redirectTo.searchParams.delete("next");
 
+  console.log("Redirecting to:", redirectTo.href);
   return NextResponse.redirect(redirectTo);
 }

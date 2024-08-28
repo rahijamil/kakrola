@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import React, { ReactNode } from "react";
+import Spinner from "../ui/Spinner";
 
 const ConfirmAlert = ({
   onCancel,
@@ -7,12 +8,14 @@ const ConfirmAlert = ({
   title,
   description,
   submitBtnText,
+  loading,
 }: {
   onCancel: () => void;
   onConfirm: () => void;
   title?: string;
   description: ReactNode;
   submitBtnText: string;
+  loading?: boolean;
 }) => {
   return (
     <div
@@ -32,8 +35,15 @@ const ConfirmAlert = ({
           <Button size="xs" variant="gray" onClick={onCancel}>
             Cancel
           </Button>
-          <Button size="xs" onClick={onConfirm}>
-            {submitBtnText}
+          <Button size="xs" onClick={onConfirm} disabled={loading}>
+            {loading ? (
+              <div className="flex items-center gap-2">
+                <Spinner color="white" />
+                {submitBtnText}
+              </div>
+            ) : (
+              submitBtnText
+            )}
           </Button>
         </div>
       </div>

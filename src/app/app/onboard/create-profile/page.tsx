@@ -9,11 +9,15 @@ import createPorfileImage from "./create_profile.png";
 import { useRouter } from "next/navigation";
 import OnboardWrapper from "../OnboardWrapper";
 import Image from "next/image";
+import { useAuthProvider } from "@/context/AuthContext";
+import Spinner from "@/components/ui/Spinner";
 
 const Step1CreateProfile = () => {
-  const [name, setName] = useState("");
+  const { profile } = useAuthProvider();
+  const [name, setName] = useState(profile?.full_name || "");
   const [useWithTeam, setUseWithTeam] = useState(false);
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const handleFileChange = (file: File | null) => {
     if (file) {
@@ -23,6 +27,24 @@ const Step1CreateProfile = () => {
   };
 
   const handleSubmit = () => {
+    setLoading(true);
+
+
+
+
+
+// today you'll work here, In Sha Allah!
+
+
+
+
+
+
+
+
+
+
+
     if (useWithTeam) {
       router.push("/app/onboard/customize-kakrola");
     } else {
@@ -52,6 +74,7 @@ const Step1CreateProfile = () => {
                 Icon={UploadIcon}
                 accept="image/*"
                 onChange={handleFileChange}
+                avatarUrl={profile?.avatar_url!}
               >
                 Upload your photo
               </Upload>
@@ -69,7 +92,7 @@ const Step1CreateProfile = () => {
             <button
               type="button"
               onClick={() => setUseWithTeam(!useWithTeam)}
-              className="flex items-center justify-between w-full cursor-pointer rounded-lg border border-text-300 hover:border-text-400 focus:border-text-300 bg-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-50 px-3 h-10"
+              className="flex items-center justify-between w-full cursor-pointer rounded-full border border-text-300 hover:border-text-400 focus:border-text-300 bg-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-50 px-4 h-12"
             >
               <span className="text-sm font-medium text-text-700">
                 I want to use Kakrola with my team
@@ -82,8 +105,12 @@ const Step1CreateProfile = () => {
                 />
               </div>
             </button>
-            <Button onClick={handleSubmit} disabled={!name.trim()} fullWidth>
-              Continue
+            <Button
+              onClick={handleSubmit}
+              disabled={!name.trim() || loading}
+              fullWidth
+            >
+              {loading ? <Spinner color="white" /> : "Continue"}
             </Button>
           </div>
         </>

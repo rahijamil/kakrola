@@ -1,9 +1,9 @@
 import React from "react";
 
-const Spinner = ({ color = "-primary-" }: { color?: "white" | "-primary-" }) => {
+const Spinner = ({ color = "primary" }: { color?: "white" | "primary" }) => {
   return (
     <svg
-      className={`w-6 h-6 animate-spin ${color == "-primary-" ? "text-primary-600" : "text-white"}`}
+      className={`w-6 h-6 animate-spin ${color == "primary" ? "text-primary-600" : "text-white"}`}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"

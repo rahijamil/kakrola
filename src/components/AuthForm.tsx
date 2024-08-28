@@ -1,14 +1,15 @@
 "use client";
 import React, { ReactNode, useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PasswordInput from "@/components/ui/PasswordInput";
-import KakrolaLogo from "@/app/kakrolaLogo";
 import Link from "next/link";
 import Spinner from "./ui/Spinner";
 import { AtSign } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import loginImage from "./login.png";
+import OnboardWrapper from "@/app/app/onboard/OnboardWrapper";
 
 interface AuthFormProps {
   type: "signup" | "login" | "forgotPassword" | "updatePassword";
@@ -57,7 +58,9 @@ const AuthForm: React.FC<AuthFormProps> = ({
       if (password.length > 0 && failedCriteria.length > 0) {
         setError(
           <div className="text-left text-sm">
-            <p className="font-semibold mb-2">Password must:</p>
+            <p className="font-semibold mb-2">
+              Your password must meet the following criteria:
+            </p>
             <ul className="list-inside list-disc space-y-1">
               {passwordCriteria.map(({ regex, message }, index) => (
                 <li
@@ -172,33 +175,28 @@ const AuthForm: React.FC<AuthFormProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary-50 to-background relative">
-      <div className="flex items-center justify-center h-screen sm:h-[calc(100vh-64px)]">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full sm:max-w-md h-full sm:h-auto space-y-8 p-6 sm:p-10 bg-surface rounded-xl shadow-2xl"
-        >
-          <div className="text-center space-y-6">
-            <KakrolaLogo size="md" isTitle />
-            <div>
-              <h2 className="text-3xl font-bold text-text-900">
-                {type === "signup" && "Join Kakrola Today"}
-                {type === "login" && "Welcome back"}
-                {type === "forgotPassword" && "Forgot your password?"}
-                {type === "updatePassword" && "Update your password"}
-              </h2>
-              <p className="mt-2 text-sm text-text-600">
-                {type === "signup" &&
-                  "Create your Kakrola account and start collaborating"}
-                {type === "login" && "Log in to your Kakrola account"}
-                {type === "forgotPassword" &&
-                  message !==
-                    "Password reset link has been sent to your email." &&
-                  "Enter your email address and we'll send you a link to reset your password."}
-              </p>
-            </div>
+    <OnboardWrapper
+      leftSide={
+        <>
+          <div className="max-w-xs">
+            <h2 className="text-3xl font-bold text-text-900">
+              {type === "signup" && "Join Kakrola Today!"}
+              {type === "login" && "Welcome Back!"}
+              {type === "forgotPassword" && "Forgot Your Password?"}
+              {type === "updatePassword" && "Update Your Password"}
+            </h2>
+            <p className="mt-2 text-sm text-text-600">
+              {type === "signup" &&
+                "Create your Kakrola account and start collaborating with your team."}
+              {type === "login" &&
+                "Log in to your Kakrola account to continue your productivity journey."}
+              {type === "forgotPassword" &&
+                message !==
+                  "Password reset link has been sent to your email." &&
+                "No worries! Just enter your email address, and we’ll send you a link to reset your password."}
+              {type == "updatePassword" &&
+                "Please enter your new password below."}
+            </p>
           </div>
 
           {socialButtons && <>{socialButtons}</>}
@@ -230,6 +228,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
                       placeholder="Email address"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      autoFocus
                     />
                   </div>
                 )}
@@ -238,6 +237,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
                 <>
                   <div className="space-y-1">
                     <PasswordInput
+                      autoFocus={type == "updatePassword"}
                       password={password}
                       setPassword={setPassword}
                       label="Password"
@@ -296,9 +296,36 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
           {additionalInfo}
           {additionalFooter}
-        </motion.div>
-      </div>
-    </div>
+        </>
+      }
+      rightSide={
+        type == "login" ? (
+          <Image
+            src={loginImage}
+            width={300}
+            height={300}
+            alt="Use Case"
+            className="object-cover rounded-lg"
+          />
+        ) : type == "signup" ? (
+          <Image
+            src={loginImage}
+            width={300}
+            height={300}
+            alt="Use Case"
+            className="object-cover rounded-lg"
+          />
+        ) : (
+          <Image
+            src={loginImage}
+            width={300}
+            height={300}
+            alt="Use Case"
+            className="object-cover rounded-lg"
+          />
+        )
+      }
+    />
   );
 };
 

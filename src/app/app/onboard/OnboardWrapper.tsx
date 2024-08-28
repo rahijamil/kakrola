@@ -1,21 +1,19 @@
 import KakrolaLogo from "@/app/kakrolaLogo";
 import React, { ReactNode } from "react";
 import { motion } from "framer-motion";
-import Image, { StaticImageData } from "next/image";
-import useScreen, { Breakpoint } from "@/hooks/useScreen"; // Import the custom hook
-import MyProjects from "@/components/SidebarWrapper/TasksSidebar/MyProjects";
+import useScreen, { Breakpoint } from "@/hooks/useScreen";
 import Link from "next/link";
 
 const OnboardWrapper = ({
-  useWithTeam,
   leftSide,
-  currentStep,
   rightSide,
+  useWithTeam,
+  currentStep,
 }: {
-  useWithTeam: boolean;
   leftSide: ReactNode;
   rightSide: ReactNode;
-  currentStep: number;
+  useWithTeam?: boolean;
+  currentStep?: number;
 }) => {
   const { breakpoint, screenWidth } = useScreen();
 
@@ -42,12 +40,17 @@ const OnboardWrapper = ({
             {!isShowRightSide && (
               <div className="flex items-center justify-between whitespace-nowrap h-20">
                 <Link href="/" className="flex items-center">
-                  <KakrolaLogo size="md" isTitle={screenWidth >= 768} />
+                  <KakrolaLogo
+                    size="md"
+                    isTitle={currentStep ? screenWidth >= 768 : true}
+                  />
                 </Link>
 
-                <div className="bg-primary-100 px-3 py-1.5 rounded-lg text-sm font-medium text-primary-700">
-                  Step {currentStep} of {useWithTeam ? "5" : "2"}
-                </div>
+                {currentStep && (
+                  <div className="bg-primary-100 px-3 py-1.5 rounded-lg text-sm font-medium text-primary-700">
+                    Step {currentStep} of {useWithTeam ? "5" : "2"}
+                  </div>
+                )}
               </div>
             )}
 
@@ -69,11 +72,13 @@ const OnboardWrapper = ({
         {/* Right Side */}
         {isShowRightSide && (
           <div className="flex-grow bg-primary-50f bg-gradient-to-b from-primary-50 via-background to-primary-50">
-            <div className="flex items-center justify-end h-20 pr-32">
-              <div className="bg-primary-100 px-3 py-1.5 rounded-lg text-sm font-medium text-primary-700">
-                Step {currentStep} of {useWithTeam ? "5" : "2"}
+            {currentStep && (
+              <div className="flex items-center justify-end h-20 pr-32">
+                <div className="bg-primary-100 px-3 py-1.5 rounded-lg text-sm font-medium text-primary-700">
+                  Step {currentStep} of {useWithTeam ? "5" : "2"}
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="flex items-center justify-center h-[80%]">
               <div className="flex items-center justify-center w-full h-full">

@@ -1,21 +1,19 @@
 "use client";
 import AddTeam from "@/components/AddTeam";
 import {
-  ChevronDown,
   CircleCheckBig,
-  FileText,
   LucideProps,
-  MessageCircleMore,
   MessageSquareText,
   PanelLeft,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import ProfileMoreOptions from "../TasksSidebar/ProfileMoreOptions";
 import { useAuthProvider } from "@/context/AuthContext";
 import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
+import axios from "axios";
 
 const menuItems: {
   id: number;
@@ -42,7 +40,10 @@ const MainSidebar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
   const { profile } = useAuthProvider();
   const [showProfileMoreOptions, setShowProfileMoreOptions] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [logoutLoading, setLogoutLoading] = useState(false);
   const [showAddTeam, setShowAddTeam] = useState<boolean | number>(false);
+
+  const router = useRouter();
 
   return (
     <>
@@ -108,14 +109,25 @@ const MainSidebar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
               description="Are you sure you want to log out?"
               onCancel={() => setShowLogoutConfirm(false)}
               submitBtnText="Log out"
+              loading={logoutLoading}
               onConfirm={async () => {
-                const response = await fetch("/api/auth/signout", {
-                  method: "POST",
-                });
+                setLogoutLoading(true);
+                try {
+                  const response = await axios("/api/auth/signout", {
+                    method: "POST",
+                  });
 
-                // if (response.ok) {
-                //   router.push("/auth/login");
-                // }
+                  if (response.data.success) {
+                    router.push("/auth/login");
+                  } else {
+                    // Handle error case (e.g., show an error message)
+                    console.error("Failed to log out:", response.data.message);
+                  }
+                } catch (error) {
+                  console.error("Error during logout:", error);
+                } finally {
+                  setLogoutLoading(false);
+                }
               }}
             />
           )}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { LucideIcon, LucideProps } from "lucide-react";
 
 // Simplified utility function to combine class names
@@ -17,9 +17,12 @@ const getButtonClasses = (
   size: ButtonSize = "default",
   fullWidth: boolean = false,
   className?: string,
-  leftAlign?: boolean
+  leftAlign?: boolean,
+  rightContent?: boolean
 ) => {
-  const baseClasses = `inline-flex items-center gap-2 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ${leftAlign ? "justify-start text-left" : "justify-center"}`;
+  const baseClasses = `inline-flex items-center gap-2 rounded-full font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ${
+    leftAlign ? "justify-start text-left" : "justify-center"
+  }`;
 
   const variantClasses = {
     default: {
@@ -52,10 +55,10 @@ const getButtonClasses = (
   };
 
   const sizeClasses = {
-    default: "h-10 px-4 py-2",
-    xs: "h-7 rounded-lg px-3",
-    sm: "h-9 rounded-lg px-3",
-    lg: "h-12 rounded-lg px-8",
+    default: rightContent ? "pl-5 h-12 pr-2 gap-4" : "px-6 h-12",
+    xs: "h-7 px-3",
+    sm: "h-9 px-3",
+    lg: "h-12 px-8",
     icon: "h-10 w-10",
   };
 
@@ -77,6 +80,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
   >;
   leftAlign?: boolean;
+  rightContent?: ReactNode;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -90,6 +94,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       icon: Icon,
       children,
       leftAlign,
+      rightContent,
       ...props
     },
     ref
@@ -102,7 +107,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           size,
           fullWidth,
           className,
-          leftAlign
+          leftAlign,
+          !!rightContent
         )}
         ref={ref}
         tabIndex={0}
@@ -110,6 +116,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {Icon && <Icon className="h-5 w-5" />}
         {children}
+        {rightContent}
       </button>
     );
   }

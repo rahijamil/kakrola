@@ -29,6 +29,7 @@ import { useAuthProvider } from "@/context/AuthContext";
 import CustomSelect from "./ui/CustomSelect";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import Textarea from "./ui/textarea";
+import Link from "next/link";
 
 // Updated TeamData type
 interface TeamData extends BaseTeamType {
@@ -302,13 +303,13 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
 
         <div className="px-6 pb-6 text-xs text-text-500">
           By creating a team, you agree to our{" "}
-          <a href="#" className="text-blue-600 hover:underline">
+          <Link href="#" className="text-blue-600 hover:underline">
             Terms of Service
-          </a>{" "}
+          </Link>{" "}
           and{" "}
-          <a href="#" className="text-blue-600 hover:underline">
+          <Link href="#" className="text-blue-600 hover:underline">
             Privacy Policy
-          </a>
+          </Link>
           .
         </div>
       </div>

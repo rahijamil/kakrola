@@ -12,6 +12,7 @@ interface UploadProps {
   >;
   accept?: string;
   onChange?: (file: File | null) => void;
+  avatarUrl: string | null;
 }
 
 export const Upload: React.FC<UploadProps> = ({
@@ -21,8 +22,9 @@ export const Upload: React.FC<UploadProps> = ({
   Icon,
   accept,
   onChange,
+  avatarUrl
 }) => {
-  const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [fileUrl, setFileUrl] = useState<string | null>(avatarUrl);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = () => {
@@ -52,16 +54,16 @@ export const Upload: React.FC<UploadProps> = ({
       />
       <button
         type="button"
-        className="flex items-center h-10 border border-text-300 hover:border-text-400 focus:border-text-300 px-3 rounded-lg gap-2 w-full focus:outline-none focus:ring-2 focus:ring-primary-300 ring-offset-2"
+        className="flex items-center h-12 border border-text-300 hover:border-text-400 focus:border-text-300 px-3 rounded-full gap-2 w-full focus:outline-none focus:ring-2 focus:ring-primary-300 ring-offset-2"
         onClick={handleClick}
       >
         {fileUrl ? (
           <Image
             src={fileUrl}
             alt="Uploaded image"
-            width={20}
-            height={20}
-            className="rounded-lg overflow-hidden bg-text-100"
+            width={28}
+            height={28}
+            className="rounded-full overflow-hidden bg-text-100"
             objectFit="cover"
           />
         ) : (

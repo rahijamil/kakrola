@@ -79,7 +79,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         {label}
       </label>
       <div
-        className={`flex items-center justify-between w-full h-10 border border-text-300 rounded-lg cursor-pointer bg-surface hover:border-text-400 px-3 py-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-primary-300 focus:border-text-300 ${height}`}
+        className={`flex items-center justify-between w-full h-12 border border-text-300 rounded-full cursor-pointer bg-surface hover:border-text-400 px-4 pr-3 py-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-primary-300 focus:border-text-300 ${height}`}
         onClick={() => setIsOpen(!isOpen)}
         onKeyDown={handleKeyDown}
         tabIndex={0}

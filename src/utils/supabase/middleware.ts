@@ -32,6 +32,11 @@ export async function updateSession(request: NextRequest) {
   // refreshing the auth token
   const user = await supabase.auth.getUser();
 
+  // Redirect if user is logged in and tries to access the /confirmation page
+  if (request.nextUrl.pathname === "/confirmation" && user.data.user) {
+    return NextResponse.redirect(new URL("/app", request.url));
+  }
+
   if (
     (request.nextUrl.pathname.startsWith("/app") ||
       request.nextUrl.pathname == "/auth/update-password") &&

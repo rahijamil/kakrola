@@ -6,7 +6,7 @@ export type Breakpoint = {
 
 const useScreen = () => {
   const [breakpoint, setBreakpoints] = useState<Breakpoint["breakpoint"]>(null);
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const [screenWidth, setScreenWidth] = useState(0);
 
   useEffect(() => {
     const handleResize = () => {

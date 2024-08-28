@@ -12,12 +12,14 @@ const PasswordInput = ({
   label,
   labelRight,
   required = false,
+  autoFocus
 }: {
   password: string;
   setPassword: (password: string) => void;
   label?: string;
   labelRight?: ReactNode;
   required?: boolean;
+  autoFocus?: boolean
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -53,6 +55,7 @@ const PasswordInput = ({
       onChange={(e) => setPassword(e.target.value)}
       label={label}
       labelRight={labelRight}
+      autoFocus={autoFocus}
     />
   );
 };

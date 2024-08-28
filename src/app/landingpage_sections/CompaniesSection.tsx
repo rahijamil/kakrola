@@ -12,44 +12,37 @@ const companies: {
     id: 1,
     name: "Airbnb",
     logo: "/images/companies/airbnb.png",
-    width: 750,
+    width: 70,
     height: 432,
   },
   {
     id: 2,
     name: "Google",
     logo: "/images/companies/google.png",
-    width: 700,
+    width: 70,
     height: 382,
   },
   {
     id: 3,
     name: "Uber",
     logo: "/images/companies/uber.png",
-    width: 600,
+    width: 50,
     height: 393,
-  },
-  {
-    id: 4,
-    name: "Salesforce",
-    logo: "/images/companies/salesforce.png",
-    width: 350,
-    height: 791,
   },
   {
     id: 5,
     name: "Arc",
     logo: "/images/companies/arc.png",
-    width: 300,
+    width: 40,
     height: 850,
   },
 ];
 
 const CompaniesSection = () => {
   return (
-    <ul className="grid grid-cols-3 sm:grid-cols-5 items-center scale-75 md:scale-50 lg:scale-[.45] gap-8 sm:gap-16 lg:gap-24">
+    <ul className="flex items-center justify-center gap-8 w-fit mx-auto">
       {companies.map((company) => (
-        <li key={company.id} >
+        <li key={company.id}>
           <Image
             height={0}
             width={company.width}

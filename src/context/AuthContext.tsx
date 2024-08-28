@@ -1,6 +1,7 @@
 "use client";
 import { ProfileType } from "@/types/user";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 import React, {
   createContext,
   ReactNode,
@@ -9,12 +10,19 @@ import React, {
   useState,
 } from "react";
 
-const AuthContext = createContext<{ profile: ProfileType | null }>({
+const AuthContext = createContext<{
+  profile: ProfileType | null;
+  loading: boolean;
+}>({
   profile: null,
+  loading: true,
 });
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<ProfileType | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const router = useRouter();
 
   useEffect(() => {
     const getAuthUser = async () => {
@@ -30,7 +38,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (user) {
         const { data, error } = await supabaseBrowser
           .from("profiles")
-          .select(`id, username, email, full_name, avatar_url`)
+          .select(`id, username, email, full_name, avatar_url, is_onboarded`)
           .eq("id", user?.id)
           .single();
         if (error) {
@@ -38,8 +46,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
         if (data) {
           setProfile(data);
+
+          if (!data.is_onboarded) {
+            router.push("/app/onboard/create-profile");
+          }
         }
       }
+
+      setLoading(false);
     };
 
     getAuthUser();
@@ -80,7 +94,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [profile]);
 
   return (
-    <AuthContext.Provider value={{ profile }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ profile, loading }}>
+      {children}
+    </AuthContext.Provider>
   );
 };
 

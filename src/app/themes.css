@@ -30,7 +30,7 @@
   --color-text-600: #4d4d4d;
   --color-text-700: #333333;
   --color-text-800: #1a1a1a;
-  --color-text-900: #000000; /* Black for main text */
+  --color-text-900: #111827; /* Black for main text */
 }
 
 [data-theme="dark"] {

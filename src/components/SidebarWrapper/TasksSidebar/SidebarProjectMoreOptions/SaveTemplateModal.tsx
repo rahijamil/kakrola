@@ -153,7 +153,7 @@ const SaveTemplateModal = ({
             template_creator: {
               id: profile.id,
               name: profile.full_name,
-              avatar_url: profile.avatar_url,
+              avatar_url: profile?.avatar_url || "/default-avatar.png",
             },
           };
 

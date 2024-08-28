@@ -54,7 +54,7 @@ const sections: {
 const SectionsLayout = () => {
   return (
     <section
-      className="py-20 sm:py-32 z-10 sm:z-0 relative bg-primary-50"
+      className="py-20 sm:py-32 z-10 sm:z-0 relative bg-primary-25"
       id="top-features"
     >
       <div className="lg:wrapper space-y-4 sm:space-y-8 md:space-y-16 lg:space-y-32">

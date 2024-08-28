@@ -15,13 +15,15 @@ export async function POST(req: NextRequest) {
     }
 
     revalidatePath("/", "layout");
-    return NextResponse.redirect(new URL("/auth/login", req.url), {
-      status: 302,
-    });
+
+    // Return a success response
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error signing out:", error);
-    return NextResponse.redirect(new URL("/auth/error", req.url), {
-      status: 302,
+
+    // Return an error response
+    return NextResponse.json({ success: false, message: "Error signing out" }, {
+      status: 500,
     });
   }
 }
