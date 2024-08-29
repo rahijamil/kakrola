@@ -4,6 +4,8 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import React, { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import Spinner from "../ui/Spinner";
 import { v4 as uuidv4 } from "uuid";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 const AddNewSectionBoardView = ({
   setShowUngroupedAddSection,
@@ -129,7 +131,7 @@ const AddNewSectionBoardView = ({
       {(columnId ? showAddSection !== columnId : !showUngroupedAddSection) && (
         <>
           {(columns ? columns.length - 1 == index : true) ? (
-            <div className="bg-text-50 p-3 py-2 rounded-lg min-w-[300px] h-fit ml-5">
+            <div className="bg-text-50 p-3 py-2 rounded-full min-w-[300px] h-fit ml-5">
               <button
                 className="text-text-500 hover:text-primary-600 flex items-center gap-2 w-full group py-1 whitespace-nowrap"
                 onClick={() =>
@@ -195,19 +197,19 @@ const AddNewSectionBoardView = ({
           className="space-y-2 min-w-[300px] mx-5"
           onSubmit={(ev) => handleAddSection(ev)}
         >
-          <input
+          <Input
             type="text"
             value={newSectionName}
             onChange={(e) => setNewSectionName(e.target.value)}
             placeholder="Name this section"
-            className="border border-text-200 focus:outline-none focus:border-text-400 w-full rounded px-2 py-1 font-semibold"
+            howBig="sm"
             autoFocus
           />
 
           <div className="flex items-center gap-2">
-            <button
+            <Button
               type="submit"
-              className="px-2 py-[6px] text-xs text-white bg-primary-500 rounded-lg hover:bg-primary-700 disabled:bg-primary-600 disabled:cursor-not-allowed transition disabled:opacity-50"
+              size="xs"
               disabled={!newSectionName.trim() || loading}
             >
               {loading ? (
@@ -218,19 +220,20 @@ const AddNewSectionBoardView = ({
               ) : (
                 "Add section"
               )}
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="button"
               onClick={() => {
                 setShowAddSection(null);
                 setShowUngroupedAddSection(false);
               }}
-              className="px-3 py-[6px] text-xs text-text-600 transition bg-text-200 hover:bg-text-100 rounded-lg disabled:opacity-50 disabled:hover:bg-text-100 disabled:cursor-not-allowed"
               disabled={loading}
+              size="xs"
+              variant="gray"
             >
               Cancel
-            </button>
+            </Button>
           </div>
         </form>
       )}

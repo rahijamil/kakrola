@@ -12,7 +12,7 @@ const ImportCSVModal = ({ onClose }: { onClose: () => void }) => {
       onClick={onClose}
     >
       <div
-        className="bg-surface rounded-lg p-4 pb-6 space-y-6 w-[420px] whitespace-normal"
+        className="bg-surface rounded-2xl p-4 pb-6 space-y-6 w-[420px] whitespace-normal"
         onClick={(ev) => ev.stopPropagation()}
       >
         <div className="flex items-center justify-between">
@@ -20,13 +20,13 @@ const ImportCSVModal = ({ onClose }: { onClose: () => void }) => {
 
           <button
             onClick={onClose}
-            className="p-1 hover:bg-text-100 transition rounded-lg"
+            className="p-1 hover:bg-text-100 transition rounded-full"
           >
             <X strokeWidth={1.5} size={20} />
           </button>
         </div>
 
-        <div className="border border-dashed border-text-2000 rounded-lg space-y-6 p-10 flex flex-col items-center justify-center">
+        <div className="border border-dashed border-text-2000 rounded-2xl space-y-6 p-10 flex flex-col items-center justify-center">
           <p>Drag and drop a CSV file</p>
 
           <p className="font-bold text-xs">Upload from your computer</p>

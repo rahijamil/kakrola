@@ -102,7 +102,7 @@ const ListViewSection = ({
     <div>
       <div className="flex items-center gap-1 py-2">
         <button
-          className={`p-1 hover:bg-text-100 transition rounded-lg ${
+          className={`p-1 hover:bg-text-100 transition rounded-full ${
             !section.is_collapsed && "rotate-90"
           }`}
           onClick={() => toggleSection(section.id, !section.is_collapsed)}
@@ -123,7 +123,7 @@ const ListViewSection = ({
               <input
                 value={columnTitle}
                 onChange={(ev) => setColumnTitle(ev.target.value)}
-                className="font-bold rounded-lg px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300"
+                className="font-bold rounded-full px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300"
                 onKeyDown={(ev) => {
                   if (ev.key === "Enter") {
                     handleUpdateColumnTitle();

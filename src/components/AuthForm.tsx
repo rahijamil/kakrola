@@ -305,7 +305,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
             width={300}
             height={300}
             alt="Use Case"
-            className="object-cover rounded-lg"
+            className="object-cover"
           />
         ) : type == "signup" ? (
           <Image
@@ -313,7 +313,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
             width={300}
             height={300}
             alt="Use Case"
-            className="object-cover rounded-lg"
+            className="object-cover"
           />
         ) : (
           <Image
@@ -321,7 +321,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
             width={300}
             height={300}
             alt="Use Case"
-            className="object-cover rounded-lg"
+            className="object-cover"
           />
         )
       }

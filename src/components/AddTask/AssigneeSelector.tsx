@@ -44,10 +44,8 @@ const AssigneeSelector = ({
         forTaskModal ? (
           <div>
             <button
-              onClick={() =>
-                task.assigned_to_id == null && setIsOpen(true)
-              }
-              className={`flex items-center justify-between rounded-lg transition p-[6px] px-2 group w-full ${
+              onClick={() => task.assigned_to_id == null && setIsOpen(true)}
+              className={`flex items-center justify-between rounded-full transition p-[6px] px-2 group w-full ${
                 task.assigned_to_id == null
                   ? isOpen
                     ? "bg-primary-100 cursor-pointer"
@@ -71,7 +69,7 @@ const AssigneeSelector = ({
             {task.assigned_to_id !== null && (
               <button
                 onClick={() => setIsOpen(true)}
-                className={`flex items-center relative rounded-lg transition py-[6px] px-2 group w-full text-xs ${
+                className={`flex items-center relative rounded-full transition py-[6px] px-2 group w-full text-xs ${
                   task.assigned_to_id !== null
                     ? isOpen
                       ? "bg-primary-100 cursor-pointer"
@@ -85,7 +83,7 @@ const AssigneeSelector = ({
                     width={18}
                     height={18}
                     alt={profile?.full_name || profile?.username || "avatar"}
-                    className="rounded-full"
+                    className="rounded-full object-cover max-w-[18px] max-h-[18px]"
                   />
                   {profile?.full_name.split(" ")[0]}{" "}
                   {profile?.full_name.split(" ")[1][0] &&
@@ -97,7 +95,7 @@ const AssigneeSelector = ({
                     ev.stopPropagation();
                     setTask({ ...task, assigned_to_id: null });
                   }}
-                  className="p-1 rounded-lg hover:bg-surface absolute top-1/2 -translate-y-1/2 right-1"
+                  className="p-1 rounded-full hover:bg-surface absolute top-1/2 -translate-y-1/2 right-1"
                 >
                   <X strokeWidth={1.5} size={16} />
                 </div>
@@ -107,7 +105,7 @@ const AssigneeSelector = ({
         ) : (
           <div
             ref={triggerRef}
-            className={`flex items-center gap-1 cursor-pointer text-xs p-1 rounded-lg border border-text-200 ${
+            className={`flex items-center gap-1 cursor-pointer text-xs px-2 p-1 rounded-full border border-text-200 ${
               isOpen ? "bg-text-50" : "hover:bg-text-100"
             }`}
             onClick={onClick}
@@ -120,7 +118,7 @@ const AssigneeSelector = ({
                     width={18}
                     height={18}
                     alt={profile?.full_name || profile?.username || "avatar"}
-                    className="rounded-full"
+                    className="rounded-full object-cover max-w-[18px] max-h-[18px]"
                   />
                   {profile?.full_name.split(" ")[0]}{" "}
                   {profile?.full_name.split(" ")[1][0] &&
@@ -132,7 +130,7 @@ const AssigneeSelector = ({
                     ev.stopPropagation();
                     setTask({ ...task, assigned_to_id: null });
                   }}
-                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-lg"
+                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-full"
                 >
                   <X strokeWidth={1.5} className="w-3 h-3 text-text-500" />
                 </button>
@@ -150,7 +148,7 @@ const AssigneeSelector = ({
         <div>
           <div className="p-2 border-b border-text-200">
             <Input
-              howBig="sm"
+              howBig="xs"
               fullWidth
               type="text"
               placeholder="Type an assignee"
@@ -195,11 +193,12 @@ const AssigneeSelector = ({
                   alt={profile?.full_name || profile?.username || "avatar"}
                   width={18}
                   height={18}
-                  className="rounded-full"
+                    className="rounded-full object-cover max-w-[18px] max-h-[18px]"
                 />
-                Me ({profile?.full_name.split(" ")[0]}{" "}
-                {profile?.full_name.split(" ")[1][0] &&
-                  profile?.full_name.split(" ")[1][0] + "."}
+                Me ({profile?.full_name.split(" ")[0]}
+                {profile?.full_name.split(" ")[1] // Check if the second name exists
+                  ? " " + profile?.full_name.split(" ")[1][0] + "." // Display the initial of the second name
+                  : ""}
                 )
               </div>
 

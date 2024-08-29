@@ -35,7 +35,7 @@ const AddTaskModal = ({ onClose, dueDate }: AddTaskModalProps) => {
       <motion.div
         initial={{ scale: 0.8, y: 20 }}
         animate={{ scale: 1, y: 0 }}
-        className="bg-surface rounded-lg shadow-[1px_1px_32px_1px_rgba(0,0,0,0.3)] p-2 w-[550px]"
+        className="bg-surface rounded-2xl shadow-[1px_1px_32px_1px_rgba(0,0,0,0.3)] p-2 w-[550px]"
         onClick={(ev) => ev.stopPropagation()}
       >
         <AddTaskForm

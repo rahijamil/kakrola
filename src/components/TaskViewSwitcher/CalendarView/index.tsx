@@ -58,7 +58,7 @@ const CalendarView = ({
             <span>{format(month, "yyyy")}</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="font-medium rounded-lg border border-text-200 text-xs flex items-center gap-1 text-text-600">
+            <div className="font-medium rounded-full border border-text-200 text-xs flex items-center gap-1 text-text-600">
               <button className="hover:bg-text-100 transition p-0.5">
                 <ChevronLeft strokeWidth={1.5} size={20} />
               </button>
@@ -71,7 +71,7 @@ const CalendarView = ({
             {setShowNoDateTasks && (
               <button
                 onClick={() => setShowNoDateTasks((prev) => !prev)}
-                className={`p-2 py-0.5 transition rounded-lg border border-text-200 text-xs flex items-center gap-1 ${
+                className={`p-2 py-0.5 transition rounded-full border border-text-200 text-xs flex items-center gap-1 ${
                   showNoDateTasks
                     ? "bg-text-50 text-text-700 font-bold"
                     : "text-text-600 hover:bg-text-100 font-medium"
@@ -82,7 +82,7 @@ const CalendarView = ({
                 </span>
 
                 <div
-                  className={`${showNoDateTasks && "bg-text-300 rounded-lg"}`}
+                  className={`${showNoDateTasks && "bg-text-300 rounded-full"}`}
                 >
                   <PanelRight strokeWidth={1.5} size={20} />
                 </div>
@@ -129,7 +129,7 @@ const CalendarView = ({
                           <span
                             className={`${
                               isToday(day) &&
-                              "bg-primary-500 text-surface rounded-lg w-6 h-6 inline-flex items-center justify-center"
+                              "bg-primary-500 text-surface rounded-full w-6 h-6 inline-flex items-center justify-center"
                             }`}
                           >
                             {format(day, "d")}
@@ -156,7 +156,7 @@ const CalendarView = ({
                                       {...draggableProvided.draggableProps}
                                       {...draggableProvided.dragHandleProps}
                                       key={task.id}
-                                      className="bg-text-50 hover:bg-text-100 transition p-1 flex items-center gap-1 border rounded-lg"
+                                      className="bg-text-50 hover:bg-text-100 transition p-1 flex items-center gap-1 border rounded-full"
                                       onClick={(ev) => ev.stopPropagation()}
                                     >
                                       <div

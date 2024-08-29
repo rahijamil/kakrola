@@ -12,7 +12,7 @@ const ExportCSVModal = ({ onClose }: { onClose: () => void }) => {
       onClick={onClose}
     >
       <div
-        className="bg-surface rounded-lg p-4 pb-6 space-y-6 w-[420px] whitespace-normal"
+        className="bg-surface rounded-2xl p-4 pb-6 space-y-6 w-[420px] whitespace-normal"
         onClick={(ev) => ev.stopPropagation()}
       >
         <div className="flex items-center justify-between">
@@ -20,7 +20,7 @@ const ExportCSVModal = ({ onClose }: { onClose: () => void }) => {
 
           <button
             onClick={onClose}
-            className="p-1 hover:bg-text-100 transition rounded-lg"
+            className="p-1 hover:bg-text-100 transition rounded-full"
           >
             <X strokeWidth={1.5} size={20} />
           </button>

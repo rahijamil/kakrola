@@ -32,12 +32,12 @@ const ThreadsSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
           }`}
         >
           <button
-            className={`text-text-700 hover:bg-text-100 rounded-lg transition-colors z-10 w-8 h-8 flex items-center justify-center`}
+            className={`text-text-700 hover:bg-text-100 rounded-full transition-colors z-10 w-8 h-8 flex items-center justify-center`}
           >
             <Bell strokeWidth={1.5} width={20} />
           </button>
           <button
-            className={`text-text-700 hover:bg-text-100 rounded-lg transition-colors z-10 w-8 h-8 flex items-center justify-center`}
+            className={`text-text-700 hover:bg-text-100 rounded-full transition-colors z-10 w-8 h-8 flex items-center justify-center`}
           >
             <Bell strokeWidth={1.5} width={20} />
           </button>
@@ -51,7 +51,7 @@ const ThreadsSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
               {item.path ? (
                 <Link
                   href={item.path}
-                  className={`flex items-center p-2 rounded-lg transition-colors ${
+                  className={`flex items-center p-2 rounded-full transition-colors ${
                     item.path === pathname
                       ? "bg-primary-500 text-surface"
                       : "hover:bg-text-100 text-text-700"
@@ -62,7 +62,7 @@ const ThreadsSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
                 </Link>
               ) : (
                 <button
-                  className={`flex items-center p-2 rounded-lg transition-colors w-full ${
+                  className={`flex items-center p-2 rounded-full transition-colors w-full ${
                     item.path === pathname
                       ? "bg-primary-500 text-surface"
                       : "hover:bg-text-100 text-text-700"

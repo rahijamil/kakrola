@@ -75,7 +75,7 @@ const Priorities = ({
           {forTaskItemModal ? (
             <div
               ref={triggerRef}
-              className={`flex items-center justify-between rounded-lg transition p-[6px] px-2 group cursor-pointer ${
+              className={`flex items-center justify-between rounded-full transition p-[6px] px-2 group cursor-pointer ${
                 isOpen ? "bg-primary-100" : "hover:bg-text-100"
               }`}
               onClick={onClick}
@@ -97,7 +97,7 @@ const Priorities = ({
           ) : (
             <div
               ref={triggerRef}
-              className={`flex items-center gap-1 cursor-pointer p-1 px-2 rounded-lg border border-text-200 ${
+              className={`flex items-center gap-1 cursor-pointer p-1 px-2 rounded-full border border-text-200 ${
                 isOpen ? "bg-text-50" : "hover:bg-text-100"
               }`}
               onClick={onClick}
@@ -128,7 +128,7 @@ const Priorities = ({
                     ev.stopPropagation();
                     setTaskData({ ...taskData, priority: "Priority" });
                   }}
-                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-lg"
+                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-full"
                 >
                   <X strokeWidth={1.5} className="w-3 h-3 text-text-500" />
                 </button>

@@ -1,11 +1,6 @@
 "use client";
 import AddTeam from "@/components/AddTeam";
-import {
-  CircleCheckBig,
-  LucideProps,
-  MessageSquareText,
-  PanelLeft,
-} from "lucide-react";
+import { Hash, LucideProps, PanelLeft, Target } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -26,19 +21,18 @@ const menuItems: {
 }[] = [
   {
     id: 1,
-    icon: CircleCheckBig,
-    text: "Tasks",
+    icon: Target,
+    text: "Projects",
     path: "/app",
-    pathNotStartsWith: "/app/threads",
+    pathNotStartsWith: "/app/c",
   },
-  { id: 2, icon: MessageSquareText, text: "Threads", path: "/app/threads" },
+  { id: 2, icon: Hash, text: "Channels", path: "/app/c" },
   // { id: 5, icon: FileText, text: "Docs", path: "/app/docs" },
 ];
 
 const MainSidebar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
   const pathname = usePathname();
   const { profile } = useAuthProvider();
-  const [showProfileMoreOptions, setShowProfileMoreOptions] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [showAddTeam, setShowAddTeam] = useState<boolean | number>(false);
@@ -53,7 +47,7 @@ const MainSidebar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
             <li className="aspect-square flex items-center justify-center">
               <button
                 onClick={toggleSidebar}
-                className={`hover:bg-primary-50 rounded-lg transition-colors w-9 h-9 flex items-center justify-center`}
+                className={`hover:bg-primary-50 rounded-full transition-colors w-9 h-9 flex items-center justify-center`}
               >
                 <PanelLeft strokeWidth={1.5} width={20} />
               </button>
@@ -66,7 +60,7 @@ const MainSidebar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
                   className={`flex flex-col items-center justify-center gap-1 w-full aspect-square transition-colors text-xs group`}
                 >
                   <span
-                    className={`p-2 rounded-lg transition-colors text-text-900 ${
+                    className={`p-2 rounded-full transition-colors text-text-900 ${
                       pathname.startsWith(item.path) &&
                       !pathname.startsWith(item.pathNotStartsWith!)
                         ? "bg-primary-100"
@@ -75,7 +69,7 @@ const MainSidebar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
                   >
                     <item.icon strokeWidth={1.5} className="w-5 h-5" />
                   </span>
-                  {item.text}
+                  <span>{item.text}</span>
                 </Link>
               </li>
             ))}
@@ -83,25 +77,10 @@ const MainSidebar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
         </div>
 
         <div className="relative">
-          <div className="flex items-center justify-center aspect-square w-full">
-            <button onClick={() => setShowProfileMoreOptions(true)}>
-              <Image
-                src={profile?.avatar_url || "/default-avatar.png"}
-                alt={profile?.full_name || profile?.username || ""}
-                width={32}
-                height={32}
-                className="rounded-lg"
-              />
-            </button>
-          </div>
-
-          {showProfileMoreOptions && (
-            <ProfileMoreOptions
-              onClose={() => setShowProfileMoreOptions(false)}
-              setShowAddTeam={setShowAddTeam}
-              setShowLogoutConfirm={setShowLogoutConfirm}
-            />
-          )}
+          <ProfileMoreOptions
+            setShowAddTeam={setShowAddTeam}
+            setShowLogoutConfirm={setShowLogoutConfirm}
+          />
 
           {showLogoutConfirm && (
             <ConfirmAlert

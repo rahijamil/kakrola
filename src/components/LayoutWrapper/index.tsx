@@ -1,11 +1,6 @@
 "use client";
 import React, { Dispatch, SetStateAction, useState } from "react";
-import {
-  Ellipsis,
-  MessageSquare,
-  SlidersHorizontal,
-  UserPlus,
-} from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { ProjectType, TaskType } from "@/types/project";
@@ -58,8 +53,6 @@ const LayoutWrapper = ({
     showArchiveConfirm: false,
     showDeleteConfirm: false,
     editTitle: false,
-    showViewOptions: false,
-    showMoreOptions: false,
   });
 
   const [projectTitle, setProjectTitle] = useState<string>(
@@ -130,9 +123,7 @@ const LayoutWrapper = ({
     <>
       <DragDropContext onDragEnd={onDragEnd}>
         <div
-          className={`${
-            view == "Calendar" && "flex overflow-x-hidden"
-          } h-full`}
+          className={`${view == "Calendar" && "flex overflow-x-hidden"} h-full`}
         >
           <div
             className={`flex flex-col h-full w-full flex-1 transition-all duration-300`}
@@ -156,55 +147,56 @@ const LayoutWrapper = ({
                     {typeof setShowShareOption === "function" &&
                       headline !== "Today" && (
                         <li>
-                          <button
-                            className={`${
-                              showShareOption
-                                ? "bg-text-50"
-                                : "hover:bg-text-100"
-                            } transition p-1 md:pr-3 rounded-lg cursor-pointer flex items-center gap-1`}
-                            onClick={() => setShowShareOption(true)}
-                          >
-                            <UserPlus
-                              strokeWidth={1.5}
-                              className="w-5 h-5 text-text-500"
-                            />
-                            <span className="hidden md:inline-block">
-                              Share
-                            </span>
-                          </button>
+                          <ShareOption />
                         </li>
                       )}
                     <li>
-                      <button
-                        className={`${
-                          modalState.showViewOptions
-                            ? "bg-text-50"
-                            : "hover:bg-text-100"
-                        } transition p-1 md:pr-3 rounded-lg cursor-pointer flex items-center gap-1`}
-                        onClick={() => toggleModal("showViewOptions", true)}
-                      >
-                        <SlidersHorizontal
-                          strokeWidth={1.5}
-                          className="w-5 h-5 text-text-500"
-                        />
-                        <span className="hidden md:inline-block">View</span>
-                      </button>
+                      <ViewOptions
+                        hideCalendarView={hideCalendarView}
+                        view={view}
+                        setView={setView}
+                        setTasks={setTasks}
+                        tasks={tasks}
+                      />
                     </li>
                     {headline !== "Today" && (
                       <li>
-                        <button
-                          className={`${
-                            modalState.showMoreOptions
-                              ? "bg-text-50"
-                              : "hover:bg-text-100"
-                          } transition p-1 rounded-lg cursor-pointer`}
-                          onClick={() => toggleModal("showMoreOptions", true)}
-                        >
-                          <Ellipsis
-                            strokeWidth={1.5}
-                            className="w-5 h-5 text-text-500"
+                        {project && (
+                          <ActiveProjectMoreOptions
+                            project={project}
+                            stateActions={{
+                              setProjectEdit: (value) =>
+                                toggleModal("projectEdit", value as boolean),
+                              setSaveTemplate: (value) =>
+                                toggleModal("saveTemplate", value as boolean),
+                              setImportFromCSV: (value) =>
+                                toggleModal(
+                                  "showImportFromCSV",
+                                  value as boolean
+                                ),
+                              setExportAsCSV: (value) =>
+                                toggleModal(
+                                  "showExportAsCSV",
+                                  value as boolean
+                                ),
+                              setShowArchiveConfirm: (value) =>
+                                toggleModal(
+                                  "showArchiveConfirm",
+                                  value as boolean
+                                ),
+                              setShowDeleteConfirm: (value) =>
+                                toggleModal(
+                                  "showDeleteConfirm",
+                                  value as boolean
+                                ),
+                              setShowCommentOrActivity: (value) =>
+                                toggleModal(
+                                  "showCommentOrActivity",
+                                  value as null
+                                ),
+                            }}
                           />
-                        </button>
+                        )}
                       </li>
                     )}
                   </ul>
@@ -229,7 +221,7 @@ const LayoutWrapper = ({
                     modalState.editTitle ? (
                       <input
                         type="text"
-                        className="text-[26px] font-bold border border-text-300 w-full rounded-lg p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300"
+                        className="text-[26px] font-bold border border-text-300 w-full rounded-full p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300"
                         value={projectTitle}
                         onBlur={handleEditTitle}
                         autoFocus
@@ -240,7 +232,7 @@ const LayoutWrapper = ({
                       />
                     ) : (
                       <h1
-                        className="text-[26px] font-bold border border-transparent w-fit hover:w-full hover:border-text-200 rounded-lg p-1 py-[14px] cursor-text"
+                        className="text-[26px] font-bold border border-transparent w-fit hover:w-full hover:border-text-200 rounded-full p-1 py-[14px] cursor-text"
                         onClick={() => toggleModal("editTitle", true)}
                       >
                         {project.name}
@@ -275,44 +267,6 @@ const LayoutWrapper = ({
           )}
         </div>
       </DragDropContext>
-
-      {showShareOption && setShowShareOption && (
-        <ShareOption onClose={() => setShowShareOption(false)} />
-      )}
-
-      {modalState.showViewOptions && setView && (
-        <ViewOptions
-          onClose={() => toggleModal("showViewOptions", false)}
-          hideCalendarView={hideCalendarView}
-          view={view}
-          setView={setView}
-          setTasks={setTasks}
-          tasks={tasks}
-        />
-      )}
-
-      {modalState.showMoreOptions && project && (
-        <ActiveProjectMoreOptions
-          onClose={() => toggleModal("showMoreOptions", false)}
-          project={project}
-          stateActions={{
-            setProjectEdit: (value) =>
-              toggleModal("projectEdit", value as boolean),
-            setSaveTemplate: (value) =>
-              toggleModal("saveTemplate", value as boolean),
-            setImportFromCSV: (value) =>
-              toggleModal("showImportFromCSV", value as boolean),
-            setExportAsCSV: (value) =>
-              toggleModal("showExportAsCSV", value as boolean),
-            setShowArchiveConfirm: (value) =>
-              toggleModal("showArchiveConfirm", value as boolean),
-            setShowDeleteConfirm: (value) =>
-              toggleModal("showDeleteConfirm", value as boolean),
-            setShowCommentOrActivity: (value) =>
-              toggleModal("showCommentOrActivity", value as null),
-          }}
-        />
-      )}
 
       {modalState.showDeleteConfirm && project && (
         <ProjectDeleteConfirm

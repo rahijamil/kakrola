@@ -44,6 +44,7 @@ const config: Config = {
     },
   },
   safelist: [
+    "bg-primary-50",
     "bg-primary-100",
     "bg-primary-200",
     "bg-primary-300",
@@ -52,7 +53,9 @@ const config: Config = {
     "bg-primary-600",
     "bg-primary-800",
     "bg-primary-900",
+    "text-primary-500",
 
+    "bg-purple-50",
     "bg-purple-100",
     "bg-purple-200",
     "bg-purple-400",
@@ -60,7 +63,9 @@ const config: Config = {
     "bg-purple-600",
     "bg-purple-800",
     "bg-purple-900",
+    "text-purple-500",
 
+    "bg-green-50",
     "bg-green-100",
     "bg-green-200",
     "bg-green-400",
@@ -68,7 +73,9 @@ const config: Config = {
     "bg-green-600",
     "bg-green-800",
     "bg-green-900",
+    "text-green-500",
 
+    "bg-yellow-50",
     "bg-yellow-100",
     "bg-yellow-200",
     "bg-yellow-400",
@@ -76,7 +83,9 @@ const config: Config = {
     "bg-yellow-600",
     "bg-yellow-800",
     "bg-yellow-900",
+    "text-yellow-500",
 
+    "bg-orange-50",
     "bg-orange-100",
     "bg-orange-200",
     "bg-orange-400",
@@ -84,7 +93,9 @@ const config: Config = {
     "bg-orange-600",
     "bg-orange-800",
     "bg-orange-900",
+    "text-orange-500",
 
+    "bg-teal-50",
     "bg-teal-100",
     "bg-teal-200",
     "bg-teal-400",
@@ -92,7 +103,9 @@ const config: Config = {
     "bg-teal-600",
     "bg-teal-800",
     "bg-teal-900",
+    "text-teal-500",
 
+    "bg-lime-50",
     "bg-lime-100",
     "bg-lime-200",
     "bg-lime-400",
@@ -100,7 +113,9 @@ const config: Config = {
     "bg-lime-600",
     "bg-lime-800",
     "bg-lime-900",
+    "text-lime-500",
 
+    "bg-pink-50",
     "bg-pink-100",
     "bg-pink-200",
     "bg-pink-400",
@@ -108,7 +123,9 @@ const config: Config = {
     "bg-pink-600",
     "bg-pink-800",
     "bg-pink-900",
+    "text-pink-500",
 
+    "bg-gray-50",
     "bg-gray-100",
     "bg-gray-200",
     "bg-gray-400",
@@ -116,6 +133,7 @@ const config: Config = {
     "bg-gray-600",
     "bg-gray-800",
     "bg-gray-900",
+    "text-gray-500",
   ],
   plugins: [],
 };

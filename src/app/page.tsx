@@ -34,7 +34,7 @@ const LandingPage = () => {
                   </span>
                 </h2>
                 <div className="mt-8 flex flex-wrap sm:flex-nowrap gap-3 lg:mt-0 lg:flex-shrink-0 whitespace-nowrap">
-                  <div className="inline-flex rounded-lg shadow">
+                  <div className="inline-flex rounded-full shadow">
                     <Link href="/auth/signup">
                       <Button
                         size="lg"

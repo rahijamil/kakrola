@@ -42,7 +42,7 @@ const TaskItemMoreDropdown = ({
       Label={({ onClick }) => (
         <button
           ref={triggerRef}
-          className={`p-1 transition rounded-lg ${
+          className={`p-1 transition rounded-2xl ${
             isOpen ? "bg-text-50" : "hover:bg-text-100"
           }`}
           onClick={onClick}
@@ -50,44 +50,50 @@ const TaskItemMoreDropdown = ({
           <Ellipsis strokeWidth={1.5} className="w-5 h-5" />
         </button>
       )}
+      items={[
+        {
+          id: 1,
+          label: "Add task above",
+          icon: <ArrowUp strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setAddTaskAboveBellow({ position: "above", task });
+            onClose();
+          },
+        },
+        {
+          id: 2,
+          label: "Add task below",
+          icon: <ArrowDown strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setAddTaskAboveBellow({ position: "below", task });
+            onClose();
+          },
+          divide: true,
+        },
+        {
+          id: 3,
+          label: "Edit",
+          icon: <Pencil strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setEditTaskId(task.id);
+            onClose();
+          },
+        },
+        {
+          id: 4,
+          label: "Delete",
+          icon: <Trash2 strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setShowDeleteConfirm(task.id.toString());
+            onClose();
+          },
+          textColor: "text-red-600",
+        },
+      ]}
       content={
         <div>
           {!column?.is_archived && (
             <>
-              <div>
-                <button
-                  onClick={() => {
-                    setAddTaskAboveBellow({ position: "above", task });
-                    onClose();
-                  }}
-                  className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center"
-                >
-                  <ArrowUp strokeWidth={1.5} className="w-4 h-4 mr-4" /> Add
-                  task above
-                </button>
-                <button
-                  onClick={() => {
-                    setAddTaskAboveBellow({ position: "below", task });
-                    onClose();
-                  }}
-                  className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center"
-                >
-                  <ArrowDown strokeWidth={1.5} className="w-4 h-4 mr-4" /> Add
-                  task below
-                </button>
-              </div>
-              <div className="h-[1px] bg-text-200 my-1"></div>
-              <div>
-                <button
-                  onClick={() => {
-                    setEditTaskId(task.id);
-                    onClose();
-                  }}
-                  className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center"
-                >
-                  <Pencil strokeWidth={1.5} className="w-4 h-4 mr-4" /> Edit
-                </button>
-              </div>
               {/* <div className="h-[1px] bg-text-200 my-1"></div>
           <div>
             <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center">
@@ -120,19 +126,6 @@ const TaskItemMoreDropdown = ({
           task
         </button>
       </div> */}
-
-          <div className="h-[1px] bg-text-200 my-1"></div>
-          <div>
-            <button
-              onClick={() => {
-                setShowDeleteConfirm(task.id.toString());
-                onClose();
-              }}
-              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-text-100 transition flex items-center"
-            >
-              <Trash2 strokeWidth={1.5} className="w-4 h-4 mr-4" /> Delete
-            </button>
-          </div>
         </div>
       }
       contentWidthClass="w-64 py-1"

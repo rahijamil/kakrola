@@ -110,7 +110,11 @@ export const TaskInput: React.FC<{
         if (inputValue) {
           cursorOffsetRef.current = inputValue.length;
         }
-        el.focus(); // Ensure the element is focused
+
+        setTimeout(() => {
+          el.focus(); // Ensure the element is focused
+        }, 0);
+
         firstRenderRef.current = false; // Disable first render flag after first use
       }
 

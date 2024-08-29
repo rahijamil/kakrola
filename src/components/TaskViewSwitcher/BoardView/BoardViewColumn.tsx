@@ -14,6 +14,7 @@ import { ProjectType, SectionType, TaskType } from "@/types/project";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import SectionMoreOptions from "../SectionMoreOptions";
 import useTheme from "@/hooks/useTheme";
+import useFoundFixedDropdown from "@/hooks/useFoundFixedDropdown";
 
 const BoardViewColumn = ({
   column,
@@ -120,21 +121,7 @@ const BoardViewColumn = ({
     setColumnTitle(column.title);
   };
 
-  const [foundFixedDropdown, setFoundFixedDropdwon] = useState(false);
-
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      const fixedDropdown = document.getElementById("fixed_dropdown");
-      setFoundFixedDropdwon(!!fixedDropdown);
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    const fixedDropdown = document.getElementById("fixed_dropdown");
-    setFoundFixedDropdwon(!!fixedDropdown);
-
-    return () => observer.disconnect();
-  }, []);
+  const { foundFixedDropdown } = useFoundFixedDropdown();
 
   const { theme } = useTheme();
 
@@ -143,7 +130,10 @@ const BoardViewColumn = ({
   // Tailwind doesn't generate all color classes by default, so we need to explicitly define them
   const bgColorClass =
     theme == "dark" ? `bg-${sectionColor}-900` : `bg-${sectionColor}-100`;
-  const hoverBgColorClass = theme == "dark" ? `hover:bg-${sectionColor}-800` : `hover:bg-${sectionColor}-200`;
+  const hoverBgColorClass =
+    theme == "dark"
+      ? `hover:bg-${sectionColor}-800`
+      : `hover:bg-${sectionColor}-200`;
 
   return (
     <>
@@ -166,7 +156,7 @@ const BoardViewColumn = ({
                 {...boardDraggaleProvided.draggableProps}
                 {...boardDraggaleProvided.dragHandleProps}
                 onClick={() => setCollapseColumn(false)}
-                className={`${bgColorClass} ${hoverBgColorClass} flex flex-col py-4 px-2 h-fit items-center justify-center gap-4 rounded-lg hover:transition-colors cursor-pointer ${
+                className={`${bgColorClass} ${hoverBgColorClass} flex flex-col py-4 px-2 h-fit items-center justify-center gap-4 rounded-2xl hover:transition-colors cursor-pointer ${
                   column.is_archived && "opacity-70"
                 }`}
               >
@@ -188,7 +178,7 @@ const BoardViewColumn = ({
                 ref={boardDraggaleProvided.innerRef}
                 {...boardDraggaleProvided.draggableProps}
                 {...boardDraggaleProvided.dragHandleProps}
-                className={`${bgColorClass} rounded-lg min-w-72 md:min-w-80 w-80 h-fit max-h-[calc(100vh-150px)] overflow-y-auto cursor-default ${
+                className={`${bgColorClass} rounded-2xl min-w-72 md:min-w-80 w-80 h-fit max-h-[calc(100vh-150px)] overflow-y-auto cursor-default ${
                   column.is_archived && "opacity-70"
                 }`}
               >
@@ -221,7 +211,7 @@ const BoardViewColumn = ({
                     <input
                       value={columnTitle}
                       onChange={(ev) => setColumnTitle(ev.target.value)}
-                      className="font-bold rounded-lg px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 w-full"
+                      className="font-bold rounded-2xl px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 w-full"
                       onKeyDown={(ev) => {
                         if (ev.key === "Enter") {
                           handleUpdateColumnTitle();
@@ -235,7 +225,7 @@ const BoardViewColumn = ({
 
                   <div className="flex items-center">
                     <button
-                      className={`p-1 hover:transition rounded-lg ${hoverBgColorClass}`}
+                      className={`p-1 hover:transition rounded-2xl ${hoverBgColorClass}`}
                       onClick={() => setCollapseColumn(true)}
                     >
                       <FoldHorizontal
@@ -280,7 +270,7 @@ const BoardViewColumn = ({
                           <>
                             <div
                               key={task.id}
-                              className={`rounded shadow-sm hover:ring-2 hover:ring-primary-300 hover:transition ring-1 ring-text-200`}
+                              className={`rounded-xl hover:ring-2 hover:ring-primary-300 hover:transition ring-1 ring-text-200`}
                             >
                               <TaskItem
                                 key={task.id}

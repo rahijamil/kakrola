@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   BookOpen,
   ChevronRight,
@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { useAuthProvider } from "@/context/AuthContext";
 import Image from "next/image";
 import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
+import Dropdown from "@/components/ui/Dropdown";
 
 type IconType = React.ForwardRefExoticComponent<
   React.SVGProps<SVGSVGElement> & { title?: string; titleId?: string }
@@ -59,7 +60,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
   <>
     {path ? (
       <Link
-        className={`w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center justify-between ${
+        className={`w-full text-left px-4 py-1.5 text-sm text-text-700 hover:bg-text-100 transition flex items-center justify-between rounded-2xl ${
           isActive ? "bg-text-50" : ""
         }`}
         href={path}
@@ -84,7 +85,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
       </Link>
     ) : (
       <button
-        className={`w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center justify-between ${
+        className={`w-full text-left px-4 py-1.5 text-sm text-text-700 hover:bg-text-100 transition flex items-center justify-between rounded-2xl ${
           isActive ? "bg-text-50" : ""
         }`}
         onClick={onClick}
@@ -111,13 +112,11 @@ const MenuItem: React.FC<MenuItemProps> = ({
 );
 
 interface ProfileMoreOptionsProps {
-  onClose: () => void;
   setShowAddTeam: React.Dispatch<React.SetStateAction<boolean | number>>;
   setShowLogoutConfirm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
-  onClose,
   setShowAddTeam,
   setShowLogoutConfirm,
 }) => {
@@ -201,72 +200,95 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
     }
   };
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const onClose = () => {
+    setIsOpen(false);
+  };
+
+  const triggerRef = useRef(null);
+
   return (
-    <>
-      <div className="absolute bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg border border-text-200 bottom-[35%] mt-1 left-[85%] z-20 w-60 py-1">
-        {profile && (
-          <>
-            <div className="flex items-center gap-2 p-2">
-              <Image
-                src={profile?.avatar_url || "/default-avatar.png"}
-                alt="profile"
-                width={32}
-                height={32}
-                className="rounded-lg"
-              />
-
-              <h2 className="font-bold">{profile.full_name}</h2>
-            </div>
-
-            <div className="h-[1px] bg-text-200 my-1"></div>
-          </>
-        )}
-        {menuItems.map((group, groupIndex) => (
-          <React.Fragment key={groupIndex}>
-            {group.items.map((item, itemIndex) => (
-              <div key={itemIndex} className="relative">
-                <MenuItem
-                  icon={item.icon}
-                  label={item.label}
-                  onClick={() => {
-                    item.onClick && item.onClick();
-                    onClose();
-                  }}
-                  onMouseEnter={() => handleMenuItemHover(item)}
-                  hasSubmenu={!!item.subMenu}
-                  isActive={activeSubmenu === item.label}
-                  path={item.path}
+    <Dropdown
+      direction="bottom-left"
+      setIsOpen={setIsOpen}
+      triggerRef={triggerRef}
+      Label={({ onClick }) => (
+        <div className="flex items-center justify-center aspect-square w-full">
+          <button onClick={onClick} ref={triggerRef}>
+            <Image
+              src={profile?.avatar_url || "/default-avatar.png"}
+              alt={profile?.full_name || profile?.username || ""}
+              width={32}
+              height={32}
+              className="rounded-full object-cover max-w-[32px] max-h-[32px]"
+            />
+          </button>
+        </div>
+      )}
+      isOpen={isOpen}
+      contentWidthClass="w-60 pb-1"
+      content={
+        <div>
+          {profile && (
+            <>
+              <div className="flex items-center gap-2 p-2 pb-0.5">
+                <Image
+                  src={profile?.avatar_url || "/default-avatar.png"}
+                  alt="profile"
+                  width={32}
+                  height={32}
+                  className="rounded-full object-cover max-w-[32px] max-h-[32px]"
                 />
 
-                {item.subMenu && activeSubmenu === item.label && (
-                  <div className="absolute bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg border border-text-200 top-0 left-full z-20 w-60 py-1">
-                    {item.subMenu.map((subItem, subIndex) => (
-                      <MenuItem
-                        key={subIndex}
-                        icon={subItem.icon}
-                        label={subItem.label}
-                        onClick={() => {}}
-                        onMouseEnter={() => {}}
-                        hasSubmenu={false}
-                        isActive={false}
-                      />
-                    ))}
-                  </div>
-                )}
+                <h2 className="font-bold">{profile.full_name}</h2>
               </div>
-            ))}
-            {groupIndex < menuItems.length - 1 && (
-              <div className="h-[1px] bg-text-200 my-1"></div>
-            )}
-          </React.Fragment>
-        ))}
-      </div>
 
-      <div
-        className="fixed top-0 left-0 bottom-0 right-0 z-10"
-        onClick={onClose}
-      ></div>
-    </>
+              <div className="h-[1px] bg-text-200 my-1"></div>
+            </>
+          )}
+          {menuItems.map((group, groupIndex) => (
+            <React.Fragment key={groupIndex}>
+              {group.items.map((item, itemIndex) => (
+                <div key={itemIndex} className="relative">
+                  <MenuItem
+                    icon={item.icon}
+                    label={item.label}
+                    onClick={() => {
+                      item.onClick && item.onClick();
+                      onClose();
+                    }}
+                    onMouseEnter={() => handleMenuItemHover(item)}
+                    hasSubmenu={!!item.subMenu}
+                    isActive={activeSubmenu === item.label}
+                    path={item.path}
+                  />
+
+                  {item.subMenu && activeSubmenu === item.label && (
+                    <div className="absolute bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-2xl border border-text-200 top-0 left-full z-20 w-60 py-1">
+                      {item.subMenu.map((subItem, subIndex) => (
+                        <MenuItem
+                          key={subIndex}
+                          icon={subItem.icon}
+                          label={subItem.label}
+                          onClick={() => {}}
+                          onMouseEnter={() => {}}
+                          hasSubmenu={false}
+                          isActive={false}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+              {groupIndex < menuItems.length - 1 && (
+                <div className="h-[1px] bg-text-200 my-1"></div>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+      }
+    />
   );
 };
 

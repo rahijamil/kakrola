@@ -137,15 +137,17 @@ const TaskItem = ({
               className="transition w-full"
             >
               <div
-                className="flex items-start justify-between gap-2 taskitem_group bg-background p-1 w-full rounded-lg cursor-pointer relative"
+                className="flex items-start justify-between gap-2 taskitem_group bg-background p-1 pl-2 w-full rounded-xl cursor-pointer relative"
                 onClick={() => setShowModal && setShowModal(task.id.toString())}
               >
-                <div className="flex items-center gap-1">
-                  <AnimatedCircleCheck
-                    handleCheckSubmit={handleCheckClickDebounced}
-                    priority={task.priority}
-                    is_completed={task.is_completed}
-                  />
+                <div className="flex gap-2">
+                  <div className="pt-1">
+                    <AnimatedCircleCheck
+                      handleCheckSubmit={handleCheckClickDebounced}
+                      priority={task.priority}
+                      is_completed={task.is_completed}
+                    />
+                  </div>
 
                   <div className="space-y-2 py-1 pr-1 flex-1">
                     <div className="space-y-[2px]">
@@ -169,7 +171,10 @@ const TaskItem = ({
                         {subTasks.length > 0 ? (
                           <div className="flex items-center gap-[2px] text-text-500">
                             <Workflow strokeWidth={1.5} className="w-3 h-3" />
-                            <span className="text-xs">{subTasks.filter((t) => t.is_completed).length}/{subTasks.length}</span>
+                            <span className="text-xs">
+                              {subTasks.filter((t) => t.is_completed).length}/
+                              {subTasks.length}
+                            </span>
                           </div>
                         ) : null}
 
@@ -205,14 +210,14 @@ const TaskItem = ({
                   </div>
 
                   <button
-                    className="p-1 hover:bg-text-100 transition rounded-lg"
+                    className="p-1 hover:bg-text-100 transition rounded-full"
                     onClick={(ev) => {
                       ev.stopPropagation();
                       typeof setShowShareOption == "function" &&
                         setShowShareOption(true);
                     }}
                   >
-                    <User strokeWidth={1.5} className="w5 h-5" />
+                    <User strokeWidth={1.5} className="w-5 h-5" />
                   </button>
                 </div>
               </div>

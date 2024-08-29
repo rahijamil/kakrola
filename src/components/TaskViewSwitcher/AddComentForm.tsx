@@ -8,7 +8,7 @@ import {Textarea} from "../ui";
 
 const AddComentForm = ({ onCancelClick }: { onCancelClick?: () => void }) => {
   return (
-    <div className="border border-text-200 rounded-lg p-4 focus-within:border-text-400">
+    <div className="border border-text-200 rounded-full p-4 focus-within:border-text-400">
       <Textarea
         placeholder="Comment"
         className="resize-none"
@@ -19,16 +19,16 @@ const AddComentForm = ({ onCancelClick }: { onCancelClick?: () => void }) => {
 
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-1">
-          <button className="p-[5px] rounded-lg hover:bg-text-100 transition">
+          <button className="p-[5px] rounded-full hover:bg-text-100 transition">
             <PaperClipIcon className="w-5 h-5" />
           </button>
-          <button className="p-[5px] rounded-lg hover:bg-text-100 transition">
+          <button className="p-[5px] rounded-full hover:bg-text-100 transition">
             <MicrophoneIcon className="w-5 h-5" />
           </button>
-          <button className="p-[5px] rounded-lg hover:bg-text-100 transition">
+          <button className="p-[5px] rounded-full hover:bg-text-100 transition">
             <FaceSmileIcon className="w-5 h-5" />
           </button>
-          <button className="p-[5px] rounded-lg hover:bg-text-100 transition">
+          <button className="p-[5px] rounded-full hover:bg-text-100 transition">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"

@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import { Button } from "@/components/ui/button";
 import { LucideIcon, LucideProps } from "lucide-react";
 import Image from "next/image";
 
@@ -12,8 +11,18 @@ interface UploadProps {
   >;
   accept?: string;
   onChange?: (file: File | null) => void;
-  avatarUrl: string | null;
+  fileUrl: string | null;
+  setFileUrl: React.Dispatch<React.SetStateAction<string | null>>;
 }
+
+const randomPhrases = [
+  "Looking good!",
+  "Nice choice!",
+  "That suits you!",
+  "Great pick!",
+  "Perfect!",
+  "Awesome!",
+];
 
 export const Upload: React.FC<UploadProps> = ({
   id,
@@ -22,9 +31,12 @@ export const Upload: React.FC<UploadProps> = ({
   Icon,
   accept,
   onChange,
-  avatarUrl
+  fileUrl,
+  setFileUrl,
 }) => {
-  const [fileUrl, setFileUrl] = useState<string | null>(avatarUrl);
+  const [randomPhrase, setRandomPhrase] = useState<string>(
+    randomPhrases[Math.floor(Math.random() * randomPhrases.length)]
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = () => {
@@ -35,6 +47,9 @@ export const Upload: React.FC<UploadProps> = ({
     const file = event.target.files?.[0] || null;
     if (file) {
       setFileUrl(URL.createObjectURL(file));
+      setRandomPhrase(
+        randomPhrases[Math.floor(Math.random() * randomPhrases.length)]
+      );
       onChange?.(file);
     } else {
       setFileUrl(null);
@@ -58,18 +73,20 @@ export const Upload: React.FC<UploadProps> = ({
         onClick={handleClick}
       >
         {fileUrl ? (
-          <Image
-            src={fileUrl}
-            alt="Uploaded image"
-            width={28}
-            height={28}
-            className="rounded-full overflow-hidden bg-text-100"
-            objectFit="cover"
-          />
+          <>
+            <Image
+              src={fileUrl}
+              alt="Uploaded image"
+              width={28}
+              height={28}
+              className="rounded-full overflow-hidden bg-text-100 max-w-7 max-h-7 object-cover"
+            />
+            {randomPhrase}
+          </>
         ) : (
           Icon && <Icon size={20} strokeWidth={1.5} className="text-text-600" />
         )}
-        {fileUrl ? "Looking good!" : children}
+        {!fileUrl && children}
       </button>
     </div>
   );

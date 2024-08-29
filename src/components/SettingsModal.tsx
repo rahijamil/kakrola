@@ -126,7 +126,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
   return (
     <Dialog size="lg" onClose={closeSettings}>
       <>
-        <div className="flex h-full rounded-lg overflow-hidden">
+        <div className="flex h-full rounded-2xl overflow-hidden">
           <div className="w-56 flex flex-col bg-primary-10">
             <div className="flex-1">
               <div className="p-3">
@@ -140,7 +140,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                       {item.path && (
                         <Link
                           href={item.path}
-                          className={`flex items-center px-2 py-2 rounded-lg transition-colors text-text-900 ${
+                          className={`flex items-center px-2 py-2 rounded-2xl transition-colors text-text-900 ${
                             item.path === pathname ||
                             (item.path == "/app/settings/account" &&
                               pathname == "/app/settings/account/password")
@@ -169,7 +169,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                         <li>
                           <Link
                             href={`/app/settings/workspaces/${team.id}/settings`}
-                            className={`flex items-center gap-2 p-2 rounded-lg transition-colors text-text-900 ${
+                            className={`flex items-center gap-2 p-2 rounded-2xl transition-colors text-text-900 ${
                               pathname ==
                               `/app/settings/workspaces/${team.id}/settings`
                                 ? "bg-primary-100"
@@ -182,10 +182,10 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                                 alt={team.name}
                                 width={20}
                                 height={20}
-                                className="rounded-lg"
+                                className="rounded-2xl"
                               />
                             ) : (
-                              <div className="w-6 h-6 min-w-5 min-h-5 bg-primary-500 rounded-lg flex items-center justify-center">
+                              <div className="w-6 h-6 min-w-5 min-h-5 bg-primary-500 rounded-2xl flex items-center justify-center">
                                 <span className="text-white text-[10px] font-medium">
                                   {team.name.slice(0, 1).toUpperCase()}
                                 </span>
@@ -199,7 +199,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                         <li>
                           <Link
                             href={`/app/settings/workspaces/${team.id}/members`}
-                            className={`flex items-center gap-2 p-2 rounded-lg transition-colors text-text-900 ${
+                            className={`flex items-center gap-2 p-2 rounded-2xl transition-colors text-text-900 ${
                               pathname ==
                               `/app/settings/workspaces/${team.id}/members`
                                 ? "bg-primary-100"
@@ -214,7 +214,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
                         <li>
                           <Link
                             href={`/app/settings/workspaces/${team.id}/billing`}
-                            className={`flex items-center gap-2 p-2 rounded-lg transition-colors text-text-900 ${
+                            className={`flex items-center gap-2 p-2 rounded-2xl transition-colors text-text-900 ${
                               pathname ==
                               `/app/settings/workspaces/${team.id}/billing`
                                 ? "bg-primary-100"
@@ -235,7 +235,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
             <div className="border-t border-text-200 p-1 px-3">
               <button
                 onClick={() => setShowAddTeam(true)}
-                className={`flex items-center px-2 py-2 rounded-lg transition-colors hover:bg-primary-50 text-text-700 w-full`}
+                className={`flex items-center px-2 py-2 rounded-2xl transition-colors hover:bg-primary-50 text-text-700 w-full`}
               >
                 <Plus className="w-5 h-5 mr-3" strokeWidth={1.5} />
                 Add team
@@ -248,7 +248,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
               <div className="flex items-center gap-2">
                 {pathname === "/app/settings/account/password" && (
                   <button
-                    className="p-1 rounded-lg hover:bg-primary-50 transition"
+                    className="p-1 rounded-2xl hover:bg-primary-50 transition"
                     onClick={() => router.back()}
                   >
                     <ArrowLeft strokeWidth={1.5} size={20} />
@@ -262,7 +262,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
               </div>
 
               <button
-                className="p-1 rounded-lg hover:bg-primary-50 transition"
+                className="p-1 rounded-2xl hover:bg-primary-50 transition"
                 onClick={closeSettings}
               >
                 <X strokeWidth={1.5} size={20} />

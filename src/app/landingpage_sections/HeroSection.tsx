@@ -61,7 +61,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="relative aspect-video border w-full max-w-5xl z-10 rounded-lg overflow-hidden shadow-md"
+          className="relative aspect-video border w-full max-w-5xl z-10 rounded-2xl overflow-hidden shadow-md"
         >
           <Image
             src="/images/feature1.png"

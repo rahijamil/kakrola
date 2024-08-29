@@ -87,7 +87,7 @@ const TeamProjects = ({
   return (
     <>
       <div className="mt-4 px-2">
-        <div className="relative text-text-700 hover:bg-primary-50 rounded-lg transition">
+        <div className="relative text-text-700 hover:bg-primary-50 rounded-full transition">
           <Link
             href={`/app/${team.id}`}
             className={`w-full flex items-center justify-between pl-2 py-[6px] gap-1`}
@@ -111,10 +111,10 @@ const TeamProjects = ({
                     alt={team.name}
                     width={20}
                     height={20}
-                    className="rounded-lg"
+                    className="rounded-full"
                   />
                 ) : (
-                  <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-lg flex items-center justify-center">
+                  <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-full flex items-center justify-center">
                     <span className="text-white text-[10px] font-medium">
                       {team.name?.slice(0, 1).toUpperCase()}
                     </span>
@@ -131,7 +131,7 @@ const TeamProjects = ({
 
           <div className="opacity-0 group-hover:opacity-100 transition flex items-center absolute right-0 top-1/2 -translate-y-1/2">
             <button
-              className="p-1 hover:bg-primary-100 rounded-lg transition"
+              className="p-1 hover:bg-primary-100 rounded-full transition"
               onClick={() => setTeamId(team.id)}
             >
               <Plus
@@ -140,7 +140,7 @@ const TeamProjects = ({
               />
             </button>
             <button
-              className="p-1 hover:bg-primary-100 rounded-lg transition"
+              className="p-1 hover:bg-primary-100 rounded-full transition"
               onClick={() => setShowProjects(!showProjects)}
             >
               <ChevronRight

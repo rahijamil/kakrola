@@ -31,7 +31,7 @@ export const Dialog: React.FC<DialogProps> = ({
       onClick={onClose}
     >
       <div
-        className={`bg-surface rounded-lg shadow-xl w-11/12 flex flex-col ${
+        className={`bg-surface rounded-2xl shadow-xl w-11/12 flex flex-col ${
           size === "xs"
             ? "max-w-md"
             : size === "sm"
@@ -95,7 +95,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <input
           className={`w-full transition py-1 bg-transparent outline-none ${
             label &&
-            "px-2 border rounded-lg border-text-200 focus:border-text-400"
+            "px-2 border rounded-2xl border-text-200 focus:border-text-400"
           } ${className}`}
           ref={ref}
           id={id}
@@ -157,7 +157,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = "", ...props }, ref) => (
     <button
-      className={`px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 ${className}`}
+      className={`px-4 py-2 bg-primary-500 text-white rounded-2xl hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 ${className}`}
       ref={ref}
       {...props}
     />
@@ -183,7 +183,7 @@ export const Select: React.FC<SelectProps> = ({
       <select
         onChange={(e) => onValueChange(e.target.value)}
         defaultValue={defaultValue}
-        className="w-full px-3 py-2 border border-text-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600 appearance-none"
+        className="w-full px-3 py-2 border border-text-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-600 appearance-none"
       >
         {children}
       </select>

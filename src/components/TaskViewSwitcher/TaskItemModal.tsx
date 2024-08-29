@@ -93,7 +93,7 @@ const TaskItemModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-background rounded-lg w-11/12 max-w-[52rem] min-h-full h-fit flex flex-col"
+        className="bg-background rounded-2xl w-11/12 max-w-[52rem] min-h-full h-fit flex flex-col"
         onClick={(ev) => ev.stopPropagation()}
       >
         <div className="p-2 px-4 flex items-center justify-between border-b border-text-200">
@@ -127,11 +127,11 @@ const TaskItemModal = ({
           )}
 
           <div className="flex items-center gap-2">
-            {/* <button className="p-1 hover:bg-text-100 transition rounded-lg">
+            {/* <button className="p-1 hover:bg-text-100 transition rounded-full">
               <Ellipsis strokeWidth={1.5} className="w-6 h-6" />
             </button> */}
             <button
-              className="p-1 hover:bg-text-100 transition rounded-lg"
+              className="p-1 hover:bg-text-100 transition rounded-full"
               onClick={onClose}
             >
               <X strokeWidth={1.5} className="w-6 h-6" />
@@ -152,12 +152,12 @@ const TaskItemModal = ({
                 <div
                   className={`${
                     contentEditable && "border"
-                  } rounded-lg overflow-hidden border-text-200 focus-within:border-text-400`}
+                  } rounded-full overflow-hidden border-text-200 focus-within:border-text-400`}
                 >
                   <Input
                     className={`${
                       taskData.is_completed ? "line-through text-text-500" : ""
-                    } text-lg font-bold w-full p-2 pb-[10px]`}
+                    } text-full font-bold w-full p-2 pb-[10px]`}
                     value={taskData.title}
                     onClick={() => setContentEditable(true)}
                     onChange={(ev) =>
@@ -219,7 +219,7 @@ const TaskItemModal = ({
               <div className="mt-6">
                 {!showAddSubtask && (
                   <button
-                    className="text-xs hover:bg-text-100 transition rounded-lg flex items-center gap-2 px-2 py-[6px] text-text-600"
+                    className="text-xs hover:bg-text-100 transition rounded-full flex items-center gap-2 px-2 py-[6px] text-text-600"
                     onClick={() => setShowAddSubtask(true)}
                   >
                     <Plus strokeWidth={1.5} className="w-4 h-4" />
@@ -228,7 +228,7 @@ const TaskItemModal = ({
                   </button>
                 )}
                 {showAddSubtask && (
-                  <div className="rounded-lg border border-text-200 focus-within:border-text-400 bg-surface">
+                  <div className="rounded-full border border-text-200 focus-within:border-text-400 bg-surface">
                     <AddTaskForm
                       onClose={() => setShowAddSubtask(false)}
                       parentTaskIdForSubTask={task.id}
@@ -269,7 +269,7 @@ const TaskItemModal = ({
                     width={28}
                     height={28}
                     alt={profile?.full_name || profile?.username || "avatar"}
-                    className="rounded-full"
+                    className="rounded-full object-cover max-w-[28px] max-h-[28px]"
                   />
 
                   <div
@@ -341,7 +341,7 @@ const TaskItemModal = ({
 
             {/* <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-text-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-text-100 rounded-full cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Labels</p>
                   <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
@@ -350,7 +350,7 @@ const TaskItemModal = ({
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-text-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-text-100 rounded-full cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Reminders</p>
                   <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
@@ -359,10 +359,10 @@ const TaskItemModal = ({
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-text-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-text-100 rounded-full cursor-pointer transition p-[6px] px-2 group">
                   <p className="space-x-1 font-semibold text-xs">
                     <span>Location</span>
-                    <span className="uppercase text-[10px] tracking-widest font-bold text-primary-800 bg-primary-100 p-[2px] px-1 rounded-lg">
+                    <span className="uppercase text-[10px] tracking-widest font-bold text-primary-800 bg-primary-100 p-[2px] px-1 rounded-full">
                       Upgrade
                     </span>
                   </p>

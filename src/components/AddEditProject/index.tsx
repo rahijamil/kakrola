@@ -219,7 +219,7 @@ const AddEditProject = ({
       <>
         <DialogHeader>
           <DialogTitle>Add project</DialogTitle>
-          <button className="p-2 rounded-lg hover:bg-text-100 transition">
+          <button className="p-2 rounded-full hover:bg-text-100 transition">
             <CircleHelp strokeWidth={1.5} className="w-5 h-5 text-text-500" />
           </button>
         </DialogHeader>
@@ -252,6 +252,7 @@ const AddEditProject = ({
               label="Name"
               Icon={SquareGanttChart}
               placeholder="Project name"
+              className="h-12"
             />
 
             <ColorSelector

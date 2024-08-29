@@ -11,44 +11,60 @@ import OnboardWrapper from "../OnboardWrapper";
 import Image from "next/image";
 import { useAuthProvider } from "@/context/AuthContext";
 import Spinner from "@/components/ui/Spinner";
+import { supabaseBrowser } from "@/utils/supabase/client";
+import { avatarUploader } from "@/utils/avatarUploader";
 
 const Step1CreateProfile = () => {
   const { profile } = useAuthProvider();
   const [name, setName] = useState(profile?.full_name || "");
   const [useWithTeam, setUseWithTeam] = useState(false);
+  const [fileUrl, setFileUrl] = useState<string | null>(
+    profile?.avatar_url || null
+  );
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const handleFileChange = (file: File | null) => {
-    if (file) {
-      console.log("File selected:", file.name);
-      // Here you would typically handle the file, e.g., upload it to a server
+    try {
+      if (file && profile) {
+        avatarUploader(file, profile.id).then((url) => {
+          if (url) {
+            setFileUrl(url);
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
     }
   };
 
-  const handleSubmit = () => {
-    setLoading(true);
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
 
+      if (!name.trim() && !fileUrl && !profile?.id) {
+        setLoading(false);
+        return;
+      }
 
+      const { error } = await supabaseBrowser
+        .from("profiles")
+        .update({
+          full_name: name.trim(),
+        })
+        .eq("id", profile?.id);
 
+      if (error) {
+        throw error;
+      }
 
-
-// today you'll work here, In Sha Allah!
-
-
-
-
-
-
-
-
-
-
-
-    if (useWithTeam) {
-      router.push("/app/onboard/customize-kakrola");
-    } else {
-      router.push("/app/onboard/use-case");
+      if (useWithTeam) {
+        router.push("/app/onboard/customize-kakrola");
+      } else {
+        router.push("/app/onboard/use-case");
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -74,7 +90,8 @@ const Step1CreateProfile = () => {
                 Icon={UploadIcon}
                 accept="image/*"
                 onChange={handleFileChange}
-                avatarUrl={profile?.avatar_url!}
+                fileUrl={fileUrl}
+                setFileUrl={setFileUrl}
               >
                 Upload your photo
               </Upload>
@@ -121,7 +138,7 @@ const Step1CreateProfile = () => {
           width={300}
           height={300}
           alt="Use Case"
-          className="object-cover rounded-lg"
+          className="object-cover"
         />
       }
       useWithTeam={useWithTeam}

@@ -20,6 +20,7 @@ interface DropdownProps {
     divide?: boolean;
     className?: string;
     content?: ReactNode;
+    textColor?: string;
   }[];
   content?: ReactNode;
   contentWidthClass?: string;
@@ -27,6 +28,7 @@ interface DropdownProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   triggerRef: RefObject<HTMLElement> | null;
+  direction?: "top-right" | "bottom-left";
 }
 
 import { motion } from "framer-motion";
@@ -40,6 +42,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   isOpen,
   setIsOpen,
   triggerRef,
+  direction = "top-right",
 }) => {
   const [position, setPosition] = useState<{
     top: string;
@@ -121,13 +124,42 @@ const Dropdown: React.FC<DropdownProps> = ({
     setShowContent(!showContent);
   };
 
+  const isTopRight = direction === "top-right";
+
   return (
     <>
       <div className={className}>
         <Label onClick={() => setIsOpen(true)} />
 
         {isOpen && (
-          <div
+          <motion.div
+            initial={{
+              scaleY: 0.8,
+              y: isTopRight ? -10 : 10, // Upwards for top-right, downwards for bottom-left
+              opacity: 0,
+              transformOrigin: isTopRight ? "top right" : "bottom left", // Change origin
+            }}
+            animate={{
+              scaleY: 1,
+              y: isTopRight ? [0, -5, 0] : [0, 5, 0], // Subtle bounce in the respective direction
+              opacity: 1,
+              transformOrigin: isTopRight ? "top right" : "bottom left",
+            }}
+            exit={{
+              scaleY: 0.8,
+              y: isTopRight ? -10 : 10,
+              opacity: 0,
+              transformOrigin: isTopRight ? "top right" : "bottom left",
+            }}
+            transition={{
+              duration: 0.2,
+              ease: [0.25, 0.1, 0.25, 1],
+              y: {
+                type: "spring",
+                stiffness: 300,
+                damping: 15,
+              },
+            }}
             ref={menuRef}
             style={{
               top: position.top,
@@ -136,9 +168,10 @@ const Dropdown: React.FC<DropdownProps> = ({
               right: position.right,
               transform: position.transform,
             }}
-            className={`z-50 bg-surface shadow-lg rounded-lg fixed overflow-hidden text-xs ${
+            className={`z-50 bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-2xl fixed overflow-hidden px-1 ${
               contentWidthClass ? contentWidthClass : "w-72 py-1"
             }`}
+            id="fixed_dropdown"
           >
             {items.map((item) => (
               <>
@@ -153,7 +186,9 @@ const Dropdown: React.FC<DropdownProps> = ({
                         toggleContent();
                       }
                     }}
-                    className={`w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-background transition flex items-center justify-between ${item.className}`}
+                    className={`w-full text-left px-4 py-1.5 hover:bg-text-100 transition flex items-center justify-between rounded-2xl ${
+                      item.className
+                    } ${item.textColor ? item.textColor : "text-text-700"}`}
                   >
                     <div className="flex items-center gap-4">
                       {item.icon} {item.label}
@@ -193,7 +228,7 @@ const Dropdown: React.FC<DropdownProps> = ({
               </>
             ))}
             {content}
-          </div>
+          </motion.div>
         )}
       </div>
 

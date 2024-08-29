@@ -110,16 +110,16 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
 
       {isOpen && (
         <ul
-          className="absolute z-10 w-full mt-1 bg-surface border border-text-300 rounded-lg shadow-lg max-h-60 overflow-auto"
+          className="absolute z-10 w-full mt-1 bg-surface border border-text-300 rounded-2xl p-1 shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] max-h-60 overflow-auto"
           role="listbox"
         >
           {options.map((option, index) => (
             <li
               key={option.value}
-              className={`px-4 cursor-pointer flex items-center justify-between ${height ? height : "py-2"} ${
+              className={`px-4 cursor-pointer flex items-center justify-between rounded-full ${height ? height : "py-2"} ${
                 index === highlightedIndex
-                  ? "bg-primary-100"
-                  : "hover:bg-text-50"
+                  ? "bg-text-100"
+                  : "hover:bg-text-100"
               }`}
               onClick={() => {
                 onChange({ target: { id, value: option.value, label: option.label } });
@@ -140,7 +140,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
               </div>
               {value === option.value && (
                 <Check
-                  strokeWidth={1.5}
+                  strokeWidth={2}
                   className="w-4 h-4 text-primary-600 flex-shrink-0 ml-2"
                 />
               )}

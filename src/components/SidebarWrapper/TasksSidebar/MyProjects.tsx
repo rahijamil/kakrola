@@ -75,7 +75,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
   return (
     <>
       <div className="mt-4 px-2">
-        <div className="relative text-text-700 hover:bg-primary-50 rounded-lg transition">
+        <div className="relative text-text-700 hover:bg-primary-50 rounded-full transition duration-150">
           <Link
             href={`/app/projects`}
             className={`w-full flex items-center justify-between pl-2 py-[6px] gap-1`}
@@ -100,40 +100,40 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
                   alt={profile?.full_name || profile?.username || ""}
                   width={20}
                   height={20}
-                  className="rounded-lg"
+                    className="rounded-full object-cover max-w-[20px] max-h-[20px]"
                 />
 
                 <span
-                  className={`font-medium transition overflow-hidden whitespace-nowrap text-ellipsis`}
+                  className={`font-medium transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis`}
                 >
                   My Projects
                 </span>
               </div>
               {projects.length > 3 && (
-                <span className="bg-text-300 text-text-700 px-1 py-[1px] rounded-lg uppercase text-[11px] whitespace-nowrap font-medium">
+                <span className="bg-text-300 text-text-700 px-1 py-[1px] rounded-full uppercase text-[11px] whitespace-nowrap font-medium">
                   Used: {projects.length}/{5}
                 </span>
               )}
             </div>
           </Link>
 
-          <div className="opacity-0 group-hover:opacity-100 transition flex items-center absolute right-0 top-1/2 -translate-y-1/2">
+          <div className="opacity-0 group-hover:opacity-100 transition duration-150 flex items-center absolute right-0 top-1/2 -translate-y-1/2">
             <button
-              className="p-1 hover:bg-primary-100 rounded-lg transition"
+              className="p-1 hover:bg-primary-100 rounded-full transition duration-150"
               onClick={() => setShowAddProjectModal(true)}
             >
               <Plus
                 strokeWidth={1.5}
-                className={`w-[18px] h-[18px] transition-transform`}
+                className={`w-[18px] h-[18px] transition-transform duration-150`}
               />
             </button>
             <button
-              className="p-1 hover:bg-primary-100 rounded-lg transition"
+              className="p-1 hover:bg-primary-100 rounded-full transition duration-150"
               onClick={() => setShowProjects(!showProjects)}
             >
               <ChevronRight
                 strokeWidth={1.5}
-                className={`w-[18px] h-[18px] transition-transform transform ${
+                className={`w-[18px] h-[18px] transition-transform duration-150 transform ${
                   showProjects ? "rotate-90" : ""
                 }`}
               />

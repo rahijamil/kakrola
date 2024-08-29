@@ -54,7 +54,7 @@ const AddNewSectionListView = ({
           <div className="flex items-center gap-2">
             <button
               type="submit"
-              className="px-2 py-[6px] text-xs text-white bg-primary-500 rounded-lg hover:bg-primary-700 disabled:bg-primary-600 disabled:cursor-not-allowed transition disabled:opacity-50"
+              className="px-2 py-[6px] text-xs text-white bg-primary-500 rounded-full hover:bg-primary-700 disabled:bg-primary-600 disabled:cursor-not-allowed transition disabled:opacity-50"
               disabled={!newSectionName.trim() || sectionAddLoading}
             >
               {sectionAddLoading ? (
@@ -70,7 +70,7 @@ const AddNewSectionListView = ({
             <button
               type="button"
               onClick={() => setShowAddSection(null)}
-              className="px-3 py-[6px] text-xs text-text-600 transition bg-text-200 hover:bg-text-100 rounded-lg disabled:opacity-50 disabled:hover:bg-text-100 disabled:cursor-not-allowed"
+              className="px-3 py-[6px] text-xs text-text-600 transition bg-text-200 hover:bg-text-100 rounded-full disabled:opacity-50 disabled:hover:bg-text-100 disabled:cursor-not-allowed"
               disabled={sectionAddLoading}
             >
               Cancel

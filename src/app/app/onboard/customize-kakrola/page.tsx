@@ -58,7 +58,7 @@ const Step2CustomizeKakrola = () => {
           width={300}
           height={300}
           alt="Use Case"
-          className="object-cover rounded-lg"
+          className="object-cover"
         />
       }
       useWithTeam={true}

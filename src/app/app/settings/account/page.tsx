@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useAuthProvider } from "@/context/AuthContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import Spinner from "@/components/ui/Spinner";
+import { avatarUploader } from "@/utils/avatarUploader";
 
 export default function AccountSettingsPage() {
   const { profile } = useAuthProvider();
@@ -28,36 +29,9 @@ export default function AccountSettingsPage() {
 
     try {
       const file = event.target.files?.[0];
-      if (!file) return;
+      if (!file || !profile) return;
 
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${file.name.split(".")[0]}-${profile?.id}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      // Upload image to Supabase storage
-      const { data, error: uploadError } = await supabaseBrowser.storage
-        .from("avatars")
-        .upload(filePath, file, {
-          cacheControl: "3600",
-          upsert: true,
-        });
-
-      if (uploadError) throw uploadError;
-
-      // Get public URL for the uploaded avatar
-      const {
-        data: { publicUrl },
-      } = supabaseBrowser.storage.from("avatars").getPublicUrl(filePath);
-
-      // Update profile with new avatar URL
-      const { error: updateError } = await supabaseBrowser
-        .from("profiles")
-        .update({ avatar_url: publicUrl })
-        .eq("id", profile?.id);
-
-      if (updateError) throw updateError;
-
-      setAvatarUrl(publicUrl);
+      setAvatarUrl(await avatarUploader(file, profile?.id));
     } catch (error) {
       console.error("Error uploading avatar:", error);
       setError("Failed to upload avatar. Please try again.");
@@ -170,7 +144,7 @@ export default function AccountSettingsPage() {
                   />
                   <label
                     htmlFor="avatar-upload"
-                    className={`border cursor-pointer h-9 inline-flex items-center justify-center gap-2 rounded-lg px-3 border-primary-600 text-primary-600 ${
+                    className={`border cursor-pointer h-9 inline-flex items-center justify-center gap-2 rounded-full px-3 border-primary-600 text-primary-600 ${
                       uploadLoading ? "opacity-50" : "hover:bg-text-100"
                     }`}
                   >

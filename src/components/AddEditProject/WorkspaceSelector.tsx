@@ -68,7 +68,7 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
         Workspace
       </label>
       <div
-        className="flex items-center justify-between w-full h-10 border border-text-300 rounded-lg cursor-pointer bg-surface hover:border-text-400 px-3 py-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-primary-300 focus:border-text-300"
+        className="flex items-center justify-between w-full h-12 border border-text-300 rounded-full cursor-pointer bg-surface hover:border-text-400 px-4 py-2 pr-3 focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-primary-300 focus:border-text-300"
         onClick={() => setIsOpen(!isOpen)}
         onKeyDown={handleKeyDown}
         tabIndex={0}
@@ -79,14 +79,14 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
         aria-controls="listbox"
       >
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-lg flex items-center justify-center">
+          <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-2xl flex items-center justify-center">
             {currentWorkspace?.team_id == null ? (
               <Image
                 src={profile?.avatar_url || ""}
                 alt={currentWorkspace?.name || ""}
                 width={20}
                 height={20}
-                className="rounded-lg"
+                className="rounded-full object-cover max-w-[20px] max-h-[20px]"
               />
             ) : (
               <>
@@ -96,7 +96,7 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
                     alt={currentWorkspace?.name}
                     width={20}
                     height={20}
-                    className="rounded-lg"
+                    className="rounded-full object-cover max-w-[20px] max-h-[20px]"
                   />
                 ) : (
                   <span className="text-white text-[10px] font-medium">
@@ -115,16 +115,16 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
 
       {isOpen && (
         <ul
-          className="absolute z-10 w-full mt-1 bg-surface border border-text-300 rounded-lg shadow-lg max-h-60 overflow-auto"
+          className="absolute z-10 w-full mt-1 bg-surface border border-text-300 rounded-2xl p-1 shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] max-h-60 overflow-auto"
           role="listbox"
         >
           {workspaces.map((workspace, index) => (
             <li
               key={workspace.team_id}
-              className={`px-4 py-2 cursor-pointer flex items-center justify-between ${
+              className={`px-4 py-2 cursor-pointer flex items-center justify-between rounded-full ${
                 index === highlightedIndex
-                  ? "bg-primary-50"
-                  : "hover:primary-50"
+                  ? "bg-text-100"
+                  : "hover:bg-text-100"
               }`}
               onClick={() => {
                 onSelect(workspace);
@@ -135,14 +135,14 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
               aria-selected={currentWorkspace?.team_id === workspace.team_id}
             >
               <div className="flex items-center gap-2 flex-1 min-w-0">
-                <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-lg flex items-center justify-center">
+                <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-2xl flex items-center justify-center">
                   {workspace?.team_id == null ? (
                     <Image
                       src={profile?.avatar_url || ""}
                       alt={workspace?.name || ""}
                       width={20}
                       height={20}
-                      className="rounded-lg"
+                      className="rounded-full object-cover max-w-[20px] max-h-[20px]"
                     />
                   ) : (
                     <>
@@ -152,7 +152,7 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
                           alt={workspace?.name}
                           width={20}
                           height={20}
-                          className="rounded-lg"
+                          className="rounded-full object-cover max-w-[20px] max-h-[20px]"
                         />
                       ) : (
                         <span className="text-white text-[10px] font-medium">

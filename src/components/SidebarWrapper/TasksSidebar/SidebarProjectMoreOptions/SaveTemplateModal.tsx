@@ -1,3 +1,7 @@
+import ColorSelector from "@/components/AddEditProject/ColorSelector";
+import { Button } from "@/components/ui/button";
+import Spinner from "@/components/ui/Spinner";
+import Textarea from "@/components/ui/textarea";
 import { useAuthProvider } from "@/context/AuthContext";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType } from "@/types/project";
@@ -7,123 +11,9 @@ import {
   TemplateTaskType,
 } from "@/types/template";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import { ChartPieIcon } from "@heroicons/react/24/outline";
-import {
-  BriefcaseBusiness,
-  Brush,
-  GraduationCap,
-  Headset,
-  Kanban,
-  LucideProps,
-  Palette,
-  Puzzle,
-  SquareGanttChart,
-  SquareKanban,
-  SquareTerminal,
-  Star,
-  SwatchBook,
-  Target,
-  User,
-  UserCircle,
-  X,
-} from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React, { useEffect, useState } from "react";
-
-const categories: {
-  id: number;
-  name: string;
-  path: string;
-  icon: React.ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
-  >;
-}[] = [
-  {
-    id: 1,
-    name: "Featured",
-    path: "/app/templates/category/featured",
-    icon: SwatchBook,
-  },
-  {
-    id: 2,
-    name: "Setups",
-    path: "/app/templates/category/setups",
-    icon: SquareGanttChart,
-  },
-  {
-    id: 3,
-    name: "Popular",
-    path: "/app/templates/category/setups",
-    icon: Star,
-  },
-  {
-    id: 4,
-    name: "Work",
-    path: "/app/templates/category/setups",
-    icon: BriefcaseBusiness,
-  },
-  {
-    id: 5,
-    name: "Personal",
-    path: "/app/templates/category/setups",
-    icon: User,
-  },
-  {
-    id: 6,
-    name: "Education",
-    path: "/app/templates/category/setups",
-    icon: GraduationCap,
-  },
-  {
-    id: 7,
-    name: "Management",
-    path: "/app/templates/category/setups",
-    icon: Puzzle,
-  },
-  {
-    id: 8,
-    name: "Marketing & Sales",
-    path: "/app/templates/category/setups",
-    icon: ChartPieIcon,
-  },
-  {
-    id: 9,
-    name: "Development",
-    path: "/app/templates/category/setups",
-    icon: SquareTerminal,
-  },
-  {
-    id: 10,
-    name: "Design & Product",
-    path: "/app/templates/category/setups",
-    icon: Brush,
-  },
-  {
-    id: 11,
-    name: "Customer Support",
-    path: "/app/templates/category/setups",
-    icon: Headset,
-  },
-  {
-    id: 12,
-    name: "Creative",
-    path: "/app/templates/category/setups",
-    icon: Palette,
-  },
-  {
-    id: 12,
-    name: "Boards",
-    path: "/app/templates/category/setups",
-    icon: SquareKanban,
-  },
-  {
-    id: 12,
-    name: "2024 Goals",
-    path: "/app/templates/category/setups",
-    icon: Target,
-  },
-];
+import { X } from "lucide-react";
+import Image from "next/image";
+import React, { useState } from "react";
 
 const SaveTemplateModal = ({
   onClose,
@@ -137,130 +27,150 @@ const SaveTemplateModal = ({
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const createTemplate = async () => {
-      setIsSaving(true);
-      setError(null);
-      try {
-        if (project && profile) {
-          const templateProject: TemplateProjectType = {
-            name: project.name,
-            slug: project.slug,
-            color: project.color,
-            description: "", // You might want to add a description input in the modal
-            preview_image: "", // You might want to add an image upload feature
-            view: project.view,
-            template_creator: {
-              id: profile.id,
-              name: profile.full_name,
-              avatar_url: profile?.avatar_url || "/default-avatar.png",
-            },
-          };
+  const [savingStatus, setSavingStatus] = useState<string>("");
 
-          const { data: templateProjectData, error: projectError } =
-            await supabaseBrowser
-              .from("template_projects")
-              .insert(templateProject)
-              .select()
-              .single();
+  const [templateData, setTemplateData] = useState<{
+    color: string;
+    description: string;
+  }>({
+    color: project.color,
+    description: "",
+  });
 
-          if (projectError) throw projectError;
+  const createTemplate = async () => {
+    if (!templateData.description.trim()) {
+      setError("Template description is required");
+      return;
+    }
 
-          if (templateProjectData && templateProjectData.id) {
-            const projectSections = sections.filter(
-              (section) => section.project_id === project.id
-            );
-            const projectTasks = tasks.filter(
-              (task) => task.project_id === project.id
-            );
+    setIsSaving(true);
+    setError(null);
+    try {
+      if (project && profile) {
+        setSavingStatus("Saving project...");
+        const templateProject: TemplateProjectType = {
+          name: project.name,
+          slug:
+            project.name.toLowerCase().replace(/\s+/g, "-") +
+            "-template-" +
+            Date.now(),
+          color: templateData.color,
+          description: templateData.description,
+          preview_image: "", // You might want to add an image upload feature
+          view: project.view,
+          template_creator: {
+            id: profile.id,
+            name: profile.full_name,
+            avatar_url: profile?.avatar_url || "/default-avatar.png",
+          },
+        };
 
-            // Create a map to store the relation between original section IDs and new template section IDs
-            const sectionIdMap = new Map<string | number, string | number>();
+        const { data: templateProjectData, error: projectError } =
+          await supabaseBrowser
+            .from("template_projects")
+            .insert(templateProject)
+            .select()
+            .single();
 
-            // Insert template sections
-            for (const section of projectSections) {
-              const templateSection: TemplateSectionType = {
-                template_project_id: templateProjectData.id,
-                name: section.name,
-                order: section.order,
-              };
+        if (projectError) throw projectError;
 
-              const { data: templateSectionData, error: sectionError } =
-                await supabaseBrowser
-                  .from("template_sections")
-                  .insert(templateSection)
-                  .select()
-                  .single();
+        if (templateProjectData && templateProjectData.id) {
+          const projectSections = sections.filter(
+            (section) => section.project_id === project.id
+          );
+          const projectTasks = tasks.filter(
+            (task) => task.project_id === project.id
+          );
 
-              if (sectionError) throw sectionError;
+          // Create a map to store the relation between original section IDs and new template section IDs
+          const sectionIdMap = new Map<string | number, string | number>();
 
-              if (templateSectionData) {
-                sectionIdMap.set(section.id, templateSectionData.id);
-              }
+          // Insert template sections
+          // Update status to saving sections
+          setSavingStatus("Saving sections...");
+          for (const section of projectSections) {
+            const templateSection: TemplateSectionType = {
+              template_project_id: templateProjectData.id,
+              name: section.name,
+              order: section.order,
+            };
+
+            const { data: templateSectionData, error: sectionError } =
+              await supabaseBrowser
+                .from("template_sections")
+                .insert(templateSection)
+                .select()
+                .single();
+
+            if (sectionError) throw sectionError;
+
+            if (templateSectionData) {
+              sectionIdMap.set(section.id, templateSectionData.id);
             }
+          }
 
-            // Create a map to store the relation between original task IDs and new template task IDs
-            const taskIdMap = new Map<string | number, string | number>();
+          // Create a map to store the relation between original task IDs and new template task IDs
+          const taskIdMap = new Map<string | number, string | number>();
 
-            // Insert template tasks
-            for (const task of projectTasks) {
-              const templateTask: TemplateTaskType = {
-                template_project_id: templateProjectData.id,
-                template_section_id: task.section_id
-                  ? sectionIdMap.get(task.section_id) ?? null
-                  : null,
-                parent_template_task_id: null, // We'll update this in the next step
-                title: task.title,
-                description: task.description,
-                priority: task.priority,
-                due_date: task.due_date,
-                reminder_time: task.reminder_time,
-                order: task.order,
-              };
+          // Insert template tasks
+          // Update status to saving tasks
+          setSavingStatus("Saving tasks...");
+          for (const task of projectTasks) {
+            const templateTask: TemplateTaskType = {
+              template_project_id: templateProjectData.id,
+              template_section_id: task.section_id
+                ? sectionIdMap.get(task.section_id) ?? null
+                : null,
+              parent_template_task_id: null, // We'll update this in the next step
+              title: task.title,
+              description: task.description,
+              priority: task.priority,
+              due_date: task.due_date,
+              reminder_time: task.reminder_time,
+              order: task.order,
+            };
 
-              const { data: templateTaskData, error: taskError } =
+            const { data: templateTaskData, error: taskError } =
+              await supabaseBrowser
+                .from("template_tasks")
+                .insert(templateTask)
+                .select()
+                .single();
+
+            if (taskError) throw taskError;
+
+            if (templateTaskData) {
+              taskIdMap.set(task.id, templateTaskData.id);
+            }
+          }
+
+          // Update parent_template_task_id for tasks with parent tasks
+          setSavingStatus("Updating task hierarchy...");
+
+          for (const task of projectTasks) {
+            if (task.parent_task_id) {
+              const templateTaskId = taskIdMap.get(task.id);
+              const templateParentTaskId = taskIdMap.get(task.parent_task_id);
+
+              if (templateTaskId && templateParentTaskId) {
                 await supabaseBrowser
                   .from("template_tasks")
-                  .insert(templateTask)
-                  .select()
-                  .single();
-
-              if (taskError) throw taskError;
-
-              if (templateTaskData) {
-                taskIdMap.set(task.id, templateTaskData.id);
-              }
-            }
-
-            // Update parent_template_task_id for tasks with parent tasks
-            for (const task of projectTasks) {
-              if (task.parent_task_id) {
-                const templateTaskId = taskIdMap.get(task.id);
-                const templateParentTaskId = taskIdMap.get(task.parent_task_id);
-
-                if (templateTaskId && templateParentTaskId) {
-                  await supabaseBrowser
-                    .from("template_tasks")
-                    .update({ parent_template_task_id: templateParentTaskId })
-                    .eq("id", templateTaskId);
-                }
+                  .update({ parent_template_task_id: templateParentTaskId })
+                  .eq("id", templateTaskId);
               }
             }
           }
         }
-        onClose();
-      } catch (error) {
-        console.error(error);
-        setError("Failed to save template. Please try again.");
-      } finally {
-        setIsSaving(false);
       }
-    };
-
-    // createTemplate();
-  }, [project, profile, sections, tasks, onClose]);
-
-  const pathname = usePathname();
+      onClose();
+    } catch (error) {
+      console.error(error);
+      setError("Failed to save template. Please try again.");
+    } finally {
+      setIsSaving(false);
+      setSavingStatus("");
+    }
+  };
 
   return (
     <div
@@ -268,69 +178,91 @@ const SaveTemplateModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-surface rounded-lg overflow-hidden flex w-11/12 max-w-4xl h-[90%] max-h-[44rem]"
+        className="rounded-2xl overflow-hidden w-11/12 max-w-md bg-surface"
         onClick={(e) => e.stopPropagation()}
       >
-        <aside className="w-56 bg-primary-50">
-          <div className="p-4 py-3">
-            <h3 className="font-semibold text-[15px]">Templates</h3>
+        <div className="flex items-center justify-between p-4 py-3">
+          <h3 className="font-semibold text-[15px]">Save as template</h3>
+
+          <button
+            className="p-1 rounded-full hover:bg-text-100 transition"
+            onClick={onClose}
+          >
+            <X strokeWidth={1.5} size={20} />
+          </button>
+        </div>
+
+        <div className="w-full h-full border-t border-text-100 p-3 px-5 pb-4 space-y-4 text-xs">
+          <div className="flex items-center p-3">
+            <span
+              className={`text-5xl rounded-full w-16 h-16 flex items-center justify-center bg-${
+                templateData.color.split("-")[0]
+              }-100 text-${templateData.color}`}
+              style={{ fontFamily: "fantasy" }}
+            >
+              #
+            </span>
           </div>
 
           <div>
-            <div className="px-2">
-              <ul>
-                <li>
-                  <Link
-                    href={"item.path"}
-                    className={`flex items-center p-2 rounded-lg transition-colors gap-2 ${
-                      "item.path" === pathname
-                        ? "bg-primary-500 text-surface"
-                        : "hover:bg-text-100 text-text-700"
-                    }`}
-                  >
-                    <UserCircle strokeWidth={1.5} className="w-5 h-5" />
-                    My templates
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div className="text-[13px] font-semibold px-4 py-2 mt-3">
-              Categories
-            </div>
-
-            <div className="px-2">
-              <ul>
-                {categories.map((category) => (
-                  <li key={category.id}>
-                    <Link
-                      href={category.path}
-                      className={`flex items-center p-2 rounded-lg transition-colors gap-2 ${
-                        category.path === pathname
-                          ? "bg-primary-500 text-surface"
-                          : "hover:bg-text-100 text-text-700"
-                      }`}
-                    >
-                      <category.icon strokeWidth={1.5} className="w-5 h-5" />
-                      {category.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </aside>
-
-        <div className="flex-1">
-          <div className="flex items-center justify-between p-4 py-3 border-b border-text-200">
-            <h3 className="font-semibold text-[15px]">My templates</h3>
-
-            <button className="p-1 rounded-lg hover:bg-text-100 transition" onClick={onClose}>
-              <X strokeWidth={1.5} size={20} />
-            </button>
+            <ColorSelector
+              value={templateData.color}
+              onChange={(color) =>
+                setTemplateData((prev) => ({ ...prev, color }))
+              }
+              height="h-10"
+            />
           </div>
 
-          <div></div>
+          <div className="h-[1px] bg-text-100"></div>
+
+          <div>
+            <Textarea
+              label="About this template"
+              placeholder="Add your description..."
+              className="resize-none text-xs"
+              rows={4}
+              value={templateData.description}
+              onChange={(e) =>
+                setTemplateData((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
+            />
+          </div>
+
+          <div className="h-[1px] bg-text-100"></div>
+
+          <div className="space-y-2">
+            <p className="font-semibold text-text-700">Template by</p>
+            <div className="flex items-center gap-1">
+              <Image
+                src={profile?.avatar_url || "/default_avatar.png"}
+                alt="avatar"
+                width={20}
+                height={20}
+                className={"rounded-full max-w-5 max-h-5 object-cover"}
+              />
+
+              <p>{profile?.full_name}</p>
+            </div>
+          </div>
+
+          <div className="h-[1px] bg-text-100"></div>
+
+          <div className="space-y-2">
+            {error && <p className="text-red-500">{error}</p>}
+            {isSaving && <p className="text-primary-500">{savingStatus}</p>}
+            <Button
+              type="button"
+              fullWidth
+              disabled={isSaving}
+              onClick={createTemplate}
+            >
+              {isSaving ? <Spinner color="white" /> : "Save template"}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

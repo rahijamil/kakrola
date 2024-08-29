@@ -47,7 +47,7 @@ const OnboardWrapper = ({
                 </Link>
 
                 {currentStep && (
-                  <div className="bg-primary-100 px-3 py-1.5 rounded-lg text-sm font-medium text-primary-700">
+                  <div className="bg-primary-100 px-3 py-1.5 rounded-full text-sm font-medium text-primary-700">
                     Step {currentStep} of {useWithTeam ? "5" : "2"}
                   </div>
                 )}
@@ -74,7 +74,7 @@ const OnboardWrapper = ({
           <div className="flex-grow bg-primary-50f bg-gradient-to-b from-primary-50 via-background to-primary-50">
             {currentStep && (
               <div className="flex items-center justify-end h-20 pr-32">
-                <div className="bg-primary-100 px-3 py-1.5 rounded-lg text-sm font-medium text-primary-700">
+                <div className="bg-primary-100 px-3 py-1.5 rounded-full text-sm font-medium text-primary-700">
                   Step {currentStep} of {useWithTeam ? "5" : "2"}
                 </div>
               </div>

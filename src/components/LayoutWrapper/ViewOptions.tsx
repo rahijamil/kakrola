@@ -1,20 +1,19 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import LayoutView from "../LayoutView";
 import { ViewTypes } from "@/types/viewTypes";
 import { ToggleSwitch } from "../ui/ToggleSwitch";
-import { Check } from "lucide-react";
+import { Check, SlidersHorizontal } from "lucide-react";
 import { TaskType } from "@/types/project";
+import Dropdown from "../ui/Dropdown";
 
 const ViewOptions = React.memo(
   ({
-    onClose,
     view,
     setView,
     hideCalendarView,
     tasks = [],
     setTasks,
   }: {
-    onClose: () => void;
     view?: ViewTypes["view"];
     setView: (value: ViewTypes["view"]) => void;
     hideCalendarView?: boolean;
@@ -43,11 +42,31 @@ const ViewOptions = React.memo(
       }
     }, [showCompletedTasks, setTasks, tasks]);
 
+    const [isOpen, setIsOpen] = useState(false);
+
+    const triggerRef = useRef(null);
+
     return (
-      <>
-        <div className="absolute bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg border border-text-200 pt-3 pb-1 w-[300px] top-11 right-5 z-20 text-xs">
-          <div className="space-y-2">
-            <div className="px-3">
+      <Dropdown
+        triggerRef={triggerRef}
+        Label={({ onClick }) => (
+          <button
+            ref={triggerRef}
+            className={`${
+              isOpen ? "bg-text-50" : "hover:bg-text-100"
+            } transition px-3 p-1 pr-2 rounded-full cursor-pointer flex items-center gap-1`}
+            onClick={onClick}
+          >
+            <SlidersHorizontal
+              strokeWidth={1.5}
+              className="w-4 h-4 text-text-500"
+            />
+            <span className="hidden md:inline-block">View</span>
+          </button>
+        )}
+        content={
+          <div className="text-xs pb-2">
+            <div className="space-y-2">
               {view && (
                 <LayoutView
                   view={view}
@@ -56,10 +75,9 @@ const ViewOptions = React.memo(
                   hideCalendarView={hideCalendarView}
                 />
               )}
-            </div>
 
-            {/* <div
-              className="flex justify-between items-center hover:bg-text-100 transition cursor-pointer py-[6px] px-3 mx-1 rounded-lg"
+              <div
+              className="flex justify-between items-center hover:bg-text-100 transition cursor-pointer py-[6px] px-3 mx-1 rounded-2xl"
               onClick={toggleShowCompletedTasks}
             >
               <div className="flex items-center gap-3">
@@ -84,15 +102,14 @@ const ViewOptions = React.memo(
                 checked={showCompletedTasks}
                 onCheckedChange={setShowCompletedTasks}
               />
-            </div> */}
+            </div>
+            </div>
           </div>
-        </div>
-
-        <div
-          className="fixed top-0 left-0 bottom-0 right-0 z-10"
-          onClick={onClose}
-        ></div>
-      </>
+        }
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        contentWidthClass="w-[300px]"
+      />
     );
   }
 );

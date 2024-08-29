@@ -1,5 +1,18 @@
-import { BlocksIcon, Copy, PencilLine, SwatchBook } from "lucide-react";
-import React, { Dispatch, SetStateAction } from "react";
+import {
+  Archive,
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  Copy,
+  Ellipsis,
+  Heart,
+  HeartOff,
+  Link,
+  Logs,
+  PencilLine,
+  SwatchBook,
+  Trash2,
+} from "lucide-react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { ProjectType } from "@/types/project";
 import DeleteOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/DeleteOption";
 import ArchiveOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ArchiveOption";
@@ -7,17 +20,14 @@ import ActivityLogOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMore
 import ImportCSVOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ImportCSVOption";
 import ExportCSVOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ExportCSVOption";
 import CopyProjectLinkOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/CopyProjectLinkOption";
-import CommentOrActivityModal from "./CommentOrActivityModal";
-import ExportCSVModal from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ExportCSVModal";
-import ImportCSVModal from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ImportCSVModal";
-import AddEditProject from "../AddEditProject";
-import ProjectDeleteConfirm from "../SidebarWrapper/TasksSidebar/ProjectDeleteConfirm";
-import ProjectArchiveConfirm from "../SidebarWrapper/TasksSidebar/ProjectArchiveConfirm";
 import FavoriteOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/FavoriteOption";
 import SaveTemplateOption from "./SaveTemplateOption";
+import { motion } from "framer-motion";
+import Dropdown from "../ui/Dropdown";
+import useFavorite from "@/hooks/useFavorite";
+import { useRouter } from "next/navigation";
 
 const ActiveProjectMoreOptions = ({
-  onClose,
   project,
   stateActions: {
     setShowDeleteConfirm,
@@ -29,7 +39,6 @@ const ActiveProjectMoreOptions = ({
     setSaveTemplate,
   },
 }: {
-  onClose: () => void;
   project: ProjectType;
   stateActions: {
     setShowDeleteConfirm: Dispatch<SetStateAction<boolean>>;
@@ -43,112 +52,164 @@ const ActiveProjectMoreOptions = ({
     setSaveTemplate: Dispatch<SetStateAction<boolean>>;
   };
 }) => {
-  return (
-    <>
-      <div className="absolute bg-surface rounded-lg border border-text-200 top-11 right-4 z-20 w-60 py-1 shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)]">
-        <div>
-          <button
-            onClick={() => {
-              setProjectEdit(true);
-              onClose();
-            }}
-            className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center"
-          >
-            <PencilLine strokeWidth={1.5} className="w-4 h-4 mr-2" /> Edit
-          </button>
-          <FavoriteOption project={project} />
-          {/* <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center">
-            <CopyPlusIcon className="w-4 h-4 mr-4" /> Duplicate
-          </button> */}
-          {/* <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center">
-            <span className="w-5 h-5 mr-4 flex items-center justify-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="currentColor"
-                  d="M19.5 20a.5.5 0 0 1 0 1h-15a.5.5 0 0 1 0-1h15zM18 6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h12zm0 1H6a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zm-6 2a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 12 9zm7.5-6a.5.5 0 0 1 0 1h-15a.5.5 0 0 1 0-1h15z"
-                ></path>
-              </svg>
-            </span>{" "}
-            Add section
-          </button> */}
-        </div>
-        <div className="h-[1px] bg-text-200 my-1"></div>
-        <div>
-          <CopyProjectLinkOption
-            onClose={onClose}
-            project_slug={project.slug}
-          />
-        </div>
-        <div className="h-[1px] bg-text-200 my-1"></div>
-        <div>
-          <SaveTemplateOption
-            onClick={() => {
-              setSaveTemplate(true);
-              onClose();
-            }}
-          />
-          <button
-            onClick={() => {
-              
-              onClose();
-            }}
-            className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center"
-          >
-            <SwatchBook strokeWidth={1.5} className="w-4 h-4 mr-2" /> Browse
-            templates
-          </button>
-        </div>
-        <div className="h-[1px] bg-text-200 my-1"></div>
-        <div>
-          <ImportCSVOption
-            onClick={() => {
-              setImportFromCSV(true);
-              onClose();
-            }}
-          />
-          <ExportCSVOption
-            onClick={() => {
-              setExportAsCSV(true);
-              onClose();
-            }}
-          />
-        </div>
-        <div className="h-[1px] bg-text-200 my-1"></div>
-        <div>
-          <ActivityLogOption
-            onClick={() => {
-              setShowCommentOrActivity("activity");
-              onClose();
-            }}
-          />
-        </div>
-        <div className="h-[1px] bg-text-200 my-1"></div>
-        <div>
-          <ArchiveOption
-            onClick={() => {
-              setShowArchiveConfirm(true);
-              onClose();
-            }}
-          />
-          <DeleteOption
-            onClick={() => {
-              setShowDeleteConfirm(true);
-              onClose();
-            }}
-          />
-        </div>
-      </div>
+  const [isOpen, setIsOpen] = useState(false);
 
-      <div
-        className="fixed top-0 left-0 bottom-0 right-0 z-10"
-        onClick={onClose}
-      ></div>
-    </>
+  const onClose = () => {
+    setIsOpen(false);
+  };
+
+  const triggerRef = useRef(null);
+
+  const router = useRouter();
+
+  const { handleFavorite } = useFavorite({ project });
+
+  const handleCopyProjectLink = () => {
+    navigator.clipboard.writeText(`https://ekta.com/project/${project.slug}`);
+    onClose();
+  };
+
+  return (
+    <Dropdown
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      triggerRef={triggerRef}
+      Label={({ onClick }) => (
+        <button
+          ref={triggerRef}
+          className={`${
+            isOpen ? "bg-text-100" : "hover:bg-text-100"
+          } transition p-1 rounded-full cursor-pointer ml-1`}
+          onClick={onClick}
+        >
+          <Ellipsis strokeWidth={1.5} className="w-5 h-5 text-text-500" />
+        </button>
+      )}
+      contentWidthClass="w-60 py-1"
+      items={[
+        {
+          id: 1,
+          label: "Edit",
+          icon: <PencilLine strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setProjectEdit(true);
+            onClose();
+          },
+        },
+        {
+          id: 2,
+          label: project.is_favorite
+            ? "Remove from favorites"
+            : "Add to favorites",
+          icon: project.is_favorite ? (
+            <HeartOff className="w-4 h-4" />
+          ) : (
+            <Heart strokeWidth={1.5} className="w-4 h-4" />
+          ),
+          onClick: handleFavorite,
+          divide: true,
+        },
+        {
+          id: 3,
+          label: "Copy project link",
+          icon: <Link strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: handleCopyProjectLink,
+          divide: true,
+        },
+        {
+          id: 4,
+          label: "Save as template",
+          icon: <Copy strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setSaveTemplate(true);
+            onClose();
+          },
+        },
+        {
+          id: 5,
+          label: "Templates",
+          icon: <SwatchBook strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            router.push("/app/templates");
+            onClose();
+          },
+          divide: true,
+        },
+        {
+          id: 6,
+          label: "Import from CSV",
+          icon: <ArrowDownToLine strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setImportFromCSV(true);
+            onClose();
+          },
+        },
+        {
+          id: 7,
+          label: "Export as CSV",
+          icon: <ArrowUpFromLine strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setExportAsCSV(true);
+            onClose();
+          },
+          divide: true,
+        },
+        {
+          id: 8,
+          label: "Activity log",
+          icon: <Logs strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setShowCommentOrActivity("activity");
+            onClose();
+          },
+          divide: true,
+        },
+        {
+          id: 9,
+          label: "Archive",
+          icon: <Archive strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setShowArchiveConfirm(true);
+            onClose();
+          },
+        },
+        {
+          id: 10,
+          label: "Delete",
+          textColor: "text-red-600",
+          icon: <Trash2 strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setShowDeleteConfirm(true);
+            onClose();
+          },
+        },
+      ]}
+      content={
+        <div>
+          <div>
+            {/* <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center">
+        <CopyPlusIcon className="w-4 h-4 mr-4" /> Duplicate
+      </button> */}
+            {/* <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center">
+        <span className="w-5 h-5 mr-4 flex items-center justify-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fill="currentColor"
+              d="M19.5 20a.5.5 0 0 1 0 1h-15a.5.5 0 0 1 0-1h15zM18 6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h12zm0 1H6a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zm-6 2a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 12 9zm7.5-6a.5.5 0 0 1 0 1h-15a.5.5 0 0 1 0-1h15z"
+            ></path>
+          </svg>
+        </span>{" "}
+        Add section
+      </button> */}
+          </div>
+        </div>
+      }
+    />
   );
 };
 

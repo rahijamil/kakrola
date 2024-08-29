@@ -28,7 +28,7 @@ const CommentOrActivityModal = ({
         </div>
 
         <button
-          className="p-1 hover:bg-text-100 transition rounded-lg"
+          className="p-1 hover:bg-text-100 transition rounded-full"
           onClick={onClose}
         >
           <XMarkIcon className="w-6 h-6" />

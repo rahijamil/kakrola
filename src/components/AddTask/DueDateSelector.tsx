@@ -171,7 +171,7 @@ const DueDateSelector = ({
           <div>
             <button
               onClick={() => task.due_date == null && setIsOpen(true)}
-              className={`flex items-center justify-between rounded-lg transition p-[6px] px-2 group w-full ${
+              className={`flex items-center justify-between rounded-full transition p-[6px] px-2 group w-full ${
                 task.due_date == null
                   ? isOpen
                     ? "bg-primary-100 cursor-pointer"
@@ -204,7 +204,7 @@ const DueDateSelector = ({
         ) : (
           <div
             ref={triggerRef}
-            className={`flex items-center gap-1 cursor-pointer p-1 text-xs rounded-lg border border-text-200 ${
+            className={`flex items-center gap-1 cursor-pointer p-1 px-2 text-xs rounded-full border border-text-200 ${
               isOpen ? "bg-text-50" : "hover:bg-text-100"
             }`}
             onClick={onClick}
@@ -221,7 +221,7 @@ const DueDateSelector = ({
                     ev.stopPropagation();
                     setTask({ ...task, due_date: null });
                   }}
-                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-lg"
+                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-full"
                 >
                   <X strokeWidth={1.5} className="w-3 h-3 text-text-500" />
                 </button>
@@ -239,7 +239,7 @@ const DueDateSelector = ({
         <div>
           <div className="p-2 border-b border-text-200">
             <Input
-              howBig="sm"
+              howBig="xs"
               type="text"
               placeholder="Type a due date"
               value={
@@ -250,11 +250,11 @@ const DueDateSelector = ({
             />
           </div>
 
-          <ul className="max-h-[250px] overflow-y-auto">
+          <ul className="max-h-[250px] overflow-y-auto py-1">
             {predefinedDates.map((item, index) => (
               <li
                 key={index}
-                className="flex items-center justify-between p-2 hover:bg-text-100 cursor-pointer text-xs"
+                className="flex items-center justify-between px-3 py-1.5 rounded-2xl hover:bg-text-100 cursor-pointer text-xs"
                 onClick={() => handleDateSelect(item.date)}
               >
                 <div className="flex items-center gap-2">
@@ -281,7 +281,7 @@ const DueDateSelector = ({
           >
             {months.map((month, index) => (
               <div key={index}>
-                <div className="border-t border-b py-1 px-2 border-text-200 space-y-2 sticky top-0 bg-surface">
+                <div className="border-t border-b py-1 px-2 border-text-200 space-y-2 sticky top-0 bg-surface z-10">
                   <div className="flex justify-between items-center">
                     <span className="font-semibold">
                       {format(month, "MMM yyyy")}
