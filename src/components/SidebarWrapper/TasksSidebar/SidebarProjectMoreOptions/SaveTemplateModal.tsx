@@ -10,6 +10,7 @@ import {
   TemplateSectionType,
   TemplateTaskType,
 } from "@/types/template";
+import { generateSlug } from "@/utils/generateSlug";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { X } from "lucide-react";
 import Image from "next/image";
@@ -33,7 +34,7 @@ const SaveTemplateModal = ({
     color: string;
     description: string;
   }>({
-    color: project.color,
+    color: project.settings.color,
     description: "",
   });
 
@@ -50,14 +51,11 @@ const SaveTemplateModal = ({
         setSavingStatus("Saving project...");
         const templateProject: TemplateProjectType = {
           name: project.name,
-          slug:
-            project.name.toLowerCase().replace(/\s+/g, "-") +
-            "-template-" +
-            Date.now(),
+          slug: generateSlug(project.name),
           color: templateData.color,
           description: templateData.description,
           preview_image: "", // You might want to add an image upload feature
-          view: project.view,
+          view: project.settings.view,
           template_creator: {
             id: profile.id,
             name: profile.full_name,

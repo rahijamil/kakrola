@@ -21,6 +21,7 @@
   --color-accent: #ff4081; /* Vivid pink accent color */
   --color-background: #ffffff; /* Soft off-white background for main content areas */
   --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
+
   --color-text-50: #f5f5f5; /* Very light grey for muted text */
   --color-text-100: #ebebeb;
   --color-text-200: #e0e0e0;
@@ -51,6 +52,7 @@
   --color-accent: #ff4081; /* Vivid pink for notifications, success messages */
   --color-background: #222; /* Dark background for main content areas */
   --color-surface: #252525; /* Slightly lighter shade for cards, modals, etc. */
+
   --color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
   --color-text-100: #2a2a2a; /* Dark grey */
   --color-text-200: #333333; /* Darker grey for less subtle text */

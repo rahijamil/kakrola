@@ -1,19 +1,36 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import OnboardWrapper from "../OnboardWrapper";
 import { Button } from "@/components/ui/button";
 import createWorkspace from "./create_workspace.png";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
+import { useOnboard } from "@/context/OnboardContext";
+import Spinner from "@/components/ui/Spinner";
 
 const Step3CreateWorkspace = () => {
   const router = useRouter();
-  const [teamName, setTeamName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [skipLoading, setSkipLoading] = useState(false);
+
+  const {
+    dispatch,
+    state: { work_role, team_name },
+  } = useOnboard();
 
   const handleSubmit = () => {
+    setLoading(true);
     router.push("/app/onboard/workspace-profile");
   };
+
+  useEffect(() => {
+    if (!work_role) {
+      router.replace("/app/onboard/customize-kakrola");
+    }
+  }, [work_role]);
+
+  if (!work_role) return null;
 
   return (
     <OnboardWrapper
@@ -32,8 +49,10 @@ const Step3CreateWorkspace = () => {
                 id="workspaceName"
                 label="Team name"
                 placeholder="e.g, Awesome Inc."
-                value={teamName}
-                onChange={(e) => setTeamName(e.target.value)}
+                value={team_name}
+                onChange={(e) =>
+                  dispatch({ type: "SET_TEAM_NAME", payload: e.target.value })
+                }
               />
               <p className="text-xs text-text-500">
                 Keep it something simple your teammates will recognize.
@@ -42,18 +61,21 @@ const Step3CreateWorkspace = () => {
 
             <Button
               onClick={handleSubmit}
-              disabled={!teamName.trim()}
+              disabled={!team_name.trim() || loading}
               fullWidth
             >
-              Continue
+              {loading ? <Spinner color="white" /> : "Continue"}
             </Button>
             <Button
-              onClick={handleSubmit}
-              disabled={false}
+              onClick={() => {
+                setSkipLoading(true);
+                router.push("/app");
+              }}
+              disabled={skipLoading}
               variant="gray"
               fullWidth
             >
-              Skip for now
+              {skipLoading ? <Spinner color="primary" /> : "Skip for now"}
             </Button>
 
             <p className="text-xs text-text-500">

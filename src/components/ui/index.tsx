@@ -1,4 +1,5 @@
 "use client";
+import { generateSlug } from "@/utils/generateSlug";
 import { LucideProps } from "lucide-react";
 import React, {
   Dispatch,
@@ -84,7 +85,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className = "", label, ...props }, ref) => {
-    const id = label?.replace(" ", "-").toLowerCase();
+    const id = label ? generateSlug(label) : "";
     return (
       <div className="space-y-1">
         {label && (

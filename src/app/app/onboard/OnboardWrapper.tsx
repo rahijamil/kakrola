@@ -54,7 +54,7 @@ const OnboardWrapper = ({
               </div>
             )}
 
-            <div className={`flex items-center h-[80%]`}>
+            <div className={`flex h-[calc(100vh-15rem)] overflow-y-auto onboard_scrollbar ${currentStep != 5 ? "items-center" : "mt-10"}`}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

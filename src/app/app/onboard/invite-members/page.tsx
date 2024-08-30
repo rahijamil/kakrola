@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import OnboardWrapper from "../OnboardWrapper";
 import { Button } from "@/components/ui/button";
 import inviteMemberImage from "./invite_members.png";
@@ -7,11 +7,21 @@ import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Spinner from "@/components/ui/Spinner";
 
 const Step5InviteMembers = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [skipLoading, setSkipLoading] = useState(false);
+
+  const [invites, setInvites] = useState<{ email: string }[]>([
+    { email: "" },
+    { email: "" },
+    { email: "" },
+  ]);
 
   const handleSubmit = () => {
+    setLoading(true);
     router.push(`/app/${"teamId"}`);
   };
   return (
@@ -29,35 +39,26 @@ const Step5InviteMembers = () => {
           </div>
 
           <div className="space-y-4">
-            <Input
-              type="text"
-              id="email1"
-              label="Email"
-              placeholder="name@example.com"
-              // value={name}
-              // onChange={(e) => setName(e.target.value)}
-            />
-
-            <Input
-              type="text"
-              id="email2"
-              label="Email"
-              placeholder="name@example.com"
-              // value={name}
-              // onChange={(e) => setName(e.target.value)}
-            />
-
-            <Input
-              type="text"
-              id="email3"
-              label="Email"
-              placeholder="name@example.com"
-              // value={name}
-              // onChange={(e) => setName(e.target.value)}
-            />
+            {invites.map((invite, index) => (
+              <Input
+                key={index}
+                type="text"
+                id={`email-${index}`}
+                label="Email"
+                placeholder="name@example.com"
+                value={invite.email}
+                onChange={(e) => {
+                  const newInvites = [...invites];
+                  newInvites[index].email = e.target.value;
+                  setInvites(newInvites);
+                }}
+              />
+            ))}
 
             <Button
-              onClick={handleSubmit}
+              onClick={() => {
+                setInvites([...invites, { email: "" }]);
+              }}
               disabled={false}
               fullWidth
               icon={Plus}
@@ -72,22 +73,25 @@ const Step5InviteMembers = () => {
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={false}
+              disabled={loading}
               fullWidth
               variant="gray"
             >
-              Copy invite link
+              {loading ? <Spinner color="white" /> : "Copy invite link"}
             </Button>
           </div>
 
           <div className="space-y-2">
             <Button
-              onClick={handleSubmit}
-              disabled={false}
+              onClick={() => {
+                setSkipLoading(true);
+                router.push(`/app/${"teamId"}`);
+              }}
+              disabled={skipLoading}
               fullWidth
               variant="gray"
             >
-              Skip for now
+              {skipLoading ? <Spinner color="primary" /> : "Skip for now"}
             </Button>
 
             <p className="text-xs text-text-500">

@@ -6,9 +6,9 @@ import Link from "next/link";
 const ForgotPassword = () => (
   <AuthForm
     type="forgotPassword"
-    onSubmit={async ({ email }) => {
+    onSubmit={async ({ email, captchaToken }) => {
       "use server";
-      return await forgotPassword(email);
+      return await forgotPassword(email, captchaToken);
     }}
     additionalFooter={
       <div className="mt-6 text-center">

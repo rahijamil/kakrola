@@ -14,15 +14,6 @@ import {
 } from "lucide-react";
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { ProjectType } from "@/types/project";
-import DeleteOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/DeleteOption";
-import ArchiveOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ArchiveOption";
-import ActivityLogOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ActivityLogOption";
-import ImportCSVOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ImportCSVOption";
-import ExportCSVOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ExportCSVOption";
-import CopyProjectLinkOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/CopyProjectLinkOption";
-import FavoriteOption from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/FavoriteOption";
-import SaveTemplateOption from "./SaveTemplateOption";
-import { motion } from "framer-motion";
 import Dropdown from "../ui/Dropdown";
 import useFavorite from "@/hooks/useFavorite";
 import { useRouter } from "next/navigation";
@@ -54,10 +45,6 @@ const ActiveProjectMoreOptions = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const onClose = () => {
-    setIsOpen(false);
-  };
-
   const triggerRef = useRef(null);
 
   const router = useRouter();
@@ -66,7 +53,6 @@ const ActiveProjectMoreOptions = ({
 
   const handleCopyProjectLink = () => {
     navigator.clipboard.writeText(`https://ekta.com/project/${project.slug}`);
-    onClose();
   };
 
   return (
@@ -93,7 +79,6 @@ const ActiveProjectMoreOptions = ({
           icon: <PencilLine strokeWidth={1.5} className="w-4 h-4" />,
           onClick: () => {
             setProjectEdit(true);
-            onClose();
           },
         },
         {
@@ -122,7 +107,6 @@ const ActiveProjectMoreOptions = ({
           icon: <Copy strokeWidth={1.5} className="w-4 h-4" />,
           onClick: () => {
             setSaveTemplate(true);
-            onClose();
           },
         },
         {
@@ -131,7 +115,6 @@ const ActiveProjectMoreOptions = ({
           icon: <SwatchBook strokeWidth={1.5} className="w-4 h-4" />,
           onClick: () => {
             router.push("/app/templates");
-            onClose();
           },
           divide: true,
         },
@@ -141,7 +124,6 @@ const ActiveProjectMoreOptions = ({
           icon: <ArrowDownToLine strokeWidth={1.5} className="w-4 h-4" />,
           onClick: () => {
             setImportFromCSV(true);
-            onClose();
           },
         },
         {
@@ -150,7 +132,6 @@ const ActiveProjectMoreOptions = ({
           icon: <ArrowUpFromLine strokeWidth={1.5} className="w-4 h-4" />,
           onClick: () => {
             setExportAsCSV(true);
-            onClose();
           },
           divide: true,
         },
@@ -160,7 +141,6 @@ const ActiveProjectMoreOptions = ({
           icon: <Logs strokeWidth={1.5} className="w-4 h-4" />,
           onClick: () => {
             setShowCommentOrActivity("activity");
-            onClose();
           },
           divide: true,
         },
@@ -170,7 +150,6 @@ const ActiveProjectMoreOptions = ({
           icon: <Archive strokeWidth={1.5} className="w-4 h-4" />,
           onClick: () => {
             setShowArchiveConfirm(true);
-            onClose();
           },
         },
         {
@@ -180,7 +159,6 @@ const ActiveProjectMoreOptions = ({
           icon: <Trash2 strokeWidth={1.5} className="w-4 h-4" />,
           onClick: () => {
             setShowDeleteConfirm(true);
-            onClose();
           },
         },
       ]}

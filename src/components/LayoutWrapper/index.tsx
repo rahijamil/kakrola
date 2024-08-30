@@ -18,6 +18,8 @@ import AddEditProject from "../AddEditProject";
 import NoDueDate from "../TaskViewSwitcher/CalendarView/NoDueDate";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import SaveTemplateModal from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/SaveTemplateModal";
+import LayoutView from "../LayoutView";
+import Link from "next/link";
 
 const LayoutWrapper = ({
   children,
@@ -53,6 +55,7 @@ const LayoutWrapper = ({
     showArchiveConfirm: false,
     showDeleteConfirm: false,
     editTitle: false,
+    editTitleInListView: false,
   });
 
   const [projectTitle, setProjectTitle] = useState<string>(
@@ -80,7 +83,11 @@ const LayoutWrapper = ({
 
       if (error) console.log(error);
     }
-    setModalState((prev) => ({ ...prev, editTitle: false }));
+    setModalState((prev) => ({
+      ...prev,
+      editTitle: false,
+      editTitleInListView: false,
+    }));
   };
 
   const toggleModal = (key: keyof typeof modalState, value: boolean | null) =>
@@ -131,16 +138,61 @@ const LayoutWrapper = ({
             {view && setView && (
               <div className="flex items-center justify-between p-4 py-3 sticky top-0 bg-background mb-1 z-10">
                 {!["Today", "Inbox"].includes(headline) && (
-                  <div>
-                    {teams.find((t) => t.id === project?.team_id)?.name ??
-                      "My Projects"}{" "}
-                    / {project?.name}
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center w-64 whitespace-nowrap">
+                      <Link
+                        href={`/app/projects`}
+                        className="hover:bg-text-100 p-1 py-0.5 rounded-full transition-colors"
+                      >
+                        {teams.find((t) => t.id === project?.team_id)?.name ??
+                          "My Projects"}
+                      </Link>
+                      <span className="text-text-400">/</span>
+                      {project ? (
+                        modalState.editTitle ? (
+                          <input
+                            type="text"
+                            className="font-semibold border border-text-300 rounded-full p-1 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300"
+                            value={projectTitle}
+                            onBlur={handleEditTitle}
+                            autoFocus
+                            onChange={(ev) => setProjectTitle(ev.target.value)}
+                            onKeyDown={(ev) =>
+                              ev.key === "Enter" && handleEditTitle()
+                            }
+                          />
+                        ) : (
+                          <h1
+                            className="font-semibold border border-transparent hover:border-text-200 rounded-full w-full p-1 py-0.5 cursor-text inline-block overflow-hidden text-ellipsis"
+                            onClick={() => toggleModal("editTitle", true)}
+                          >
+                            {project.name}
+                          </h1>
+                        )
+                      ) : (
+                        <h1
+                          className={`font-semibold inline-block overflow-hidden text-ellipsis p-1 py-0.5 ${
+                            (headline == "Filters & Labels" ||
+                              headline == "Upcoming") &&
+                            "mt-6"
+                          }`}
+                        >
+                          {headline}
+                        </h1>
+                      )}
+                    </div>
+
+                    <div>
+                      {project && (
+                        <LayoutView
+                          view={view}
+                          setView={setView}
+                          project={project}
+                        />
+                      )}
+                    </div>
                   </div>
                 )}
-
-                {/* {view == "List" && (
-              <h1 className="font-bold text-base">{project?.name}</h1>
-            )} */}
 
                 <div className={`flex items-center justify-end flex-1`}>
                   <ul className="flex items-center">
@@ -210,47 +262,49 @@ const LayoutWrapper = ({
               }`}
             >
               <div className="flex flex-col h-full">
-                <div
-                  className={` ${
-                    project && view !== "List" ? "pb-4" : "pl-3.5 pb-2"
-                  } ${
-                    view == "Board" ? "mx-8" : view == "Calendar" && "mx-3"
-                  } ${!setView && "pt-8"}`}
-                >
-                  {project ? (
-                    modalState.editTitle ? (
-                      <input
-                        type="text"
-                        className="text-[26px] font-bold border border-text-300 w-full rounded-full p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300"
-                        value={projectTitle}
-                        onBlur={handleEditTitle}
-                        autoFocus
-                        onChange={(ev) => setProjectTitle(ev.target.value)}
-                        onKeyDown={(ev) =>
-                          ev.key === "Enter" && handleEditTitle()
-                        }
-                      />
+                {view == "List" && (
+                  <div
+                    className={`mt-4 ${
+                      project && view !== "List" ? "pb-4" : "pl-3.5 pb-2"
+                    } ${!setView && "pt-8"}`}
+                  >
+                    {project ? (
+                      modalState.editTitleInListView ? (
+                        <input
+                          type="text"
+                          className="text-[26px] font-bold border border-text-300 w-full rounded-full p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300"
+                          value={projectTitle}
+                          onBlur={handleEditTitle}
+                          autoFocus
+                          onChange={(ev) => setProjectTitle(ev.target.value)}
+                          onKeyDown={(ev) =>
+                            ev.key === "Enter" && handleEditTitle()
+                          }
+                        />
+                      ) : (
+                        <h1
+                          className="text-[26px] font-bold border border-transparent w-fit hover:w-full hover:border-text-200 rounded-full p-1 py-[14px] cursor-text"
+                          onClick={() =>
+                            toggleModal("editTitleInListView", true)
+                          }
+                        >
+                          {project.name}
+                        </h1>
+                      )
                     ) : (
                       <h1
-                        className="text-[26px] font-bold border border-transparent w-fit hover:w-full hover:border-text-200 rounded-full p-1 py-[14px] cursor-text"
-                        onClick={() => toggleModal("editTitle", true)}
+                        className={`text-[26px] font-bold p-1 py-[14px] ${
+                          (headline == "Filters & Labels" ||
+                            headline == "Upcoming") &&
+                          "mt-6"
+                        }`}
                       >
-                        {project.name}
+                        {headline}
                       </h1>
-                    )
-                  ) : (
-                    <h1
-                      className={`text-[26px] font-bold p-1 py-[14px] ${
-                        (headline == "Filters & Labels" ||
-                          headline == "Upcoming") &&
-                        "mt-6"
-                      }`}
-                    >
-                      {headline}
-                    </h1>
-                  )}
-                </div>
-                <div className={`flex-1 ${view == "List" && "pb-80"}`}>
+                    )}
+                  </div>
+                )}
+                <div className={`flex-1 ${view == "List" ? "pb-80" : "pt-4"}`}>
                   {children}
                 </div>
               </div>

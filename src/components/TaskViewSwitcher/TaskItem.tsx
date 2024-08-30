@@ -10,7 +10,7 @@ import {
 import TaskItemMoreDropdown from "./TaskItemMoreDropdown";
 import { Draggable } from "@hello-pangea/dnd";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
-import { Circle, CircleCheck, Ellipsis, User, Workflow } from "lucide-react";
+import { User, Workflow } from "lucide-react";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import AddTask from "../AddTask";
 import { debounce } from "lodash";

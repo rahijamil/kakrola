@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hcaptcha/react-hcaptcha": "^1.11.0",
     "@headlessui/react": "^2.1.2",
     "@hello-pangea/dnd": "^16.6.0",
     "@heroicons/react": "^2.1.5",

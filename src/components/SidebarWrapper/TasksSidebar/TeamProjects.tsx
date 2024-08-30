@@ -90,7 +90,7 @@ const TeamProjects = ({
         <div className="relative text-text-700 hover:bg-primary-50 rounded-full transition">
           <Link
             href={`/app/${team.id}`}
-            className={`w-full flex items-center justify-between pl-2 py-[6px] gap-1`}
+            className={`w-full flex items-center justify-between pl-2 py-[7px] gap-1`}
           >
             <div
               className={`flex items-center ${
@@ -129,7 +129,7 @@ const TeamProjects = ({
             </div>
           </Link>
 
-          <div className="opacity-0 group-hover:opacity-100 transition flex items-center absolute right-0 top-1/2 -translate-y-1/2">
+          <div className="opacity-0 group-hover:opacity-100 transition flex items-center absolute right-1 top-1/2 -translate-y-1/2">
             <button
               className="p-1 hover:bg-primary-100 rounded-full transition"
               onClick={() => setTeamId(team.id)}

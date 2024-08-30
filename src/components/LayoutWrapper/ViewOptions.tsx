@@ -54,55 +54,46 @@ const ViewOptions = React.memo(
             ref={triggerRef}
             className={`${
               isOpen ? "bg-text-50" : "hover:bg-text-100"
-            } transition px-3 p-1 pr-2 rounded-full cursor-pointer flex items-center gap-1`}
+            } transition px-3 p-1 pr-2 rounded-full cursor-pointer flex items-center gap-1 text-text-500`}
             onClick={onClick}
           >
             <SlidersHorizontal
               strokeWidth={1.5}
-              className="w-4 h-4 text-text-500"
+              className="w-4 h-4"
             />
-            <span className="hidden md:inline-block">View</span>
+            <span className="hidden md:inline-block">Filters</span>
           </button>
         )}
         content={
-          <div className="text-xs pb-2">
+          <div className="text-xs p-1">
             <div className="space-y-2">
-              {view && (
-                <LayoutView
-                  view={view}
-                  setView={setView}
-                  showHelper
-                  hideCalendarView={hideCalendarView}
-                />
-              )}
-
               <div
-              className="flex justify-between items-center hover:bg-text-100 transition cursor-pointer py-[6px] px-3 mx-1 rounded-2xl"
-              onClick={toggleShowCompletedTasks}
-            >
-              <div className="flex items-center gap-3">
-                <div
-                  className={`border w-5 h-5 rounded-full flex items-center justify-center ${
-                    showCompletedTasks
-                      ? "border-primary-600 bg-primary-500"
-                      : "border-text-400 bg-surface"
-                  }`}
-                >
-                  <Check
-                    strokeWidth={1.5}
-                    className={`w-[14px] h-[14px] transition ${
-                      showCompletedTasks ? "text-white" : "text-text-500"
+                className="flex justify-between items-center hover:bg-text-100 transition cursor-pointer py-[6px] px-3 rounded-2xl"
+                onClick={toggleShowCompletedTasks}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`border w-5 h-5 rounded-full flex items-center justify-center ${
+                      showCompletedTasks
+                        ? "border-primary-600 bg-primary-500"
+                        : "border-text-400 bg-surface"
                     }`}
-                  />
+                  >
+                    <Check
+                      strokeWidth={1.5}
+                      className={`w-[14px] h-[14px] transition ${
+                        showCompletedTasks ? "text-white" : "text-text-500"
+                      }`}
+                    />
+                  </div>
+                  <span>Completed tasks</span>
                 </div>
-                <span>Completed tasks</span>
-              </div>
 
-              <ToggleSwitch
-                checked={showCompletedTasks}
-                onCheckedChange={setShowCompletedTasks}
-              />
-            </div>
+                <ToggleSwitch
+                  checked={showCompletedTasks}
+                  onCheckedChange={setShowCompletedTasks}
+                />
+              </div>
             </div>
           </div>
         }

@@ -5,6 +5,7 @@ import {
   Brush,
   GraduationCap,
   Headset,
+  LucideIcon,
   LucideProps,
   Palette,
   Puzzle,
@@ -21,16 +22,15 @@ import {
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { ChartPieIcon } from "@heroicons/react/24/outline";
-import { useTemplateProvider } from "./TemplateContext";
 import Image from "next/image";
+import TemplateItem from "./TemplateItem";
+import useTemplates from "@/hooks/useTemplates";
 
 const categories: {
   id: number;
   name: string;
   path: string;
-  icon: React.ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
-  >;
+  icon: LucideIcon
 }[] = [
   {
     id: 1,
@@ -120,69 +120,21 @@ const categories: {
 
 const TemplatesPage = () => {
   const pathname = usePathname();
-  const { projects, sections, tasks } = useTemplateProvider();
+  const { templateProjects } = useTemplates();
 
   return (
-    <div>
+    <div className="wrapper">
       <header className="h-[53px] sticky top-0 bg-background z-10">
-        <div className="wrapper flex items-center h-full">
+        <div className="flex items-center h-full">
           <h2 className="font-semibold">My Templates</h2>
         </div>
       </header>
 
-      <div className="wrapper flex">
+      <div className="flex">
         <div className="flex-grow">
-          <div className="grid grid-cols-4 gap-8">
-            {projects.map((project) => (
-              <div
-                key={project.id}
-                className={`rounded-2xl overflow-hidden transition-all duration-150 border border-text-100 shadow-[1px_1px_8px_rgba(0,0,0,0.1)] hover:shadow-[2px_2px_16px_rgba(0,0,0,0.2)] cursor-pointer`}
-              >
-                <div
-                  className={`w-full aspect-video relative flex justify-center items-center bg-${
-                    project.color.split("-")[0]
-                  }-50`}
-                >
-                  {/* <Image src={project.preview_image} alt={project.name} fill /> */}
-
-                  <span
-                    className={`text-5xl rounded-full w-20 h-20 flex items-center justify-center bg-${
-                      project.color.split("-")[0]
-                    }-200 text-${project.color}`}
-                    style={{ fontFamily: "fantasy" }}
-                  >
-                    #
-                  </span>
-                </div>
-
-                <div className="p-4 space-y-4 border-t border-text-100">
-                  <h3 className="font-semibold">{project.name}</h3>
-                  <p className="text-text-500 text-xs">{project.description || "Template for managing the Kakrola project, including tasks for vision..."}</p>
-
-                  <div>
-                    <div className="flex items-center gap-1">
-                      {project.view == "List" ? (
-                        <>
-                          <SquareKanban
-                            size={20}
-                            strokeWidth={1.5}
-                            className="-rotate-90"
-                          />
-                          <span>List</span>
-                        </>
-                      ) : (
-                        project.view == "Board" && (
-                          <>
-                            <SquareKanban size={20} strokeWidth={1.5} />
-
-                            <span>Board</span>
-                          </>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <div className="flex gap-8">
+            {templateProjects.map((project) => (
+              <TemplateItem key={project.id} project={project} />
             ))}
           </div>
         </div>

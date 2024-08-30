@@ -160,6 +160,7 @@ const SectionMoreOptions = ({
             setShowDeleteConfirm(column);
             onClose();
           },
+          textColor: "text-red-600",
           icon: <Trash2 strokeWidth={1.5} size={16} />,
           className: "text-red-600",
         },

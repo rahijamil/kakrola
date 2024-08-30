@@ -8,14 +8,19 @@ import { cookies } from "next/headers";
 export async function login({
   email,
   password,
+  captchaToken,
 }: {
   email: string;
   password: string;
+  captchaToken: string;
 }) {
   const supabaseServer = createClient();
   const { error } = await supabaseServer.auth.signInWithPassword({
     email,
     password,
+    options: {
+      captchaToken,
+    },
   });
 
   if (error) {
@@ -29,14 +34,19 @@ export async function login({
 export async function signup({
   email,
   password,
+  captchaToken,
 }: {
   email: string;
   password: string;
+  captchaToken: string;
 }) {
   const supabaseServer = createClient();
   const { error, data } = await supabaseServer.auth.signUp({
     email,
     password,
+    options: {
+      captchaToken,
+    },
   });
 
   if (error) {
@@ -67,7 +77,7 @@ export async function signup({
   redirect("/confirmation");
 }
 
-export async function forgotPassword(email: string) {
+export async function forgotPassword(email: string, captchaToken: string) {
   const supabaseServer = createClient();
 
   // Check if email is exists
@@ -86,6 +96,7 @@ export async function forgotPassword(email: string) {
     email,
     {
       redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/update-password`,
+      captchaToken,
     }
   );
 

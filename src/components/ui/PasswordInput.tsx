@@ -5,6 +5,7 @@ import {
   EyeSlashIcon,
 } from "@heroicons/react/24/outline";
 import { Input } from "./input";
+import { generateSlug } from "@/utils/generateSlug";
 
 const PasswordInput = ({
   password,
@@ -27,7 +28,7 @@ const PasswordInput = ({
     setShowPassword(!showPassword);
   };
 
-  const id = label ? label.replace(/\s+/g, "") : "password";
+  const id = label ? generateSlug(label) : "password";
 
   return (
     <Input

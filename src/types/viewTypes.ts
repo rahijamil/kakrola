@@ -1,3 +1,3 @@
 export interface ViewTypes {
-  view: "List" | "Board" | Partial<"Calendar">;
+  view: "List" | "Board" | "Calendar" | "Dashboard";
 }

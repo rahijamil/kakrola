@@ -1,5 +1,5 @@
 "use client";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PasswordInput from "@/components/ui/PasswordInput";
@@ -10,10 +10,16 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import loginImage from "./login.png";
 import OnboardWrapper from "@/app/app/onboard/OnboardWrapper";
+import Hcaptcha from "./Hcaptcha";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 interface AuthFormProps {
   type: "signup" | "login" | "forgotPassword" | "updatePassword";
-  onSubmit: (data: { email: string; password: string }) => Promise<{
+  onSubmit: (data: {
+    email: string;
+    password: string;
+    captchaToken: string;
+  }) => Promise<{
     success: boolean;
     error: string;
   }>;
@@ -46,6 +52,14 @@ const AuthForm: React.FC<AuthFormProps> = ({
   const [error, setError] = useState<ReactNode | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Hcaptcha
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captcha = useRef<HCaptcha | null>(null);
+
+  const handleVerify = (token: string) => {
+    setCaptchaToken(token);
+  };
 
   const router = useRouter();
 
@@ -90,6 +104,12 @@ const AuthForm: React.FC<AuthFormProps> = ({
     setError(null);
     setMessage(null);
     setLoading(true);
+
+    if (!captchaToken) {
+      setError("Please complete the hCaptcha");
+      setLoading(false);
+      return;
+    }
 
     // Basic validation
     if (!email && type !== "updatePassword") {
@@ -148,7 +168,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
     }
 
     try {
-      const result = await onSubmit({ email, password });
+      const result = await onSubmit({ email, password, captchaToken });
 
       if (result?.error) {
         setError(result?.error);
@@ -171,6 +191,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
       );
     } finally {
       setLoading(false);
+      captcha.current?.resetCaptcha();
     }
   };
 
@@ -270,6 +291,10 @@ const AuthForm: React.FC<AuthFormProps> = ({
                   </div>
                 </>
               )}
+            </div>
+
+            <div className="flex items-center justify-center">
+              <Hcaptcha ref={captcha} onVerify={handleVerify} />
             </div>
 
             {message !== "Password reset link has been sent to your email." && (

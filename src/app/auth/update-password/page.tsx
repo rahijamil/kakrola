@@ -7,7 +7,7 @@ const UpdatePassword = () => {
   return (
     <AuthForm
       type="updatePassword"
-      onSubmit={async ({ password }) => {
+      onSubmit={async ({ password, captchaToken }) => {
         if (!password) {
           throw new Error("Please enter your password.");
         }

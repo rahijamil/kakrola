@@ -47,15 +47,17 @@ const Step1CreateProfile = () => {
         return;
       }
 
-      const { error } = await supabaseBrowser
-        .from("profiles")
-        .update({
-          full_name: name.trim(),
-        })
-        .eq("id", profile?.id);
+      if (profile?.full_name !== name.trim()) {
+        const { error } = await supabaseBrowser
+          .from("profiles")
+          .update({
+            full_name: name.trim(),
+          })
+          .eq("id", profile?.id);
 
-      if (error) {
-        throw error;
+        if (error) {
+          throw error;
+        }
       }
 
       if (useWithTeam) {

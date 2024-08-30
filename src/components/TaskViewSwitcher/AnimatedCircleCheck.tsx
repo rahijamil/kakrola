@@ -7,11 +7,13 @@ const AnimatedTaskCheckbox = ({
   is_completed,
   handleCheckSubmit,
   playSound = true,
+  disabled,
 }: {
   priority: TaskType["priority"];
   is_completed: boolean;
   handleCheckSubmit: () => void;
   playSound?: boolean;
+  disabled?: boolean;
 }) => {
   const [isChecked, setIsChecked] = useState(is_completed);
 
@@ -21,11 +23,14 @@ const AnimatedTaskCheckbox = ({
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsChecked(!isChecked);
-    if (playSound && !isChecked) {
-      new Audio("/sounds/done.wav").play();
+
+    if (!disabled) {
+      setIsChecked(!isChecked);
+      if (playSound && !isChecked) {
+        new Audio("/sounds/done.wav").play();
+      }
+      handleCheckSubmit();
     }
-    handleCheckSubmit();
   };
 
   const getColor = () => {
@@ -46,7 +51,7 @@ const AnimatedTaskCheckbox = ({
         return {
           hex: "var(--color-primary-500)",
           class1: "bg-primary-500",
-          class2: "bg-primary-50"
+          class2: "bg-primary-50",
         };
       default:
         return {
@@ -89,9 +94,9 @@ const AnimatedTaskCheckbox = ({
           strokeLinecap="round"
           strokeLinejoin="round"
           initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ 
+          animate={{
             pathLength: isChecked ? 1 : 0,
-            opacity: isChecked ? 1 : 0
+            opacity: isChecked ? 1 : 0,
           }}
           transition={{ duration: 0.3, ease: "easeOut" }}
         />

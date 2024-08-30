@@ -78,7 +78,7 @@ const ProjectItem = ({
     <li>
       <div
         ref={moreRef}
-        className={`relative sidebar_project_item flex-1 flex items-center justify-between transition-colors rounded-full text-text-900 ${
+        className={`sidebar_project_item flex-1 flex items-center justify-between transition-colors rounded-full text-text-900 ${
           isDragging
             ? "bg-surface shadow-[0_0_8px_1px_rgba(0,0,0,0.2)]"
             : pathname === `/app/project/${project.slug}`
@@ -94,7 +94,7 @@ const ProjectItem = ({
           <div className="flex items-center">
             <div className="p-2">
               <Hash
-                className={`w-4 h-4 text-${project.color}`}
+                className={`w-4 h-4 text-${project.settings.color}`}
                 strokeWidth={1.5}
               />
             </div>
@@ -102,8 +102,8 @@ const ProjectItem = ({
           </div>
         </Link>
 
-        <div className="absolute right-0 top-1/2 -translate-y-1/2">
-          <div className="relative w-7 h-7 flex items-center justify-center">
+        <div className="relative mr-1">
+          <div className="w-7 h-7 flex items-center justify-center">
             {tasks.filter((task) => task.project_id == project.id).length >
               0 && (
               <p className="text-text-500">
@@ -111,40 +111,21 @@ const ProjectItem = ({
               </p>
             )}
 
-            <div
-              onClick={(ev) => {
-                ev.stopPropagation();
-                setShowProjectMoreDropdown(true);
+            <SidebarProjectMoreOptions
+              project={project}
+              stateActions={{
+                setShowDeleteConfirm,
+                setShowArchiveConfirm,
+                setShowCommentOrActivity,
+                setExportAsCSV,
+                setImportFromCSV,
+                setProjectEdit,
+                setAboveBellow,
               }}
-              className={`flex items-center justify-center absolute left-0 top-0 right-0 bottom-0 z-10 cursor-pointer ${
-                (pathname === `/app/project/${project.slug}`)
-                  ? "bg-primary-100"
-                  : "bg-primary-100"
-              } hover:bg-primary-200 rounded-full sidebar_project_item_options w-7 h-7 ${!showProjectMoreDropdown && "opacity-0"}`}
-            >
-              <Ellipsis className="w-5 h-5 text-text-700" strokeWidth={1.5} />
-            </div>
+            />
           </div>
         </div>
       </div>
-
-      {showProjectMoreDropdown && (
-        <SidebarProjectMoreOptions
-          onClose={() => setShowProjectMoreDropdown(false)}
-          project={project}
-          dropdownPosition={dropdownPosition}
-          dropdownRef={dropdownRef}
-          stateActions={{
-            setShowDeleteConfirm,
-            setShowArchiveConfirm,
-            setShowCommentOrActivity,
-            setExportAsCSV,
-            setImportFromCSV,
-            setProjectEdit,
-            setAboveBellow,
-          }}
-        />
-      )}
 
       {showDeleteConfirm && (
         <ProjectDeleteConfirm

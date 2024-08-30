@@ -4,6 +4,7 @@ import ListView from "./ListView";
 import BoardView from "./BoardView";
 import CalendarView from "./CalendarView";
 import { ViewTypes } from "@/types/viewTypes";
+import DashboardView from "./DashboardView";
 
 interface TaskViewSwitcherProps {
   project: ProjectType | null;
@@ -106,6 +107,8 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
           setShowNoDateTasks={setShowNoDateTasks}
         />
       );
+    case "Dashboard":
+      return <DashboardView tasks={tasks} sections={sections} />;
     default:
       return <div>Invalid view selected</div>;
   }

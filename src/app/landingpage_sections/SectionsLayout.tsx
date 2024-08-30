@@ -2,12 +2,12 @@ import {
   CalendarCheck2,
   CheckCircle,
   Lightbulb,
+  LucideIcon,
   LucideProps,
   Users,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { ForwardRefExoticComponent, RefAttributes } from "react";
 
 const sections: {
   id: string;
@@ -15,7 +15,7 @@ const sections: {
   content: string;
   imgSrc?: string;
   video?: string;
-  icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
+  icon: LucideIcon;
 }[] = [
   {
     id: "section1",

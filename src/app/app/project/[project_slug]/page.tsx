@@ -114,7 +114,7 @@ const ProjectDetails = ({
 
       const { error } = await supabaseBrowser
         .from("projects")
-        .update({ view })
+        .update({ settings: { ...currentProject?.settings, view } })
         .eq("id", currentProject?.id);
 
       if (error) console.log(error);
@@ -152,7 +152,7 @@ const ProjectDetails = ({
     return (
       <LayoutWrapper
         headline={currentProject.name}
-        view={currentProject.view}
+        view={currentProject.settings.view}
         setView={updateProjectView}
         project={currentProject}
         showShareOption={showShareOption}
@@ -167,35 +167,36 @@ const ProjectDetails = ({
           setTasks={setProjectTasks}
           sections={projectSections}
           setSections={setProjectSections}
-          view={currentProject.view}
+          view={currentProject.settings.view}
           showShareOption={showShareOption}
           setShowShareOption={setShowShareOption}
           showNoDateTasks={showNoDateTasks}
           setShowNoDateTasks={setShowNoDateTasks}
         />
 
-        {projectTasks.length === 0 && currentProject.view === "List" && (
-          <div className="flex items-center justify-center flex-col gap-1 h-[30vh] select-none">
-            <Image
-              src="/project.png"
-              width={220}
-              height={200}
-              alt="Empty project"
-              className="rounded-full object-cover"
-              draggable={false}
-            />
+        {projectTasks.length === 0 &&
+          currentProject.settings.view === "List" && (
+            <div className="flex items-center justify-center flex-col gap-1 h-[30vh] select-none">
+              <Image
+                src="/project.png"
+                width={220}
+                height={200}
+                alt="Empty project"
+                className="rounded-full object-cover"
+                draggable={false}
+              />
 
-            <div className="text-center space-y-1 w-72">
-              <h3 className="font-medium text-base">
-                Start small (or dream big)...
-              </h3>
-              <p className="text-sm text-text-600">
-                Add your tasks or find a template to get started with your
-                project.
-              </p>
+              <div className="text-center space-y-1 w-72">
+                <h3 className="font-medium text-base">
+                  Start small (or dream big)...
+                </h3>
+                <p className="text-sm text-text-600">
+                  Add your tasks or find a template to get started with your
+                  project.
+                </p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </LayoutWrapper>
     );
   } else {

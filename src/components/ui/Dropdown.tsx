@@ -4,7 +4,6 @@ import {
   useEffect,
   useRef,
   ReactNode,
-  LegacyRef,
   Dispatch,
   SetStateAction,
   RefObject,
@@ -21,7 +20,10 @@ interface DropdownProps {
     className?: string;
     content?: ReactNode;
     textColor?: string;
+    disabled?: boolean;
+    rightContent?: ReactNode;
   }[];
+  autoClose?: boolean;
   content?: ReactNode;
   contentWidthClass?: string;
   className?: string;
@@ -43,6 +45,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   setIsOpen,
   triggerRef,
   direction = "top-right",
+  autoClose = true,
 }) => {
   const [position, setPosition] = useState<{
     top: string;
@@ -181,14 +184,17 @@ const Dropdown: React.FC<DropdownProps> = ({
                     onClick={() => {
                       if (item.onClick && !item.content) {
                         item.onClick();
-                        setIsOpen(false);
+                        if (autoClose) {
+                          setIsOpen(false);
+                        }
                       } else if (item.content) {
                         toggleContent();
                       }
                     }}
-                    className={`w-full text-left px-4 py-1.5 hover:bg-text-100 transition flex items-center justify-between rounded-2xl ${
+                    className={`w-full text-left px-4 py-1.5 hover:bg-text-100 transition flex items-center justify-between rounded-2xl disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent ${
                       item.className
                     } ${item.textColor ? item.textColor : "text-text-700"}`}
+                    disabled={item.disabled}
                   >
                     <div className="flex items-center gap-4">
                       {item.icon} {item.label}
@@ -204,6 +210,8 @@ const Dropdown: React.FC<DropdownProps> = ({
                         <ChevronDown strokeWidth={1.5} className="w-4 h-4" />
                       </div>
                     )}
+
+                    {item.rightContent}
                   </button>
 
                   {item.content && showContent && (

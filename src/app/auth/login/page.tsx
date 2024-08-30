@@ -11,12 +11,12 @@ const SocialLogin = dynamic(() => import("../SocialLogin"), { ssr: false });
 const LoginPage = () => (
   <AuthForm
     type="login"
-    onSubmit={async ({ email, password }) => {
+    onSubmit={async ({ email, password, captchaToken }) => {
       "use server";
       if (!password) {
         throw new Error("Password is required for log in.");
       }
-      return await login({ email, password });
+      return await login({ email, password, captchaToken });
     }}
     socialButtons={<SocialLogin />}
     additionalFooter={

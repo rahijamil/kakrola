@@ -1,21 +1,30 @@
-import React, { Dispatch, RefObject, SetStateAction } from "react";
-import { ArrowDown, ArrowUp, Heart, HeartOffIcon, Pencil } from "lucide-react";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import React, { Dispatch, RefObject, SetStateAction, useRef } from "react";
+import {
+  Archive,
+  ArrowDown,
+  ArrowDownToLine,
+  ArrowUp,
+  ArrowUpFromLine,
+  Ellipsis,
+  Heart,
+  HeartOff,
+  HeartOffIcon,
+  Link,
+  Logs,
+  Pencil,
+  Trash2,
+  UserPlus,
+} from "lucide-react";
 import { ProjectType } from "@/types/project";
 import DeleteOption from "./DeleteOption";
 import ArchiveOption from "./ArchiveOption";
-import ActivityLogOption from "./ActivityLogOption";
-import ExportCSVOption from "./ExportCSVOption";
-import ImportCSVOption from "./ImportCSVOption";
 import CopyProjectLinkOption from "./CopyProjectLinkOption";
-import { supabaseBrowser } from "@/utils/supabase/client";
-import FavoriteOption from "./FavoriteOption";
+import Dropdown from "@/components/ui/Dropdown";
+import { usePathname } from "next/navigation";
+import useFavorite from "@/hooks/useFavorite";
 
 const SidebarProjectMoreOptions = ({
-  onClose,
   project,
-  dropdownRef,
-  dropdownPosition,
   stateActions: {
     setShowDeleteConfirm,
     setShowArchiveConfirm,
@@ -26,13 +35,7 @@ const SidebarProjectMoreOptions = ({
     setAboveBellow,
   },
 }: {
-  onClose: () => void;
   project: ProjectType;
-  dropdownRef: RefObject<HTMLDivElement>;
-  dropdownPosition: {
-    top: number;
-    left: number;
-  };
   stateActions: {
     setShowDeleteConfirm: Dispatch<SetStateAction<boolean>>;
     setShowArchiveConfirm: Dispatch<SetStateAction<boolean>>;
@@ -45,113 +48,138 @@ const SidebarProjectMoreOptions = ({
     setAboveBellow: Dispatch<SetStateAction<"above" | "below" | null>>;
   };
 }) => {
-  return (
-    <div>
-      <div
-        ref={dropdownRef}
-        className="fixed z-20 w-60 bg-surface rounded-2xl shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] border border-text-200 py-1"
-        style={{
-          top: `${dropdownPosition.top}px`,
-          left: `${dropdownPosition.left}px`,
-        }}
-      >
-        <div>
-          <button
-            onClick={() => {
-              setAboveBellow("above");
-              onClose();
-            }}
-            className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center"
-          >
-            <ArrowUp strokeWidth={1.5} className="w-4 h-4 mr-2" /> Add project
-            above
-          </button>
-          <button
-            onClick={() => {
-              setAboveBellow("below");
-              onClose();
-            }}
-            className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center"
-          >
-            <ArrowDown strokeWidth={1.5} className="w-4 h-4 mr-2" /> Add project
-            below
-          </button>
-        </div>
-        <div className="h-[1px] bg-text-200 my-1"></div>
-        <div>
-          <button
-            onClick={() => {
-              setProjectEdit(true);
-              onClose();
-            }}
-            className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center"
-          >
-            <Pencil strokeWidth={1.5} className="w-4 h-4 mr-2" /> Edit
-          </button>
-          <FavoriteOption project={project} />
-          {/* <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center">
-            <CopyPlusIcon className="w-4 h-4 mr-2" /> Duplicate
-          </button> */}
-        </div>
-        <div className="h-[1px] bg-text-200 my-1"></div>
-        {/* <div>
-          <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center">
-            <UserPlusIcon className="w-4 h-4 mr-2" /> Share
-          </button>
-        </div>
-        <div className="h-[1px] bg-text-200 my-1"></div> */}
-        <div>
-          <CopyProjectLinkOption
-            onClose={onClose}
-            project_slug={project.slug}
-          />
-        </div>
-        {/* <div className="h-[1px] bg-text-200 my-1"></div>
-        <div>
-          <ImportCSVOption
-            onClick={() => {
-              setImportFromCSV(true);
-              onClose();
-            }}
-          />
-          <ExportCSVOption
-            onClick={() => {
-              setExportAsCSV(true);
-              onClose();
-            }}
-          />
-        </div>
-        <div className="h-[1px] bg-text-200 my-1"></div>
-        <div>
-          <ActivityLogOption
-            onClick={() => {
-              setShowCommentOrActivity("activity");
-              onClose();
-            }}
-          />
-        </div>
-        <div className="h-[1px] bg-text-200 my-1"></div> */}
-        <div>
-          <ArchiveOption
-            onClick={() => {
-              setShowArchiveConfirm(true);
-              onClose();
-            }}
-          />
-          <DeleteOption
-            onClick={() => {
-              setShowDeleteConfirm(true);
-              onClose();
-            }}
-          />
-        </div>
-      </div>
+  const triggerRef = useRef(null);
+  const [isOpen, setIsOpen] = React.useState(false);
 
-      <div
-        className="fixed top-0 left-0 bottom-0 right-0 z-10"
-        onClick={onClose}
-      ></div>
-    </div>
+  const pathname = usePathname();
+
+  const { handleFavorite } = useFavorite({ project });
+
+  const handleCopyProjectLink = () => {
+    navigator.clipboard.writeText(`https://ekta.com/project/${project.slug}`);
+  };
+
+  return (
+    <Dropdown
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      triggerRef={triggerRef}
+      Label={({ onClick }) => (
+        <div
+          ref={triggerRef}
+          onClick={(ev) => {
+            ev.stopPropagation();
+            onClick();
+          }}
+          className={`flex items-center justify-center absolute inset-0 z-10 cursor-pointer ${
+            pathname === `/app/project/${project.slug}`
+              ? "bg-primary-200"
+              : "bg-primary-100"
+          } hover:bg-primary-200 rounded-full sidebar_project_item_options w-7 h-7 ${
+            isOpen ? "bg-primary-200" : "opacity-0"
+          }`}
+        >
+          <Ellipsis className="w-5 h-5 text-text-700" strokeWidth={1.5} />
+        </div>
+      )}
+      items={[
+        {
+          id: 1,
+          label: "Add project above",
+          icon: <ArrowUp strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setAboveBellow("above");
+          },
+        },
+        {
+          id: 2,
+          label: "Add project below",
+          icon: <ArrowUp strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setAboveBellow("below");
+          },
+          divide: true,
+        },
+        {
+          id: 3,
+          label: "Edit",
+          icon: <Pencil strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setProjectEdit(true);
+          },
+        },
+        {
+          id: 4,
+          label: project.is_favorite
+            ? "Remove from favorites"
+            : "Add to favorites",
+          icon: project.is_favorite ? (
+            <HeartOff className="w-4 h-4" />
+          ) : (
+            <Heart strokeWidth={1.5} className="w-4 h-4" />
+          ),
+          onClick: handleFavorite,
+          divide: true,
+        },
+        {
+          id: 65,
+          label: "Share",
+          icon: <UserPlus strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {},
+          divide: true,
+        },
+        {
+          id: 6,
+          label: "Copy project link",
+          icon: <Link strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: handleCopyProjectLink,
+          divide: true,
+        },
+        {
+          id: 7,
+          label: "Import from CSV",
+          icon: <ArrowDownToLine strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setImportFromCSV(true);
+          },
+        },
+        {
+          id: 8,
+          label: "Export as CSV",
+          icon: <ArrowUpFromLine strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setExportAsCSV(true);
+          },
+          divide: true,
+        },
+        {
+          id: 9,
+          label: "Activity log",
+          icon: <Logs strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setShowCommentOrActivity("activity");
+          },
+          divide: true,
+        },
+        {
+          id: 10,
+          label: "Archive",
+          icon: <Archive strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setShowArchiveConfirm(true);
+          },
+        },
+        {
+          id: 11,
+          label: "Delete",
+          textColor: "text-red-600",
+          icon: <Trash2 strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setShowDeleteConfirm(true);
+          },
+        },
+      ]}
+    />
   );
 };
 

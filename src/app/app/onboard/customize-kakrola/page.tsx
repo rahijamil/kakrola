@@ -5,19 +5,32 @@ import { Button } from "@/components/ui/button";
 import customizeKakrolaImage from "./customize_kakrola.png";
 import { useRouter } from "next/navigation";
 import CustomSelect from "@/components/ui/CustomSelect";
-import { roleOptions, WorkRole } from "@/types/team";
+import { roleOptions } from "@/types/team";
 import Image from "next/image";
+import { useOnboard } from "@/context/OnboardContext";
+import Spinner from "@/components/ui/Spinner";
 
 const Step2CustomizeKakrola = () => {
   const router = useRouter();
-  const [work_role, setWorkRole] = useState<{
-    label: string;
-    value: WorkRole;
-  } | null>(null);
+  const {
+    dispatch,
+    state: { work_role },
+  } = useOnboard();
+
+  const handleRoleChange = ({ target: { value, label } }: any) => {
+    dispatch({
+      type: "SET_WORK_ROLE",
+      payload: { value, label },
+    });
+  };
+
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = () => {
+    setLoading(true);
     router.push("/app/onboard/create-workspace");
   };
+
   return (
     <OnboardWrapper
       leftSide={
@@ -33,15 +46,17 @@ const Step2CustomizeKakrola = () => {
                 label="Your role"
                 placeholder="Select an option"
                 options={roleOptions}
-                onChange={({ target: { value, label } }) =>
-                  setWorkRole({ value: value as WorkRole, label: label! })
-                }
+                onChange={handleRoleChange}
                 value={work_role?.value}
               />
             </div>
 
-            <Button onClick={handleSubmit} disabled={false} fullWidth>
-              Continue
+            <Button
+              onClick={handleSubmit}
+              disabled={!work_role || loading}
+              fullWidth
+            >
+              {loading ? <Spinner color="white" /> : "Continue"}
             </Button>
 
             <p className="text-xs text-text-500">

@@ -1,29 +1,41 @@
 import { ViewTypes } from "@/types/viewTypes";
-import { CalendarDays, CircleHelp, SquareKanban } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronDown,
+  LayoutDashboard,
+  SquareKanban,
+} from "lucide-react";
 import Image from "next/image";
-import React from "react";
+import React, { useRef, useState } from "react";
+import Dropdown from "./ui/Dropdown";
+import AnimatedTaskCheckbox from "./TaskViewSwitcher/AnimatedCircleCheck";
+import { supabaseBrowser } from "@/utils/supabase/client";
+import { ProjectType } from "@/types/project";
 
-const views: {
+const allViews: {
   id: number;
   name: ViewTypes["view"];
   icon: React.JSX.Element;
+  visible: boolean;
 }[] = [
   {
     id: 1,
     name: "List",
-    icon: <SquareKanban size={24} strokeWidth={1.5} className="-rotate-90" />,
+    icon: <SquareKanban size={16} strokeWidth={1.5} className="-rotate-90" />,
+    visible: true, // List is always visible
   },
   {
     id: 2,
     name: "Board",
-    icon: <SquareKanban size={24} strokeWidth={1.5} />,
+    icon: <SquareKanban size={16} strokeWidth={1.5} />,
+    visible: true,
   },
   {
     id: 3,
     name: "Calendar",
     icon: (
       <div className="relative">
-        <CalendarDays strokeWidth={1.5} size={24} />
+        <CalendarDays strokeWidth={1.5} size={16} />
         {/* <Image
           src="/ProIcon.svg"
           width={12}
@@ -33,6 +45,13 @@ const views: {
         /> */}
       </div>
     ),
+    visible: false,
+  },
+  {
+    id: 4,
+    name: "Dashboard",
+    icon: <LayoutDashboard size={16} strokeWidth={1.5} />,
+    visible: false,
   },
 ];
 
@@ -41,42 +60,115 @@ const LayoutView = ({
   setView,
   showHelper,
   hideCalendarView,
+  project,
 }: {
   view: ViewTypes["view"];
   setView: (v: ViewTypes["view"]) => void;
   showHelper?: boolean;
   hideCalendarView?: boolean;
+  project: ProjectType;
 }) => {
-  return (
-    <div className="px-2 pt-2 space-y-2">
-      <div className="flex items-center justify-between gap-8 font-bold">
-        <h5 className="font-bold">View</h5>
-        {showHelper && (
-          <CircleHelp strokeWidth={1.5} className="w-5 h-5 text-text-500" />
-        )}
-      </div>
+  const [views, setViews] = useState(
+    allViews.map((v) => ({
+      ...v,
+      visible:
+        v.name === "List" || project.settings.selected_views.includes(v.name), // Ensure List is always visible
+    }))
+  );
 
-      <div>
-        <ul className="bg-text-50 text-text-700 rounded-2xl overflow-hidden flex items-center gap-1 p-1">
-          {views.map(
+  const triggerRef = useRef(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleSelectedViews = async (v: {
+    id: number;
+    name: ViewTypes["view"];
+  }) => {
+    // Prevent toggling the "List" view
+    if (v.name === "List") return;
+
+    try {
+      // Toggle visibility of the view
+      const data = views.map((old) =>
+        old.id === v.id ? { ...old, visible: !old.visible } : old
+      );
+      setViews(data);
+
+      // Update selected views, always include "List"
+      const updatedSelectedViews = data
+        .filter((view) => view.visible || view.name === "List")
+        .map((view) => view.name);
+
+      const { error } = await supabaseBrowser
+        .from("projects")
+        .update({
+          settings: {
+            ...project.settings,
+            selected_views: updatedSelectedViews,
+          },
+        })
+        .eq("id", project.id);
+
+      if (error) throw error;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-1">
+      <ul className="flex items-center gap-1">
+        {views
+          .filter((v) => v.visible)
+          .map(
             (v) =>
               !(v.name === "Calendar" && hideCalendarView) && (
                 <li
                   key={v.id}
-                  className={`flex flex-col items-center justify-center gap-1 py-1 rounded-2xl cursor-pointer flex-1 transition border ${
-                    v.name === view
-                      ? "bg-surface border-text-200"
-                      : "hover:bg-text-100 border-transparent"
+                  className={`flex items-center justify-center gap-1 rounded-2xl cursor-pointer flex-1 transition px-3 p-1 pr-2 text-text-500 ${
+                    v.name === view ? "bg-text-100" : "hover:bg-text-100"
                   }`}
                   onClick={() => setView(v.name)}
                 >
                   {v.icon}
-                  <span className="text-xs">{v.name}</span>
+                  <span className="">{v.name}</span>
                 </li>
               )
           )}
-        </ul>
-      </div>
+      </ul>
+
+      <Dropdown
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        triggerRef={triggerRef}
+        Label={({ onClick }) => (
+          <div
+            ref={triggerRef}
+            className={`rounded-full cursor-pointer transition p-1.5 text-text-500 ${
+              "" ? "bg-text-100" : "hover:bg-text-100"
+            }`}
+            onClick={onClick}
+          >
+            <ChevronDown size={16} />
+          </div>
+        )}
+        items={views.map((v) => ({
+          id: v.id,
+          label: v.name,
+          icon: v.icon,
+          disabled: v.name === "List", // List view is disabled
+          onClick: () => handleSelectedViews(v),
+          rightContent: (
+            <AnimatedTaskCheckbox
+              priority={v.name === "List" ? "Priority" : "P3"}
+              playSound={false}
+              handleCheckSubmit={() => handleSelectedViews(v)}
+              is_completed={v.visible}
+              disabled={v.name === "List"}
+            />
+          ),
+        }))}
+        autoClose={false}
+      />
     </div>
   );
 };

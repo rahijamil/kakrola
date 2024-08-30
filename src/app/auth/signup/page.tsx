@@ -7,13 +7,13 @@ import Link from "next/link";
 const SignUpPage = () => (
   <AuthForm
     type="signup"
-    onSubmit={async ({ email, password }) => {
+    onSubmit={async ({ email, password, captchaToken }) => {
       "use server";
       if (!password) {
         throw new Error("Password is required for sign up.");
       }
 
-      return await signup({ email, password });
+      return await signup({ email, password, captchaToken });
     }}
     socialButtons={<SocialLogin />}
     additionalFooter={

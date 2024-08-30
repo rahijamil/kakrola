@@ -5,6 +5,7 @@ import Spinner from "@/components/ui/Spinner";
 import { ToggleSwitch } from "@/components/ui/ToggleSwitch";
 import { useAuthProvider } from "@/context/AuthContext";
 import { TaskLabelType } from "@/types/project";
+import { generateSlug } from "@/utils/generateSlug";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { Tag, X } from "lucide-react";
 import React, { useState } from "react";
@@ -63,7 +64,7 @@ const AddLabelModal = ({ onClose }: { onClose: () => void }) => {
       onClick={onClose}
     >
       <div
-        className="bg-surface rounded-full shadow-xl w-full max-w-md mx-4"
+        className="bg-surface rounded-2xl shadow-xl w-full max-w-md mx-4"
         onClick={(ev) => ev.stopPropagation()}
       >
         <div className="flex justify-between items-center p-4 border-b border-text-200">
@@ -88,9 +89,7 @@ const AddLabelModal = ({ onClose }: { onClose: () => void }) => {
                 setLabelData({
                   ...labelData,
                   name: ev.target.value,
-                  slug: `${ev.target.value
-                    .replace(/\s+/g, "-")
-                    .toLowerCase()}-${Date.now()}`,
+                  slug: generateSlug(ev.target.value),
                 });
               }}
               placeholder="Label name"

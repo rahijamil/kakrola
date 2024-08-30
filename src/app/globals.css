@@ -12,18 +12,20 @@
     @apply bg-background text-sm text-text-900;
   }
   .wrapper {
-    @apply w-11/12 lg:w-full max-w-7xl mx-auto;
+    @apply w-11/12 max-w-7xl mx-auto;
   }
   .sidebar_project_item:hover .sidebar_project_item_options,
   .taskitem_group:hover .taskitem_group_hover {
     @apply opacity-100;
   }
 
-  #scrollable {
+  #scrollable,
+  .onboard_scrollbar {
     scrollbar-width: 0;
     -ms-overflow-style: none;
   }
-  #scrollable::-webkit-scrollbar {
+  #scrollable::-webkit-scrollbar,
+  .onboard_scrollbar::-webkit-scrollbar {
     display: none;
   }
 

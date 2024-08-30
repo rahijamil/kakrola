@@ -19,10 +19,10 @@ const ShareOption = () => {
           ref={triggerRef}
           className={`${
             isOpen ? "bg-text-100" : "hover:bg-text-100"
-          } transition p-1 px-3 pr-2 rounded-full cursor-pointer flex items-center gap-1`}
+          } transition p-1 px-3 pr-2 rounded-full cursor-pointer flex items-center gap-1 text-text-500`}
           onClick={onClick}
         >
-          <UserPlus strokeWidth={1.5} className="w-4 h-4 text-text-500" />
+          <UserPlus strokeWidth={1.5} className="w-4 h-4" />
           <span className="hidden md:inline-block">Share</span>
         </button>
       )}
@@ -35,12 +35,14 @@ const ShareOption = () => {
             howBig="sm"
           />
           <div className="flex flex-col items-center justify-center gap-6 py-7">
-            <Image
-              src="/images/collaboration.png"
-              alt="Collaborate with friends and family"
-              width={200}
-              height={200}
-            />
+            <div className="w-52 h-52 flex items-center justify-center">
+              <Image
+                src="/images/collaboration.png"
+                alt="Collaborate with friends and family"
+                width={180}
+                height={180}
+              />
+            </div>
             <div className="space-y-3">
               <div className="text-center space-y-1 text-text-700">
                 <h3 className="text-base font-bold">

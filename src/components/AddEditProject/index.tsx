@@ -11,8 +11,8 @@ import Spinner from "../ui/Spinner";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import WorkspaceSelector from "./WorkspaceSelector";
-import CustomSelect from "../ui/CustomSelect";
 import ColorSelector from "./ColorSelector";
+import { generateSlug } from "@/utils/generateSlug";
 
 const AddEditProject = ({
   workspaceId,
@@ -37,9 +37,12 @@ const AddEditProject = ({
           profile_id: profile?.id || "",
           name: "",
           slug: "",
-          color: "gray-500",
           is_favorite: false,
-          view: "List",
+          settings: {
+            color: "gray-500",
+            view: "List",
+            selected_views: ["List"],
+          },
           updated_at: new Date().toISOString(),
           order: Math.max(...projects.map((p) => p.order), 0) + 1,
           is_archived: false,
@@ -62,7 +65,7 @@ const AddEditProject = ({
 
     if (project?.id) {
       const data: Partial<ProjectType> = {};
-      const fields = ["name", "color", "is_favorite", "view"] as const;
+      const fields = ["name", "is_favorite"] as const;
 
       fields.forEach((field) => {
         if (projectData[field] !== project[field]) {
@@ -241,10 +244,7 @@ const AddEditProject = ({
                 setProjectData({
                   ...projectData,
                   name: e.target.value,
-                  slug: `${e.target.value
-                    .replace(/\s+/g, "-")
-                    .replace(/[^\w-]+/g, "")
-                    .toLowerCase()}-${Date.now()}`,
+                  slug: generateSlug(e.target.value),
                 })
               }
               required
@@ -256,8 +256,13 @@ const AddEditProject = ({
             />
 
             <ColorSelector
-              value={projectData.color}
-              onChange={(color) => setProjectData({ ...projectData, color })}
+              value={projectData.settings.color}
+              onChange={(color) =>
+                setProjectData({
+                  ...projectData,
+                  settings: { ...projectData.settings, color },
+                })
+              }
             />
 
             <WorkspaceSelector
@@ -295,9 +300,12 @@ const AddEditProject = ({
 
             <div className="space-y-2 pt-3">
               <LayoutView
-                view={projectData.view}
+                view={projectData.settings.view}
                 setView={(value) =>
-                  setProjectData({ ...projectData, view: value })
+                  setProjectData({
+                    ...projectData,
+                    settings: { ...projectData.settings, view: value },
+                  })
                 }
               />
               <p className="text-text-500 text-xs">

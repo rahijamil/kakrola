@@ -67,12 +67,13 @@ export const roleOptions = [
 
 export const industryOptions = Object.values(Industry).map((value) => ({
   value,
-  label: value.charAt(0).toUpperCase() + value.slice(1).replace("_", " "),
+  // replace globaly used underscores with spaces
+  label: value.charAt(0).toUpperCase() + value.slice(1).replaceAll("_", " "),
 }));
 
 export const workTypeOptions = Object.values(WorkType).map((value) => ({
   value,
-  label: value.charAt(0).toUpperCase() + value.slice(1).replace("_", " "),
+  label: value.charAt(0).toUpperCase() + value.slice(1).replaceAll("_", " "),
 }));
 
 export const organizationSizeOptions = Object.values(OrganizationSize).map(
@@ -111,7 +112,7 @@ export interface BaseTeamType {
   avatar_url: string | null;
   profile_id: string;
   updated_at: string;
-  created_at: string;
+  created_at?: string;
 }
 
 // Team type
@@ -130,4 +131,16 @@ export interface TeamMemberType {
   profile_id: string; // UUID
   team_role: TeamRole;
   joined_at: string;
+}
+
+export interface TeamInviteType {
+  id: number;
+  team_id: number;
+  profile_id: string; // UUID
+  email: string;
+  role: TeamRole;
+  status: "pending" | "accepted" | "rejected";
+  token: string;
+  joined_at: string;
+  created_at: string;
 }

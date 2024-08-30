@@ -1,6 +1,6 @@
 "use client";
 import AddTeam from "@/components/AddTeam";
-import { Hash, LucideProps, PanelLeft, Target } from "lucide-react";
+import { FileText, Hash, LucideProps, PanelLeft, Target } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -17,17 +17,17 @@ const menuItems: {
   >;
   text: string;
   path: string;
-  pathNotStartsWith?: string;
+  pathNotStartsWith?: string[];
 }[] = [
   {
     id: 1,
     icon: Target,
     text: "Projects",
     path: "/app",
-    pathNotStartsWith: "/app/c",
+    pathNotStartsWith: ["/app/c", "/app/d"],
   },
   { id: 2, icon: Hash, text: "Channels", path: "/app/c" },
-  // { id: 5, icon: FileText, text: "Docs", path: "/app/docs" },
+  { id: 5, icon: FileText, text: "Docs", path: "/app/d" },
 ];
 
 const MainSidebar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
@@ -61,8 +61,7 @@ const MainSidebar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
                 >
                   <span
                     className={`p-2 rounded-full transition-colors text-text-900 ${
-                      pathname.startsWith(item.path) &&
-                      !pathname.startsWith(item.pathNotStartsWith!)
+                      pathname.startsWith(item.path) && !item.pathNotStartsWith?.includes(pathname)
                         ? "bg-primary-100"
                         : "group-hover:bg-primary-50"
                     }`}

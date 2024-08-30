@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import OnboardWrapper from "../OnboardWrapper";
 import { Button } from "@/components/ui/button";
 import workspaceProfileImage from "./workspace_profile.png";
@@ -10,32 +10,83 @@ import {
   industryOptions,
   OrganizationSize,
   organizationSizeOptions,
+  TeamType,
   WorkType,
   workTypeOptions,
 } from "@/types/team";
 import Image from "next/image";
+import { useOnboard } from "@/context/OnboardContext";
+import Spinner from "@/components/ui/Spinner";
+import { useAuthProvider } from "@/context/AuthContext";
+import { supabaseBrowser } from "@/utils/supabase/client";
 
 const Step4ProfileWorkspace = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const { profile } = useAuthProvider();
 
-  const [industry, setIndustry] = useState<{
-    label: string;
-    value: Industry;
-  } | null>(null);
+  const {
+    dispatch,
+    state: { work_role, team_name, industry, work_type, organization_size },
+  } = useOnboard();
 
-  const [WorkType, setWorkType] = useState<{
-    label: string;
-    value: WorkType;
-  } | null>(null);
-
-  const [organizationSize, setOrganizationSize] = useState<{
-    label: string;
-    value: OrganizationSize;
-  } | null>(null);
-
-  const handleSubmit = () => {
-    router.push("/app/onboard/invite-members");
+  const handleChange = (
+    { target: { value, label } }: any,
+    type: "SET_INDUSTRY" | "SET_WORK_TYPE" | "SET_ORGANIZATION_SIZE"
+  ) => {
+    dispatch({
+      type,
+      payload: { value, label },
+    });
   };
+
+  const handleSubmit = async () => {
+    try {
+      if (
+        profile &&
+        work_role &&
+        team_name &&
+        industry &&
+        work_type &&
+        organization_size
+      ) {
+        setLoading(true);
+
+        const teamData: Omit<TeamType, "id"> = {
+          name: team_name,
+          work_role: work_role?.value,
+          industry: industry?.value,
+          work_type: work_type?.value,
+          organization_size: organization_size?.value,
+          avatar_url: null,
+          profile_id: profile.id,
+          updated_at: new Date().toISOString(),
+        };
+
+        const { error } = await supabaseBrowser
+          .from("teams")
+          .insert([teamData]);
+        if (error) throw error;
+
+        router.push("/app/onboard/invite-members");
+      }
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!work_role) {
+      router.replace("/app/onboard/customize-kakrola");
+    }
+
+    if (!team_name) {
+      router.replace("/app/onboard/create-workspace");
+    }
+  }, [work_role, team_name]);
+
+  if (!work_role || !team_name) return null;
 
   return (
     <OnboardWrapper
@@ -56,9 +107,7 @@ const Step4ProfileWorkspace = () => {
               label="What industry do you work in?"
               placeholder="Select your answer"
               options={industryOptions}
-              onChange={({ target: { value, label } }) =>
-                setIndustry({ value: value as Industry, label: label! })
-              }
+              onChange={(ev) => handleChange(ev, "SET_INDUSTRY")}
               value={industry?.value}
             />
 
@@ -67,10 +116,8 @@ const Step4ProfileWorkspace = () => {
               label="What work do you do?"
               placeholder="Select your answer"
               options={workTypeOptions}
-              onChange={({ target: { value, label } }) =>
-                setWorkType({ value: value as WorkType, label: label! })
-              }
-              value={WorkType?.value}
+              onChange={(ev) => handleChange(ev, "SET_WORK_TYPE")}
+              value={work_type?.value}
             />
 
             <CustomSelect
@@ -78,21 +125,21 @@ const Step4ProfileWorkspace = () => {
               label="How big is your organization?"
               placeholder="Select your answer"
               options={organizationSizeOptions}
-              onChange={({ target: { value, label } }) =>
-                setOrganizationSize({
-                  value: value as OrganizationSize,
-                  label: label!,
-                })
-              }
-              value={organizationSize?.value}
+              onChange={(ev) => handleChange(ev, "SET_ORGANIZATION_SIZE")}
+              value={organization_size?.value}
             />
 
             <Button
               onClick={handleSubmit}
-              disabled={!industry || !WorkType || !organizationSize}
+              disabled={
+                !industry ||
+                !workspaceProfileImage ||
+                !organization_size ||
+                loading
+              }
               fullWidth
             >
-              Continue
+              {loading ? <Spinner color="white" /> : "Continue"}
             </Button>
 
             <p className="text-xs text-text-500">

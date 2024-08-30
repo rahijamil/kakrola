@@ -7,13 +7,16 @@ export interface ProjectType {
   profile_id: string; // UUID
   name: string;
   slug: string;
-  color: string; // Store as string in DB, convert to ReactNode in frontend
   is_favorite: boolean;
-  view: ViewTypes["view"];
   updated_at: string;
   created_at?: string;
   order: number;
   is_archived: boolean;
+  settings: {
+    color: string;
+    view: ViewTypes["view"];
+    selected_views: ViewTypes["view"][];
+  };
 }
 
 // Section types

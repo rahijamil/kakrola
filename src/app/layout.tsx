@@ -3,6 +3,7 @@ import { Inter, Poppins, Nunito } from "next/font/google";
 import "./globals.css";
 import TaskProjectDataProvider from "@/context/TaskProjectDataContext";
 import AuthProvider from "@/context/AuthContext";
+import OnboardProvider from "@/context/OnboardContext";
 
 const inter = Inter({ subsets: ["latin"] });
 const poppins = Poppins({
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
   title: "Kakrola | All Your Work in One Place",
   icons: {
     shortcut: "/kakrola.svg",
-  }
+  },
 };
 
 export default function RootLayout({
@@ -29,7 +30,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={poppins.className}>
         <AuthProvider>
-          <TaskProjectDataProvider>{children}</TaskProjectDataProvider>
+          <TaskProjectDataProvider>
+            <OnboardProvider>{children}</OnboardProvider>
+          </TaskProjectDataProvider>
         </AuthProvider>
       </body>
     </html>
