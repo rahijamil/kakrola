@@ -14,7 +14,6 @@ import {
   Permission,
   RoleType,
   TeamMemberType,
-  TeamRole,
   TeamType,
   Industry,
   WorkType,
@@ -148,16 +147,11 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
         }
 
         if (createdTeamData && profile) {
-          // Create the team member (team creator)
-          const adminRole: TeamRole = {
-            name: RoleType.ADMIN,
-            permissions: getPermissionsByRole(RoleType.ADMIN),
-          };
-
           const teamMemberData: Omit<TeamMemberType, "id"> = {
             team_id: createdTeamData.id,
             profile_id: profile.id,
-            team_role: adminRole,
+            team_role: RoleType.ADMIN,
+            email: profile.email,
             joined_at: new Date().toISOString(),
           };
 
