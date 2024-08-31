@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", Arial, sans-serif;
+        color: #333333;
+        background-color: #f6f6f6;
+      }
+
+      .container {
+        width: 85%;
+        max-width: 600px;
+        margin: 2rem auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+
+      .logo img {
+        max-width: 50px;
+        height: auto;
+      }
+
+      .logo_title {
+        font-weight: bold;
+        color: #005c83;
+        font-size: 22px;
+        margin-top: 0.5rem;
+      }
+
+      .content {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .content h2 {
+        color: #111827;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
+      .content p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        color: #4b5563;
+        line-height: 1.5;
+      }
+
+      .button {
+        display: inline-block;
+        padding: 14px 28px;
+        font-size: 1rem;
+        color: #ffffff;
+        background: linear-gradient(to right, #004d6e, #005c83);
+        text-decoration: none;
+        border-radius: 24px;
+        font-weight: 600;
+        transition: background 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .button:hover {
+        background: linear-gradient(to right, #003b4f, #004d6e);
+      }
+
+      .footer {
+        text-align: center;
+        font-size: 0.875rem;
+        color: #999999;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e1eff5;
+      }
+
+      .footer p {
+        margin: 0;
+      }
+
+      .footer a {
+        color: #005c83;
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        text-decoration: underline;
+      }
+
+      .illustration {
+        text-align: center;
+        margin-top: 2rem;
+      }
+
+      .team-info {
+        text-align: center;
+        margin-top: 2rem;
+        padding: 1rem;
+        background-color: #eaf4f8;
+        border-radius: 8px;
+      }
+
+      .team-info h3 {
+        color: #005c83;
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+      }
+
+      .team-info p {
+        font-size: 1rem;
+        color: #4b5563;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+      }
+
+      /* Secondary button style */
+      .secondary-button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 1rem;
+        color: #005c83;
+        background-color: #ffffff;
+        border: 2px solid #005c83;
+        text-decoration: none;
+        border-radius: 24px;
+        font-weight: 600;
+        transition: background 0.3s ease, color 0.3s ease;
+      }
+
+      .secondary-button:hover {
+        background-color: #f0f8fc;
+        color: #003b4f;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Logo section -->
+      <div class="logo">
+        <img src="https://www.kakrola.com/Kakrola.png" alt="Logo" />
+        <div class="logo_title">Kakrola</div>
+      </div>
+
+      <!-- Main content -->
+      <div class="content">
+        <h2>{{inviter_first_name}} has invited you to join the "{{team_name}}" team on Kakrola!</h2>
+        <p>
+          You’ve been invited to collaborate with the "{{team_name}}" team using Kakrola's powerful task management and communication tools. Accept the invitation below to start contributing to projects and engaging with your team:
+        </p>
+        <a href="{{invite_link}}" class="button">Accept Invitation</a>
+        <p>
+          If you have any questions or need more details, feel free to reach out to {{inviter_first_name}} at
+          <a href="mailto:{{inviter_email}}" style="color: #005c83; text-decoration: underline">
+            {{inviter_email}}
+          </a>.
+        </p>
+      </div>
+
+      <!-- Illustration -->
+      <div class="illustration">
+        <img src="https://www.kakrola.com/images/collaboration.png" alt="Team Illustration" style="max-width: 150px;" />
+      </div>
+
+      <!-- Team info with secondary button -->
+      <div class="team-info">
+        <h3>Ready to enhance your team’s workflow?</h3>
+        <p>
+          Kakrola offers an integrated platform for managing tasks, projects, and team communications all in one place. Discover how Kakrola can streamline your team's productivity and collaboration.
+        </p>
+        <a href="https://www.kakrola.com/create-team" class="secondary-button">Create a Team</a>
+      </div>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <p>
+          &copy; 2024 Kakrola. All rights reserved.
+        </p>
+        <p>
+          <a href="https://www.kakrola.com/privacy">Privacy Policy</a> | 
+          <a href="https://www.kakrola.com/terms">Terms of Service</a>
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

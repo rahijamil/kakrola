@@ -102,11 +102,6 @@ export enum Permission {
   MANAGE_ROLES = "MANAGE_ROLES",
 }
 
-export interface TeamRole {
-  name: RoleType;
-  permissions: Permission[];
-}
-
 export interface BaseTeamType {
   name: string;
   avatar_url: string | null;
@@ -129,18 +124,27 @@ export interface TeamMemberType {
   id: number;
   team_id: number;
   profile_id: string; // UUID
-  team_role: TeamRole;
-  joined_at: string;
+  email: string;
+  team_role: RoleType;
+  joined_at?: string;
 }
 
-export interface TeamInviteType {
+// Project member type
+export interface ProjectMemberType {
   id: number;
-  team_id: number;
-  profile_id: string; // UUID
-  email: string;
-  role: TeamRole;
+  project_id: number;
+  profile_id: string;
+  role: RoleType;
+  created_at?: string;
+}
+
+export interface InviteType {
+  id: number;
+  project_id: number | null;
+  team_id: number | null;
+  email: string | null;
+  role: RoleType;
   status: "pending" | "accepted" | "rejected";
   token: string;
-  joined_at: string;
-  created_at: string;
+  created_at?: string;
 }

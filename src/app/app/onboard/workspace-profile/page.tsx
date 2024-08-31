@@ -63,12 +63,14 @@ const Step4ProfileWorkspace = () => {
           updated_at: new Date().toISOString(),
         };
 
-        const { error } = await supabaseBrowser
+        const { error, data } = await supabaseBrowser
           .from("teams")
-          .insert([teamData]);
+          .insert([teamData])
+          .select("id")
+          .single();
         if (error) throw error;
 
-        router.push("/app/onboard/invite-members");
+        router.push(`/app/onboard/invite-members?teamId=${data.id}`);
       }
     } catch (error) {
       console.error(error);

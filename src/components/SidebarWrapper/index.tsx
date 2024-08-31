@@ -19,23 +19,6 @@ const SidebarWrapper = () => {
   const [sidebarLeft, setSidebarLeft] = useState(0);
   const [isResizing, setIsResizing] = useState(false);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 768) {
-        setIsCollapsed(true);
-        setSidebarLeft(-sidebarWidth);
-      } else {
-        setIsCollapsed(false);
-        setSidebarLeft(0);
-      }
-    };
-
-    handleResize(); // Initial check
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, [sidebarWidth]);
-
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
     setSidebarLeft(isCollapsed ? 0 : -sidebarWidth);
@@ -87,6 +70,23 @@ const SidebarWrapper = () => {
     }
   }, [isCollapsed]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setIsCollapsed(true);
+        setSidebarLeft(-sidebarWidth);
+      } else {
+        setIsCollapsed(false);
+        setSidebarLeft(0);
+      }
+    };
+
+    handleResize(); // Initial check
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [sidebarWidth]);
+
   return (
     <div className="flex h-screen">
       <MainSidebar toggleSidebar={toggleSidebar} />
@@ -105,7 +105,6 @@ const SidebarWrapper = () => {
           }`}
           style={{ width: `${sidebarWidth}px`, marginLeft: `${sidebarLeft}px` }}
         >
-
           {pathname.startsWith("/app") &&
           !pathname.startsWith("/app/threads") &&
           !pathname.startsWith("/app/docs") ? (

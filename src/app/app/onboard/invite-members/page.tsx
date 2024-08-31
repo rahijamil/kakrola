@@ -5,14 +5,24 @@ import { Button } from "@/components/ui/button";
 import inviteMemberImage from "./invite_members.png";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Spinner from "@/components/ui/Spinner";
+import axios from "axios";
+import { useAuthProvider } from "@/context/AuthContext";
+import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import InviteLink from "./InviteLink";
 
 const Step5InviteMembers = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const team_id = searchParams.get("team_id");
   const [loading, setLoading] = useState(false);
   const [skipLoading, setSkipLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null); // Error state
+
+  const { profile } = useAuthProvider();
+  const { teams } = useTaskProjectDataProvider();
 
   const [invites, setInvites] = useState<{ email: string }[]>([
     { email: "" },
@@ -20,10 +30,67 @@ const Step5InviteMembers = () => {
     { email: "" },
   ]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setLoading(true);
-    router.push(`/app/${"teamId"}`);
+    setError(null);
+
+    if (!profile || !team_id) {
+      setLoading(false);
+      setError("Profile or Team ID is missing.");
+      return;
+    }
+
+    const team = teams.find((team) => team.id === parseInt(team_id));
+    if (!team) {
+      setLoading(false);
+      setError("Team not found.");
+      return;
+    }
+
+    const team_name = team.name; // Get the team name
+
+    // Filter valid emails
+    const validEmails = invites
+      .map((invite) => invite.email.trim())
+      .filter((email) =>
+        /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)
+      );
+
+    if (validEmails.length === 0) {
+      setError("Please enter at least one valid email address.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Send all invites in one request to the server
+      const response = await axios.post("/api/invite-members", {
+        emails: validEmails,
+        team_id,
+        team_name,
+        inviter: {
+          id: profile.id,
+          first_name: profile.full_name.split(" ")[0] || "User",
+          email: profile.email,
+        },
+      });
+
+      if (response.data.success) {
+        router.push(`/app/${team_id}`);
+      } else {
+        setError(response.data.message);
+      }
+    } catch (error: any) {
+      setError(
+        error.response.data.message ||
+          "An unexpected error occurred. Please try again."
+      );
+      console.error("Error sending invites:", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
     <OnboardWrapper
       leftSide={
@@ -54,12 +121,11 @@ const Step5InviteMembers = () => {
                 }}
               />
             ))}
-
             <Button
               onClick={() => {
                 setInvites([...invites, { email: "" }]);
               }}
-              disabled={false}
+              disabled={loading}
               fullWidth
               icon={Plus}
               variant="ghost"
@@ -67,25 +133,19 @@ const Step5InviteMembers = () => {
             >
               Add email
             </Button>
-
-            <Button onClick={handleSubmit} disabled={false} fullWidth>
-              Continue
+            {error && <p className="text-red-500">{error}</p>}{" "}
+            {/* Error message */}
+            <Button onClick={handleSubmit} disabled={loading} fullWidth>
+              {loading ? <Spinner color="white" /> : "Continue"}
             </Button>
-            <Button
-              onClick={handleSubmit}
-              disabled={loading}
-              fullWidth
-              variant="gray"
-            >
-              {loading ? <Spinner color="white" /> : "Copy invite link"}
-            </Button>
+            <InviteLink team_id={parseInt(team_id!)} />
           </div>
 
           <div className="space-y-2">
             <Button
               onClick={() => {
                 setSkipLoading(true);
-                router.push(`/app/${"teamId"}`);
+                router.push(`/app/${team_id}`);
               }}
               disabled={skipLoading}
               fullWidth

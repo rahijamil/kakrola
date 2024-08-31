@@ -23,7 +23,7 @@ const Today = () => {
       case "List":
         return (
           <ListViewForToday
-            tasks={tasks}
+            tasks={todayTasks}
             setTasks={setTasks}
             showShareOption={showShareOption}
             setShowShareOption={setShowShareOption}
@@ -32,7 +32,7 @@ const Today = () => {
       case "Board":
         return (
           <BoardViewForToday
-            tasks={tasks}
+            tasks={todayTasks}
             setTasks={setTasks}
             showShareOption={showShareOption}
             setShowShareOption={setShowShareOption}
@@ -55,11 +55,11 @@ const Today = () => {
     >
       {renderTaskViewSwitcherForToday()}
 
-      {todayTasks.length == 0 && view == "List" && (
-        <div className="flex items-center justify-center flex-col gap-1 h-[30vh] select-none">
+      {todayTasks.length === 0 && view === "List" && (
+        <div className="flex items-center justify-center flex-col gap-1 h-[35vh] select-none">
           <Image
             src="/today.png"
-            width={220}
+            width={200}
             height={200}
             alt="Today"
             className="rounded-full object-cover"
@@ -67,11 +67,9 @@ const Today = () => {
           />
 
           <div className="text-center space-y-1 w-72">
-            <h3 className="font-medium text-base">
-              What do you need to get done today?
-            </h3>
+            <h3 className="font-medium text-base">Your tasks for today</h3>
             <p className="text-sm text-text-600">
-              By default, tasks added here will be due today.
+              Add your tasks here to focus on what’s important today.
             </p>
           </div>
         </div>

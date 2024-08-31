@@ -2,8 +2,7 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import { Dialog, DialogHeader, DialogTitle } from "../ui";
 import { ProjectType } from "@/types/project";
-import LayoutView from "../LayoutView";
-import { CircleHelp, SquareGanttChart, User } from "lucide-react";
+import { CircleHelp, SquareGanttChart, SquareKanban, User } from "lucide-react";
 import { ToggleSwitch } from "../ui/ToggleSwitch";
 import { Input } from "../ui/input";
 import { useAuthProvider } from "@/context/AuthContext";
@@ -13,6 +12,28 @@ import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import WorkspaceSelector from "./WorkspaceSelector";
 import ColorSelector from "./ColorSelector";
 import { generateSlug } from "@/utils/generateSlug";
+import AnimatedCircleCheck from "@/components/TaskViewSwitcher/AnimatedCircleCheck";
+import { ViewTypes } from "@/types/viewTypes";
+
+const projectViewsToSelect: {
+  id: number;
+  name: ViewTypes["view"];
+  icon: React.JSX.Element;
+  visible: boolean;
+}[] = [
+  {
+    id: 1,
+    name: "List",
+    icon: <SquareKanban size={16} strokeWidth={1.5} className="-rotate-90" />,
+    visible: true,
+  },
+  {
+    id: 2,
+    name: "Board",
+    icon: <SquareKanban size={16} strokeWidth={1.5} />,
+    visible: true,
+  },
+];
 
 const AddEditProject = ({
   workspaceId,
@@ -299,15 +320,51 @@ const AddEditProject = ({
             </div>
 
             <div className="space-y-2 pt-3">
-              <LayoutView
-                view={projectData.settings.view}
-                setView={(value) =>
-                  setProjectData({
-                    ...projectData,
-                    settings: { ...projectData.settings, view: value },
-                  })
-                }
-              />
+              <div className="space-y-1">
+                <p className="block font-bold text-text-700">View</p>
+                <ul className="flex gap-4 items-center">
+                  {projectViewsToSelect.map((v) => (
+                    <li
+                      key={v.id}
+                      tabIndex={0}
+                      className={`flex items-center justify-between cursor-pointer h-12 rounded-full px-4 border w-full ${
+                        projectData.settings.view === v.name
+                          ? "border-primary-500"
+                          : "border-text-200"
+                      } focus:outline-none hover:bg-text-50`}
+                      onClick={() =>
+                        setProjectData({
+                          ...projectData,
+                          settings: { ...projectData.settings, view: v.name },
+                        })
+                      }
+                    >
+                      <div className="flex items-center gap-2">
+                        {v.icon}
+                        <span className="text-text-700">{v.name}</span>
+                      </div>
+                      <div>
+                        <AnimatedCircleCheck
+                          handleCheckSubmit={() =>
+                            setProjectData({
+                              ...projectData,
+                              settings: {
+                                ...projectData.settings,
+                                view: v.name,
+                              },
+                            })
+                          }
+                          priority={"P3"}
+                          is_completed={projectData.settings.view === v.name}
+                          playSound={false}
+                          disabled
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
               <p className="text-text-500 text-xs">
                 Layout is synced between teammates in shared projects. Learn
                 more.

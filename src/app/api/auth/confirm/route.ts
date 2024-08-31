@@ -13,9 +13,8 @@ export async function GET(request: NextRequest) {
 
   if (!token_hash || !type) {
     console.error("Missing token_hash or type in query parameters");
-    return NextResponse.redirect(new URL("/auth/error", request.url), {
-      status: 302,
-    });
+    // Throwing an error for global handling
+    throw new Error("Missing token_hash or type in query parameters");
   }
 
   const supabaseServer = createClient();
@@ -26,10 +25,9 @@ export async function GET(request: NextRequest) {
 
   // Log the response from verifyOtp
   if (error) {
-    console.error('Error verifying OTP:', error);
-    return NextResponse.redirect(new URL("/auth/error", request.url), {
-      status: 302,
-    });
+    console.error("Error verifying OTP:", error);
+    // Throwing an error for global handling
+    throw new Error("Error verifying OTP");
   }
 
   console.log("OTP verification successful:", data);

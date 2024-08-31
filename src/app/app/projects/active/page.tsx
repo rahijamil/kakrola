@@ -95,7 +95,7 @@ const AppProjectsActivePage = () => {
                       href={`/app/project/${p.slug}`}
                       className="p-3 py-4 flex items-center gap-2"
                     >
-                      <Hash className={`w-4 h-4 text-${p.color}`} />
+                      <Hash className={`w-4 h-4 text-${p.settings.color}`} />
                       {p.name}
                     </Link>
 

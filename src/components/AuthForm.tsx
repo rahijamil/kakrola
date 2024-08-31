@@ -6,12 +6,13 @@ import PasswordInput from "@/components/ui/PasswordInput";
 import Link from "next/link";
 import Spinner from "./ui/Spinner";
 import { AtSign } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import loginImage from "./login.png";
 import OnboardWrapper from "@/app/app/onboard/OnboardWrapper";
 import Hcaptcha from "./Hcaptcha";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
+import axios from "axios";
 
 interface AuthFormProps {
   type: "signup" | "login" | "forgotPassword" | "updatePassword";
@@ -62,6 +63,16 @@ const AuthForm: React.FC<AuthFormProps> = ({
   };
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token"); // Get token from URL query parameters
+
+  useEffect(() => {
+    // Pre-fill the email field if the email is present in the query params
+    const emailParam = searchParams.get("email");
+    if (emailParam && emailParam.length > 0) {
+      setEmail(emailParam);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (type !== "forgotPassword" && type !== "login") {
@@ -181,6 +192,10 @@ const AuthForm: React.FC<AuthFormProps> = ({
       }
 
       if (result?.success) {
+        if (token && (type == "login" || type == "signup")) {
+          axios.get(`/api/accept-invite?token=${token}`);
+        }
+
         router.push("/app");
       }
     } catch (error: any) {
