@@ -92,23 +92,6 @@ const LayoutView = ({
         old.id === v.id ? { ...old, visible: !old.visible } : old
       );
       setViews(data);
-
-      // Update selected views, always include "List"
-      const updatedSelectedViews = data
-        .filter((view) => view.visible || view.name === "List")
-        .map((view) => view.name);
-
-      const { error } = await supabaseBrowser
-        .from("projects")
-        .update({
-          settings: {
-            ...project.settings,
-            selected_views: updatedSelectedViews,
-          },
-        })
-        .eq("id", project.id);
-
-      if (error) throw error;
     } catch (error) {
       console.error(error);
     }

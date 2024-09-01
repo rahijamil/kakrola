@@ -83,11 +83,11 @@ const TeamProjects = ({
       // setProjects(projects); // or handle error state
     }
   };
-  
+
   return (
     <>
       <div className="mt-4 px-2">
-        <div className="relative text-text-700 hover:bg-primary-50 rounded-full transition">
+        <div className="relative text-text-600 hover:bg-primary-50 rounded-full transition">
           <Link
             href={`/app/${team.id}`}
             className={`w-full flex items-center justify-between pl-2 py-[7px] gap-1`}
@@ -115,7 +115,7 @@ const TeamProjects = ({
                   />
                 ) : (
                   <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-[10px] font-medium">
+                    <span className="text-surface text-[10px] font-bold">
                       {team.name?.slice(0, 1).toUpperCase()}
                     </span>
                   </div>
@@ -168,11 +168,7 @@ const TeamProjects = ({
               <Droppable droppableId="teams">
                 {(provided) => {
                   return (
-                    <ul
-                      className="ml-2"
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                    >
+                    <ul ref={provided.innerRef} {...provided.droppableProps}>
                       {teamProjects.map((project, index) => (
                         <Draggable
                           key={project.id}

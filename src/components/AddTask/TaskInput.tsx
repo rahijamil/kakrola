@@ -9,6 +9,7 @@ export const TaskInput: React.FC<{
   biggerTitle?: boolean;
   handleSubmit: (e: React.FormEvent) => void;
   titleEditableRef: React.RefObject<HTMLDivElement>;
+  className?: string;
 }> = ({
   projects,
   biggerTitle,
@@ -16,6 +17,7 @@ export const TaskInput: React.FC<{
   setTaskData,
   handleSubmit,
   titleEditableRef,
+  className,
 }) => {
   const [inputValue, setInputValue] = useState(taskData.title);
 
@@ -128,9 +130,9 @@ export const TaskInput: React.FC<{
       <div
         ref={titleEditableRef}
         contentEditable
-        className={`py-1 outline-none cursor-text font-medium ${
-          biggerTitle ? "text-lg" : "text-sm"
-        }`}
+        className={`py-1 outline-none cursor-text w-full ${
+          biggerTitle ? "text-lg font-medium" : "text-sm font-normal"
+        } ${className}`}
         onInput={handleInput}
         onKeyDown={(e) => {
           if (e.key === "Enter") {

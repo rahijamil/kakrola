@@ -1,7 +1,9 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
 import AddTask from "../AddTask";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
+import AddTaskFormForProject from "../AddTask/AddTaskFormForProject";
+import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 
 const SectionAddTask = ({
   showAddTask,
@@ -32,24 +34,43 @@ const SectionAddTask = ({
     ? showAddTask === section.id
     : showUngroupedAddTask;
 
+  const { activeProject } = useTaskProjectDataProvider();
+
   return (
     <>
       {isAddTaskVisible && (
         <button
-          className="mx-[6px] mt-2 text-text-500 hover:text-primary-600 flex items-center gap-2 w-full group py-1"
-          onClick={() =>
+          className={`px-2 text-text-500 hover:text-primary-600 hover:bg-text-50d flex items-center gap-2 w-full group py-2.5 ${
+            activeProject?.settings.view == "List" && "pl-16"
+          }`}
+          onClick={() => {
             section
               ? setShowAddTask && setShowAddTask(section.id)
-              : setShowUngroupedAddTask && setShowUngroupedAddTask(true)
-          }
+              : setShowUngroupedAddTask && setShowUngroupedAddTask(true);
+          }}
         >
-          <PlusIcon className="w-[18px] h-[18px] text-primary-600 group-hover:text-white transition group-hover:bg-primary-600 rounded-full" />
+          <PlusIcon className="w-[18px] h-[18px] text-primary-600 group-hover:text-surface transition group-hover:bg-primary-600 rounded-full" />
           <span>Add task</span>
         </button>
       )}
-      {isAddTaskFormVisible && (
-        <div className="mt-4">
-          <AddTask
+      {isAddTaskFormVisible &&
+        (activeProject?.settings.view == "Board" ? (
+          <div className="mt-4">
+            <AddTask
+              onClose={() =>
+                section
+                  ? setShowAddTask && setShowAddTask(null)
+                  : setShowUngroupedAddTask && setShowUngroupedAddTask(false)
+              }
+              isSmall={isSmall}
+              section_id={section?.id}
+              project={project}
+              tasks={tasks}
+              setTasks={setTasks}
+            />
+          </div>
+        ) : (
+          <AddTaskFormForProject
             onClose={() =>
               section
                 ? setShowAddTask && setShowAddTask(null)
@@ -61,8 +82,7 @@ const SectionAddTask = ({
             tasks={tasks}
             setTasks={setTasks}
           />
-        </div>
-      )}
+        ))}
     </>
   );
 };

@@ -3,9 +3,11 @@ import { Input } from "../ui/input";
 import Image from "next/image";
 import Dropdown from "../ui/Dropdown";
 import { UserPlus } from "lucide-react";
+import { useAuthProvider } from "@/context/AuthContext";
 
 const ShareOption = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { profile } = useAuthProvider();
 
   const triggerRef = useRef(null);
 
@@ -15,16 +17,27 @@ const ShareOption = () => {
       setIsOpen={setIsOpen}
       triggerRef={triggerRef}
       Label={({ onClick }) => (
-        <button
-          ref={triggerRef}
-          className={`${
-            isOpen ? "bg-text-100" : "hover:bg-text-100"
-          } transition p-1 px-3 pr-2 rounded-full cursor-pointer flex items-center gap-1 text-text-500`}
-          onClick={onClick}
-        >
-          <UserPlus strokeWidth={1.5} className="w-4 h-4" />
-          <span className="hidden md:inline-block">Share</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <div className="">
+            <Image
+              src={profile?.avatar_url || "/default_avatar.png"}
+              alt="Avatar"
+              width={24}
+              height={24}
+              className="rounded-full object-cover max-w-6 max-h-6"
+            />
+          </div>
+          <button
+            ref={triggerRef}
+            className={`${
+              isOpen ? "bg-text-100" : "hover:bg-text-100"
+            } transition p-1 px-3 pr-2 rounded-full cursor-pointer flex items-center gap-1 text-text-500`}
+            onClick={onClick}
+          >
+            <UserPlus strokeWidth={1.5} className="w-4 h-4" />
+            <span className="hidden md:inline-block">Share</span>
+          </button>
+        </div>
       )}
       content={
         <div className="p-2">

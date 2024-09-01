@@ -109,7 +109,11 @@ const ProjectDetails = ({
       if (!currentProject?.id) return;
 
       setProjects((prev) =>
-        prev.map((p) => (p.id === currentProject?.id ? { ...p, view } : p))
+        prev.map((p) =>
+          p.id === currentProject?.id
+            ? { ...p, settings: { ...p.settings, view } }
+            : p
+        )
       );
 
       const { error } = await supabaseBrowser

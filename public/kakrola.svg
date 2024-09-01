@@ -1,27 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080">
-  <defs>
-    <!-- Gradient Background -->
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#003B56;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#0076A3;stop-opacity:1" />
-    </linearGradient>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- White Background -->
+  <rect width="200" height="200" fill="#ffffff"/>
 
-    <!-- Drop Shadow Filter -->
-    <filter id="f1" x="-10%" y="-10%" width="120%" height="120%">
-      <feOffset result="offOut" in="SourceGraphic" dx="10" dy="10" />
-      <feGaussianBlur in="offOut" result="blurred" stdDeviation="10" />
-      <feBlend in="SourceGraphic" in2="blurred" mode="normal" />
+  <!-- Hashtag Symbol with Gradient and Shadow -->
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#005c83;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#004d6e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0076a3;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#005a8e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#69afcd;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4a8fb1;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="4" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.2"/>
     </filter>
   </defs>
 
-  <!-- Background with Gradient -->
-  <rect width="1080" height="1080" rx="196" ry="196" fill="url(#grad)" />
-
-  <!-- Creative Chat Bubble -->
-  <g filter="url(#f1)" transform="translate(200, 110) scale(.9)">
-    <path d="M243 194 Q341 47 537 47 Q733 47 831 194 Q929 341 929 537 Q929 733 831 880 Q733 1027 537 1027 Q390 1027 292 880 Q243 831 194 782 Q145 733 145 684 Q145 635 194 586 Q243 537 292 488 L243 194 Z" fill="#FFFFFF" stroke="#003B56" stroke-width="10" />
-
-    <!-- Adjusted Hash Symbols -->
-    <text x="590" y="700" font-family="fantasy, Arial, sans-serif" font-size="500" fill="#005c83" text-anchor="middle" dy="0.3em">#</text>
+  <!-- Hashtag Symbol -->
+  <g filter="url(#shadow)">
+    <!-- Vertical Bars -->
+    <rect x="40" y="40" width="20" height="120" rx="10" fill="url(#grad1)" />
+    <rect x="80" y="40" width="20" height="120" rx="10" fill="url(#grad2)" />
+    <!-- Horizontal Bars -->
+    <rect x="30" y="70" width="140" height="20" rx="10" fill="url(#grad3)" />
+    <rect x="30" y="110" width="140" height="20" rx="10" fill="url(#grad1)" />
   </g>
 </svg>

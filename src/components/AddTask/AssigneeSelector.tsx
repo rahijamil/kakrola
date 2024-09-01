@@ -18,11 +18,13 @@ const AssigneeSelector = ({
   setTask,
   isSmall,
   forTaskModal,
+  forListView,
 }: {
   task: TaskType;
   setTask: Dispatch<SetStateAction<TaskType>>;
   isSmall?: boolean;
   forTaskModal?: boolean;
+  forListView?: boolean;
 }) => {
   const { profile } = useAuthProvider();
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -85,9 +87,10 @@ const AssigneeSelector = ({
                     alt={profile?.full_name || profile?.username || "avatar"}
                     className="rounded-full object-cover max-w-[18px] max-h-[18px]"
                   />
-                  {profile?.full_name.split(" ")[0]}{" "}
-                  {profile?.full_name.split(" ")[1][0] &&
-                    profile?.full_name.split(" ")[1][0] + "."}
+                  {profile?.full_name.split(" ")[0]}
+                  {profile?.full_name.split(" ")[1] // Check if the second name exists
+                    ? " " + profile?.full_name.split(" ")[1][0] + "." // Display the initial of the second name
+                    : ""}
                 </div>
 
                 <div
@@ -100,6 +103,50 @@ const AssigneeSelector = ({
                   <X strokeWidth={1.5} size={16} />
                 </div>
               </button>
+            )}
+          </div>
+        ) : forListView ? (
+          <div
+            ref={triggerRef}
+            data-state={"assignee"}
+            className={`flex items-center justify-between gap-1 cursor-pointer text-xs px-2 h-10 group relative ${
+              isOpen ? "bg-text-50" : "hover:bg-text-100"
+            }`}
+            onClick={onClick}
+          >
+            {task.assigned_to_id ? (
+              <>
+                <div className="flex items-center gap-1">
+                  <Image
+                    src={profile?.avatar_url || "/default_avatar.png"}
+                    width={20}
+                    height={20}
+                    alt={profile?.full_name || profile?.username || "avatar"}
+                    className="rounded-full object-cover max-w-5 max-h-5"
+                  />
+                  {profile?.full_name.split(" ")[0]}
+                  {profile?.full_name.split(" ")[1] // Check if the second name exists
+                    ? " " + profile?.full_name.split(" ")[1][0] + "." // Display the initial of the second name
+                    : ""}
+                </div>
+
+                <button
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    setTask({ ...task, assigned_to_id: null });
+                  }}
+                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-200 rounded-full hidden group-data-[state=assignee]:group-hover:inline-block absolute top-1/2 -translate-y-1/2 right-2"
+                >
+                  <X strokeWidth={1.5} className="w-4 h-4 text-text-500" />
+                </button>
+              </>
+            ) : (
+              <div className="flex items-center gap-1">
+                <div className="w-5 h-5 flex items-center justify-center border border-text-400 border-dashed rounded-full">
+                  <User strokeWidth={1.5} className="w-3 h-3 text-text-500" />
+                </div>
+                {/* {!isSmall && <span className="text-text-700">Assignee</span>} */}
+              </div>
             )}
           </div>
         ) : (
@@ -120,9 +167,10 @@ const AssigneeSelector = ({
                     alt={profile?.full_name || profile?.username || "avatar"}
                     className="rounded-full object-cover max-w-[18px] max-h-[18px]"
                   />
-                  {profile?.full_name.split(" ")[0]}{" "}
-                  {profile?.full_name.split(" ")[1][0] &&
-                    profile?.full_name.split(" ")[1][0] + "."}
+                  {profile?.full_name.split(" ")[0]}
+                  {profile?.full_name.split(" ")[1] // Check if the second name exists
+                    ? " " + profile?.full_name.split(" ")[1][0] + "." // Display the initial of the second name
+                    : ""}
                 </div>
 
                 <button
@@ -157,9 +205,9 @@ const AssigneeSelector = ({
             />
           </div>
 
-          <ul>
+          <ul className="py-1">
             <li
-              className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
+              className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-text-100 cursor-pointer rounded-2xl"
               onClick={() => {
                 setTask({
                   ...task,
@@ -178,7 +226,7 @@ const AssigneeSelector = ({
               )}
             </li>
             <li
-              className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
+              className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-text-100 cursor-pointer rounded-2xl"
               onClick={() => {
                 setTask({
                   ...task,
@@ -193,7 +241,7 @@ const AssigneeSelector = ({
                   alt={profile?.full_name || profile?.username || "avatar"}
                   width={18}
                   height={18}
-                    className="rounded-full object-cover max-w-[18px] max-h-[18px]"
+                  className="rounded-full object-cover max-w-[18px] max-h-[18px]"
                 />
                 Me ({profile?.full_name.split(" ")[0]}
                 {profile?.full_name.split(" ")[1] // Check if the second name exists
@@ -207,7 +255,7 @@ const AssigneeSelector = ({
               )}
             </li>
             <li
-              className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
+              className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-text-100 cursor-pointer rounded-2xl"
               onClick={() => {
                 onClose();
               }}

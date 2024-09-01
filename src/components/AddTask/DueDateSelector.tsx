@@ -37,11 +37,13 @@ const DueDateSelector = ({
   setTask,
   isSmall,
   forTaskModal,
+  forListView,
 }: {
   task: TaskType;
   setTask: Dispatch<SetStateAction<TaskType>>;
   isSmall?: boolean;
   forTaskModal?: boolean;
+  forListView?: boolean;
 }) => {
   const [date, setDate] = useState<Date | undefined>(
     task.due_date ? new Date(task.due_date) : undefined
@@ -199,6 +201,44 @@ const DueDateSelector = ({
                 setShowDueDateSelector={setIsOpen}
                 showDueDateSelector={isOpen}
               />
+            )}
+          </div>
+        ) : forListView ? (
+          <div
+            ref={triggerRef}
+            data-state="due-date"
+            className={`flex items-center justify-between gap-1 cursor-pointer h-10 px-2 w-full text-xs group relative ${
+              isOpen ? "bg-text-50" : "hover:bg-text-100"
+            }`}
+            onClick={onClick}
+          >
+            {task.due_date ? (
+              <>
+                <div className="flex items-center gap-1">
+                  {dateInfo?.icon}
+                  <span className={dateInfo?.color}>{dateInfo?.label}</span>
+                </div>
+
+                <button
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    setTask({ ...task, due_date: null });
+                  }}
+                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-200 rounded-full hidden group-data-[state=due-date]:group-hover:inline-block absolute top-1/2 -translate-y-1/2 right-2"
+                >
+                  <X strokeWidth={1.5} className="w-4 h-4 text-text-500" />
+                </button>
+              </>
+            ) : (
+              <div className="flex items-center gap-1">
+                <div className="w-5 h-5 flex items-center justify-center border border-text-400 border-dashed rounded-full">
+                  <Calendar
+                    strokeWidth={1.5}
+                    className="w-3 h-3 text-text-500"
+                  />
+                </div>
+                {/* {!isSmall && <span className="text-text-700">Due date</span>} */}
+              </div>
             )}
           </div>
         ) : (

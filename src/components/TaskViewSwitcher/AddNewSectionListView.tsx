@@ -29,7 +29,7 @@ const AddNewSectionListView = ({
   return (
     <div>
       <div
-        className={`flex items-center gap-2 pl-7 transition ${showAddSection ? "pointer-events-none opacity-0 cursor-default" : "cursor-pointer opacity-0 hover:opacity-100"}`}
+        className={`flex items-center gap-2 mx-8 transition ${showAddSection ? "pointer-events-none opacity-0 cursor-default" : "cursor-pointer opacity-0 hover:opacity-100"}`}
         onClick={() => setShowAddSection(section.id)}
       >
         <div className="flex-1 bg-primary-400 h-[1px]"></div>

@@ -21,7 +21,9 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
   const { projects: allProjects, setProjects } = useTaskProjectDataProvider();
   const pathname = usePathname();
   const [showProjects, setShowProjects] = useState(true);
-  const projects = allProjects.filter((p) => !p.team_id && !p.slug.startsWith("test-"));
+  const projects = allProjects.filter(
+    (p) => !p.team_id && !p.slug.startsWith("test-")
+  );
 
   const handleOnDragEnd = async (result: DropResult) => {
     const { source, destination } = result;
@@ -75,7 +77,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
   return (
     <>
       <div className="mt-4 px-2">
-        <div className="relative text-text-700 hover:bg-primary-50 rounded-full transition duration-150">
+        <div className="relative text-text-600 hover:bg-primary-50 rounded-full transition duration-150">
           <Link
             href={`/app/projects`}
             className={`w-full flex items-center justify-between pl-2 py-[7px] gap-1`}
@@ -100,7 +102,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
                   alt={profile?.full_name || profile?.username || ""}
                   width={20}
                   height={20}
-                    className="rounded-full object-cover max-w-[20px] max-h-[20px]"
+                  className="rounded-full object-cover max-w-[20px] max-h-[20px]"
                 />
 
                 <span
@@ -156,11 +158,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
               <Droppable droppableId="projects">
                 {(provided) => {
                   return (
-                    <ul
-                      className="ml-2"
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                    >
+                    <ul ref={provided.innerRef} {...provided.droppableProps}>
                       {projects.map((project, index) => (
                         <Draggable
                           key={project.id}

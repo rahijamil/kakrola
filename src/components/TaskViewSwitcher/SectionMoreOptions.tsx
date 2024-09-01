@@ -109,14 +109,14 @@ const SectionMoreOptions = ({
       Label={({ onClick }) => (
         <button
           ref={triggerRef}
-          className={`p-1 transition rounded-full ${
+          className={`p-1 border border-text-200 transition rounded-full ${
             isOpen
               ? bgColorClass
               : hoverBgColorClass
           }`}
           onClick={onClick}
         >
-          <Ellipsis strokeWidth={1.5} className="w-5 h-5 text-text-700" />
+          <Ellipsis strokeWidth={1.5} className="w-4 h-4 text-text-700" />
         </button>
       )}
       items={[

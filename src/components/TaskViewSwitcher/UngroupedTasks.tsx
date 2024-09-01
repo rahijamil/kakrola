@@ -3,6 +3,7 @@ import { Droppable } from "@hello-pangea/dnd";
 import TaskItem from "./TaskItem";
 import SectionAddTask from "./SectionAddTask";
 import { ProjectType, TaskType } from "@/types/project";
+import TaskItemForListView from "./ListView/TaskItemForListView";
 
 interface UngroupedTasksProps {
   tasks: TaskType[];
@@ -45,7 +46,7 @@ const UngroupedTasks: React.FC<UngroupedTasksProps> = ({
               .map((task, index) => (
                 <Fragment key={task.id}>
                   <li className="border-b border-text-200 p-1 pl-0 flex items-center gap-3 cursor-pointer">
-                    <TaskItem
+                    <TaskItemForListView
                       showDeleteConfirm={showTaskDeleteConfirm}
                       setShowDeleteConfirm={setShowTaskDeleteConfirm}
                       task={task}
@@ -73,7 +74,7 @@ const UngroupedTasks: React.FC<UngroupedTasksProps> = ({
                             key={childTask.id}
                             className="border-b border-text-200 p-1 pl-0 flex items-center gap-3 cursor-pointer"
                           >
-                            <TaskItem
+                            <TaskItemForListView
                               task={childTask}
                               setTasks={setTasks}
                               subTasks={tasks.filter(

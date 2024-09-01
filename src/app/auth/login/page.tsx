@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import AuthForm from "@/components/AuthForm";
 import { login } from "@/app/auth/action";
 
@@ -9,6 +9,7 @@ import Link from "next/link";
 const SocialLogin = dynamic(() => import("../SocialLogin"), { ssr: false });
 
 const LoginPage = () => (
+  <Suspense fallback={<div>Loading...</div>}>
   <AuthForm
     type="login"
     onSubmit={async ({ email, password, captchaToken }) => {
@@ -33,6 +34,7 @@ const LoginPage = () => (
       </div>
     }
   />
+  </Suspense>
 );
 
 export default LoginPage;

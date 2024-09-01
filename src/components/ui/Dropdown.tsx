@@ -178,7 +178,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           >
             {items.map((item) => (
               <>
-                <div>
+                <div onClick={(ev) => ev.stopPropagation()}>
                   <button
                     key={item.id}
                     onClick={() => {
@@ -235,7 +235,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                 )}
               </>
             ))}
-            {content}
+            <div onClick={(ev) => ev.stopPropagation()}>{content}</div>
           </motion.div>
         )}
       </div>

@@ -83,7 +83,12 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
       <aside className="h-full flex flex-col group w-full">
         {/* here will notification icons */}
         <div className="p-4 px-2 flex items-center justify-between relative">
-          <div className="font-bold text-primary-500">Kakrola</div>
+          <div
+            onClick={() => setShowAddTaskModal(true)}
+            className={`flex items-center p-2 pr-3 rounded-full transition-colors duration-150 text-text-700 cursor-pointer hover:bg-primary-50`}
+          >
+            <AddTaskTextButton />
+          </div>
 
           <div
             className={`flex items-center justify-end w-full transition duration-150 ${
@@ -105,14 +110,6 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
 
         <nav className="flex-grow overflow-y-auto">
           <ul className="px-2">
-            <li>
-              <div
-                onClick={() => setShowAddTaskModal(true)}
-                className={`flex items-center px-2 py-2 rounded-full transition-colors duration-150 text-text-700 w-full cursor-pointer hover:bg-primary-50`}
-              >
-                <AddTaskTextButton />
-              </div>
-            </li>
             {menuItems.map((item) => (
               <li key={item.id}>
                 {item.path ? (

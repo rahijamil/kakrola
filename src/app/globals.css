@@ -14,8 +14,7 @@
   .wrapper {
     @apply w-11/12 max-w-7xl mx-auto;
   }
-  .sidebar_project_item:hover .sidebar_project_item_options,
-  .taskitem_group:hover .taskitem_group_hover {
+  .sidebar_project_item:hover .sidebar_project_item_options {
     @apply opacity-100;
   }
 

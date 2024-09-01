@@ -1,11 +1,20 @@
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { ChevronRightIcon, MoreHorizontal } from "lucide-react";
-import { Dispatch, Fragment, LegacyRef, SetStateAction, useState } from "react";
+import {
+  Dispatch,
+  Fragment,
+  LegacyRef,
+  RefObject,
+  SetStateAction,
+  useRef,
+  useState,
+} from "react";
 import SectionMoreOptions from "./SectionMoreOptions";
 import { Droppable } from "@hello-pangea/dnd";
 import TaskItem from "./TaskItem";
 import SectionAddTask from "./SectionAddTask";
+import TaskItemForListView from "./ListView/TaskItemForListView";
 
 const ListViewSection = ({
   section,
@@ -99,8 +108,8 @@ const ListViewSection = ({
   };
 
   return (
-    <div>
-      <div className="flex items-center gap-1 py-2">
+    <div className="pt-2">
+      <div className="flex items-center gap-1 border-b border-text-200 mx-8">
         <button
           className={`p-1 hover:bg-text-100 transition rounded-full ${
             !section.is_collapsed && "rotate-90"
@@ -110,7 +119,7 @@ const ListViewSection = ({
           <ChevronRightIcon className="w-4 h-4 text-text-700" />
         </button>
 
-        <div className="flex items-center justify-between gap-8 border-b border-text-200 w-full">
+        <div className="flex items-center gap-4 h-7 group">
           <div className="flex items-center gap-2">
             {!editColumnTitle ? (
               <h3
@@ -123,7 +132,7 @@ const ListViewSection = ({
               <input
                 value={columnTitle}
                 onChange={(ev) => setColumnTitle(ev.target.value)}
-                className="font-bold rounded-full px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300"
+                className="font-bold rounded-full px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 bg-transparent"
                 onKeyDown={(ev) => {
                   if (ev.key === "Enter") {
                     handleUpdateColumnTitle();
@@ -142,7 +151,11 @@ const ListViewSection = ({
             )}
           </div>
 
-          <div className="relative">
+          <div
+            className={`${
+              !editColumnTitle && "opacity-0 group-hover:opacity-100"
+            }`}
+          >
             <SectionMoreOptions
               column={{
                 id: section.id.toString(),
@@ -167,11 +180,7 @@ const ListViewSection = ({
           droppableId={section.id.toString()}
         >
           {(provided, snapshot) => (
-            <div
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-              className="pl-6"
-            >
+            <div ref={provided.innerRef} {...provided.droppableProps}>
               <ul>
                 {(groupedTasks[section.id] || [])
                   .filter((t) => !t.parent_task_id)
@@ -186,11 +195,10 @@ const ListViewSection = ({
                   .map((task, index) => (
                     <Fragment key={task.id}>
                       <li
-                        className={`border-b border-text-200 p-1 pl-0 flex items-center gap-3 cursor-pointer ${
-                          task.parent_task_id && "ml-8"
-                        }`}
+                        tabIndex={0}
+                        className={`flex items-center gap-3 cursor-pointer w-full h-10 hover:bg-text-50f `}
                       >
-                        <TaskItem
+                        <TaskItemForListView
                           task={task}
                           setTasks={setTasks}
                           subTasks={(groupedTasks[section.id] || []).filter(
@@ -208,7 +216,7 @@ const ListViewSection = ({
                         />
                       </li>
 
-                      {(groupedTasks[section.id] || []).filter(
+                      {/* {(groupedTasks[section.id] || []).filter(
                         (t) => t.parent_task_id == task.id
                       ).length > 0 && (
                         <ul>
@@ -217,11 +225,11 @@ const ListViewSection = ({
                             .map((childTask, childIndex) => (
                               <li
                                 key={childTask.id}
-                                className={`border-b border-text-200 p-1 pl-0 flex items-center gap-3 cursor-pointer ${
+                                className={`border-b border-text-200 flex items-center gap-3 cursor-pointer ${
                                   childTask.parent_task_id && "ml-8"
                                 }`}
                               >
-                                <TaskItem
+                                <TaskItemForListView
                                   task={childTask}
                                   setTasks={setTasks}
                                   subTasks={(
@@ -238,7 +246,7 @@ const ListViewSection = ({
                               </li>
                             ))}
                         </ul>
-                      )}
+                      )} */}
                     </Fragment>
                   ))}
 

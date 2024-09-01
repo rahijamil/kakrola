@@ -47,11 +47,13 @@ const Priorities = ({
   setTaskData,
   isSmall,
   forTaskItemModal,
+  forListView,
 }: {
   taskData: TaskType;
   setTaskData: Dispatch<SetStateAction<TaskType>>;
   isSmall?: boolean;
   forTaskItemModal?: boolean;
+  forListView?: boolean;
 }) => {
   const selectedPriority = priorities.find(
     (priority) => priority.value === taskData.priority
@@ -93,6 +95,52 @@ const Priorities = ({
                 strokeWidth={1.5}
                 className="w-4 h-4 opacity-0 group-hover:opacity-100 transition"
               />
+            </div>
+          ) : forListView ? (
+            <div
+              ref={triggerRef}
+              data-state="priority"
+              className={`flex items-center justify-between cursor-pointer h-10 px-2 group relative ${
+                isOpen ? "bg-text-50" : "hover:bg-text-100"
+              }`}
+              onClick={onClick}
+            >
+              <div className="flex items-center gap-1">
+                <PriorityIcon priority={taskData.priority} />
+
+                {isSmall ? (
+                  <>
+                    {taskData.priority !== "Priority" && (
+                      <span className="text-xs text-text-700">
+                        {
+                          priorities.find((p) => p.value === taskData.priority)
+                            ?.value
+                        }
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <span className="text-xs text-text-700">
+                    {
+                      priorities.find((p) => p.value === taskData.priority)
+                        ?.value
+                    }
+                  </span>
+                )}
+              </div>
+
+              {taskData.priority !== "Priority" && (
+                <button
+                  type="button"
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    setTaskData({ ...taskData, priority: "Priority" });
+                  }}
+                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-200 rounded-full hidden group-data-[state=priority]:group-hover:inline-block absolute top-1/2 -translate-y-1/2 right-2"
+                >
+                  <X strokeWidth={1.5} className="w-4 h-4 text-text-500" />
+                </button>
+              )}
             </div>
           ) : (
             <div
@@ -142,7 +190,7 @@ const Priorities = ({
           {priorities.map((priority) => (
             <li
               key={priority.value}
-              className={`flex items-center px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700`}
+              className={`flex items-center px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-2xl`}
               onClick={() => {
                 setTaskData({
                   ...taskData,

@@ -47,6 +47,10 @@ const AuthForm: React.FC<AuthFormProps> = ({
   additionalInfo,
   additionalFooter,
 }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token"); // Get token from URL query parameters
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -61,10 +65,6 @@ const AuthForm: React.FC<AuthFormProps> = ({
   const handleVerify = (token: string) => {
     setCaptchaToken(token);
   };
-
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token"); // Get token from URL query parameters
 
   useEffect(() => {
     // Pre-fill the email field if the email is present in the query params

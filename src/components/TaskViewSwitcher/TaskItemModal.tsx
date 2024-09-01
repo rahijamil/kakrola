@@ -36,6 +36,7 @@ import AssigneeSelector from "../AddTask/AssigneeSelector";
 import DueDateSelector from "../AddTask/DueDateSelector";
 import DueDateButton from "./DueDateButton";
 import AnimatedCircleCheck from "./AnimatedCircleCheck";
+import { motion } from "framer-motion";
 
 const TaskItemModal = ({
   task,
@@ -89,42 +90,20 @@ const TaskItemModal = ({
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 bottom-0 flex py-16 justify-center bg-black/50 z-20 overflow-y-auto"
+      className="fixed inset-0 z-10 cursor-default"
+      id="fixed_dropdown"
       onClick={onClose}
     >
-      <div
-        className="bg-background rounded-2xl w-11/12 max-w-[52rem] min-h-full h-fit flex flex-col"
+      <motion.div
+        initial={{ opacity: 0, x: "100%" }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: "100%" }}
+        transition={{ duration: 0.2 }}
+        className="bg-background rounded-l-2xl w-11/12 max-w-[52rem] min-h-full h-fit flex flex-col fixed top-0 right-0 bottom-0 border-l border-text-200 shadow-md"
         onClick={(ev) => ev.stopPropagation()}
       >
         <div className="p-2 px-4 flex items-center justify-between border-b border-text-200">
-          {taskData.is_inbox ? (
-            <div className="flex items-center gap-2">
-              <Inbox className="w-4 h-4" />
-              Inbox
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2">
-                <Hash strokeWidth={1.5} className="w-4 h-4" />
-                {projects.find((p) => p.id == taskData.project_id)?.name}
-              </div>
-              <div>/</div>
-              <div className="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    fill="currentColor"
-                    d="M17.5 20a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11zM16 8a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h8zm0 1H8a1 1 0 0 0-.993.883L7 10v5a1 1 0 0 0 .883.993L8 16h8a1 1 0 0 0 .993-.883L17 15v-5a1 1 0 0 0-.883-.993L16 9zm1.5-5a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1h11z"
-                  ></path>
-                </svg>
-                {sections.find((s) => s.id == taskData.section_id)?.name}
-              </div>
-            </div>
-          )}
+          <div></div>
 
           <div className="flex items-center gap-2">
             {/* <button className="p-1 hover:bg-text-100 transition rounded-full">
@@ -152,7 +131,7 @@ const TaskItemModal = ({
                 <div
                   className={`${
                     contentEditable && "border"
-                  } rounded-full overflow-hidden border-text-200 focus-within:border-text-400`}
+                  } rounded-2xl overflow-hidden border-text-200 focus-within:border-text-400`}
                 >
                   <Input
                     className={`${
@@ -228,7 +207,7 @@ const TaskItemModal = ({
                   </button>
                 )}
                 {showAddSubtask && (
-                  <div className="rounded-full border border-text-200 focus-within:border-text-400 bg-surface">
+                  <div className="rounded-2xl border border-text-200 focus-within:border-text-400 bg-surface">
                     <AddTaskForm
                       onClose={() => setShowAddSubtask(false)}
                       parentTaskIdForSubTask={task.id}
@@ -373,7 +352,7 @@ const TaskItemModal = ({
             </div> */}
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

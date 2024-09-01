@@ -5,6 +5,7 @@ import {
   SetStateAction,
   useCallback,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import {
@@ -13,12 +14,12 @@ import {
   Droppable,
   DropResult,
 } from "@hello-pangea/dnd";
-import AddNewSectionListView from "./AddNewSectionListView";
-import ConfirmAlert from "../AlertBox/ConfirmAlert";
+import AddNewSectionListView from "../AddNewSectionListView";
+import ConfirmAlert from "../../AlertBox/ConfirmAlert";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useAuthProvider } from "@/context/AuthContext";
-import ListViewSection from "./ListViewSection";
-import UngroupedTasks from "./UngroupedTasks";
+import ListViewSection from "../ListViewSection";
+import UngroupedTasks from "../UngroupedTasks";
 import { v4 as uuidv4 } from "uuid";
 
 interface ListViewProps {
@@ -455,9 +456,21 @@ const ListView: React.FC<ListViewProps> = ({
             <div
               ref={listProvided.innerRef}
               {...listProvided.droppableProps}
-              className="space-y-2"
+              className="space-y-2 whitespace-nowrap overflow-x-auto h-full"
             >
-              <div className="space-y-4">
+              <div className="border-y border-text-200 flex items-center divide-x divide-text-200 text-xs font-medium mx-8 min-w-max">
+                <div className="w-full max-w-[632px] min-w-[632px] p-2">
+                  Task name
+                </div>
+                <div className="min-w-32 p-2">Assignee</div>
+                <div className="min-w-32 p-2">Due date</div>
+                <div className="min-w-32 p-2">Priority</div>
+                <div className="min-w-32 p-2">Labels</div>
+
+                {/* <div className="min-w-32 p-2">Status</div> */}
+              </div>
+
+              {/* <div className="space-y-4">
                 <UngroupedTasks
                   tasks={unGroupedTasks}
                   showUngroupedAddTask={showUngroupedAddTask}
@@ -480,7 +493,7 @@ const ListView: React.FC<ListViewProps> = ({
                   showAddSection={showAddSection}
                   sectionAddLoading={sectionAddLoading}
                 />
-              </div>
+              </div> */}
 
               {columns
                 .filter((c) => c.id !== "ungrouped")
@@ -495,7 +508,7 @@ const ListView: React.FC<ListViewProps> = ({
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className="space-y-4"
+                        className="space-y-2"
                       >
                         <ListViewSection
                           section={
