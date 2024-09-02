@@ -15,7 +15,7 @@ export default function AccountSettingsPage() {
   const { profile } = useAuthProvider();
   const [name, setName] = useState(profile?.full_name || "");
   const [email, setEmail] = useState(profile?.email);
-  const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url);
+  const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || "/default_avatar.png");
   const [twoFactorAuth, setTwoFactorAuth] = useState(false);
 
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -92,12 +92,12 @@ export default function AccountSettingsPage() {
       // Update profile to remove avatar URL
       const { error: updateError } = await supabaseBrowser
         .from("profiles")
-        .update({ avatar_url: null })
+        .update({ avatar_url: "/default_avatar.png" })
         .eq("id", profile?.id);
 
       if (updateError) throw updateError;
 
-      setAvatarUrl(null);
+      setAvatarUrl("/default_avatar.png");
     } catch (error) {
       console.error("Error removing avatar:", error);
       setError("Failed to remove avatar. Please try again.");

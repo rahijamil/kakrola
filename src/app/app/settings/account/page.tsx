@@ -71,7 +71,7 @@ export default function AccountSettingsPage() {
 
       if (updateError) throw updateError;
 
-      setAvatarUrl(null);
+      setAvatarUrl("/default_avatar.png");
     } catch (error) {
       console.error("Error removing avatar:", error);
       setError("Failed to remove avatar. Please try again.");

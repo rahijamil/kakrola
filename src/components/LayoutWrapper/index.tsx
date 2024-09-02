@@ -5,7 +5,6 @@ import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { ProjectType, TaskType } from "@/types/project";
 import { ViewTypes } from "@/types/viewTypes";
-import DocsSidebar from "../SidebarWrapper/DocsSidebar";
 import ShareOption from "./ShareOption";
 import ViewOptions from "./ViewOptions";
 import ActiveProjectMoreOptions from "./ActiveProjectMoreOptions";
@@ -198,8 +197,6 @@ const LayoutWrapper = ({
                       headline !== "Today" && (
                         <li>
                           <ShareOption
-                            showShareOption={showShareOption!}
-                            setShowShareOption={setShowShareOption}
                             projectId={project?.id}
                             teamId={project?.team_id}
                           />
