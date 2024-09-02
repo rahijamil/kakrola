@@ -12,6 +12,7 @@ import { Check, Plus, User, UserPlus, X } from "lucide-react";
 import { useAuthProvider } from "@/context/AuthContext";
 import { TaskType } from "@/types/project";
 import Dropdown from "../ui/Dropdown";
+import { useGlobalOption } from "@/context/GlobalOptionContext";
 
 const AssigneeSelector = ({
   task,
@@ -19,14 +20,17 @@ const AssigneeSelector = ({
   isSmall,
   forTaskModal,
   forListView,
+  dataFromElement,
 }: {
   task: TaskType;
   setTask: Dispatch<SetStateAction<TaskType>>;
   isSmall?: boolean;
   forTaskModal?: boolean;
   forListView?: boolean;
+  dataFromElement?: boolean;
 }) => {
   const { profile } = useAuthProvider();
+  const { setShowShareOption } = useGlobalOption();
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const [isOpen, setIsOpen] = useState(false);
@@ -107,6 +111,7 @@ const AssigneeSelector = ({
           </div>
         ) : forListView ? (
           <div
+            data-form-element={dataFromElement}
             ref={triggerRef}
             data-state={"assignee"}
             className={`flex items-center justify-between gap-1 cursor-pointer text-xs px-2 h-10 group relative ${
@@ -193,7 +198,7 @@ const AssigneeSelector = ({
         )
       }
       content={
-        <div>
+        <div data-form-element={dataFromElement}>
           <div className="p-2 border-b border-text-200">
             <Input
               howBig="xs"
@@ -257,6 +262,7 @@ const AssigneeSelector = ({
             <li
               className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-text-100 cursor-pointer rounded-2xl"
               onClick={() => {
+                setShowShareOption(true);
                 onClose();
               }}
             >

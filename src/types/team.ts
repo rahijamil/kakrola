@@ -87,6 +87,8 @@ export const organizationSizeOptions = Object.values(OrganizationSize).map(
 export enum RoleType {
   ADMIN = "ADMIN",
   MEMBER = "MEMBER",
+  COMMENTER = "COMMENTER",
+  VIEWER = "VIEWER",
 }
 
 export enum Permission {

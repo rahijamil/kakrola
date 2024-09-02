@@ -1,10 +1,8 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
-import TasksSidebar from "./TasksSidebar";
-import MainSidebar from "./MainSidebar";
+import TasksSidebar from "./Sidebar";
 import { usePathname } from "next/navigation";
-import ThreadsSidebar from "./ThreadsSidebar";
-import DocsSidebar from "./DocsSidebar";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const SidebarWrapper = () => {
   const pathname = usePathname();
@@ -26,8 +24,11 @@ const SidebarWrapper = () => {
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
-    setIsResizing(true);
-    document.body.style.cursor = "col-resize"; // Set cursor to col-resize
+
+    if (!isCollapsed) {
+      setIsResizing(true);
+      document.body.style.cursor = "col-resize"; // Set cursor to col-resize
+    }
   }, []);
 
   const handleMouseUp = useCallback(() => {
@@ -89,8 +90,6 @@ const SidebarWrapper = () => {
 
   return (
     <div className="flex h-screen">
-      <MainSidebar toggleSidebar={toggleSidebar} />
-
       <>
         {!isCollapsed && (
           <div
@@ -100,29 +99,54 @@ const SidebarWrapper = () => {
         )}
 
         <div
-          className={`fixed md:relative flex bg-primary-10 transition-all duration-300 h-screen whitespace-nowrap origin-left z-20 md:z-[auto] ${
-            isCollapsed ? "-left-full" : "left-0"
+          className={`fixed md:relative flex transition-all duration-300 h-screen whitespace-nowrap origin-left z-20 dmd:z-[auto] group ${
+            isCollapsed ? "bg-primary-10 hover:bg-primary-50" : "bg-primary-10"
           }`}
-          style={{ width: `${sidebarWidth}px`, marginLeft: `${sidebarLeft}px` }}
+          style={{
+            width: `${sidebarWidth}px`,
+            marginLeft: `${isCollapsed ? sidebarLeft + 20 : sidebarLeft}px`,
+          }}
+          onClick={() => {
+            if (isCollapsed) {
+              toggleSidebar();
+            }
+          }}
         >
-          {pathname.startsWith("/app") &&
-          !pathname.startsWith("/app/threads") &&
-          !pathname.startsWith("/app/docs") ? (
+          <div
+            className={`${
+              isCollapsed && "pointer-events-none opacity-0"
+            } w-full whitespace-nowrap`}
+          >
             <TasksSidebar sidebarWidth={sidebarWidth} />
-          ) : pathname.startsWith("/app/threads") ? (
-            <ThreadsSidebar sidebarWidth={sidebarWidth} />
-          ) : (
-            pathname.startsWith("/app/docs") && <DocsSidebar />
-          )}
+          </div>
 
           <div
-            className={`w-1 min-w-1 min-h-full h-full cursor-col-resize hidden md:block z-10 ${
+            className={`w-[3px] min-w-[3px] min-h-full h-full hidden md:block z-10 ${
               isResizing
                 ? "bg-primary-200"
-                : "hover:bg-primary-200 bg-transparent"
+                : ` ${
+                    isCollapsed
+                      ? "bg-text-100 group-hover:bg-primary-50"
+                      : "bg-transparent cursor-col-resize hover:bg-primary-200"
+                  }`
             }`}
             onMouseDown={handleMouseDown}
           ></div>
+
+          <button
+            className={`w-6 h-6 items-center justify-center absolute bottom-12 left-[calc(100%-14px)] z-10 rounded-full bg-background border border-primary-500 hover:bg-primary-500 hover:text-surface text-primary-500 shadow-md cursor-pointer ${
+              isCollapsed
+                ? "flex group-hover:bg-primary-500 group-hover:border-primary-500 group-hover:text-surface"
+                : "hidden group-hover:flex"
+            }`}
+            onClick={toggleSidebar}
+          >
+            {isCollapsed ? (
+              <ChevronRight strokeWidth={1.5} size={16} />
+            ) : (
+              <ChevronLeft strokeWidth={1.5} size={16} />
+            )}
+          </button>
         </div>
       </>
     </div>

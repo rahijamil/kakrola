@@ -9,7 +9,7 @@ import ExportCSVModal from "./SidebarProjectMoreOptions/ExportCSVModal";
 import ImportCSVModal from "./SidebarProjectMoreOptions/ImportCSVModal";
 import AddEditProject from "../../AddEditProject";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { Ellipsis, Hash } from "lucide-react";
+import { CheckCircle, Ellipsis, Hash } from "lucide-react";
 import ProjectDeleteConfirm from "./ProjectDeleteConfirm";
 import ProjectArchiveConfirm from "./ProjectArchiveConfirm";
 
@@ -93,9 +93,9 @@ const ProjectItem = ({
         >
           <div className="flex items-center">
             <div className="p-2">
-              <Hash
+              <CheckCircle
                 className={`w-4 h-4 text-${project.settings.color}`}
-                strokeWidth={1.5}
+                strokeWidth={2}
               />
             </div>
             {project.name}

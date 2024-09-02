@@ -193,7 +193,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
       if (result?.success) {
         if (token && (type == "login" || type == "signup")) {
-          axios.get(`/api/accept-invite?token=${token}`);
+          axios.get(`/api/invite/accept-invite?token=${token}`);
         }
 
         router.push("/app");

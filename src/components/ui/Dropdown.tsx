@@ -15,6 +15,7 @@ interface DropdownProps {
     id: number;
     label: string;
     onClick: () => void;
+    summary?: string;
     icon?: ReactNode;
     divide?: boolean;
     className?: string;
@@ -191,13 +192,19 @@ const Dropdown: React.FC<DropdownProps> = ({
                         toggleContent();
                       }
                     }}
-                    className={`w-full text-left px-4 py-1.5 hover:bg-text-100 transition flex items-center justify-between rounded-2xl disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent ${
+                    className={`w-full text-left px-4 py-1.5 hover:bg-text-100 transition flex items-center justify-between gap-4 rounded-2xl disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent ${
                       item.className
                     } ${item.textColor ? item.textColor : "text-text-700"}`}
                     disabled={item.disabled}
                   >
-                    <div className="flex items-center gap-4">
-                      {item.icon} {item.label}
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-4">
+                        {item.icon} {item.label}
+                      </div>
+
+                      {item.summary && (
+                        <p className="text-xs text-text-500">{item.summary}</p>
+                      )}
                     </div>
 
                     {item.content && (
@@ -242,6 +249,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 
       {isOpen && (
         <div
+          data-form-element="true"
           className="fixed top-0 left-0 bottom-0 right-0 z-10"
           onClick={() => setIsOpen(false)}
         ></div>

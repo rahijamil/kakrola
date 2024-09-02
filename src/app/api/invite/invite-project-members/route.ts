@@ -6,14 +6,14 @@ import { InviteType, RoleType } from "@/types/team";
 
 export async function POST(req: NextRequest) {
   const supabase = createClient();
-  const { emails, team_id, inviter, team_name } = (await req.json()) as {
+  const { emails, team_id, inviter } = (await req.json()) as {
     emails: string[];
-    team_id: number;
+    team_id: number | null;
+    project_id: number | null;
     inviter: { id: string; first_name: string; email: string }; // Include inviter's profile ID
-    team_name: string;
   };
 
-  if (!emails || !team_id || !inviter || !team_name) {
+  if (!emails || !inviter) {
     return NextResponse.json(
       { success: false, message: "Missing required parameters." },
       { status: 400 }
@@ -27,9 +27,9 @@ export async function POST(req: NextRequest) {
     .eq("id", team_id)
     .single();
 
-  if (teamError || !teamData || teamData.name !== team_name) {
+  if (teamError || !teamData) {
     return NextResponse.json(
-      { success: false, message: "Invalid team ID or team name mismatch." },
+      { success: false, message: "Invalid team ID." },
       { status: 400 }
     );
   }
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
 
       const inviteData: Omit<InviteType, "id"> = {
         project_id: null,
-        team_id: team_id,
+        team_id,
         email,
         role: RoleType["MEMBER"],
         status: "pending",
@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
         to: email,
         token: inviteData.token,
         inviter,
-        team_name,
+        team_name: teamData.name,
       });
     } catch (error) {
       console.error(`Error inviting ${email}:`, error);

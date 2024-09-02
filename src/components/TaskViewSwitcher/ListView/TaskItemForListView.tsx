@@ -17,13 +17,12 @@ import Priorities from "@/components/AddTask/Priorities";
 const TaskItemForListView = ({
   task,
   subTasks,
-  showShareOption,
-  setShowShareOption,
   index,
   project,
   setTasks,
   tasks,
   setShowModal,
+  setShowAddTask,
   showModal,
   showDeleteConfirm,
   smallAddTask,
@@ -32,8 +31,6 @@ const TaskItemForListView = ({
 }: {
   task: TaskType;
   subTasks: TaskType[];
-  showShareOption?: boolean;
-  setShowShareOption?: Dispatch<SetStateAction<boolean>>;
   index: number;
   project: ProjectType | null;
   setTasks: (updatedTasks: TaskType[]) => void;
@@ -41,6 +38,7 @@ const TaskItemForListView = ({
   showModal?: string | null;
   smallAddTask?: boolean;
   setShowModal?: Dispatch<SetStateAction<string | null>>;
+  setShowAddTask?: Dispatch<SetStateAction<string | number | null>>;
   showDeleteConfirm?: string | null;
   setShowDeleteConfirm?: Dispatch<SetStateAction<string | null>>;
   column?: {
@@ -142,7 +140,10 @@ const TaskItemForListView = ({
             >
               <div className="group border-b border-text-200 mx-8 px-8 bg-transparent cursor-pointer flex items-center justify-between h-10">
                 <div className="flex-1 flex items-center divide-x divide-text-200">
-                  <div className="w-full max-w-[600px] flex items-center justify-between gap-4 group">
+                  <div
+                    className="w-full max-w-[600px] flex items-center justify-between gap-4 group"
+                    onClick={() => setShowAddTask && setShowAddTask(null)}
+                  >
                     <div className="flex items-center gap-2 w-full">
                       <AnimatedCircleCheck
                         handleCheckSubmit={handleCheckClickDebounced}
@@ -151,14 +152,14 @@ const TaskItemForListView = ({
                       />
                       <div
                         className="flex items-center gap-2 w-full"
-                        onClick={(ev) => {
-                          ev.stopPropagation();
+                        onClick={() => {
                           setShowModal && setShowModal(task.id.toString());
                         }}
                       >
                         {!editTaskTitle ? (
                           <h2
                             onClick={(ev) => {
+                              ev.stopPropagation();
                               setEditTaskTitle(true);
                             }}
                             className={`${

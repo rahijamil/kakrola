@@ -38,12 +38,14 @@ const DueDateSelector = ({
   isSmall,
   forTaskModal,
   forListView,
+  dataFromElement
 }: {
   task: TaskType;
   setTask: Dispatch<SetStateAction<TaskType>>;
   isSmall?: boolean;
   forTaskModal?: boolean;
   forListView?: boolean;
+  dataFromElement?: boolean;
 }) => {
   const [date, setDate] = useState<Date | undefined>(
     task.due_date ? new Date(task.due_date) : undefined
@@ -206,6 +208,7 @@ const DueDateSelector = ({
         ) : forListView ? (
           <div
             ref={triggerRef}
+            data-form-element={dataFromElement}
             data-state="due-date"
             className={`flex items-center justify-between gap-1 cursor-pointer h-10 px-2 w-full text-xs group relative ${
               isOpen ? "bg-text-50" : "hover:bg-text-100"
@@ -276,7 +279,7 @@ const DueDateSelector = ({
         )
       }
       content={
-        <div>
+        <div data-form-element={dataFromElement}>
           <div className="p-2 border-b border-text-200">
             <Input
               howBig="xs"

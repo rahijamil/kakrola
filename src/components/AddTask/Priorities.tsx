@@ -48,12 +48,14 @@ const Priorities = ({
   isSmall,
   forTaskItemModal,
   forListView,
+  dataFromElement
 }: {
   taskData: TaskType;
   setTaskData: Dispatch<SetStateAction<TaskType>>;
   isSmall?: boolean;
   forTaskItemModal?: boolean;
   forListView?: boolean;
+  dataFromElement?: boolean;
 }) => {
   const selectedPriority = priorities.find(
     (priority) => priority.value === taskData.priority
@@ -98,6 +100,7 @@ const Priorities = ({
             </div>
           ) : forListView ? (
             <div
+              data-form-element={dataFromElement}
               ref={triggerRef}
               data-state="priority"
               className={`flex items-center justify-between cursor-pointer h-10 px-2 group relative ${
@@ -186,7 +189,7 @@ const Priorities = ({
         </>
       )}
       content={
-        <ul className="text-xs">
+        <ul className="text-xs" data-form-element={dataFromElement}>
           {priorities.map((priority) => (
             <li
               key={priority.value}

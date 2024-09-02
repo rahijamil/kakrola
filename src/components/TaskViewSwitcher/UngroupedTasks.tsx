@@ -11,8 +11,6 @@ interface UngroupedTasksProps {
   setShowUngroupedAddTask: React.Dispatch<React.SetStateAction<boolean>>;
   project: ProjectType | null;
   setTasks: (updatedTasks: TaskType[]) => void;
-  showShareOption?: boolean;
-  setShowShareOption?: React.Dispatch<React.SetStateAction<boolean>>;
   showTaskItemModal: string | null;
   setShowTaskItemModal: Dispatch<SetStateAction<string | null>>;
 }
@@ -23,8 +21,6 @@ const UngroupedTasks: React.FC<UngroupedTasksProps> = ({
   setShowUngroupedAddTask,
   project,
   setTasks,
-  showShareOption,
-  setShowShareOption,
   showTaskItemModal,
   setShowTaskItemModal,
 }) => {
@@ -54,8 +50,6 @@ const UngroupedTasks: React.FC<UngroupedTasksProps> = ({
                       subTasks={tasks.filter(
                         (t) => t.parent_task_id === task.id
                       )}
-                      showShareOption={showShareOption}
-                      setShowShareOption={setShowShareOption}
                       index={index}
                       project={project}
                       tasks={tasks}
@@ -80,8 +74,6 @@ const UngroupedTasks: React.FC<UngroupedTasksProps> = ({
                               subTasks={tasks.filter(
                                 (t) => t.parent_task_id === childTask.id
                               )}
-                              showShareOption={showShareOption}
-                              setShowShareOption={setShowShareOption}
                               index={childIndex}
                               project={project}
                               tasks={tasks}

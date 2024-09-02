@@ -9,17 +9,18 @@ import DocsSidebar from "../SidebarWrapper/DocsSidebar";
 import ShareOption from "./ShareOption";
 import ViewOptions from "./ViewOptions";
 import ActiveProjectMoreOptions from "./ActiveProjectMoreOptions";
-import ProjectDeleteConfirm from "../SidebarWrapper/TasksSidebar/ProjectDeleteConfirm";
-import ProjectArchiveConfirm from "../SidebarWrapper/TasksSidebar/ProjectArchiveConfirm";
+import ProjectDeleteConfirm from "../SidebarWrapper/Sidebar/ProjectDeleteConfirm";
+import ProjectArchiveConfirm from "../SidebarWrapper/Sidebar/ProjectArchiveConfirm";
 import CommentOrActivityModal from "./CommentOrActivityModal";
-import ExportCSVModal from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ExportCSVModal";
-import ImportCSVModal from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/ImportCSVModal";
+import ExportCSVModal from "../SidebarWrapper/Sidebar/SidebarProjectMoreOptions/ExportCSVModal";
+import ImportCSVModal from "../SidebarWrapper/Sidebar/SidebarProjectMoreOptions/ImportCSVModal";
 import AddEditProject from "../AddEditProject";
 import NoDueDate from "../TaskViewSwitcher/CalendarView/NoDueDate";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
-import SaveTemplateModal from "../SidebarWrapper/TasksSidebar/SidebarProjectMoreOptions/SaveTemplateModal";
+import SaveTemplateModal from "../SidebarWrapper/Sidebar/SidebarProjectMoreOptions/SaveTemplateModal";
 import LayoutView from "../LayoutView";
 import Link from "next/link";
+import { useGlobalOption } from "@/context/GlobalOptionContext";
 
 const LayoutWrapper = ({
   children,
@@ -27,8 +28,6 @@ const LayoutWrapper = ({
   project,
   view,
   setView,
-  showShareOption,
-  setShowShareOption,
   hideCalendarView,
   setTasks,
   tasks,
@@ -39,8 +38,6 @@ const LayoutWrapper = ({
   project?: ProjectType;
   view?: ViewTypes["view"];
   setView?: (value: ViewTypes["view"]) => void;
-  showShareOption?: boolean;
-  setShowShareOption?: Dispatch<SetStateAction<boolean>>;
   hideCalendarView?: boolean;
   setTasks?: (updatedTasks: TaskType[]) => void;
   tasks?: TaskType[];
@@ -63,6 +60,7 @@ const LayoutWrapper = ({
   );
 
   const { setProjects, teams } = useTaskProjectDataProvider();
+  const { setShowShareOption, showShareOption } = useGlobalOption();
 
   const handleEditTitle = async () => {
     if (
@@ -199,7 +197,12 @@ const LayoutWrapper = ({
                     {typeof setShowShareOption === "function" &&
                       headline !== "Today" && (
                         <li>
-                          <ShareOption />
+                          <ShareOption
+                            showShareOption={showShareOption!}
+                            setShowShareOption={setShowShareOption}
+                            projectId={project?.id}
+                            teamId={project?.team_id}
+                          />
                         </li>
                       )}
                     <li>
@@ -258,9 +261,7 @@ const LayoutWrapper = ({
 
             <div
               className={`flex-1 ${
-                view === "List" &&
-                !project &&
-                "max-w-4xl w-full mx-auto p-8 pt-0"
+                view === "List" && !project && "max-w-4xlw-fullmx-auto p-8 pt-0"
               }`}
             >
               <div className="flex flex-col h-full">

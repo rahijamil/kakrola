@@ -15,7 +15,7 @@ const InviteLink = ({ team_id }: { team_id: TeamType["id"] }) => {
 
     try {
       // Request the server to generate an invite link
-      const response = await axios.post("/api/generate-invite-link", {
+      const response = await axios.post("/api/invite/generate-invite-link", {
         team_id,
       });
 

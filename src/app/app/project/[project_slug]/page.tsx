@@ -10,6 +10,8 @@ import { ViewTypes } from "@/types/viewTypes";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuthProvider } from "@/context/AuthContext";
+import { ProjectMemberType, RoleType } from "@/types/team";
 
 const ProjectDetails = ({
   params: { project_slug },
@@ -30,7 +32,7 @@ const ProjectDetails = ({
   const [currentProject, setCurrentProject] = useState<ProjectType | null>(
     null
   );
-  const [showShareOption, setShowShareOption] = useState<boolean>(false);
+  
   const [notFound, setNotFound] = useState<boolean>(false);
   const [showNoDateTasks, setShowNoDateTasks] = useState(false);
 
@@ -159,8 +161,6 @@ const ProjectDetails = ({
         view={currentProject.settings.view}
         setView={updateProjectView}
         project={currentProject}
-        showShareOption={showShareOption}
-        setShowShareOption={setShowShareOption}
         setTasks={setProjectTasks}
         tasks={projectTasks}
         showNoDateTasks={showNoDateTasks}
@@ -172,8 +172,6 @@ const ProjectDetails = ({
           sections={projectSections}
           setSections={setProjectSections}
           view={currentProject.settings.view}
-          showShareOption={showShareOption}
-          setShowShareOption={setShowShareOption}
           showNoDateTasks={showNoDateTasks}
           setShowNoDateTasks={setShowNoDateTasks}
         />

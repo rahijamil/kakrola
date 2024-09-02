@@ -22,7 +22,6 @@ const Step5InviteMembers = () => {
   const [error, setError] = useState<string | null>(null); // Error state
 
   const { profile } = useAuthProvider();
-  const { teams } = useTaskProjectDataProvider();
 
   const [invites, setInvites] = useState<{ email: string }[]>([
     { email: "" },
@@ -40,15 +39,6 @@ const Step5InviteMembers = () => {
       return;
     }
 
-    const team = teams.find((team) => team.id === parseInt(team_id));
-    if (!team) {
-      setLoading(false);
-      setError("Team not found.");
-      return;
-    }
-
-    const team_name = team.name; // Get the team name
-
     // Filter valid emails
     const validEmails = invites
       .map((invite) => invite.email.trim())
@@ -64,10 +54,9 @@ const Step5InviteMembers = () => {
 
     try {
       // Send all invites in one request to the server
-      const response = await axios.post("/api/invite-members", {
+      const response = await axios.post("/api/invite/invite-team-members", {
         emails: validEmails,
         team_id,
-        team_name,
         inviter: {
           id: profile.id,
           first_name: profile.full_name.split(" ")[0] || "User",

@@ -8,13 +8,9 @@ import SectionAddTask from "./SectionAddTask";
 const BoardViewForToday = ({
   tasks,
   setTasks,
-  showShareOption,
-  setShowShareOption,
 }: {
   tasks: TaskType[];
   setTasks: (updatedTasks: TaskType[]) => void;
-  showShareOption: boolean;
-  setShowShareOption: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [showUngroupedAddTask, setShowUngroupedAddTask] = useState(false);
   const [showTaskItemModal, setShowTaskItemModal] = useState<string | null>(
@@ -72,8 +68,6 @@ const BoardViewForToday = ({
                         subTasks={tasks.filter(
                           (t) => t.parent_task_id == task.id
                         )}
-                        setShowShareOption={setShowShareOption}
-                        showShareOption={showShareOption}
                         index={taskIndex}
                         project={null}
                         setShowDeleteConfirm={setShowDeleteConfirm}

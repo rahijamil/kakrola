@@ -21,6 +21,7 @@ import { useAuthProvider } from "@/context/AuthContext";
 import ListViewSection from "../ListViewSection";
 import UngroupedTasks from "../UngroupedTasks";
 import { v4 as uuidv4 } from "uuid";
+import { useGlobalOption } from "@/context/GlobalOptionContext";
 
 interface ListViewProps {
   groupedTasks: Record<string, TaskType[]>;
@@ -33,8 +34,6 @@ interface ListViewProps {
   setShowUngroupedAddTask: Dispatch<SetStateAction<boolean>>;
   showUngroupedAddSection: boolean;
   setShowUngroupedAddSection: Dispatch<SetStateAction<boolean>>;
-  showShareOption?: boolean;
-  setShowShareOption?: Dispatch<SetStateAction<boolean>>;
   project: ProjectType | null;
   setTasks: (updatedTasks: TaskType[]) => void;
   tasks: TaskType[];
@@ -50,8 +49,6 @@ const ListView: React.FC<ListViewProps> = ({
   showUngroupedAddTask,
   setShowUngroupedAddSection,
   setShowUngroupedAddTask,
-  setShowShareOption,
-  showShareOption,
   project,
   setTasks,
   tasks,
@@ -77,6 +74,7 @@ const ListView: React.FC<ListViewProps> = ({
   const [showTaskItemModal, setShowTaskItemModal] = useState<string | null>(
     null
   );
+
 
   const { profile } = useAuthProvider();
   const [sectionAddLoading, setSectionAddLoading] = useState(false);
@@ -523,10 +521,8 @@ const ListView: React.FC<ListViewProps> = ({
                           setShowDeleteConfirm={setShowDeleteConfirm}
                           setShowArchiveConfirm={setShowArchiveConfirm}
                           setShowAddTask={setShowAddTask}
-                          setShowShareOption={setShowShareOption}
                           setTasks={setTasks}
                           showAddTask={showAddTask}
-                          showShareOption={showShareOption}
                           tasks={tasks}
                           project={project}
                           showTaskItemModal={showTaskItemModal}

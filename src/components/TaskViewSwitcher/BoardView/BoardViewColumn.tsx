@@ -25,8 +25,6 @@ const BoardViewColumn = ({
   setShowSectionMoreOptions,
   project,
   setTasks,
-  setShowShareOption,
-  showShareOption,
   sections,
   setShowUngroupedAddSection,
   showAddTask,
@@ -63,8 +61,6 @@ const BoardViewColumn = ({
   setShowSectionMoreOptions: Dispatch<SetStateAction<string | null>>;
   project: ProjectType | null;
   setTasks: (updatedTasks: TaskType[]) => void;
-  setShowShareOption?: Dispatch<SetStateAction<boolean>>;
-  showShareOption?: boolean;
   sections: SectionType[];
   setShowUngroupedAddSection: Dispatch<SetStateAction<boolean>>;
   showAddTask: string | number | null;
@@ -280,8 +276,6 @@ const BoardViewColumn = ({
                                 subTasks={column.tasks.filter(
                                   (t) => t.parent_task_id == task.id
                                 )}
-                                setShowShareOption={setShowShareOption}
-                                showShareOption={showShareOption}
                                 index={taskIndex}
                                 project={project}
                                 setShowDeleteConfirm={setShowTaskDeleteConfirm}

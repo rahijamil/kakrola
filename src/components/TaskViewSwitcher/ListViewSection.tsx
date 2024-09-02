@@ -27,8 +27,6 @@ const ListViewSection = ({
   setShowDeleteConfirm,
   setShowArchiveConfirm,
   setTasks,
-  showShareOption,
-  setShowShareOption,
   project,
   tasks,
   showAddTask,
@@ -62,8 +60,6 @@ const ListViewSection = ({
   >;
   setTasks: (updatedTasks: TaskType[]) => void;
   tasks: TaskType[];
-  showShareOption?: boolean;
-  setShowShareOption?: Dispatch<SetStateAction<boolean>>;
   project: ProjectType | null;
   showAddTask: string | number | null;
   setShowAddTask: Dispatch<SetStateAction<string | number | null>>;
@@ -196,7 +192,11 @@ const ListViewSection = ({
                     <Fragment key={task.id}>
                       <li
                         tabIndex={0}
-                        className={`flex items-center gap-3 cursor-pointer w-full h-10 hover:bg-text-50f `}
+                        className={`flex items-center gap-3 cursor-pointer w-full h-10 ring-1 mt-[1px] ${
+                          showTaskItemModal === task.id.toString()
+                            ? "ring-primary-300 bg-primary-10"
+                            : "ring-transparent"
+                        }`}
                       >
                         <TaskItemForListView
                           task={task}
@@ -204,8 +204,6 @@ const ListViewSection = ({
                           subTasks={(groupedTasks[section.id] || []).filter(
                             (t) => t.parent_task_id == task.id
                           )}
-                          showShareOption={showShareOption}
-                          setShowShareOption={setShowShareOption}
                           index={index}
                           project={project}
                           tasks={tasks}
@@ -213,6 +211,7 @@ const ListViewSection = ({
                           showModal={showTaskItemModal}
                           showDeleteConfirm={showTaskDeleteConfirm}
                           setShowDeleteConfirm={setShowTaskDeleteConfirm}
+                          setShowAddTask={setShowAddTask}
                         />
                       </li>
 

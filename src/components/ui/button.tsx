@@ -20,14 +20,14 @@ const getButtonClasses = (
   leftAlign?: boolean,
   rightContent?: boolean
 ) => {
-  const baseClasses = `inline-flex items-center gap-2 rounded-full font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ${
+  const baseClasses = `inline-flex items-center gap-2 rounded-full font-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ${
     leftAlign ? "justify-start text-left" : "justify-center"
   }`;
 
   const variantClasses = {
     default: {
       indigo:
-        "text-surface bg-gradient-to-r from-primary-600 to-primary-500 hover:to-primary-600 disabled:hover:to-primary-500",
+        "text-surface bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-400 hover:to-primary-500 disabled:hover:to-primary-500",
       red: "text-surface bg-gradient-to-r from-red-700 to-red-600 hover:to-red-700",
       gray: "",
     },

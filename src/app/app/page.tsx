@@ -7,10 +7,10 @@ import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { isToday } from "date-fns";
 import ListViewForToday from "@/components/TaskViewSwitcher/ListViewForToday";
 import BoardViewForToday from "@/components/TaskViewSwitcher/BoardViewForToday";
+import AppWrapper from "./AppLayoutWrapper";
 const Today = () => {
   const { tasks, setTasks } = useTaskProjectDataProvider();
   const [view, setView] = useState<ViewTypes["view"]>("List");
-  const [showShareOption, setShowShareOption] = useState<boolean>(false);
 
   const todayTasks = useMemo(() => {
     return tasks
@@ -25,8 +25,6 @@ const Today = () => {
           <ListViewForToday
             tasks={todayTasks}
             setTasks={setTasks}
-            showShareOption={showShareOption}
-            setShowShareOption={setShowShareOption}
           />
         );
       case "Board":
@@ -34,8 +32,6 @@ const Today = () => {
           <BoardViewForToday
             tasks={todayTasks}
             setTasks={setTasks}
-            showShareOption={showShareOption}
-            setShowShareOption={setShowShareOption}
           />
         );
 
@@ -45,36 +41,36 @@ const Today = () => {
   };
 
   return (
-    <LayoutWrapper
-      headline="Today"
-      view={view}
-      setView={setView}
-      hideCalendarView
-      showShareOption={showShareOption}
-      setShowShareOption={setShowShareOption}
-    >
-      {renderTaskViewSwitcherForToday()}
+    <AppWrapper>
+      <LayoutWrapper
+        headline="Today"
+        view={view}
+        setView={setView}
+        hideCalendarView
+      >
+        {renderTaskViewSwitcherForToday()}
 
-      {todayTasks.length === 0 && view === "List" && (
-        <div className="flex items-center justify-center flex-col gap-1 h-[35vh] select-none">
-          <Image
-            src="/today.png"
-            width={200}
-            height={200}
-            alt="Today"
-            className="rounded-full object-cover"
-            draggable={false}
-          />
+        {todayTasks.length === 0 && view === "List" && (
+          <div className="flex items-center justify-center flex-col gap-1 h-[35vh] select-none">
+            <Image
+              src="/today.png"
+              width={200}
+              height={200}
+              alt="Today"
+              className="rounded-full object-cover"
+              draggable={false}
+            />
 
-          <div className="text-center space-y-1 w-72">
-            <h3 className="font-medium text-base">Your tasks for today</h3>
-            <p className="text-sm text-text-600">
-              Add your tasks here to focus on what’s important today.
-            </p>
+            <div className="text-center space-y-1 w-72">
+              <h3 className="font-medium text-base">Your tasks for today</h3>
+              <p className="text-sm text-text-600">
+                Add your tasks here to focus on what’s important today.
+              </p>
+            </div>
           </div>
-        </div>
-      )}
-    </LayoutWrapper>
+        )}
+      </LayoutWrapper>
+    </AppWrapper>
   );
 };
 

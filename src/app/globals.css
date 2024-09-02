@@ -60,4 +60,13 @@
     writing-mode: vertical-lr;
     text-orientation: mixed;
   }
+
+  .hero_button:hover {
+    transform: scale(1.05);
+    background: linear-gradient(
+      to right,
+      var(--color-primary-400),
+      var(--color-primary-500)
+    );
+  }
 }

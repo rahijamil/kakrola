@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import {
@@ -96,6 +96,28 @@ const AddTaskFormForProject = ({
   const [error, setError] = useState<string | null>(null);
 
   const titleEditableRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (ev: MouseEvent) => {
+      const target = ev.target as HTMLElement;
+
+      // Check if the click is outside the form and does not have a specific attribute
+      if (
+        formRef.current &&
+        !formRef.current.contains(target) &&
+        !target.closest('[data-form-element="true"]')
+      ) {
+        onClose();
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [onClose]);
 
   // Helper functions
   const calculateNewOrder = (
@@ -229,7 +251,7 @@ const AddTaskFormForProject = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
+    <form ref={formRef} onSubmit={handleSubmit} className="w-full">
       <div className="border-b border-text-200 mx-8 bg-transparent flex items-center divide-x divide-text-200 text-xs font-medium px-8 h-10 overflow-hidden">
         <div
           className={`w-full max-w-[600px] flex items-center gap-2 py-2 pr-4`}
@@ -256,11 +278,17 @@ const AddTaskFormForProject = ({
             setTask={setTaskData}
             isSmall={isSmall}
             forListView
+            dataFromElement
           />
         </div>
 
         <div className="min-w-32">
-          <DueDateSelector task={taskData} setTask={setTaskData} forListView />
+          <DueDateSelector
+            task={taskData}
+            setTask={setTaskData}
+            forListView
+            dataFromElement
+          />
         </div>
 
         <div className="min-w-32">
@@ -269,10 +297,11 @@ const AddTaskFormForProject = ({
             setTaskData={setTaskData}
             isSmall={isSmall}
             forListView
+            dataFromElement
           />
         </div>
 
-        <div className="relative">
+        <div className="relative" data-form-element="true">
           <div
             className="flex items-center gap-1 hover:bg-text-100 cursor-pointer p-1 px-2 rounded-full border border-text-200"
             onClick={() => setShowReminder(!showReminder)}
@@ -302,6 +331,7 @@ const AddTaskFormForProject = ({
 
         <div className="relative">
           <div
+            data-form-element="true"
             className="flex items-center gap-2 hover:bg-text-100 cursor-pointer p-1 rounded-full border border-text-200"
             onClick={() => setShowMore(!showMore)}
           >

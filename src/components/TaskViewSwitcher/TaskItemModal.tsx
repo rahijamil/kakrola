@@ -226,8 +226,6 @@ const TaskItemModal = ({
                     <TaskItem
                       task={subTask}
                       setTasks={setTasks}
-                      showShareOption={false}
-                      setShowShareOption={(v) => {}}
                       index={index}
                       project={project}
                       subTasks={tasks

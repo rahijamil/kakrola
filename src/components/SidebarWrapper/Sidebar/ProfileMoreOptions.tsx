@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import {
   BookOpen,
+  ChevronDown,
   ChevronRight,
   CircleHelp,
   Gift,
@@ -210,21 +211,24 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
 
   return (
     <Dropdown
-      direction="bottom-left"
       setIsOpen={setIsOpen}
       triggerRef={triggerRef}
       Label={({ onClick }) => (
-        <div className="flex items-center justify-center aspect-square w-full">
-          <button onClick={onClick} ref={triggerRef}>
-            <Image
-              src={profile?.avatar_url || "/default-avatar.png"}
-              alt={profile?.full_name || profile?.username || ""}
-              width={32}
-              height={32}
-              className="rounded-full object-cover max-w-[32px] max-h-[32px]"
-            />
-          </button>
-        </div>
+        <button
+          onClick={onClick}
+          ref={triggerRef}
+          className="flex items-center gap-1 hover:bg-primary-50 transition p-1 pl-1.5 rounded-2xl"
+        >
+          <Image
+            src={profile?.avatar_url || "/default-avatar.png"}
+            alt={profile?.full_name || profile?.username || ""}
+            width={20}
+            height={20}
+            className="rounded-full object-cover max-w-[20px] max-h-[20px]"
+          />
+
+          <ChevronDown strokeWidth={1.5} size={16} />
+        </button>
       )}
       isOpen={isOpen}
       contentWidthClass="w-60 pb-1"

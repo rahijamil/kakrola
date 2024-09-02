@@ -70,18 +70,22 @@ const SectionAddTask = ({
             />
           </div>
         ) : (
-          <AddTaskFormForProject
-            onClose={() =>
-              section
-                ? setShowAddTask && setShowAddTask(null)
-                : setShowUngroupedAddTask && setShowUngroupedAddTask(false)
-            }
-            isSmall={isSmall}
-            section_id={section?.id}
-            project={project}
-            tasks={tasks}
-            setTasks={setTasks}
-          />
+          <div
+            className={`flex items-center gap-3 cursor-pointer w-full h-10 ring-1 ring-primary-300 mt-[1px]`}
+          >
+            <AddTaskFormForProject
+              onClose={() =>
+                section
+                  ? setShowAddTask && setShowAddTask(null)
+                  : setShowUngroupedAddTask && setShowUngroupedAddTask(false)
+              }
+              isSmall={isSmall}
+              section_id={section?.id}
+              project={project}
+              tasks={tasks}
+              setTasks={setTasks}
+            />
+          </div>
         ))}
     </>
   );

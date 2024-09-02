@@ -16,12 +16,11 @@ import AddTask from "../AddTask";
 import { debounce } from "lodash";
 import { getDateInfo } from "@/utils/getDateInfo";
 import AnimatedCircleCheck from "./AnimatedCircleCheck";
+import { useGlobalOption } from "@/context/GlobalOptionContext";
 
 const TaskItem = ({
   task,
   subTasks,
-  showShareOption,
-  setShowShareOption,
   index,
   project,
   setTasks,
@@ -35,8 +34,6 @@ const TaskItem = ({
 }: {
   task: TaskType;
   subTasks: TaskType[];
-  showShareOption?: boolean;
-  setShowShareOption?: Dispatch<SetStateAction<boolean>>;
   index: number;
   project: ProjectType | null;
   setTasks: (updatedTasks: TaskType[]) => void;
@@ -58,6 +55,8 @@ const TaskItem = ({
     position: "above" | "below";
     task: TaskType;
   } | null>(null);
+
+  const { setShowShareOption, showShareOption } = useGlobalOption();
 
   const handleTaskDelete = async () => {
     const updatedTasks = tasks.filter((t) => t.id !== task.id);

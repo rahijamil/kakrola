@@ -8,13 +8,9 @@ import { Droppable } from "@hello-pangea/dnd";
 const ListViewForToday = ({
   tasks,
   setTasks,
-  showShareOption,
-  setShowShareOption,
 }: {
   tasks: TaskType[];
   setTasks: (updatedTasks: TaskType[]) => void;
-  showShareOption: boolean;
-  setShowShareOption: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [showUngroupedAddTask, setShowUngroupedAddTask] = useState(false);
   const [showTaskItemModal, setShowTaskItemModal] = useState<string | null>(
@@ -59,8 +55,6 @@ const ListViewForToday = ({
                       subTasks={tasks.filter(
                         (t) => t.parent_task_id == task.id
                       )}
-                      showShareOption={showShareOption}
-                      setShowShareOption={setShowShareOption}
                       index={index}
                       project={projects.find((p) => p.id === task.project_id)!}
                       tasks={tasks}
@@ -89,8 +83,6 @@ const ListViewForToday = ({
                               subTasks={tasks.filter(
                                 (t) => t.parent_task_id == childTask.id
                               )}
-                              showShareOption={showShareOption}
-                              setShowShareOption={setShowShareOption}
                               index={childIndex}
                               project={
                                 projects.find(

@@ -4,7 +4,7 @@ export interface ProfileType {
   username: string;
   email: string;
   full_name: string;
-  avatar_url: string | null;
+  avatar_url: string;
   created_at?: Date;
   updated_at?: Date;
   last_login_at?: Date;

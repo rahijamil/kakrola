@@ -24,7 +24,7 @@ const OnboardWrapper = ({
   return (
     <div className="min-h-screen overflow-hidden bg-background">
       <div
-        className={`grid h-screen ${
+        className={`${rightSide && "grid"} h-screen ${
           isShowRightSide ? "grid-cols-2" : "grid-cols-1"
         }`}
       >

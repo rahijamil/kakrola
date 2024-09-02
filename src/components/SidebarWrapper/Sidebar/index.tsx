@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { useAuthProvider } from "@/context/AuthContext";
 import {
@@ -15,12 +15,17 @@ import {
   LayoutPanelTop,
   Bell,
   SwatchBook,
+  MessagesSquare,
+  Plus,
 } from "lucide-react";
-import AddTaskTextButton from "@/components/AddTaskTextButton";
 import AddTaskModal from "@/components/AddTask/AddTaskModal";
 import MyProjects from "./MyProjects";
 import FavoriteProjects from "./FavoriteProjects";
 import TeamProjects from "./TeamProjects";
+import ProfileMoreOptions from "./ProfileMoreOptions";
+import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
+import axios from "axios";
+import AddTeam from "@/components/AddTeam";
 
 const menuItems: {
   id: number;
@@ -31,16 +36,15 @@ const menuItems: {
   path?: string;
   onClick?: () => void;
 }[] = [
-  { id: 1, icon: Search, text: "Search", path: "/app/search" },
+  { id: 1, icon: Calendar, text: "My Tasks", path: "/app" },
   { id: 2, icon: Inbox, text: "Inbox", path: "/app/inbox" },
-  { id: 3, icon: Calendar, text: "Today", path: "/app" },
-  { id: 4, icon: CalendarDays, text: "Upcoming", path: "/app/upcoming" },
-  {
-    id: 5,
-    icon: LayoutPanelTop,
-    text: "Filters & Labels",
-    path: "/app/filters-labels",
-  },
+  // {
+  //   id: 5,
+  //   icon: LayoutPanelTop,
+  //   text: "Filters & Labels",
+  //   path: "/app/filters-labels",
+  // },
+  { id: 3, icon: MessagesSquare, text: "DMs", path: "/app/dm" },
 ];
 
 const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
@@ -49,6 +53,12 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
 
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);
+
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [logoutLoading, setLogoutLoading] = useState(false);
+  const [showAddTeam, setShowAddTeam] = useState<boolean | number>(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -82,28 +92,36 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
     <>
       <aside className="h-full flex flex-col group w-full">
         {/* here will notification icons */}
-        <div className="p-4 px-2 flex items-center justify-between relative">
-          <div
-            onClick={() => setShowAddTaskModal(true)}
-            className={`flex items-center p-2 pr-3 rounded-full transition-colors duration-150 text-text-700 cursor-pointer hover:bg-primary-50`}
-          >
-            <AddTaskTextButton />
-          </div>
+        <div className="pb-4 p-2 flex items-center justify-between relative">
+          <ProfileMoreOptions
+            setShowAddTeam={setShowAddTeam}
+            setShowLogoutConfirm={setShowLogoutConfirm}
+          />
 
           <div
             className={`flex items-center justify-end w-full transition duration-150 ${
               sidebarWidth > 220 ? "gap-2" : "gap-1"
             }`}
           >
-            {/* <button
-              className={`text-text-700 hover:bg-primary-50 rounded-full transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center`}
+            <button
+              className={`text-text-700 hover:bg-primary-50 rounded-full transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
             >
-              <Bell strokeWidth={1.5} width={20} />
-            </button> */}
+              <Search strokeWidth={1.5} width={20} />
+            </button>
+
             <button
               className={`text-text-700 hover:bg-primary-50 rounded-full transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
             >
               <Bell strokeWidth={1.5} width={20} />
+            </button>
+
+            <button
+              onClick={() => setShowAddTaskModal(true)}
+              className="flex items-center gap-1 text-primary-600 font-semibold hover:bg-primary-50 rounded-full transition-colors duration-150 z-10 w-8 h-8 justify-center"
+            >
+              <div className="w-5 h-5 bg-primary-500 rounded-full">
+                <Plus className="w-5 h-5 text-surface" strokeWidth={1.5} />
+              </div>
             </button>
           </div>
         </div>
@@ -177,6 +195,37 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
       {showAddTaskModal && (
         <AddTaskModal onClose={() => setShowAddTaskModal(false)} />
       )}
+
+      {showLogoutConfirm && (
+        <ConfirmAlert
+          title="Log out?"
+          description="Are you sure you want to log out?"
+          onCancel={() => setShowLogoutConfirm(false)}
+          submitBtnText="Log out"
+          loading={logoutLoading}
+          onConfirm={async () => {
+            setLogoutLoading(true);
+            try {
+              const response = await axios("/api/auth/signout", {
+                method: "POST",
+              });
+
+              if (response.data.success) {
+                router.push("/auth/login");
+              } else {
+                // Handle error case (e.g., show an error message)
+                console.error("Failed to log out:", response.data.message);
+              }
+            } catch (error) {
+              console.error("Error during logout:", error);
+            } finally {
+              setLogoutLoading(false);
+            }
+          }}
+        />
+      )}
+
+      {showAddTeam && <AddTeam onClose={() => setShowAddTeam(false)} />}
     </>
   );
 };

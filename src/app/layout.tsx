@@ -4,6 +4,7 @@ import "./globals.css";
 import TaskProjectDataProvider from "@/context/TaskProjectDataContext";
 import AuthProvider from "@/context/AuthContext";
 import OnboardProvider from "@/context/OnboardContext";
+import GlobalOptionProvider from "@/context/GlobalOptionContext";
 
 const inter = Inter({ subsets: ["latin"] });
 const poppins = Poppins({
@@ -31,7 +32,9 @@ export default function RootLayout({
       <body className={poppins.className}>
         <AuthProvider>
           <TaskProjectDataProvider>
-            <OnboardProvider>{children}</OnboardProvider>
+            <OnboardProvider>
+              <GlobalOptionProvider>{children}</GlobalOptionProvider>
+            </OnboardProvider>
           </TaskProjectDataProvider>
         </AuthProvider>
       </body>

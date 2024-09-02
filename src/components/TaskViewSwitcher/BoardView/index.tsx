@@ -24,8 +24,6 @@ const BoardView: React.FC<{
   setShowUngroupedAddTask: React.Dispatch<React.SetStateAction<boolean>>;
   showUngroupedAddSection: boolean;
   setShowUngroupedAddSection: React.Dispatch<React.SetStateAction<boolean>>;
-  showShareOption?: boolean;
-  setShowShareOption?: React.Dispatch<React.SetStateAction<boolean>>;
   project: ProjectType | null;
   setTasks: (updatedTasks: TaskType[]) => void;
 }> = ({
@@ -40,8 +38,6 @@ const BoardView: React.FC<{
   setShowUngroupedAddTask,
   showUngroupedAddSection,
   setShowUngroupedAddSection,
-  showShareOption,
-  setShowShareOption,
   project,
   setTasks,
 }) => {
@@ -370,8 +366,6 @@ const BoardView: React.FC<{
                   setSections={setSections}
                   sections={sections}
                   setTasks={setTasks}
-                  setShowShareOption={setShowShareOption}
-                  showShareOption={showShareOption}
                   setShowAddTask={setShowAddTask}
                   setShowSectionMoreOptions={setShowSectionMoreOptions}
                   setShowUngroupedAddTask={setShowUngroupedAddTask}

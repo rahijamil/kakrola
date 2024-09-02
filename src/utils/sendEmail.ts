@@ -25,7 +25,7 @@ export default async function sendInviteEmail({
       },
     });
 
-    const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/api/accept-invite?token=${token}`;
+    const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/api/invite/accept-invite?token=${token}`;
 
     const templatePath = path.join(
       process.cwd(),

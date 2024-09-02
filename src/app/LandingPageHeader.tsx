@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronsRight, Hash, MenuIcon, XIcon } from "lucide-react";
+import { MenuIcon, Rocket, XIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthProvider } from "@/context/AuthContext";
 import KakrolaLogo from "./kakrolaLogo";
@@ -75,14 +75,14 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
 
                     <Link href="/auth/signup" className="group">
                       <Button
-                        className="uppercase"
+                        className="uppercase shadow-lg hover:shadow-xl transition-all"
                         rightContent={
                           <div className="bg-background text-primary-500 rounded-full w-8 h-8 flex items-center justify-center">
-                            <Hash className="w-5 h-5" />
+                            <Rocket className="w-5 h-5" strokeWidth={1.5} />
                           </div>
                         }
                       >
-                        Get Started with Kakrola
+                        Start Your Journey
                       </Button>
                     </Link>
                   </>

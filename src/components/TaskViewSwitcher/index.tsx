@@ -13,8 +13,6 @@ interface TaskViewSwitcherProps {
   sections: SectionType[];
   setSections: (updatedSections: SectionType[]) => void;
   view: ViewTypes["view"];
-  showShareOption?: boolean;
-  setShowShareOption?: Dispatch<SetStateAction<boolean>>;
   showNoDateTasks?: boolean;
   setShowNoDateTasks?: Dispatch<SetStateAction<boolean>>;
 }
@@ -26,8 +24,6 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
   view,
   sections,
   setSections,
-  showShareOption,
-  setShowShareOption,
   showNoDateTasks,
   setShowNoDateTasks,
 }) => {
@@ -72,8 +68,6 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
           setShowUngroupedAddSection={setShowUngroupedAddSection}
           showUngroupedAddTask={showUngroupedAddTask}
           setShowUngroupedAddTask={setShowUngroupedAddTask}
-          showShareOption={showShareOption}
-          setShowShareOption={setShowShareOption}
           project={project}
           setTasks={setTasks}
           tasks={tasks}
@@ -93,8 +87,6 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
           setShowUngroupedAddSection={setShowUngroupedAddSection}
           showUngroupedAddTask={showUngroupedAddTask}
           setShowUngroupedAddTask={setShowUngroupedAddTask}
-          showShareOption={showShareOption}
-          setShowShareOption={setShowShareOption}
           project={project}
           setTasks={setTasks}
         />
