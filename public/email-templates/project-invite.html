@@ -4,10 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
       body {
         margin: 0;
         padding: 0;
-        font-family: "Poppins", Arial, sans-serif;
+        font-family: "Poppins", sans-serif;
+        font-weight: 400;
+        font-style: normal;
         color: #333333;
         background-color: #f6f6f6;
       }
@@ -25,18 +29,21 @@
       .logo {
         text-align: center;
         margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
       }
 
-      .logo img {
-        max-width: 50px;
-        height: auto;
+      .logo_svg {
+        height: 50px;
+        width: 50px;
       }
 
       .logo_title {
         font-weight: bold;
         color: #005c83;
         font-size: 22px;
-        margin-top: 0.5rem;
       }
 
       .content {
@@ -147,7 +154,93 @@
     <div class="container">
       <!-- Logo section -->
       <div class="logo">
-        <img src="https://www.kakrola.com/Kakrola.png" alt="Logo" />
+        <div class="logo_svg">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+            <!-- White Background -->
+            <rect width="200" height="200" fill="#ffffff" />
+
+            <!-- Hashtag Symbol with Gradient and Shadow -->
+            <defs>
+              <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop
+                  offset="0%"
+                  style="stop-color: #005c83; stop-opacity: 1"
+                />
+                <stop
+                  offset="100%"
+                  style="stop-color: #004d6e; stop-opacity: 1"
+                />
+              </linearGradient>
+              <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop
+                  offset="0%"
+                  style="stop-color: #0076a3; stop-opacity: 1"
+                />
+                <stop
+                  offset="100%"
+                  style="stop-color: #005a8e; stop-opacity: 1"
+                />
+              </linearGradient>
+              <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop
+                  offset="0%"
+                  style="stop-color: #69afcd; stop-opacity: 1"
+                />
+                <stop
+                  offset="100%"
+                  style="stop-color: #4a8fb1; stop-opacity: 1"
+                />
+              </linearGradient>
+              <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow
+                  dx="4"
+                  dy="4"
+                  stdDeviation="4"
+                  flood-color="#000000"
+                  flood-opacity="0.2"
+                />
+              </filter>
+            </defs>
+
+            <!-- Hashtag Symbol -->
+            <g filter="url(#shadow)">
+              <!-- Vertical Bars -->
+              <rect
+                x="40"
+                y="40"
+                width="20"
+                height="120"
+                rx="10"
+                fill="url(#grad1)"
+              />
+              <rect
+                x="80"
+                y="40"
+                width="20"
+                height="120"
+                rx="10"
+                fill="url(#grad2)"
+              />
+              <!-- Horizontal Bars -->
+              <rect
+                x="30"
+                y="70"
+                width="140"
+                height="20"
+                rx="10"
+                fill="url(#grad3)"
+              />
+              <rect
+                x="30"
+                y="110"
+                width="140"
+                height="20"
+                rx="10"
+                fill="url(#grad1)"
+              />
+            </g>
+          </svg>
+        </div>
         <div class="logo_title">Kakrola</div>
       </div>
 
@@ -156,7 +249,9 @@
         <h2>
           {{inviter_first_name}} just invited you to a project in Kakrola!
         </h2>
-        <p>Click the link below to join the project and start working together.</p>
+        <p>
+          Click the link below to join the project and start working together.
+        </p>
         <a href="{{invite_link}}" class="button">Accept Invite</a>
         <p>
           Have questions about this project? Get in touch with
@@ -173,7 +268,7 @@
       <!-- Illustration -->
       <div class="illustration">
         <img
-          src="https://www.kakrola.com/images/collaboration.png"
+          src="https://www.kakrola.com/images/collaboration_empty_state.png"
           alt="Team Illustration"
           style="max-width: 150px"
         />

@@ -4,18 +4,22 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { signInWithProvider } from "./action";
+import { useSearchParams } from "next/navigation";
 
 const SocialLogin = () => {
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token"); // Get token from URL query parameters
+
   const socialProviders = [
     {
       name: "Google",
       icon: FcGoogle,
-      onClick: () => signInWithProvider("google"),
+      onClick: () => signInWithProvider("google", token),
     },
     {
       name: "GitHub",
       icon: FaGithub,
-      onClick: () => signInWithProvider("github"),
+      onClick: () => signInWithProvider("github", token),
     },
   ];
 
@@ -42,7 +46,9 @@ const SocialLogin = () => {
           <div className="w-full border-t border-text-300" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-surface text-text-500">Or continue with</span>
+          <span className="px-2 bg-surface text-text-500">
+            Or continue with
+          </span>
         </div>
       </div>
     </div>

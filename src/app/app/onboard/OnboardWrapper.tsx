@@ -37,7 +37,7 @@ const OnboardWrapper = ({
           )}
 
           <div className={`w-11/12 max-w-sm lg:max-w-md mx-auto h-full`}>
-            {!isShowRightSide && (
+            {!isShowRightSide && currentStep && (
               <div className="flex items-center justify-between whitespace-nowrap h-20">
                 <Link href="/" className="flex items-center">
                   <KakrolaLogo
@@ -54,7 +54,13 @@ const OnboardWrapper = ({
               </div>
             )}
 
-            <div className={`flex h-[calc(100vh-15rem)] overflow-y-auto onboard_scrollbar ${currentStep != 5 ? "items-center" : "mt-10"}`}>
+            <div
+              className={`flex h-[calc(100vh-10rem)] overflow-y-auto onboard_scrollbar ${
+                currentStep != 5 && typeof currentStep == "number"
+                  ? "items-center"
+                  : "mt-5"
+              }`}
+            >
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

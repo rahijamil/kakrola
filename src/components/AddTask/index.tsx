@@ -7,7 +7,7 @@ interface AddTaskProps {
   isSmall?: boolean;
   section_id?: SectionType["id"] | null;
   project: ProjectType | null;
-  setTasks: (updatedTasks: TaskType[]) => void;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
   tasks: TaskType[];
   addTaskAboveBellow?: { position: "above" | "below"; task: TaskType } | null;
   taskForEdit?: TaskType;

@@ -11,8 +11,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   BaseTeamType,
-  Permission,
-  RoleType,
   TeamMemberType,
   TeamType,
   Industry,
@@ -29,6 +27,7 @@ import CustomSelect from "./ui/CustomSelect";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import Textarea from "./ui/textarea";
 import Link from "next/link";
+import { Permission, RoleType } from "@/types/role";
 
 // Updated TeamData type
 interface TeamData extends BaseTeamType {
@@ -49,33 +48,6 @@ interface TeamData extends BaseTeamType {
     label: string;
   } | null;
 }
-
-const getPermissionsByRole = (role: RoleType): Permission[] => {
-  switch (role) {
-    case RoleType.ADMIN:
-      return [
-        Permission.CREATE_TASK,
-        Permission.EDIT_TASK,
-        Permission.DELETE_TASK,
-        Permission.ASSIGN_TASK,
-        Permission.CREATE_PROJECT,
-        Permission.EDIT_PROJECT,
-        Permission.DELETE_PROJECT,
-        Permission.INVITE_MEMBER,
-        Permission.REMOVE_MEMBER,
-        Permission.MANAGE_ROLES,
-      ];
-    case RoleType.MEMBER:
-      return [
-        Permission.CREATE_TASK,
-        Permission.EDIT_TASK,
-        Permission.DELETE_TASK,
-        Permission.ASSIGN_TASK,
-      ];
-    default:
-      return [];
-  }
-};
 
 const AddTeam = ({ onClose }: { onClose: () => void }) => {
   const { profile } = useAuthProvider();

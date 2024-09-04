@@ -36,7 +36,7 @@ const TaskItem = ({
   subTasks: TaskType[];
   index: number;
   project: ProjectType | null;
-  setTasks: (updatedTasks: TaskType[]) => void;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
   tasks: TaskType[];
   showModal?: string | null;
   smallAddTask?: boolean;

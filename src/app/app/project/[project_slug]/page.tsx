@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import TaskViewSwitcher from "@/components/TaskViewSwitcher";
 import { Button } from "@/components/ui/button";
@@ -10,71 +10,23 @@ import { ViewTypes } from "@/types/viewTypes";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import Image from "next/image";
 import Link from "next/link";
-import { useAuthProvider } from "@/context/AuthContext";
-import { ProjectMemberType, RoleType } from "@/types/team";
+import { fetchSectionsAndTasksByProjectId } from "@/utils/fetchSectionsAndTasksByProjectId";
 
 const ProjectDetails = ({
   params: { project_slug },
 }: {
   params: { project_slug: string };
 }) => {
-  const {
-    projects,
-    setProjects,
-    projectsLoading,
-    sections,
-    setSections,
-    tasks,
-    setTasks,
-    setActiveProject,
-  } = useTaskProjectDataProvider();
+  const { projects, setProjects, projectsLoading, setActiveProject } =
+    useTaskProjectDataProvider();
 
   const [currentProject, setCurrentProject] = useState<ProjectType | null>(
     null
   );
-  
+  const [tasks, setTasks] = useState<TaskType[]>([]);
+  const [sections, setSections] = useState<SectionType[]>([]);
   const [notFound, setNotFound] = useState<boolean>(false);
   const [showNoDateTasks, setShowNoDateTasks] = useState(false);
-
-  const projectSections = useMemo(() => {
-    if (!currentProject) return [];
-    return sections
-      .filter((s) => s.project_id === currentProject.id)
-      .sort((a, b) => a.order - b.order);
-  }, [currentProject, sections]);
-
-  const projectTasks = useMemo(() => {
-    if (!currentProject) return [];
-    return tasks
-      .filter((t) => t.project_id === currentProject.id)
-      .sort((a, b) => a.order - b.order);
-  }, [currentProject, tasks]);
-
-  const setProjectSections = useCallback(
-    (updatedSections: SectionType[]) => {
-      setSections((prev) => {
-        const allSections = prev.filter(
-          (s) => s.project_id !== currentProject?.id
-        );
-
-        return [...allSections, ...updatedSections];
-      });
-    },
-    [currentProject?.id, setSections]
-  );
-
-  const setProjectTasks = useCallback(
-    (updatedTasks: TaskType[]) => {
-      setTasks((prev) => {
-        const allTasks = prev.filter(
-          (t) => t.project_id !== currentProject?.id
-        );
-
-        return [...allTasks, ...updatedTasks];
-      });
-    },
-    [currentProject?.id, setTasks]
-  );
 
   useEffect(() => {
     if (projectsLoading) return;
@@ -99,12 +51,21 @@ const ProjectDetails = ({
   }, [project_slug, projects, projectsLoading]);
 
   useEffect(() => {
-    if (currentProject?.name) {
+    if (currentProject?.id) {
       document.title = `${currentProject.name} - Kakrola`;
+
+      fetchSectionsAndTasksByProjectId(currentProject.id)
+        .then((data) => {
+          setSections(data.sections);
+          setTasks(data.tasks);
+        })
+        .catch((error) => {
+          console.error("Error fetching project sections and tasks:", error);
+        });
     } else {
       document.title = "Kakrola";
     }
-  }, [currentProject?.name]);
+  }, [currentProject]);
 
   const updateProjectView = useCallback(
     async (view: ViewTypes["view"]) => {
@@ -139,7 +100,6 @@ const ProjectDetails = ({
           className="rounded-full object-cover"
           draggable={false}
         />
-
         <div className="text-center space-y-2 w-72">
           <h3 className="font-bold text-base">Project not found</h3>
           <p className="text-sm text-text-600 pb-4">
@@ -161,44 +121,42 @@ const ProjectDetails = ({
         view={currentProject.settings.view}
         setView={updateProjectView}
         project={currentProject}
-        setTasks={setProjectTasks}
-        tasks={projectTasks}
+        setTasks={setTasks}
+        tasks={tasks}
         showNoDateTasks={showNoDateTasks}
       >
         <TaskViewSwitcher
           project={currentProject}
-          tasks={projectTasks}
-          setTasks={setProjectTasks}
-          sections={projectSections}
-          setSections={setProjectSections}
+          tasks={tasks}
+          setTasks={setTasks}
+          sections={sections}
+          setSections={setSections}
           view={currentProject.settings.view}
           showNoDateTasks={showNoDateTasks}
           setShowNoDateTasks={setShowNoDateTasks}
         />
 
-        {projectTasks.length === 0 &&
-          currentProject.settings.view === "List" && (
-            <div className="flex items-center justify-center flex-col gap-1 h-[30vh] select-none">
-              <Image
-                src="/project.png"
-                width={220}
-                height={200}
-                alt="Empty project"
-                className="rounded-full object-cover"
-                draggable={false}
-              />
-
-              <div className="text-center space-y-1 w-72">
-                <h3 className="font-medium text-base">
-                  Start small (or dream big)...
-                </h3>
-                <p className="text-sm text-text-600">
-                  Add your tasks or find a template to get started with your
-                  project.
-                </p>
-              </div>
+        {tasks.length === 0 && currentProject.settings.view === "List" && (
+          <div className="flex items-center justify-center flex-col gap-1 h-[30vh] select-none">
+            <Image
+              src="/project.png"
+              width={220}
+              height={200}
+              alt="Empty project"
+              className="rounded-full object-cover"
+              draggable={false}
+            />
+            <div className="text-center space-y-1 w-72">
+              <h3 className="font-medium text-base">
+                Start small (or dream big)...
+              </h3>
+              <p className="text-sm text-text-600">
+                Add your tasks or find a template to get started with your
+                project.
+              </p>
             </div>
-          )}
+          </div>
+        )}
       </LayoutWrapper>
     );
   } else {

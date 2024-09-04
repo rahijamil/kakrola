@@ -1,40 +1,36 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import LayoutWrapper from "../../components/LayoutWrapper";
 import Image from "next/image";
 import { ViewTypes } from "@/types/viewTypes";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { isToday } from "date-fns";
 import ListViewForToday from "@/components/TaskViewSwitcher/ListViewForToday";
 import BoardViewForToday from "@/components/TaskViewSwitcher/BoardViewForToday";
 import AppWrapper from "./AppLayoutWrapper";
-const Today = () => {
-  const { tasks, setTasks } = useTaskProjectDataProvider();
-  const [view, setView] = useState<ViewTypes["view"]>("List");
+import { fetchTodayTasks } from "@/utils/fetchTodayTasks";
+import { TaskType } from "@/types/project";
+import { useAuthProvider } from "@/context/AuthContext";
 
-  const todayTasks = useMemo(() => {
-    return tasks
-      .filter((t) => t.due_date && isToday(new Date(t.due_date)))
-      .sort((a, b) => a.order - b.order);
-  }, [tasks]);
+const Today = () => {
+  const [view, setView] = useState<ViewTypes["view"]>("List");
+  const [todayTasks, setTodayTasks] = useState<TaskType[]>([]);
+  const { profile } = useAuthProvider();
+
+  useEffect(() => {
+    if (profile?.id) {
+      fetchTodayTasks(profile?.id).then((tasks) => {
+        setTodayTasks(tasks);
+      });
+    }
+  }, [profile?.id]);
 
   const renderTaskViewSwitcherForToday = () => {
     switch (view) {
       case "List":
-        return (
-          <ListViewForToday
-            tasks={todayTasks}
-            setTasks={setTasks}
-          />
-        );
+        return <ListViewForToday tasks={todayTasks} setTasks={setTodayTasks} />;
       case "Board":
         return (
-          <BoardViewForToday
-            tasks={todayTasks}
-            setTasks={setTasks}
-          />
+          <BoardViewForToday tasks={todayTasks} setTasks={setTodayTasks} />
         );
-
       default:
         return <div>Invalid view selected</div>;
     }
@@ -60,7 +56,6 @@ const Today = () => {
               className="rounded-full object-cover"
               draggable={false}
             />
-
             <div className="text-center space-y-1 w-72">
               <h3 className="font-medium text-base">Your tasks for today</h3>
               <p className="text-sm text-text-600">

@@ -69,14 +69,14 @@ const AddTaskFormForProject = ({
   section_id?: SectionType["id"] | null;
   parentTaskIdForSubTask?: string | number;
   project: ProjectType | null;
-  setTasks: (updatedTasks: TaskType[]) => void;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
   tasks: TaskType[];
   addTaskAboveBellow?: { position: "above" | "below"; task: TaskType } | null;
   taskForEdit?: TaskType;
   biggerTitle?: boolean;
   dueDate?: Date | null;
 }) => {
-  const { projects, activeProject, sections } = useTaskProjectDataProvider();
+  const { projects, activeProject } = useTaskProjectDataProvider();
   const { profile } = useAuthProvider();
 
   const [taskData, setTaskData] = useState<TaskType>(
@@ -279,6 +279,7 @@ const AddTaskFormForProject = ({
             isSmall={isSmall}
             forListView
             dataFromElement
+            project={project}
           />
         </div>
 

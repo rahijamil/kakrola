@@ -14,6 +14,8 @@ import { TemplateProjectType } from "@/types/template";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import Spinner from "@/components/ui/Spinner";
+import { ProjectMemberType } from "@/types/team";
+import { RoleType } from "@/types/role";
 
 interface UseCase {
   id: number;
@@ -48,7 +50,7 @@ const Step2UseCase = () => {
   const router = useRouter();
   const { templateProjects, templateSsections, templateTasks } = useTemplates();
   const { profile } = useAuthProvider();
-  const { projects } = useTaskProjectDataProvider();
+  const { projects, projectMembers } = useTaskProjectDataProvider();
   const [loading, setLoading] = useState(false);
 
   const handleUseCaseClick = (useCase: UseCase) => {
@@ -82,8 +84,6 @@ const Step2UseCase = () => {
           slug: templateProject.slug,
           team_id: null,
           profile_id: profile.id,
-          is_favorite: false,
-          order: Math.max(...projects.map((p) => p.order), 0) + 1,
           is_archived: false,
           updated_at: new Date().toISOString(),
           settings: {
@@ -113,6 +113,35 @@ const Step2UseCase = () => {
           } else {
             // Handle other types of errors if necessary
             continue;
+          }
+        }
+
+        if (newProject.id) {
+          // Determine the new project's order
+          const maxOrder = Math.max(
+            ...projectMembers.map((s) => s.project_settings.order),
+            0
+          );
+          const newOrder = maxOrder + 1;
+
+          const projectMemberData: Omit<ProjectMemberType, "id"> = {
+            profile_id: profile.id,
+            project_id: newProject.id,
+            role: RoleType.ADMIN,
+            project_settings: {
+              is_favorite: false,
+              order: newOrder,
+            },
+          };
+          const { data, error: userSettingsError } = await supabaseBrowser
+            .from("project_members")
+            .insert([projectMemberData]);
+
+          if (userSettingsError) {
+            console.error(
+              "Error creating user project settings:",
+              userSettingsError
+            );
           }
         }
 

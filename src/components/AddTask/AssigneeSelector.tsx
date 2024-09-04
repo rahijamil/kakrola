@@ -3,6 +3,7 @@ import React, {
   LegacyRef,
   ReactNode,
   SetStateAction,
+  useEffect,
   useRef,
   useState,
 } from "react";
@@ -10,9 +11,12 @@ import { Input } from "../ui/input";
 import Image from "next/image";
 import { Check, Plus, User, UserPlus, X } from "lucide-react";
 import { useAuthProvider } from "@/context/AuthContext";
-import { TaskType } from "@/types/project";
+import { ProjectType, TaskType } from "@/types/project";
 import Dropdown from "../ui/Dropdown";
 import { useGlobalOption } from "@/context/GlobalOptionContext";
+import { ProfileType } from "@/types/user";
+import { supabaseBrowser } from "@/utils/supabase/client";
+import { ProjectMemberType, TeamMemberType } from "@/types/team";
 
 const AssigneeSelector = ({
   task,
@@ -21,6 +25,7 @@ const AssigneeSelector = ({
   forTaskModal,
   forListView,
   dataFromElement,
+  project,
 }: {
   task: TaskType;
   setTask: Dispatch<SetStateAction<TaskType>>;
@@ -28,10 +33,15 @@ const AssigneeSelector = ({
   forTaskModal?: boolean;
   forListView?: boolean;
   dataFromElement?: boolean;
+  project: ProjectType | null;
 }) => {
-  const { profile } = useAuthProvider();
+  const { profile: authProfile } = useAuthProvider();
   const { setShowShareOption } = useGlobalOption();
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const [projectMembers, setProjectMembers] = useState<ProjectMemberType[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMemberType[]>([]);
+  const [assigneeProfiles, setAssigneeProfiles] = useState<ProfileType[]>([]);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -41,6 +51,77 @@ const AssigneeSelector = ({
 
   const triggerRef = useRef(null);
 
+  useEffect(() => {
+    const fetchAssignees = async () => {
+      if (!project?.id) return;
+      try {
+        const { data: projectMembersData, error } = await supabaseBrowser
+          .from("project_members")
+          .select("*")
+          .eq("project_id", project.id);
+
+        if (error) {
+          console.error("Error fetching project members:", error);
+        }
+
+        if (projectMembersData) {
+          setProjectMembers(projectMembersData);
+          const profileIds = projectMembersData.map(
+            (member) => member.profile_id
+          );
+          fetchProfiles(profileIds); // Fetch profiles for project members
+        }
+
+        if (project.team_id) {
+          const { data: teamMembersData, error: teamMembersError } =
+            await supabaseBrowser
+              .from("team_members")
+              .select("*")
+              .eq("team_id", project.team_id);
+
+          if (teamMembersError) {
+            console.error("Error fetching team members:", teamMembersError);
+          }
+
+          if (teamMembersData) {
+            setTeamMembers(teamMembersData);
+            const profileIds = teamMembersData.map(
+              (member) => member.profile_id
+            );
+            fetchProfiles(profileIds); // Fetch profiles for team members
+          }
+        }
+      } catch (error) {
+        console.error("Error in fetchAssignees:", error);
+      }
+    };
+
+    const fetchProfiles = async (profileIds: string[]) => {
+      try {
+        const { data: profileData, error } = await supabaseBrowser
+          .from("profiles")
+          .select("*")
+          .in("id", profileIds); // Fetch all profiles with the given IDs
+
+        if (error) {
+          console.error("Error fetching profiles:", error);
+        }
+
+        if (profileData) {
+          setAssigneeProfiles(profileData); // Store the fetched profile data
+        }
+      } catch (error) {
+        console.error("Error in fetchProfiles:", error);
+      }
+    };
+
+    fetchAssignees();
+  }, [project?.id]);
+
+  // Helper function to get profile by id
+  const getProfileById = (profileId: string | null) => {
+    return assigneeProfiles.find((profile) => profile.id === profileId);
+  };
   return (
     <Dropdown
       isOpen={isOpen}
@@ -85,15 +166,26 @@ const AssigneeSelector = ({
               >
                 <div className="flex items-center gap-2">
                   <Image
-                    src={profile?.avatar_url || "/default_avatar.png"}
+                    src={
+                      getProfileById(task.assigned_to_id)?.avatar_url ||
+                      "/default_avatar.png"
+                    }
                     width={18}
                     height={18}
-                    alt={profile?.full_name || profile?.username || "avatar"}
+                    alt={
+                      getProfileById(task.assigned_to_id)?.full_name ||
+                      getProfileById(task.assigned_to_id)?.username ||
+                      "avatar"
+                    }
                     className="rounded-full object-cover max-w-[18px] max-h-[18px]"
                   />
-                  {profile?.full_name.split(" ")[0]}
-                  {profile?.full_name.split(" ")[1] // Check if the second name exists
-                    ? " " + profile?.full_name.split(" ")[1][0] + "." // Display the initial of the second name
+                  {getProfileById(task.assigned_to_id)?.full_name.split(" ")[0]}
+                  {getProfileById(task.assigned_to_id)?.full_name.split(" ")[1] // Check if the second name exists
+                    ? " " +
+                      getProfileById(task.assigned_to_id)?.full_name.split(
+                        " "
+                      )[1][0] +
+                      "." // Display the initial of the second name
                     : ""}
                 </div>
 
@@ -123,15 +215,26 @@ const AssigneeSelector = ({
               <>
                 <div className="flex items-center gap-1">
                   <Image
-                    src={profile?.avatar_url || "/default_avatar.png"}
+                    src={
+                      getProfileById(task.assigned_to_id)?.avatar_url ||
+                      "/default_avatar.png"
+                    }
                     width={20}
                     height={20}
-                    alt={profile?.full_name || profile?.username || "avatar"}
+                    alt={
+                      getProfileById(task.assigned_to_id)?.full_name ||
+                      getProfileById(task.assigned_to_id)?.username ||
+                      "avatar"
+                    }
                     className="rounded-full object-cover max-w-5 max-h-5"
                   />
-                  {profile?.full_name.split(" ")[0]}
-                  {profile?.full_name.split(" ")[1] // Check if the second name exists
-                    ? " " + profile?.full_name.split(" ")[1][0] + "." // Display the initial of the second name
+                  {getProfileById(task.assigned_to_id)?.full_name.split(" ")[0]}
+                  {getProfileById(task.assigned_to_id)?.full_name.split(" ")[1] // Check if the second name exists
+                    ? " " +
+                      getProfileById(task.assigned_to_id)?.full_name.split(
+                        " "
+                      )[1][0] +
+                      "." // Display the initial of the second name
                     : ""}
                 </div>
 
@@ -166,15 +269,26 @@ const AssigneeSelector = ({
               <>
                 <div className="flex items-center gap-1">
                   <Image
-                    src={profile?.avatar_url || "/default_avatar.png"}
+                    src={
+                      getProfileById(task.assigned_to_id)?.avatar_url ||
+                      "/default_avatar.png"
+                    }
                     width={18}
                     height={18}
-                    alt={profile?.full_name || profile?.username || "avatar"}
+                    alt={
+                      getProfileById(task.assigned_to_id)?.full_name ||
+                      getProfileById(task.assigned_to_id)?.username ||
+                      "avatar"
+                    }
                     className="rounded-full object-cover max-w-[18px] max-h-[18px]"
                   />
-                  {profile?.full_name.split(" ")[0]}
-                  {profile?.full_name.split(" ")[1] // Check if the second name exists
-                    ? " " + profile?.full_name.split(" ")[1][0] + "." // Display the initial of the second name
+                  {getProfileById(task.assigned_to_id)?.full_name.split(" ")[0]}
+                  {getProfileById(task.assigned_to_id)?.full_name.split(" ")[1] // Check if the second name exists
+                    ? " " +
+                      getProfileById(task.assigned_to_id)?.full_name.split(
+                        " "
+                      )[1][0] +
+                      "." // Display the initial of the second name
                     : ""}
                 </div>
 
@@ -230,35 +344,123 @@ const AssigneeSelector = ({
                 <Check strokeWidth={2.5} className="w-4 h-4 text-primary-600" />
               )}
             </li>
-            <li
-              className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-text-100 cursor-pointer rounded-2xl"
-              onClick={() => {
-                setTask({
-                  ...task,
-                  assigned_to_id: profile?.id!,
-                });
-                onClose();
-              }}
-            >
-              <div className="flex items-center gap-3">
-                <Image
-                  src={profile?.avatar_url || "/default_avatar.png"}
-                  alt={profile?.full_name || profile?.username || "avatar"}
-                  width={18}
-                  height={18}
-                  className="rounded-full object-cover max-w-[18px] max-h-[18px]"
-                />
-                Me ({profile?.full_name.split(" ")[0]}
-                {profile?.full_name.split(" ")[1] // Check if the second name exists
-                  ? " " + profile?.full_name.split(" ")[1][0] + "." // Display the initial of the second name
-                  : ""}
-                )
-              </div>
 
-              {task.assigned_to_id == profile?.id && (
-                <Check strokeWidth={2.5} className="w-4 h-4 text-primary-600" />
-              )}
-            </li>
+            {projectMembers
+              .filter((member) =>
+                member.profile_id
+                  ? getProfileById(member.profile_id)
+                      ?.full_name?.toLowerCase()
+                      .includes(searchQuery.toLowerCase())
+                  : true
+              )
+              .map((member) => {
+                const profile = getProfileById(member.profile_id);
+
+                if (!profile) {
+                  return null; // Skip if profile is not found
+                }
+
+                return (
+                  <li
+                    key={member.id}
+                    className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-text-100 cursor-pointer rounded-2xl"
+                    onClick={() => {
+                      setTask({
+                        ...task,
+                        assigned_to_id: member.profile_id,
+                      });
+                      onClose();
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Image
+                        src={profile.avatar_url || "/default_avatar.png"}
+                        alt={profile.full_name || "avatar"}
+                        width={18}
+                        height={18}
+                        className="rounded-full object-cover max-w-[18px] max-h-[18px]"
+                      />
+                      Me ({profile?.full_name.split(" ")[0]}
+                      {profile?.full_name.split(" ")[1] // Check if the second name exists
+                        ? " " + profile?.full_name.split(" ")[1][0] + "." // Display the initial of the second name
+                        : ""}
+                      )
+                    </div>
+
+                    {task.assigned_to_id == member.id.toString() && (
+                      <Check
+                        strokeWidth={2.5}
+                        className="w-4 h-4 text-primary-600"
+                      />
+                    )}
+                  </li>
+                );
+              })}
+
+            {teamMembers
+              .filter((member) =>
+                member.profile_id
+                  ? getProfileById(member.profile_id)
+                      ?.full_name?.toLowerCase()
+                      .includes(searchQuery.toLowerCase())
+                  : true
+              )
+              .map((member) => {
+                const profile = getProfileById(member.profile_id);
+
+                if (!profile) {
+                  return null; // Skip if profile is not found
+                }
+
+                return (
+                  <li
+                    key={member.id}
+                    className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-text-100 cursor-pointer rounded-2xl"
+                    onClick={() => {
+                      setTask({
+                        ...task,
+                        assigned_to_id: member.profile_id,
+                      });
+                      onClose();
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Image
+                        src={profile.avatar_url || "/default_avatar.png"}
+                        alt={profile.full_name || "avatar"}
+                        width={18}
+                        height={18}
+                        className="rounded-full object-cover max-w-[18px] max-h-[18px]"
+                      />
+                      {profile.id == authProfile?.id ? (
+                        <>
+                          Me ({profile?.full_name.split(" ")[0]}
+                          {profile?.full_name.split(" ")[1] // Check if the second name exists
+                            ? " " + profile?.full_name.split(" ")[1][0] + "." // Display the initial of the second name
+                            : ""}
+                          )
+                        </>
+                      ) : (
+                        <>
+                          ({profile?.full_name.split(" ")[0]}
+                          {profile?.full_name.split(" ")[1] // Check if the second name exists
+                            ? " " + profile?.full_name.split(" ")[1][0] + "." // Display the initial of the second name
+                            : ""}
+                          )
+                        </>
+                      )}
+                    </div>
+
+                    {task.assigned_to_id == member.id.toString() && (
+                      <Check
+                        strokeWidth={2.5}
+                        className="w-4 h-4 text-primary-600"
+                      />
+                    )}
+                  </li>
+                );
+              })}
+
             <li
               className="flex items-center justify-between p-2 px-3 transition-colors text-text-700 hover:bg-text-100 cursor-pointer rounded-2xl"
               onClick={() => {

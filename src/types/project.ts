@@ -7,10 +7,8 @@ export interface ProjectType {
   profile_id: string; // UUID
   name: string;
   slug: string;
-  is_favorite: boolean;
   updated_at: string;
   created_at?: string;
-  order: number;
   is_archived: boolean;
   settings: {
     color: string;
@@ -64,5 +62,5 @@ export interface TaskType {
   order: number;
   updated_at?: string;
   created_at?: string;
-  labels?: TaskLabelType[];
+  task_labels?: TaskLabelType[];
 }

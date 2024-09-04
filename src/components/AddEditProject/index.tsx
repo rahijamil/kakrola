@@ -1,8 +1,14 @@
 "use client";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Dialog, DialogHeader, DialogTitle } from "../ui";
 import { ProjectType } from "@/types/project";
-import { CircleHelp, SquareGanttChart, SquareKanban, User } from "lucide-react";
+import { CircleHelp, SquareGanttChart, SquareKanban } from "lucide-react";
 import { ToggleSwitch } from "../ui/ToggleSwitch";
 import { Input } from "../ui/input";
 import { useAuthProvider } from "@/context/AuthContext";
@@ -14,6 +20,8 @@ import ColorSelector from "./ColorSelector";
 import { generateSlug } from "@/utils/generateSlug";
 import AnimatedCircleCheck from "@/components/TaskViewSwitcher/AnimatedCircleCheck";
 import { ViewTypes } from "@/types/viewTypes";
+import { ProjectMemberType } from "@/types/team";
+import { RoleType } from "@/types/role";
 
 const projectViewsToSelect: {
   id: number;
@@ -47,34 +55,109 @@ const AddEditProject = ({
   aboveBellow?: "above" | "below" | null;
 }) => {
   const { profile } = useAuthProvider();
-  const { projects, setProjects, teams, setTeams } =
+  const { projects, setProjects, teams, projectMembers } =
     useTaskProjectDataProvider();
 
-  const [projectData, setProjectData] = useState<Omit<ProjectType, "id">>(
-    project && !aboveBellow
-      ? project
-      : {
-          team_id: workspaceId || null,
-          profile_id: profile?.id || "",
-          name: "",
-          slug: "",
-          is_favorite: false,
-          settings: {
-            color: "gray-500",
-            view: "List",
-            selected_views: ["List"],
+  const initialProjectData = useMemo(
+    () =>
+      project && !aboveBellow
+        ? project
+        : {
+            team_id: workspaceId || null,
+            profile_id: profile?.id || "",
+            name: "",
+            slug: "",
+            settings: {
+              color: "gray-500",
+              view: "List",
+              selected_views: ["List"],
+            },
+            updated_at: new Date().toISOString(),
+            is_archived: false,
           },
-          updated_at: new Date().toISOString(),
-          order: Math.max(...projects.map((p) => p.order), 0) + 1,
-          is_archived: false,
-        }
+    [project, workspaceId, aboveBellow, profile?.id]
   );
 
+  const findProjectMember = useCallback(
+    (projectId?: ProjectType["id"]) =>
+      projectMembers.find((member) => member.project_id === projectId),
+    [projectMembers]
+  );
+
+  const initialProjectMembersData = useMemo(
+    () =>
+      findProjectMember(project?.id) || {
+        profile_id: profile?.id || "",
+        project_id: project?.id || 0,
+        role: RoleType.MEMBER,
+        project_settings: {
+          is_favorite: false,
+          order: 0,
+        },
+      },
+    [project?.id, profile?.id, findProjectMember]
+  );
+
+  const [projectData, setProjectData] = useState(initialProjectData);
+  const [projectMembersData, setProjectMembersData] = useState(
+    initialProjectMembersData
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const workspaces = useMemo(() => {
+    const initialWorkspaces = [
+      {
+        team_id: null,
+        name: "My Projects",
+        avatar_url: profile?.avatar_url || "",
+      },
+    ];
+
+    return [
+      ...initialWorkspaces,
+      ...teams.map((team) => ({
+        team_id: team.id,
+        name: team.name,
+        avatar_url: team.avatar_url,
+      })),
+    ];
+  }, [teams, profile?.avatar_url]);
+
+  const currentWorkspace = useMemo(
+    () =>
+      workspaces.find((w) => w.team_id === projectData?.team_id) ||
+      workspaces[0],
+    [workspaces, projectData?.team_id]
+  );
+
+  const handleProjectDataChange = useCallback(
+    (field: keyof ProjectType, value: any) => {
+      setProjectData((prevData) => ({
+        ...prevData,
+        [field]: value,
+      }));
+    },
+    []
+  );
+
+  const handleProjectMembersDataChange = useCallback(
+    (field: keyof ProjectMemberType, value: any) => {
+      setProjectMembersData((prevData) => ({
+        ...prevData,
+        project_settings: {
+          ...prevData.project_settings,
+          [field]: value,
+        },
+      }));
+    },
+    []
+  );
+
   const handleAddProject = async (ev: FormEvent) => {
     ev.preventDefault();
+
+    if (!profile?.id) return;
 
     if (!projectData.name) {
       setError("Project name is required.");
@@ -86,7 +169,7 @@ const AddEditProject = ({
 
     if (project?.id) {
       const data: Partial<ProjectType> = {};
-      const fields = ["name", "is_favorite"] as const;
+      const fields = ["name"] as const;
 
       fields.forEach((field) => {
         if (projectData[field] !== project[field]) {
@@ -122,12 +205,36 @@ const AddEditProject = ({
           return p;
         });
       });
+
+      if (projectMembersData) {
+        const { error: projectMembersError } = await supabaseBrowser
+          .from("project_members")
+          .update({
+            ...projectMembersData,
+          })
+          .eq("project_id", project.id);
+
+        if (projectMembersError) {
+          setError(projectMembersError.message);
+          setLoading(false);
+          console.error(projectMembersError);
+          return;
+        }
+      }
     } else {
-      const { data, error } = await supabaseBrowser
-        .from("projects")
-        .insert(projectData)
-        .select()
-        .single();
+      const { data, error } = await supabaseBrowser.rpc(
+        "insert_project_with_member",
+        {
+          _team_id: projectData.team_id,
+          _profile_id: profile.id,
+          _project_name: projectData.name,
+          _project_slug: projectData.slug,
+          _project_color: projectData.settings.color,
+          _view: projectData.settings.view,
+          _selected_views: projectData.settings.selected_views,
+          _is_favorite: projectMembersData.project_settings.is_favorite,
+        }
+      );
 
       if (error) {
         setError(error.message);
@@ -135,9 +242,15 @@ const AddEditProject = ({
         return;
       }
 
-      setProjects((projects) => {
-        return [...projects, data];
-      });
+      if (data) {
+        // const [newProject, newMember] = data;
+
+        // if (newProject) {
+        //   setProjects((projects) => [...projects, newProject]);
+        // }
+
+        console.log("Project and member created:", { data });
+      }
     }
 
     setLoading(false);
@@ -158,18 +271,41 @@ const AddEditProject = ({
     setLoading(true);
     setError(null);
 
-    if (project) {
+    if (project && profile?.id) {
       const currentIndex = projects.findIndex((p) => p.id === project.id);
+
+      // Retrieve the current order values from userProjectSettings
+      const currentProjectMember = projectMembers.find(
+        (m) => m.project_id === project.id
+      );
 
       const prevOrder =
         position === "above"
-          ? projects[currentIndex - 1]?.order || project.order - 1
-          : project.order;
+          ? projectMembers
+              .filter(
+                (m) =>
+                  m.project_settings.order <
+                  (currentProjectMember?.project_settings.order || 0)
+              )
+              .sort(
+                (a, b) => b.project_settings.order - a.project_settings.order
+              )[0].project_settings.order ||
+            (currentProjectMember?.project_settings.order || 0) - 1
+          : currentProjectMember?.project_settings.order || 0;
 
       const nextOrder =
         position === "below"
-          ? projects[currentIndex + 1]?.order || project.order + 1
-          : project.order;
+          ? projectMembers
+              .filter(
+                (m) =>
+                  m.project_settings.order >
+                  (currentProjectMember?.project_settings.order || 0)
+              )
+              .sort(
+                (a, b) => a.project_settings.order - b.project_settings.order
+              )[0]?.project_settings.order ||
+            (currentProjectMember?.project_settings.order || 0) + 1
+          : currentProjectMember?.project_settings.order || 0;
 
       const newOrder = (prevOrder + nextOrder) / 2;
 
@@ -178,7 +314,6 @@ const AddEditProject = ({
         .from("projects")
         .insert({
           ...projectData,
-          order: newOrder,
         })
         .select()
         .single();
@@ -186,6 +321,29 @@ const AddEditProject = ({
       if (insertError) {
         setError(insertError.message);
         setLoading(false);
+        return;
+      }
+
+      // Update userProjectSettings with the new order
+      const newProjectMembersData: Omit<ProjectMemberType, "id"> = {
+        project_id: newProject.id,
+        profile_id: profile.id,
+        role: RoleType.ADMIN,
+        project_settings: {
+          is_favorite:
+            projectMembersData?.project_settings.is_favorite || false,
+          order: newOrder,
+        },
+      };
+
+      const { error: settingsError } = await supabaseBrowser
+        .from("project_members")
+        .insert(newProjectMembersData);
+
+      if (settingsError) {
+        setError(settingsError.message);
+        setLoading(false);
+        console.error(settingsError);
         return;
       }
 
@@ -202,41 +360,6 @@ const AddEditProject = ({
     setLoading(false);
     onClose();
   };
-
-  const [workspaces, setWorkspaces] = useState<
-    { team_id: number | null; name: string; avatar_url: string }[]
-  >([]);
-
-  useEffect(() => {
-    setWorkspaces([
-      {
-        team_id: null,
-        name: "My Projects",
-        avatar_url: profile?.avatar_url || "",
-      },
-    ]);
-
-    teams.forEach((team) => {
-      if (!workspaces.some((w) => w.team_id === team.id)) {
-        setWorkspaces((prev) => [
-          ...prev,
-          {
-            team_id: team.id,
-            name: team.name,
-            avatar_url: team.avatar_url,
-          } as {
-            team_id: number;
-            name: string;
-            avatar_url: string;
-          },
-        ]);
-      }
-    });
-
-    return () => {
-      setWorkspaces([]);
-    };
-  }, [teams, profile?.avatar_url]);
 
   return (
     <Dialog size="xs" onClose={onClose}>
@@ -261,13 +384,10 @@ const AddEditProject = ({
             <Input
               type="text"
               value={projectData?.name}
-              onChange={(e) =>
-                setProjectData({
-                  ...projectData,
-                  name: e.target.value,
-                  slug: generateSlug(e.target.value),
-                })
-              }
+              onChange={(e) => {
+                handleProjectDataChange("name", e.target.value);
+                handleProjectDataChange("slug", generateSlug(e.target.value));
+              }}
               required
               autoFocus
               label="Name"
@@ -279,21 +399,18 @@ const AddEditProject = ({
             <ColorSelector
               value={projectData.settings.color}
               onChange={(color) =>
-                setProjectData({
-                  ...projectData,
-                  settings: { ...projectData.settings, color },
+                handleProjectDataChange("settings", {
+                  ...projectData.settings,
+                  color,
                 })
               }
             />
 
             <WorkspaceSelector
-              currentWorkspace={
-                workspaces.find((w) => w.team_id === projectData?.team_id) ||
-                workspaces[0]
-              }
+              currentWorkspace={currentWorkspace}
               workspaces={workspaces}
               onSelect={(workspace) =>
-                setProjectData({ ...projectData, team_id: workspace.team_id })
+                handleProjectDataChange("team_id", workspace.team_id)
               }
             />
 
@@ -302,16 +419,26 @@ const AddEditProject = ({
                 className="flex items-center space-x-2 w-full"
                 type="button"
                 onClick={() =>
-                  setProjectData((prev) => ({
+                  setProjectMembersData((prev) => ({
                     ...prev,
-                    is_favorite: !prev.is_favorite,
+                    project_settings: {
+                      ...projectMembersData?.project_settings,
+                      is_favorite:
+                        !projectMembersData?.project_settings.is_favorite,
+                    },
                   }))
                 }
               >
                 <ToggleSwitch
-                  checked={projectData.is_favorite}
+                  checked={projectMembersData.project_settings.is_favorite}
                   onCheckedChange={(value) =>
-                    setProjectData((prev) => ({ ...prev, is_favorite: value }))
+                    setProjectMembersData((prev) => ({
+                      ...prev,
+                      project_settings: {
+                        ...projectMembersData.project_settings,
+                        is_favorite: value,
+                      },
+                    }))
                   }
                 />
 
@@ -373,7 +500,9 @@ const AddEditProject = ({
           </div>
 
           {error && (
-            <p className="text-red-500 p-4 pt-0 text-center text-xs">{error}</p>
+            <p className="text-red-500 p-4 pt-0 text-center text-xs whitespace-normal">
+              {error}
+            </p>
           )}
 
           <div className="flex justify-end gap-4 select-none border-t border-text-200 p-4">

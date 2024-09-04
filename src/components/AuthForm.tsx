@@ -204,6 +204,8 @@ const AuthForm: React.FC<AuthFormProps> = ({
           ? `${error.message}`
           : "An unexpected error occurred. Please try again later."
       );
+      captcha.current?.resetCaptcha();
+      setLoading(false);
     } finally {
       setLoading(false);
       captcha.current?.resetCaptcha();

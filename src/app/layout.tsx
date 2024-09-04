@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Poppins, Nunito } from "next/font/google";
 import "./globals.css";
 import TaskProjectDataProvider from "@/context/TaskProjectDataContext";
@@ -20,6 +20,15 @@ export const metadata: Metadata = {
   icons: {
     shortcut: "/kakrola.svg",
   },
+  manifest: "/manifest.json",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

@@ -33,7 +33,7 @@ const TaskItemForListView = ({
   subTasks: TaskType[];
   index: number;
   project: ProjectType | null;
-  setTasks: (updatedTasks: TaskType[]) => void;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
   tasks: TaskType[];
   showModal?: string | null;
   smallAddTask?: boolean;
@@ -225,6 +225,7 @@ const TaskItemForListView = ({
                       task={taskData}
                       setTask={setTaskData}
                       forListView
+                      project={project}
                     />
                   </div>
                   <div className="min-w-32">

@@ -3,13 +3,13 @@ import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/Spinner";
 import Textarea from "@/components/ui/textarea";
 import { useAuthProvider } from "@/context/AuthContext";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType } from "@/types/project";
 import {
   TemplateProjectType,
   TemplateSectionType,
   TemplateTaskType,
 } from "@/types/template";
+import { fetchSectionsAndTasksByProjectId } from "@/utils/fetchSectionsAndTasksByProjectId";
 import { generateSlug } from "@/utils/generateSlug";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { X } from "lucide-react";
@@ -24,7 +24,6 @@ const SaveTemplateModal = ({
   project: ProjectType;
 }) => {
   const { profile } = useAuthProvider();
-  const { sections, tasks } = useTaskProjectDataProvider();
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,7 +50,7 @@ const SaveTemplateModal = ({
         setSavingStatus("Saving project...");
         const templateProject: TemplateProjectType = {
           name: project.name,
-          slug: generateSlug(project.name),
+          slug: generateSlug(project.name, true),
           color: templateData.color,
           description: templateData.description,
           preview_image: "", // You might want to add an image upload feature
@@ -72,93 +71,99 @@ const SaveTemplateModal = ({
 
         if (projectError) throw projectError;
 
-        if (templateProjectData && templateProjectData.id) {
-          const projectSections = sections.filter(
-            (section) => section.project_id === project.id
-          );
-          const projectTasks = tasks.filter(
-            (task) => task.project_id === project.id
-          );
+        fetchSectionsAndTasksByProjectId(project.id).then(
+          async ({ sections, tasks }) => {
+            if (templateProjectData && templateProjectData.id) {
+              const projectSections = sections.filter(
+                (section) => section.project_id === project.id
+              );
+              const projectTasks = tasks.filter(
+                (task) => task.project_id === project.id
+              );
 
-          // Create a map to store the relation between original section IDs and new template section IDs
-          const sectionIdMap = new Map<string | number, string | number>();
+              // Create a map to store the relation between original section IDs and new template section IDs
+              const sectionIdMap = new Map<string | number, string | number>();
 
-          // Insert template sections
-          // Update status to saving sections
-          setSavingStatus("Saving sections...");
-          for (const section of projectSections) {
-            const templateSection: TemplateSectionType = {
-              template_project_id: templateProjectData.id,
-              name: section.name,
-              order: section.order,
-            };
+              // Insert template sections
+              // Update status to saving sections
+              setSavingStatus("Saving sections...");
+              for (const section of projectSections) {
+                const templateSection: TemplateSectionType = {
+                  template_project_id: templateProjectData.id,
+                  name: section.name,
+                  order: section.order,
+                };
 
-            const { data: templateSectionData, error: sectionError } =
-              await supabaseBrowser
-                .from("template_sections")
-                .insert(templateSection)
-                .select()
-                .single();
+                const { data: templateSectionData, error: sectionError } =
+                  await supabaseBrowser
+                    .from("template_sections")
+                    .insert(templateSection)
+                    .select()
+                    .single();
 
-            if (sectionError) throw sectionError;
+                if (sectionError) throw sectionError;
 
-            if (templateSectionData) {
-              sectionIdMap.set(section.id, templateSectionData.id);
-            }
-          }
+                if (templateSectionData) {
+                  sectionIdMap.set(section.id, templateSectionData.id);
+                }
+              }
 
-          // Create a map to store the relation between original task IDs and new template task IDs
-          const taskIdMap = new Map<string | number, string | number>();
+              // Create a map to store the relation between original task IDs and new template task IDs
+              const taskIdMap = new Map<string | number, string | number>();
 
-          // Insert template tasks
-          // Update status to saving tasks
-          setSavingStatus("Saving tasks...");
-          for (const task of projectTasks) {
-            const templateTask: TemplateTaskType = {
-              template_project_id: templateProjectData.id,
-              template_section_id: task.section_id
-                ? sectionIdMap.get(task.section_id) ?? null
-                : null,
-              parent_template_task_id: null, // We'll update this in the next step
-              title: task.title,
-              description: task.description,
-              priority: task.priority,
-              due_date: task.due_date,
-              reminder_time: task.reminder_time,
-              order: task.order,
-            };
+              // Insert template tasks
+              // Update status to saving tasks
+              setSavingStatus("Saving tasks...");
+              for (const task of projectTasks) {
+                const templateTask: TemplateTaskType = {
+                  template_project_id: templateProjectData.id,
+                  template_section_id: task.section_id
+                    ? sectionIdMap.get(task.section_id) ?? null
+                    : null,
+                  parent_template_task_id: null, // We'll update this in the next step
+                  title: task.title,
+                  description: task.description,
+                  priority: task.priority,
+                  due_date: task.due_date,
+                  reminder_time: task.reminder_time,
+                  order: task.order,
+                };
 
-            const { data: templateTaskData, error: taskError } =
-              await supabaseBrowser
-                .from("template_tasks")
-                .insert(templateTask)
-                .select()
-                .single();
+                const { data: templateTaskData, error: taskError } =
+                  await supabaseBrowser
+                    .from("template_tasks")
+                    .insert(templateTask)
+                    .select()
+                    .single();
 
-            if (taskError) throw taskError;
+                if (taskError) throw taskError;
 
-            if (templateTaskData) {
-              taskIdMap.set(task.id, templateTaskData.id);
-            }
-          }
+                if (templateTaskData) {
+                  taskIdMap.set(task.id, templateTaskData.id);
+                }
+              }
 
-          // Update parent_template_task_id for tasks with parent tasks
-          setSavingStatus("Updating task hierarchy...");
+              // Update parent_template_task_id for tasks with parent tasks
+              setSavingStatus("Updating task hierarchy...");
 
-          for (const task of projectTasks) {
-            if (task.parent_task_id) {
-              const templateTaskId = taskIdMap.get(task.id);
-              const templateParentTaskId = taskIdMap.get(task.parent_task_id);
+              for (const task of projectTasks) {
+                if (task.parent_task_id) {
+                  const templateTaskId = taskIdMap.get(task.id);
+                  const templateParentTaskId = taskIdMap.get(
+                    task.parent_task_id
+                  );
 
-              if (templateTaskId && templateParentTaskId) {
-                await supabaseBrowser
-                  .from("template_tasks")
-                  .update({ parent_template_task_id: templateParentTaskId })
-                  .eq("id", templateTaskId);
+                  if (templateTaskId && templateParentTaskId) {
+                    await supabaseBrowser
+                      .from("template_tasks")
+                      .update({ parent_template_task_id: templateParentTaskId })
+                      .eq("id", templateTaskId);
+                  }
+                }
               }
             }
           }
-        }
+        );
       }
       onClose();
     } catch (error) {

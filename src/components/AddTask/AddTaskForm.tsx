@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import {
@@ -60,24 +60,24 @@ const AddTaskForm = ({
   section_id,
   parentTaskIdForSubTask,
   project,
-  setTasks,
-  tasks,
   addTaskAboveBellow,
   taskForEdit,
   biggerTitle,
   dueDate,
+  tasks,
+  setTasks,
 }: {
   onClose: () => void;
   isSmall?: boolean;
   section_id?: SectionType["id"] | null;
   parentTaskIdForSubTask?: string | number;
   project: ProjectType | null;
-  setTasks: (updatedTasks: TaskType[]) => void;
-  tasks: TaskType[];
   addTaskAboveBellow?: { position: "above" | "below"; task: TaskType } | null;
   taskForEdit?: TaskType;
   biggerTitle?: boolean;
   dueDate?: Date | null;
+  tasks?: TaskType[];
+  setTasks?: Dispatch<SetStateAction<TaskType[]>>;
 }) => {
   const { projects, activeProject } = useTaskProjectDataProvider();
   const { profile } = useAuthProvider();
@@ -92,10 +92,7 @@ const AddTaskForm = ({
       })
   );
 
-  const [showAssignee, setShowAssignee] = useState<boolean>(false);
-
   const [showReminder, setShowReminder] = useState<boolean>(false);
-  const [showProjects, setShowProjects] = useState<boolean>(false);
   const [showMore, setShowMore] = useState<boolean>(false);
 
   const [loading, setLoading] = useState(false);
@@ -150,11 +147,13 @@ const AddTaskForm = ({
 
     try {
       if (isEditing) {
-        // Optimistically update the task in the UI
-        updatedTasks = tasks.map((t) =>
-          t.id === taskData.id ? { ...t, ...taskData } : t
-        );
-        setTasks(updatedTasks);
+        if (tasks && setTasks) {
+          // Optimistically update the task in the UI
+          updatedTasks = tasks.map((t) =>
+            t.id === taskData.id ? { ...t, ...taskData } : t
+          );
+          setTasks(updatedTasks);
+        }
         setLoading(false);
 
         // Update the existing task in Supabase
@@ -166,9 +165,10 @@ const AddTaskForm = ({
           .single();
 
         if (error) throw error;
-
-        // Ensure UI reflects any updates from the database
-        updatedTasks = tasks.map((t) => (t.id === taskData.id ? data : t));
+        if (tasks) {
+          // Ensure UI reflects any updates from the database
+          updatedTasks = tasks.map((t) => (t.id === taskData.id ? data : t));
+        }
       } else {
         // Create a temporary task with a UUID
         const newTask: TaskType = {
@@ -178,27 +178,31 @@ const AddTaskForm = ({
           parent_task_id: parentTaskIdForSubTask || null,
         };
 
-        if (addTaskAboveBellow) {
-          const { position, task: existingTask } = addTaskAboveBellow;
-          const currentIndex = tasks.findIndex((t) => t.id === existingTask.id);
-          const insertIndex =
-            position === "below" ? currentIndex + 1 : currentIndex;
+        if (tasks && setTasks) {
+          if (addTaskAboveBellow) {
+            const { position, task: existingTask } = addTaskAboveBellow;
+            const currentIndex = tasks.findIndex(
+              (t) => t.id === existingTask.id
+            );
+            const insertIndex =
+              position === "below" ? currentIndex + 1 : currentIndex;
 
-          newTask.order = calculateNewOrder(tasks, currentIndex, position);
+            newTask.order = calculateNewOrder(tasks, currentIndex, position);
 
-          updatedTasks = [
-            ...tasks.slice(0, insertIndex),
-            newTask,
-            ...tasks.slice(insertIndex),
-          ];
-        } else {
-          newTask.order = Math.max(...tasks.map((task) => task.order), 0) + 1;
-          updatedTasks = [...tasks, newTask];
+            updatedTasks = [
+              ...tasks.slice(0, insertIndex),
+              newTask,
+              ...tasks.slice(insertIndex),
+            ];
+          } else {
+            newTask.order = Math.max(...tasks.map((task) => task.order), 0) + 1;
+            updatedTasks = [...tasks, newTask];
+          }
+
+          // Optimistically update the task list in the UI
+          setTasks(updatedTasks);
+          setLoading(false);
         }
-
-        // Optimistically update the task list in the UI
-        setTasks(updatedTasks);
-        setLoading(false);
         // Reset form and close
         resetTaskData();
 
@@ -218,8 +222,10 @@ const AddTaskForm = ({
         );
       }
 
-      // Update state with new/updated tasks
-      setTasks(updatedTasks);
+      if (setTasks) {
+        // Update state with new/updated tasks
+        setTasks(updatedTasks);
+      }
       setLoading(false);
 
       if (isEditing) {
@@ -227,8 +233,11 @@ const AddTaskForm = ({
       }
     } catch (error: any) {
       setError(error.message);
-      // Revert the optimistic update on error
-      setTasks(tasks); // Revert to the original state
+
+      if (setTasks && tasks) {
+        // Revert the optimistic update on error
+        setTasks(tasks); // Revert to the original state
+      }
     } finally {
       setLoading(false);
     }
@@ -256,6 +265,7 @@ const AddTaskForm = ({
             task={taskData}
             setTask={setTaskData}
             isSmall={isSmall}
+            project={project}
           />
 
           <Priorities

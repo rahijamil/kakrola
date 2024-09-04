@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { useAuthProvider } from "@/context/AuthContext";
 import {
   Inbox,
   Calendar,
@@ -49,7 +48,20 @@ const menuItems: {
 
 const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
   const pathname = usePathname();
-  const { projects, teams } = useTaskProjectDataProvider();
+
+  const { projects, teams, projectMembers } = useTaskProjectDataProvider();
+
+  // Create a set of favorite project IDs
+  const favoriteProjectIds = new Set(
+    projectMembers
+      .filter((member) => member.project_settings.is_favorite)
+      .map((member) => member.project_id)
+  );
+
+  // Check if there are any favorite projects
+  const hasFavoriteProjects = projects.some((project) =>
+    favoriteProjectIds.has(project.id)
+  );
 
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);
@@ -159,7 +171,7 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
             ))}
           </ul>
 
-          {projects.filter((p) => p.is_favorite).length > 0 && (
+          {hasFavoriteProjects && (
             <FavoriteProjects
               setShowFavoritesProjects={setShowFavoritesProjects}
               showFavoritesProjects={showFavoritesProjects}

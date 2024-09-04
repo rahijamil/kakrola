@@ -1,45 +1,43 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SectionType, TaskType } from "@/types/project";
 import LayoutWrapper from "../../../components/LayoutWrapper";
 import Image from "next/image";
 import TaskViewSwitcher from "@/components/TaskViewSwitcher";
 import { ViewTypes } from "@/types/viewTypes";
+import { supabaseBrowser } from "@/utils/supabase/client";
 import { useAuthProvider } from "@/context/AuthContext";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+
+const fetchInboxSectionsAndTasks = async (_profile_id: string) => {
+  const { data, error } = await supabaseBrowser.rpc(
+    "fetch_inbox_sections_and_tasks",
+    { _profile_id }
+  );
+
+  if (error) {
+    console.error("Error fetching inbox data:", error.message);
+    return { sections: [], tasks: [] }; // Return empty arrays if there's an error
+  }
+
+  // Data is already separated into sections and tasks
+  return { sections: data.sections, tasks: data.tasks };
+};
 
 const InboxPage = () => {
-  const { tasks, sections, setSections, setTasks } =
-    useTaskProjectDataProvider();
+  const { profile } = useAuthProvider();
   const [view, setView] = useState<ViewTypes["view"]>("List");
 
-  const inboxSections = useMemo(() => {
-    return sections.filter((s) => s.is_inbox).sort((a, b) => a.order - b.order);
-  }, [sections]);
+  const [inboxTasks, setInboxTasks] = useState<TaskType[]>([]);
+  const [inboxSections, setInboxSections] = useState<SectionType[]>([]);
 
-  const inboxTasks = useMemo(() => {
-    return tasks.filter((t) => t.is_inbox).sort((a, b) => a.order - b.order);
-  }, [tasks]);
+  useEffect(() => {
+    if (!profile) return;
 
-  const setInboxSections = (updatedSections: SectionType[]) => {
-    setSections((prev) =>
-      prev.map((section) =>
-        section.is_inbox
-          ? updatedSections.find((s) => s.id === section.id) || section
-          : section
-      )
-    );
-  };
-
-  const setInboxTasks = (updatedTasks: TaskType[]) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.is_inbox
-          ? updatedTasks.find((t) => t.id === task.id) || task
-          : task
-      )
-    );
-  };
+    fetchInboxSectionsAndTasks(profile?.id).then((data) => {
+      setInboxSections(data.sections);
+      setInboxTasks(data.tasks);
+    });
+  }, [profile?.id]);
 
   return (
     <LayoutWrapper headline="Inbox" setView={setView} view={view}>

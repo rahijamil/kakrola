@@ -1,16 +1,11 @@
-import { ProjectMemberType } from "@/types/team";
-import { ProfileType } from "@/types/user";
+import { InviteType } from "@/types/team";
 import Image from "next/image";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import RoleItem from "./RoleItem";
 import { RoleType } from "@/types/role";
 
-interface MemberData extends ProjectMemberType {
-  profile: ProfileType;
-}
-
-const MemberItem = ({ member }: { member: MemberData }) => {
-  const [memberData, setMemberData] = useState(member);
+const PendingItem = ({ invite }: { invite: InviteType }) => {
+  const [pendingData, setPendingData] = useState(invite);
 
   const handleUpdateRole = async (newRole: RoleType) => {
     try {
@@ -23,7 +18,7 @@ const MemberItem = ({ member }: { member: MemberData }) => {
       //   return;
       // }
 
-      setMemberData({ ...memberData, role: newRole });
+      setPendingData({ ...pendingData, role: newRole });
 
       // setIsOpen(false);
       // console.log("Project member role updated successfully");
@@ -35,26 +30,22 @@ const MemberItem = ({ member }: { member: MemberData }) => {
   return (
     <div className="flex justify-between gap-4 items-center p-2 hover:bg-text-50 cursor-default rounded-2xl transition">
       <div className="flex items-center gap-2">
-        <Image
-          src={member.profile.avatar_url || "/default_avatar.png"}
-          alt="Avatar"
-          width={24}
-          height={24}
-          className="rounded-full object-cover max-w-6 max-h-6"
-        />
+        <div className="rounded-full w-6 h-6 bg-text-200 flex items-center justify-center">
+          {invite.email?.slice(0, 1).toUpperCase()}
+        </div>
 
         <div className="flex flex-col whitespace-nowrap">
-          <span>{member.profile.full_name || "Unknown User"}</span>
-          <span className="text-xs text-text-500">{member.profile.email}</span>
+          <span>{invite.email}</span>
+          <span className="text-xs text-text-500">{invite.status}</span>
         </div>
       </div>
 
       <RoleItem
-        value={memberData.role}
+        value={invite.role}
         onChange={(newRole) => handleUpdateRole(newRole)}
       />
     </div>
   );
 };
 
-export default MemberItem;
+export default PendingItem;

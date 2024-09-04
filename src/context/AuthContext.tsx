@@ -57,6 +57,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     getAuthUser();
+
+    return () => {
+      setProfile(null);
+    }
   }, []);
 
   useEffect(() => {

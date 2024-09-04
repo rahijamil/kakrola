@@ -72,7 +72,7 @@ const LayoutView = ({
     allViews.map((v) => ({
       ...v,
       visible:
-        v.name === "List" || project.settings.selected_views.includes(v.name), // Ensure List is always visible
+        v.name === "List" || v.name === "Board" || project.settings.selected_views.includes(v.name), // Ensure List/Board is always visible
     }))
   );
 

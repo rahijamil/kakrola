@@ -1,4 +1,4 @@
-export const generateSlug = (name: string) => {
+export const generateSlug = (name: string, isTemplate: boolean = false) => {
   // Convert to lowercase and replace spaces/special characters with hyphens
   let slug = name
     .toLowerCase()
@@ -10,7 +10,7 @@ export const generateSlug = (name: string) => {
     .replace(/--+/g, "-"); // Replace multiple hyphens with a single one
 
   // Append unique suffix to avoid conflicts
-  const uniqueSuffix = "template-" + Date.now();
+  const uniqueSuffix = isTemplate ? "template-" + Date.now() : Date.now();
   slug = `${slug}-${uniqueSuffix}`;
 
   return slug;

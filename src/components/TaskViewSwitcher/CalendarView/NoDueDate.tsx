@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import TaskItem from "../../TaskViewSwitcher/TaskItem";
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import { ProjectType, TaskType } from "@/types/project";
@@ -11,7 +11,7 @@ const NoDueDate = ({
 }: {
   showNoDateTasks?: boolean;
   tasks: TaskType[];
-  setTasks: (tasks: TaskType[]) => void;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
   project: ProjectType;
 }) => {
   return (
@@ -39,7 +39,7 @@ const NoDueDate = ({
                   ?.filter((t) => !t.due_date)
                   .map((task: TaskType, index) => (
                     <li
-                    key={task.id}
+                      key={task.id}
                       className={`border-b border-text-200 p-1 pl-0 flex items-center gap-3 cursor-pointer`}
                     >
                       <TaskItem

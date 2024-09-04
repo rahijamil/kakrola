@@ -1,7 +1,7 @@
 import { TaskType } from "@/types/project";
 import { Droppable } from "@hello-pangea/dnd";
 import { format } from "date-fns";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import TaskItem from "./TaskItem";
 import SectionAddTask from "./SectionAddTask";
 
@@ -10,7 +10,7 @@ const BoardViewForToday = ({
   setTasks,
 }: {
   tasks: TaskType[];
-  setTasks: (updatedTasks: TaskType[]) => void;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
 }) => {
   const [showUngroupedAddTask, setShowUngroupedAddTask] = useState(false);
   const [showTaskItemModal, setShowTaskItemModal] = useState<string | null>(

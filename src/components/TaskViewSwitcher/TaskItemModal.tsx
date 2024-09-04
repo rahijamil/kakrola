@@ -52,14 +52,14 @@ const TaskItemModal = ({
   onClose: () => void;
   onCheckClick: () => void;
   project: ProjectType | null;
-  setTasks: (updatedTasks: TaskType[]) => void;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
   tasks: TaskType[];
 }) => {
   const { profile } = useAuthProvider();
   const [contentEditable, setContentEditable] = useState<boolean>(false);
   const [showCommentForm, setShowCommentForm] = useState<boolean>(false);
   const [showAddSubtask, setShowAddSubtask] = useState<boolean>(false);
-  const { projects, sections } = useTaskProjectDataProvider();
+  const { projects } = useTaskProjectDataProvider();
   const [taskData, setTaskData] = useState<TaskType>(task);
 
   const [showProjectsSelector, setShowProjectsSelector] =
@@ -289,6 +289,7 @@ const TaskItemModal = ({
                   task={taskData}
                   setTask={setTaskData}
                   forTaskModal
+                  project={project}
                 />
               </div>
               <div className="h-[1px] bg-text-200 m-2"></div>

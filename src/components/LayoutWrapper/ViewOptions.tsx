@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback, useRef, Dispatch, SetStateAction } from "react";
 import LayoutView from "../LayoutView";
 import { ViewTypes } from "@/types/viewTypes";
 import { ToggleSwitch } from "../ui/ToggleSwitch";
@@ -17,7 +17,7 @@ const ViewOptions = React.memo(
     view?: ViewTypes["view"];
     setView: (value: ViewTypes["view"]) => void;
     hideCalendarView?: boolean;
-    setTasks?: (updatedTasks: TaskType[]) => void;
+    setTasks?: Dispatch<SetStateAction<TaskType[]>>;
     tasks?: TaskType[];
   }) => {
     const [showCompletedTasks, setShowCompletedTasks] = useState(false);

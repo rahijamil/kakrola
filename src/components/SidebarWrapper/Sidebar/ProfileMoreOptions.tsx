@@ -219,13 +219,17 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
           ref={triggerRef}
           className="flex items-center gap-1 hover:bg-primary-50 transition p-1 pl-1.5 rounded-2xl"
         >
-          <Image
-            src={profile?.avatar_url || "/default-avatar.png"}
-            alt={profile?.full_name || profile?.username || ""}
-            width={20}
-            height={20}
-            className="rounded-full object-cover max-w-[20px] max-h-[20px]"
-          />
+          <div className="flex items-center gap-1">
+            <Image
+              src={profile?.avatar_url || "/default-avatar.png"}
+              alt={profile?.full_name || profile?.username || ""}
+              width={20}
+              height={20}
+              className="rounded-full object-cover max-w-[20px] max-h-[20px]"
+            />
+
+            <p className="font-medium">{profile?.full_name.split(" ")[0]}</p>
+          </div>
 
           <ChevronDown strokeWidth={1.5} size={16} />
         </button>

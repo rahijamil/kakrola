@@ -60,7 +60,7 @@ const BoardViewColumn = ({
   showSectionMoreOptions: string | null;
   setShowSectionMoreOptions: Dispatch<SetStateAction<string | null>>;
   project: ProjectType | null;
-  setTasks: (updatedTasks: TaskType[]) => void;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
   sections: SectionType[];
   setShowUngroupedAddSection: Dispatch<SetStateAction<boolean>>;
   showAddTask: string | number | null;
@@ -125,7 +125,7 @@ const BoardViewColumn = ({
 
   // Tailwind doesn't generate all color classes by default, so we need to explicitly define them
   const bgColorClass =
-    theme == "dark" ? `bg-${sectionColor}-900` : `bg-${sectionColor}-100`;
+    theme == "dark" ? `bg-${sectionColor}-900` : `bg-${sectionColor}-25`;
   const hoverBgColorClass =
     theme == "dark"
       ? `hover:bg-${sectionColor}-800`

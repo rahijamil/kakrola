@@ -38,7 +38,7 @@ const LayoutWrapper = ({
   view?: ViewTypes["view"];
   setView?: (value: ViewTypes["view"]) => void;
   hideCalendarView?: boolean;
-  setTasks?: (updatedTasks: TaskType[]) => void;
+  setTasks?: Dispatch<SetStateAction<TaskType[]>>;
   tasks?: TaskType[];
   showNoDateTasks?: boolean;
 }) => {

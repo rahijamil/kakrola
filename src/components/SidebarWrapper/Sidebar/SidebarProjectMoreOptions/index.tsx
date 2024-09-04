@@ -22,6 +22,7 @@ import CopyProjectLinkOption from "./CopyProjectLinkOption";
 import Dropdown from "@/components/ui/Dropdown";
 import { usePathname } from "next/navigation";
 import useFavorite from "@/hooks/useFavorite";
+import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 
 const SidebarProjectMoreOptions = ({
   project,
@@ -54,6 +55,18 @@ const SidebarProjectMoreOptions = ({
   const pathname = usePathname();
 
   const { handleFavorite } = useFavorite({ project });
+
+  const { projectMembers } = useTaskProjectDataProvider();
+
+  // Find the current user project settings for the given project
+  const currentUserProjectSettings = projectMembers.find(
+    (member) => member.project_id === project.id
+  );
+
+  // Determine the current favorite status
+  const isFavorite = currentUserProjectSettings
+    ? currentUserProjectSettings.project_settings.is_favorite
+    : false;
 
   const handleCopyProjectLink = () => {
     navigator.clipboard.writeText(`https://ekta.com/project/${project.slug}`);
@@ -110,10 +123,8 @@ const SidebarProjectMoreOptions = ({
         },
         {
           id: 4,
-          label: project.is_favorite
-            ? "Remove from favorites"
-            : "Add to favorites",
-          icon: project.is_favorite ? (
+          label: isFavorite ? "Remove from favorites" : "Add to favorites",
+          icon: isFavorite ? (
             <HeartOff className="w-4 h-4" />
           ) : (
             <Heart strokeWidth={1.5} className="w-4 h-4" />

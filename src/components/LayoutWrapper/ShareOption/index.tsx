@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Input } from "../../ui/input";
 import Image from "next/image";
 import Dropdown from "../../ui/Dropdown";
 import { UserPlus } from "lucide-react";
 import { useAuthProvider } from "@/context/AuthContext";
-import axios from "axios";
-import { ProjectMemberType } from "@/types/team";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { ProfileType } from "@/types/user";
 import { useGlobalOption } from "@/context/GlobalOptionContext";
 import MemberItem from "./MemberItem";
+import InviteEmailInput from "./InviteEmailInput";
+import { InviteStatus, InviteType, ProjectMemberType } from "@/types/team";
+import PendingItem from "./PendingItem";
 
 interface MemberData extends ProjectMemberType {
   profile: ProfileType;
@@ -25,17 +25,28 @@ const ShareOption = ({
   const { profile } = useAuthProvider();
   const { setShowShareOption, showShareOption } = useGlobalOption();
   const triggerRef = useRef(null);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<ProfileType[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [membersData, setMembersData] = useState<MemberData[]>([]);
+  const [pendingUsers, setPendingUsers] = useState<InviteType[]>([]);
+  const [emails, setEmails] = useState<string[]>([]);
 
-  // Regular expression for email validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // Fetch project members and their profiles
+  const fetchPendingUsers = async () => {
+    const { data, error } = await supabaseBrowser
+      .from("invites")
+      .select()
+      .eq("status", InviteStatus.PENDING)
+      .eq("project_id", projectId);
+
+    if (error) {
+      console.error("Failed to fetch project invites", error);
+      return;
+    }
+
+    setPendingUsers(data);
+  };
+
   useEffect(() => {
     const fetchMembersData = async () => {
       try {
@@ -66,6 +77,7 @@ const ShareOption = ({
         }));
 
         setMembersData(membersWithProfile);
+        fetchPendingUsers();
       } catch (err) {
         console.error("Failed to fetch project members and profiles", err);
       }
@@ -75,77 +87,6 @@ const ShareOption = ({
       fetchMembersData();
     }
   }, [projectId]);
-
-  // Fetch users based on search query
-  useEffect(() => {
-    const fetchUsers = async () => {
-      if (!searchQuery || !profile?.id) {
-        setSearchResults([]);
-        return;
-      }
-
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const response = await axios.get("/api/invite/search-users", {
-          params: { query: searchQuery, profile_id: profile?.id },
-        });
-        setSearchResults(response.data.users || []);
-      } catch (err) {
-        setError("Failed to fetch users. Please try again.");
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    const debounceTimeout = setTimeout(fetchUsers, 300); // Debounce to reduce API calls
-
-    return () => clearTimeout(debounceTimeout);
-  }, [searchQuery]);
-
-  const handleInvite = async (email: string) => {
-    if (!profile || (!projectId && !teamId)) {
-      setError("Invalid project or team context.");
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await axios.post("/api/invite/invite-team-members", {
-        emails: [email],
-        // project_id: projectId,
-        team_id: teamId,
-        inviter: {
-          id: profile.id,
-          first_name: profile.full_name.split(" ")[0] || "Unknown User",
-          email: profile.email,
-        },
-      });
-
-      if (response.data.success) {
-        setSearchQuery("");
-        setSearchResults([]);
-        setSuccessMessage("Invitation sent successfully!");
-        setTimeout(() => setSuccessMessage(null), 3000); // Clear success message after 3 seconds
-      } else {
-        setError(response.data.message);
-      }
-    } catch (err) {
-      setError("Failed to send invite. Please try again.");
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Helper function to check if a user is already a project member
-  const isAlreadyMember = (profileId: string) => {
-    return membersData.some((member) => member.profile_id === profileId);
-  };
 
   return (
     <Dropdown
@@ -174,86 +115,42 @@ const ShareOption = ({
         </div>
       )}
       content={
-        <div className="p-2 space-y-4">
-          <Input
-            placeholder="Add people by name or email"
-            type="text"
-            className="border border-text-200 focus:border-text-400 rounded-full px-3 py-2 w-full"
-            value={searchQuery}
-            onChange={(e) => {
-              setError(null);
-              setSuccessMessage(null);
-              setSearchQuery(e.target.value);
-            }}
-            howBig="sm"
+        <div className="p-4 space-y-4">
+          <InviteEmailInput
+            projectId={projectId}
+            teamId={teamId}
+            emails={emails}
+            setEmails={setEmails}
+            error={error}
+            setError={setError}
+            setSearchQuery={setSearchQuery}
+            searchQuery={searchQuery}
+            fetchPendingUsers={fetchPendingUsers}
           />
 
-          {isLoading ? (
-            <p className="text-center text-gray-500">Searching...</p>
-          ) : error ? (
-            <p className="text-center text-red-500">{error}</p>
-          ) : successMessage ? (
-            <p className="text-center text-green-500">{successMessage}</p>
-          ) : searchQuery ? (
-            // Display search results and indicate if already a member
-            <>
-              {searchResults.map((user) => (
-                <div
-                  key={user.id}
-                  className="flex justify-between items-center p-2 hover:bg-text-100 cursor-pointer rounded transition"
-                  onClick={() =>
-                    !isAlreadyMember(user.id) && handleInvite(user.email)
-                  }
-                >
-                  <span>{user.full_name || user.email}</span>
-                  {isAlreadyMember(user.id) ? (
-                    <span className="text-sm text-gray-500">
-                      Already a member
-                    </span>
-                  ) : (
-                    <button className="text-sm text-primary-500">Add</button>
-                  )}
-                </div>
+          {membersData.length > 0 || pendingUsers.length > 0 ? (
+            <div className="space-y-2">
+              <h3 className="font-semibold">In this project</h3>
+              {membersData.map((member) => (
+                <MemberItem key={member.id} member={member} />
               ))}
-              {searchResults.length === 0 && (
-                <div className="text-center text-gray-600">
-                  {emailRegex.test(searchQuery) ? (
-                    <button
-                      onClick={() => handleInvite(searchQuery)}
-                      className="text-sm text-primary-500 mt-2"
-                    >
-                      Invite "{searchQuery}"
-                    </button>
-                  ) : (
-                    <p>No results found for "{searchQuery}"</p>
-                  )}
-                </div>
-              )}
-            </>
+
+              {pendingUsers.map((invite) => (
+                <PendingItem key={invite.id} invite={invite} />
+              ))}
+            </div>
           ) : (
-            // Display all project members if no search query
-            <>
-              {membersData.length > 0 ? (
-                <div className="space-y-2">
-                  <h3 className="font-semibold">Members</h3>
-                  {membersData.map((member) => (
-                    <MemberItem key={member.id} member={member} />
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center gap-4 py-4">
-                  <Image
-                    src="/images/collaboration_empty_state.png"
-                    alt="No members yet"
-                    width={150}
-                    height={150}
-                  />
-                  <p className="text-center text-text-700">
-                    No members yet. Start by inviting others to collaborate!
-                  </p>
-                </div>
-              )}
-            </>
+            <div className="flex flex-col items-center justify-center gap-4 py-4">
+              <Image
+                src="/images/collaboration_empty_state.png"
+                alt="No members yet"
+                width={150}
+                height={150}
+              />
+              <p className="text-center text-text-700">
+                No members yet. Start by inviting others to collaborate!
+              </p>
+            </div>
           )}
         </div>
       }

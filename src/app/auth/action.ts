@@ -125,21 +125,42 @@ export async function updatePassword(newPassword: string) {
   redirect("/auth/login");
 }
 
-export async function signInWithProvider(provider: "google" | "github") {
+export async function signInWithProvider(
+  provider: "google" | "github",
+  acceptInviteToken?: string | null
+) {
   const supabaseServer = createClient();
-  const { data, error } = await supabaseServer.auth.signInWithOAuth({
-    provider,
-    options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
-    },
-  });
 
-  if (error) {
-    return { success: false, error: error.message || "Unknown error" };
-  }
+  if (acceptInviteToken) {
+    const { data, error } = await supabaseServer.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback?&accept_invite_token=${acceptInviteToken}`,
+      },
+    });
 
-  if (data.url) {
-    redirect(data.url);
+    if (error) {
+      return { success: false, error: error.message || "Unknown error" };
+    }
+
+    if (data.url) {
+      redirect(data.url);
+    }
+  } else {
+    const { data, error } = await supabaseServer.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
+      },
+    });
+
+    if (error) {
+      return { success: false, error: error.message || "Unknown error" };
+    }
+
+    if (data.url) {
+      redirect(data.url);
+    }
   }
 
   // After redirect and successful OAuth flow, handle user session check

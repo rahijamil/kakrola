@@ -6,7 +6,7 @@ import { useAuthProvider } from "@/context/AuthContext";
 type Workspace = {
   team_id: number | null;
   name: string;
-  avatar_url: string;
+  avatar_url: string | null;
 };
 
 interface WorkspaceSelectorProps {

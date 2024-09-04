@@ -10,6 +10,8 @@
   }
   body {
     @apply bg-background text-sm text-text-900;
+
+    -webkit-tap-highlight-color: transparent;
   }
   .wrapper {
     @apply w-11/12 max-w-7xl mx-auto;

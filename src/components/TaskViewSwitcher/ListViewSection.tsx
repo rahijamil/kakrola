@@ -58,7 +58,7 @@ const ListViewSection = ({
       is_archived?: boolean;
     } | null>
   >;
-  setTasks: (updatedTasks: TaskType[]) => void;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
   tasks: TaskType[];
   project: ProjectType | null;
   showAddTask: string | number | null;

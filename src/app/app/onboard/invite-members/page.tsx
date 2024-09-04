@@ -54,7 +54,7 @@ const Step5InviteMembers = () => {
 
     try {
       // Send all invites in one request to the server
-      const response = await axios.post("/api/invite/invite-team-members", {
+      const response = await axios.post("/api/invite/invite-members", {
         emails: validEmails,
         team_id,
         inviter: {

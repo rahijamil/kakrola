@@ -12,8 +12,21 @@ const FavoriteProjects = ({
   setShowFavoritesProjects: any;
   showFavoritesProjects: boolean;
 }) => {
-  const { projects } = useTaskProjectDataProvider();
+  const { projects, projectMembers } = useTaskProjectDataProvider();
   const pathname = usePathname();
+
+  // Create a map of project ID to favorite status from userProjectSettings
+  const favoritesMap = new Map(
+    projectMembers.map((member) => [
+      member.project_id,
+      member.project_settings.is_favorite
+    ])
+  );
+
+  // Filter projects based on userProjectSettings
+  const favoriteProjects = projects.filter(
+    (project) => favoritesMap.get(project.id) === true
+  );
 
   return (
     <div className="mt-4 px-2">
@@ -47,15 +60,13 @@ const FavoriteProjects = ({
           exit={{ opacity: 0.5, height: 0, y: -10 }}
         >
           <ul>
-            {projects
-              .filter((project) => project.is_favorite)
-              .map((project) => (
-                <ProjectItem
-                  key={project.id}
-                  project={project}
-                  pathname={pathname}
-                />
-              ))}
+            {favoriteProjects.map((project) => (
+              <ProjectItem
+                key={project.id}
+                project={project}
+                pathname={pathname}
+              />
+            ))}
           </ul>
         </motion.div>
       )}

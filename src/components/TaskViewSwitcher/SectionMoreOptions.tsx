@@ -11,13 +11,11 @@ import { SectionType, TaskType } from "@/types/project";
 import useTheme from "@/hooks/useTheme";
 
 const colors = [
-  "primary",
-  "purple",
-  "green",
-  "yellow",
-  "teal",
-  "lime",
-  "pink",
+  "kakrola",
+  "tangerine",
+  "kale",
+  "lavender",
+  "raspberry",
   "gray",
 ];
 
@@ -79,7 +77,7 @@ const SectionMoreOptions = ({
 
   const ColorButton = ({ color }: { color: string }) => {
     const bgClassName =
-      theme === "dark" ? `bg-${color}-400` : `bg-${color}-500`; // Adjusted class based on theme
+      theme === "dark" ? `bg-${color}-400` : `bg-${color}-400`; // Adjusted class based on theme
 
     return (
       <button
@@ -98,8 +96,9 @@ const SectionMoreOptions = ({
 
   // Tailwind doesn't generate all color classes by default, so we need to explicitly define them
   const bgColorClass =
-    theme == "dark" ? `bg-${sectionColor}-600` : `bg-${sectionColor}-100`;
-  const hoverBgColorClass = theme == "dark" ? `hover:bg-${sectionColor}-400` : `hover:bg-${sectionColor}-200`;
+    theme == "dark" ? `bg-${sectionColor}-600 text-${sectionColor}-100` : `bg-${sectionColor}-100 text-${sectionColor}-600`;
+  const hoverBgColorClass =
+    theme == "dark" ? `hover:bg-${sectionColor}-400` : `hover:bg-${sectionColor}-100 hover:bg-text-200`;
 
   return (
     <Dropdown
@@ -109,14 +108,12 @@ const SectionMoreOptions = ({
       Label={({ onClick }) => (
         <button
           ref={triggerRef}
-          className={`p-1 border border-text-200 transition rounded-full ${
-            isOpen
-              ? bgColorClass
-              : hoverBgColorClass
+          className={`p-1.5 transition rounded-full ${
+            isOpen ? bgColorClass : hoverBgColorClass
           }`}
           onClick={onClick}
         >
-          <Ellipsis strokeWidth={1.5} className="w-4 h-4 text-text-700" />
+          <Ellipsis strokeWidth={1.5} className={`w-4 h-4`} />
         </button>
       )}
       items={[

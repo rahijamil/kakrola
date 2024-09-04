@@ -2,31 +2,16 @@
 import React, { useMemo } from "react";
 import AddTaskForm from "./AddTaskForm";
 import { motion } from "framer-motion";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { TaskType } from "@/types/project";
 
 interface AddTaskModalProps {
   onClose: () => void;
   dueDate?: Date | null;
 }
 
-const AddTaskModal = ({ onClose, dueDate }: AddTaskModalProps) => {
-  const { tasks, setTasks } = useTaskProjectDataProvider();
-
-  const inboxTasks = useMemo(() => {
-    return tasks.filter((t) => t.is_inbox).sort((a, b) => a.order - b.order);
-  }, [tasks]);
-
-  const setInboxTasks = (updatedTasks: TaskType[]) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.is_inbox
-          ? updatedTasks.find((t) => t.id === task.id) || task
-          : task
-      )
-    );
-  };
-
+const AddTaskModal = ({
+  onClose,
+  dueDate,
+}: AddTaskModalProps) => {
   return (
     <div
       className="fixed top-0 left-0 right-0 bottom-0 flex items-start pt-40 z-20 justify-center"
@@ -41,8 +26,6 @@ const AddTaskModal = ({ onClose, dueDate }: AddTaskModalProps) => {
         <AddTaskForm
           onClose={onClose}
           project={null}
-          setTasks={setInboxTasks}
-          tasks={inboxTasks}
           biggerTitle
           dueDate={dueDate}
         />

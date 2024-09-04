@@ -34,6 +34,8 @@ const TeamProjects = ({
     if (team) {
       setTeamProjects(projects.filter((p) => p.team_id === team.id));
     }
+
+    console.log(projects)
   }, [team, projects]);
 
   const handleOnDragEnd = async (result: DropResult) => {

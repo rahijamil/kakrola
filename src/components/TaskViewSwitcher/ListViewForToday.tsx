@@ -1,5 +1,5 @@
 import { TaskType } from "@/types/project";
-import React, { Fragment, useState } from "react";
+import React, { Dispatch, Fragment, SetStateAction, useState } from "react";
 import SectionAddTask from "./SectionAddTask";
 import TaskItem from "./TaskItem";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
@@ -10,7 +10,7 @@ const ListViewForToday = ({
   setTasks,
 }: {
   tasks: TaskType[];
-  setTasks: (updatedTasks: TaskType[]) => void;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
 }) => {
   const [showUngroupedAddTask, setShowUngroupedAddTask] = useState(false);
   const [showTaskItemModal, setShowTaskItemModal] = useState<string | null>(

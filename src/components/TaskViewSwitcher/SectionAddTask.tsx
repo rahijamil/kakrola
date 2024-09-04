@@ -23,7 +23,7 @@ const SectionAddTask = ({
   setShowUngroupedAddTask?: Dispatch<SetStateAction<boolean>>;
   isSmall?: boolean;
   project: ProjectType | null;
-  setTasks: (updatedTasks: TaskType[]) => void;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
   tasks: TaskType[];
 }) => {
   const isAddTaskVisible = section

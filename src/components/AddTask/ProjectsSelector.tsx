@@ -22,7 +22,11 @@ const ProjectsSelector = ({
   forTaskModal?: boolean;
 }) => {
   const { profile } = useAuthProvider();
-  const { projects, teams, sections } = useTaskProjectDataProvider();
+  const {
+    projects,
+    sectionsForProjectSelector: sections,
+    teams,
+  } = useTaskProjectDataProvider();
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Filter projects based on the search query

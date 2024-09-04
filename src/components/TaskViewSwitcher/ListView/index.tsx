@@ -35,7 +35,7 @@ interface ListViewProps {
   showUngroupedAddSection: boolean;
   setShowUngroupedAddSection: Dispatch<SetStateAction<boolean>>;
   project: ProjectType | null;
-  setTasks: (updatedTasks: TaskType[]) => void;
+  setTasks: Dispatch<SetStateAction<TaskType[]>>;
   tasks: TaskType[];
 }
 

@@ -67,7 +67,7 @@ const AnimatedTaskCheckbox = ({
   return (
     <motion.div
       className={`relative w-5 h-5 min-w-5 min-h-5 cursor-pointer flex items-center justify-center rounded-full ${
-        isChecked ? color.class1 : color.class2
+        isChecked && color.class1
       } ${disabled && "pointer-events-none"}`}
       onClick={handleClick}
       whileHover={{ scale: 1.1 }}
@@ -82,7 +82,7 @@ const AnimatedTaskCheckbox = ({
         <motion.path
           d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z"
           stroke={color.hex}
-          strokeWidth="2.5"
+          strokeWidth="1.5"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
