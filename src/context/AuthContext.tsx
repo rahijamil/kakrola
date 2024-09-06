@@ -1,7 +1,7 @@
 "use client";
 import { ProfileType } from "@/types/user";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, {
   createContext,
@@ -45,9 +45,8 @@ const AuthContext = createContext<{
 });
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [profile, setProfile] = useState<ProfileType | null>(null);
-
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { data, error, isPending } = useQuery({
     queryKey: ["profile"],
@@ -63,18 +62,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (data) {
-      setProfile(data);
       if (!data.is_onboarded) {
         router.push("/app/onboard/create-profile");
       }
     }
 
-    return () => {
-      setProfile(null);
-    };
-  }, [data]);
-
-  useEffect(() => {
     // Subscribe to real-time changes for projects
     const profileSubscription = supabaseBrowser
       .channel("profiles-all-channel")
@@ -84,20 +76,16 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           event: "*",
           schema: "public",
           table: "profiles",
-          filter: `id=eq.${profile?.id}`,
+          filter: `id=eq.${data?.id}`,
         },
         (payload) => {
-          if (
-            (payload.eventType === "INSERT" ||
-              payload.eventType === "UPDATE") &&
-            payload.new.id === profile?.id
-          ) {
-            setProfile(payload.new as ProfileType);
+          if (payload.eventType === "UPDATE" && payload.new.id === data?.id) {
+            queryClient.setQueryData(["profile"], payload.new);
           } else if (
             payload.eventType === "DELETE" &&
-            payload.old.id === profile?.id
+            payload.old.id === data?.id
           ) {
-            setProfile(null);
+            queryClient.setQueryData(["profile"], null);
           }
         }
       )
@@ -106,10 +94,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       supabaseBrowser.removeChannel(profileSubscription);
     };
-  }, [profile]);
+  }, [data]);
 
   return (
-    <AuthContext.Provider value={{ profile, loading: isPending }}>
+    <AuthContext.Provider
+      value={{ profile: data as ProfileType | null, loading: isPending }}
+    >
       {children}
     </AuthContext.Provider>
   );
