@@ -25,6 +25,8 @@ import ProfileMoreOptions from "./ProfileMoreOptions";
 import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
 import axios from "axios";
 import AddTeam from "@/components/AddTeam";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const menuItems: {
   id: number;
@@ -49,19 +51,8 @@ const menuItems: {
 const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
   const pathname = usePathname();
 
-  const { projects, teams, projectMembers } = useTaskProjectDataProvider();
-
-  // Create a set of favorite project IDs
-  const favoriteProjectIds = new Set(
-    projectMembers
-      .filter((member) => member.project_settings.is_favorite)
-      .map((member) => member.project_id)
-  );
-
-  // Check if there are any favorite projects
-  const hasFavoriteProjects = projects.some((project) =>
-    favoriteProjectIds.has(project.id)
-  );
+  const { projects, teams, projectMembers, projectsLoading } =
+    useTaskProjectDataProvider();
 
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);
@@ -103,80 +94,95 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
   return (
     <>
       <aside className="h-full flex flex-col group w-full">
-        {/* here will notification icons */}
         <div className="pb-4 p-2 flex items-center justify-between relative">
           <ProfileMoreOptions
             setShowAddTeam={setShowAddTeam}
             setShowLogoutConfirm={setShowLogoutConfirm}
           />
 
-          <div
-            className={`flex items-center justify-end w-full transition duration-150 ${
-              sidebarWidth > 220 ? "gap-2" : "gap-1"
-            }`}
-          >
-            <button
-              className={`text-text-700 hover:bg-primary-50 rounded-full transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
+          {projectsLoading ? (
+            <div className="flex items-center w-full justify-end gap-2">
+              <Skeleton width={28} height={28} borderRadius={9999} />
+              <Skeleton width={28} height={28} borderRadius={9999} />
+              <Skeleton width={28} height={28} borderRadius={9999} />
+            </div>
+          ) : (
+            <div
+              className={`flex items-center justify-end w-full transition duration-150 ${
+                sidebarWidth > 220 ? "gap-2" : "gap-1"
+              }`}
             >
-              <Search strokeWidth={1.5} width={20} />
-            </button>
+              <button
+                className={`text-text-700 hover:bg-primary-50 rounded-full transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
+              >
+                <Search strokeWidth={1.5} width={20} />
+              </button>
 
-            <button
-              className={`text-text-700 hover:bg-primary-50 rounded-full transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
-            >
-              <Bell strokeWidth={1.5} width={20} />
-            </button>
+              <button
+                className={`text-text-700 hover:bg-primary-50 rounded-full transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
+              >
+                <Bell strokeWidth={1.5} width={20} />
+              </button>
 
-            <button
-              onClick={() => setShowAddTaskModal(true)}
-              className="flex items-center gap-1 text-primary-600 font-semibold hover:bg-primary-50 rounded-full transition-colors duration-150 z-10 w-8 h-8 justify-center"
-            >
-              <div className="w-5 h-5 bg-primary-500 rounded-full">
-                <Plus className="w-5 h-5 text-surface" strokeWidth={1.5} />
-              </div>
-            </button>
-          </div>
+              <button
+                onClick={() => setShowAddTaskModal(true)}
+                className="flex items-center gap-1 text-primary-600 font-semibold hover:bg-primary-50 rounded-full transition-colors duration-150 z-10 w-8 h-8 justify-center"
+              >
+                <div className="w-5 h-5 bg-primary-500 rounded-full">
+                  <Plus className="w-5 h-5 text-surface" strokeWidth={1.5} />
+                </div>
+              </button>
+            </div>
+          )}
         </div>
 
         <nav className="flex-grow overflow-y-auto">
           <ul className="px-2">
-            {menuItems.map((item) => (
-              <li key={item.id}>
-                {item.path ? (
-                  <Link
-                    href={item.path}
-                    className={`flex items-center p-2 rounded-full transition-colors duration-150 text-text-900 ${
-                      item.path === pathname
-                        ? "bg-primary-100"
-                        : "hover:bg-primary-50"
-                    }`}
-                  >
-                    <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3" />
-                    {item.text}
-                  </Link>
-                ) : (
-                  <button
-                    className={`flex items-center p-2 rounded-full transition-colors duration-150 w-full ${
-                      item.path === pathname
-                        ? "bg-primary-500 text-surface"
-                        : "hover:bg-primary-50 text-text-700"
-                    }`}
-                    onClick={item.onClick}
-                  >
-                    <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3" />
-                    {item.text}
-                  </button>
-                )}
-              </li>
-            ))}
+            {menuItems.map((item) =>
+              projectsLoading ? (
+                <Skeleton
+                  key={item.id}
+                  height={16}
+                  width={150}
+                  borderRadius={9999}
+                  style={{ marginBottom: ".5rem" }}
+                />
+              ) : (
+                <li key={item.id}>
+                  {item.path ? (
+                    <Link
+                      href={item.path}
+                      className={`flex items-center p-2 rounded-full transition-colors duration-150 text-text-900 ${
+                        item.path === pathname
+                          ? "bg-primary-100"
+                          : "hover:bg-primary-50"
+                      }`}
+                    >
+                      <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3" />
+                      {item.text}
+                    </Link>
+                  ) : (
+                    <button
+                      className={`flex items-center p-2 rounded-full transition-colors duration-150 w-full ${
+                        item.path === pathname
+                          ? "bg-primary-500 text-surface"
+                          : "hover:bg-primary-50 text-text-700"
+                      }`}
+                      onClick={item.onClick}
+                    >
+                      <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3" />
+                      {item.text}
+                    </button>
+                  )}
+                </li>
+              )
+            )}
           </ul>
 
-          {hasFavoriteProjects && (
-            <FavoriteProjects
-              setShowFavoritesProjects={setShowFavoritesProjects}
-              showFavoritesProjects={showFavoritesProjects}
-            />
-          )}
+          <FavoriteProjects
+            setShowFavoritesProjects={setShowFavoritesProjects}
+            showFavoritesProjects={showFavoritesProjects}
+          />
 
           <MyProjects sidebarWidth={sidebarWidth} />
 

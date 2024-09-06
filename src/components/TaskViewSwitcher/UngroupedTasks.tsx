@@ -10,7 +10,7 @@ interface UngroupedTasksProps {
   showUngroupedAddTask: boolean;
   setShowUngroupedAddTask: React.Dispatch<React.SetStateAction<boolean>>;
   project: ProjectType | null;
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (tasks: TaskType[]) => void
   showTaskItemModal: string | null;
   setShowTaskItemModal: Dispatch<SetStateAction<string | null>>;
 }

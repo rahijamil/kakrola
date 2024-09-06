@@ -16,11 +16,11 @@ const SocialLogin = () => {
       icon: FcGoogle,
       onClick: () => signInWithProvider("google", token),
     },
-    {
-      name: "GitHub",
-      icon: FaGithub,
-      onClick: () => signInWithProvider("github", token),
-    },
+    // {
+    //   name: "GitHub",
+    //   icon: FaGithub,
+    //   onClick: () => signInWithProvider("github", token),
+    // },
   ];
 
   return (

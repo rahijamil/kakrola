@@ -126,7 +126,7 @@ export async function updatePassword(newPassword: string) {
 }
 
 export async function signInWithProvider(
-  provider: "google" | "github",
+  provider: "google",
   acceptInviteToken?: string | null
 ) {
   const supabaseServer = createClient();

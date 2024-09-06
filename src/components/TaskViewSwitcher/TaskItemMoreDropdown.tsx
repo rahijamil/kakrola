@@ -42,7 +42,7 @@ const TaskItemMoreDropdown = ({
       Label={({ onClick }) => (
         <button
           ref={triggerRef}
-          className={`p-1 transition rounded-full hidden group-hover:inline-block ${
+          className={`p-1 transition rounded-full hidden group-hover:inline-block absolute right-3 top-1/2 -translate-y-1/2 ${
             isOpen ? "bg-text-50" : "hover:bg-text-100"
           }`}
           onClick={onClick}

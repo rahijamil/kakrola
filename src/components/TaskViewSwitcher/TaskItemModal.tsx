@@ -33,7 +33,7 @@ import { useAuthProvider } from "@/context/AuthContext";
 import Image from "next/image";
 import ProjectsSelector from "../AddTask/ProjectsSelector";
 import AssigneeSelector from "../AddTask/AssigneeSelector";
-import DueDateSelector from "../AddTask/DueDateSelector";
+import DateSelector from "../AddTask/DateSelector";
 import DueDateButton from "./DueDateButton";
 import AnimatedCircleCheck from "./AnimatedCircleCheck";
 import { motion } from "framer-motion";
@@ -52,22 +52,14 @@ const TaskItemModal = ({
   onClose: () => void;
   onCheckClick: () => void;
   project: ProjectType | null;
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (tasks: TaskType[]) => void
   tasks: TaskType[];
 }) => {
   const { profile } = useAuthProvider();
   const [contentEditable, setContentEditable] = useState<boolean>(false);
   const [showCommentForm, setShowCommentForm] = useState<boolean>(false);
   const [showAddSubtask, setShowAddSubtask] = useState<boolean>(false);
-  const { projects } = useTaskProjectDataProvider();
   const [taskData, setTaskData] = useState<TaskType>(task);
-
-  const [showProjectsSelector, setShowProjectsSelector] =
-    useState<boolean>(false);
-  const [showAssigneeSelector, setShowAssigneeSelector] =
-    useState<boolean>(false);
-  const [showDueDateSelector, setShowDueDateSelector] =
-    useState<boolean>(false);
 
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
@@ -243,8 +235,8 @@ const TaskItemModal = ({
                 <div className="flex items-center gap-2">
                   <Image
                     src={profile?.avatar_url || "/default_avatar.png"}
-                    width={28}
-                    height={28}
+                    width={20}
+                    height={20}
                     alt={profile?.full_name || profile?.username || "avatar"}
                     className="rounded-full object-cover max-w-[28px] max-h-[28px]"
                   />
@@ -296,7 +288,7 @@ const TaskItemModal = ({
             </div>
             <div>
               <div className="space-y-2">
-                <DueDateSelector
+                <DateSelector
                   forTaskModal
                   task={taskData}
                   setTask={setTaskData}

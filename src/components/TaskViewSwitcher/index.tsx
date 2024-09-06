@@ -9,7 +9,7 @@ import DashboardView from "./DashboardView";
 interface TaskViewSwitcherProps {
   project: ProjectType | null;
   tasks: TaskType[];
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (tasks: TaskType[]) => void
   sections: SectionType[];
   setSections: (updatedSections: SectionType[]) => void;
   view: ViewTypes["view"];

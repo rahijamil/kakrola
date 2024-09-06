@@ -4,15 +4,16 @@ import { Dispatch, SetStateAction, useState } from "react";
 import TaskItemMoreDropdown from "../TaskItemMoreDropdown";
 import { Draggable } from "@hello-pangea/dnd";
 import ConfirmAlert from "../../AlertBox/ConfirmAlert";
-import { ChevronRight, Workflow } from "lucide-react";
+import { ChevronRight, PanelRight, Workflow } from "lucide-react";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import AddTask from "../../AddTask";
 import { debounce } from "lodash";
 import { getDateInfo } from "@/utils/getDateInfo";
 import AnimatedCircleCheck from "../AnimatedCircleCheck";
-import DueDateSelector from "@/components/AddTask/DueDateSelector";
+import DateSelector from "@/components/AddTask/DateSelector";
 import AssigneeSelector from "@/components/AddTask/AssigneeSelector";
 import Priorities from "@/components/AddTask/Priorities";
+import LabelSelector from "@/components/AddTask/LabelSelector";
 
 const TaskItemForListView = ({
   task,
@@ -33,7 +34,7 @@ const TaskItemForListView = ({
   subTasks: TaskType[];
   index: number;
   project: ProjectType | null;
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (tasks: TaskType[]) => void;
   tasks: TaskType[];
   showModal?: string | null;
   smallAddTask?: boolean;
@@ -48,7 +49,6 @@ const TaskItemForListView = ({
     is_archived?: boolean;
   };
 }) => {
-  const [showMoreDropdown, setShowMoreDropdown] = useState<boolean>(false);
   const [addTaskAboveBellow, setAddTaskAboveBellow] = useState<{
     position: "above" | "below";
     task: TaskType;
@@ -97,8 +97,6 @@ const TaskItemForListView = ({
 
   const [editTaskId, setEditTaskId] = useState<TaskType["id"] | null>(null);
 
-  const dateInfo = getDateInfo(task.due_date);
-
   const [editTaskTitle, setEditTaskTitle] = useState(false);
 
   const handleUpdateTaskTitle = () => {
@@ -133,131 +131,141 @@ const TaskItemForListView = ({
       ) : (
         <Draggable draggableId={task.id?.toString()} index={index}>
           {(provided) => (
-            <div
+            <tr
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
+              className={`group border-b border-text-200 cursor-pointer flex items-center justify-between h-10 ring-1 divide-x divide-text-200 relative ${
+                showModal === task.id.toString()
+                  ? "ring-primary-300 bg-primary-10"
+                  : "ring-transparent bg-transparent"
+              }`}
             >
-              <div className="group border-b border-text-200 mx-8 px-8 bg-transparent cursor-pointer flex items-center justify-between h-10">
-                <div className="flex-1 flex items-center divide-x divide-text-200">
-                  <div
-                    className="w-full max-w-[600px] flex items-center justify-between gap-4 group"
-                    onClick={() => setShowAddTask && setShowAddTask(null)}
-                  >
-                    <div className="flex items-center gap-2 w-full">
-                      <AnimatedCircleCheck
-                        handleCheckSubmit={handleCheckClickDebounced}
-                        priority={task.priority}
-                        is_completed={task.is_completed}
-                      />
-                      <div
-                        className="flex items-center gap-2 w-full"
-                        onClick={() => {
-                          setShowModal && setShowModal(task.id.toString());
-                        }}
-                      >
-                        {!editTaskTitle ? (
-                          <h2
-                            onClick={(ev) => {
-                              ev.stopPropagation();
-                              setEditTaskTitle(true);
-                            }}
-                            className={`${
-                              task.is_completed
-                                ? "line-through text-text-500"
-                                : ""
-                            } line-clamp-1 cursor-text h-10 flex items-center justify-center`}
-                          >
-                            {task.title}
-                          </h2>
-                        ) : (
-                          <input
-                            value={taskData.title}
-                            onChange={(ev) =>
-                              setTaskData({
-                                ...taskData,
-                                title: ev.target.value,
-                              })
+              <>
+                <td
+                  className={`w-[40%] pl-8 flex items-center justify-between gap-4 group ring-1 ring-transparent h-10 ${editTaskTitle ? "bg-primary-10" : "hover:ring-primary-300"}`}
+                  onClick={() => setShowAddTask && setShowAddTask(null)}
+                >
+                  <div className="flex items-center gap-2 w-full">
+                    <AnimatedCircleCheck
+                      handleCheckSubmit={handleCheckClickDebounced}
+                      priority={task.priority}
+                      is_completed={task.is_completed}
+                    />
+                    <div
+                      className="flex items-center gap-2 w-full"
+                      onClick={() => {
+                        setShowModal && setShowModal(task.id.toString());
+                      }}
+                    >
+                      {!editTaskTitle ? (
+                        <h2
+                          onClick={(ev) => {
+                            ev.stopPropagation();
+                            setEditTaskTitle(true);
+                          }}
+                          className={`${
+                            task.is_completed
+                              ? "line-through text-text-500"
+                              : ""
+                          } line-clamp-1 cursor-pointer h-10 flex items-center w-full`}
+                        >
+                          {task.title}
+                        </h2>
+                      ) : (
+                        <input
+                          value={taskData.title}
+                          onChange={(ev) =>
+                            setTaskData({
+                              ...taskData,
+                              title: ev.target.value,
+                            })
+                          }
+                          className="outline-none w-full bg-surface rounded-full px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 h-7"
+                          onKeyDown={(ev) => {
+                            if (ev.key === "Enter") {
+                              handleUpdateTaskTitle();
                             }
-                            className="outline-none w-full bg-surface rounded-full px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 h-7"
-                            onKeyDown={(ev) => {
-                              if (ev.key === "Enter") {
-                                handleUpdateTaskTitle();
-                              }
-                            }}
-                            onBlur={handleUpdateTaskTitle}
-                            autoFocus
-                            onFocus={(ev) => ev.target.select()}
-                            onClick={(ev) => ev.stopPropagation()}
-                          />
-                        )}
+                          }}
+                          onBlur={handleUpdateTaskTitle}
+                          autoFocus
+                          onFocus={(ev) => ev.target.select()}
+                          onClick={(ev) => ev.stopPropagation()}
+                        />
+                      )}
 
-                        {subTasks.length > 0 && (
-                          <button
-                            onClick={(ev) => ev.stopPropagation()}
-                            className="flex items-center gap-[2px] text-text-500 hover:bg-text-100 rounded-2xl transition hover:text-text-700 p-0.5 px-1"
-                          >
-                            <Workflow strokeWidth={1.5} className="w-3 h-3" />
-                            <span className="text-xs">
-                              {subTasks.filter((t) => t.is_completed).length}/
-                              {subTasks.length}
-                            </span>
-                          </button>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="pr-1">
-                      <button
-                        onClick={() =>
-                          setShowModal && setShowModal(task.id.toString())
-                        }
-                        className={`p-1 transition rounded-full hover:bg-text-100 ${
-                          !editTaskTitle && "hidden group-hover:block"
-                        }`}
-                      >
-                        <ChevronRight strokeWidth={1.5} className="w-4 h-4" />
-                      </button>
+                      {subTasks.length > 0 && (
+                        <button
+                          onClick={(ev) => ev.stopPropagation()}
+                          className="flex items-center gap-[2px] text-text-500 hover:bg-text-100 rounded-2xl transition hover:text-text-700 p-0.5 px-1"
+                        >
+                          <Workflow strokeWidth={1.5} className="w-3 h-3" />
+                          <span className="text-xs">
+                            {subTasks.filter((t) => t.is_completed).length}/
+                            {subTasks.length}
+                          </span>
+                        </button>
+                      )}
                     </div>
                   </div>
-                  <div className="min-w-32">
-                    <AssigneeSelector
+
+                  <div className="pr-1">
+                    <button
+                      onClick={() =>
+                        setShowModal && setShowModal(task.id.toString())
+                      }
+                      className={`px-2 py-1 transition rounded-full hover:bg-text-100 items-center gap-1 text-text-500 ${
+                        !editTaskTitle ? "hidden group-hover:flex" : "flex"
+                      }`}
+                    >
+                      <PanelRight strokeWidth={1.5} className="w-4 h-4" />
+                      <span className="text-[11px] uppercase font-medium">
+                        Open
+                      </span>
+                    </button>
+                  </div>
+                </td>
+                <td className="w-[15%]">
+                  <AssigneeSelector
+                    task={taskData}
+                    setTask={setTaskData}
+                    forListView
+                    project={project}
+                  />
+                </td>
+                <td className="w-[15%]">
+                  <div onClick={(ev) => ev.stopPropagation()}>
+                    <DateSelector
                       task={taskData}
                       setTask={setTaskData}
                       forListView
-                      project={project}
                     />
                   </div>
-                  <div className="min-w-32">
-                    <div onClick={(ev) => ev.stopPropagation()}>
-                      <DueDateSelector
-                        task={taskData}
-                        setTask={setTaskData}
-                        forListView
-                      />
-                    </div>
-                  </div>
-                  <div className="min-w-32">
-                    <Priorities
-                      taskData={taskData}
-                      setTaskData={setTaskData}
-                      forListView
-                    />
-                  </div>
-                  {/* <div className="min-w-32">
-                    Status
-                  </div> */}
-                </div>
+                </td>
+                <td className="w-[15%]">
+                  <Priorities
+                    taskData={taskData}
+                    setTaskData={setTaskData}
+                    forListView
+                  />
+                </td>
+                <td className="w-[15%]">
+                  <LabelSelector
+                    task={taskData}
+                    setTask={setTaskData}
+                    forListView
+                  />
+                </td>
+              </>
 
-                <TaskItemMoreDropdown
-                  setShowDeleteConfirm={setShowDeleteConfirm!}
-                  setAddTaskAboveBellow={setAddTaskAboveBellow}
-                  task={task}
-                  column={column}
-                  setEditTaskId={setEditTaskId}
-                />
-              </div>
-            </div>
+              <TaskItemMoreDropdown
+                setShowDeleteConfirm={setShowDeleteConfirm!}
+                setAddTaskAboveBellow={setAddTaskAboveBellow}
+                task={task}
+                column={column}
+                setEditTaskId={setEditTaskId}
+              />
+            </tr>
           )}
         </Draggable>
       )}

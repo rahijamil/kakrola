@@ -48,7 +48,7 @@ const Priorities = ({
   isSmall,
   forTaskItemModal,
   forListView,
-  dataFromElement
+  dataFromElement,
 }: {
   taskData: TaskType;
   setTaskData: Dispatch<SetStateAction<TaskType>>;
@@ -103,8 +103,10 @@ const Priorities = ({
               data-form-element={dataFromElement}
               ref={triggerRef}
               data-state="priority"
-              className={`flex items-center justify-between cursor-pointer h-10 px-2 group relative ${
-                isOpen ? "bg-text-50" : "hover:bg-text-100"
+              className={`flex items-center justify-between cursor-pointer h-10 px-2 group relative ring-1 ${
+                isOpen
+                  ? "ring-primary-300 bg-primary-10"
+                  : "hover:ring-primary-300 ring-transparent"
               }`}
               onClick={onClick}
             >

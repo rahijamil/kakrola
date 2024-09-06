@@ -6,12 +6,13 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 
 const useFavorite = ({ project }: { project: ProjectType }) => {
   const { projectMembers, setProjectMembers } = useTaskProjectDataProvider();
-  const {profile} = useAuthProvider()
+  const { profile } = useAuthProvider();
 
   const handleFavorite = async () => {
     // Find the current user project settings for the given project
     const currentProjectMemberSettings = projectMembers.find(
-      (member) => member.profile_id === profile?.id && member.project_id === project.id
+      (member) =>
+        member.profile_id === profile?.id && member.project_id === project.id
     );
 
     if (!currentProjectMemberSettings) {
@@ -30,8 +31,8 @@ const useFavorite = ({ project }: { project: ProjectType }) => {
     };
 
     // Update local state
-    setProjectMembers((prev) =>
-      prev.map((member) =>
+    setProjectMembers(
+      projectMembers.map((member) =>
         member.project_id === project.id ? updateProjectMemberSettings : member
       )
     );

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Check, ChevronDown, LucideProps } from "lucide-react";
+import Dropdown from "./Dropdown";
 
 export interface SelectorOption {
   value: string;
@@ -9,15 +10,19 @@ export interface SelectorOption {
 
 interface CustomSelectProps {
   id: string;
-  label: string;
+  label?: string;
   Icon?: React.ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
   >;
-  value?: string;
-  onChange: (e: { target: { id: string; value: string, label?: string } }) => void;
+  value?: string | null;
+  onChange: (e: {
+    target: { id: string; value: string; label?: string };
+  }) => void;
   options: SelectorOption[];
   placeholder?: string;
   height?: string;
+  contentClassName?: string;
+  forListView?: boolean;
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -28,7 +33,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   onChange,
   options,
   placeholder,
-  height
+  height,
+  contentClassName,
+  forListView,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -70,59 +77,124 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
 
   const selectedOption = options.find((option) => option.value === value);
 
-  return (
-    <div className="relative" ref={selectRef}>
-      <label
-        htmlFor={id}
-        className="block font-semibold text-text-700 mb-1"
-      >
-        {label}
-      </label>
-      <div
-        className={`flex items-center justify-between w-full h-12 border border-text-300 rounded-full cursor-pointer bg-surface hover:border-text-400 px-4 pr-3 py-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-primary-300 focus:border-text-300 ${height}`}
-        onClick={() => setIsOpen(!isOpen)}
-        onKeyDown={handleKeyDown}
-        tabIndex={0}
-        role="combobox"
-        aria-controls="listbox"
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-        aria-labelledby={id}
-      >
-        <div className="flex items-center gap-2 flex-1 min-w-0">
-          {selectedOption?.color && (
-            <div
-              className="w-3 h-3 rounded-full flex-shrink-0"
-              style={{ backgroundColor: selectedOption.color }}
-            ></div>
-          )}
-          {Icon && <Icon className="w-5 h-5 text-text-400 flex-shrink-0" />}
-          <span
-            className={`truncate ${
-              selectedOption ? "text-text-900" : "text-text-400"
-            }`}
-          >
-            {selectedOption ? selectedOption.label : placeholder}
-          </span>
-        </div>
-        <ChevronDown className="w-5 h-5 text-text-400 flex-shrink-0 ml-2" />
-      </div>
+  const triggerRef = useRef(null);
 
-      {isOpen && (
+  return (
+    <Dropdown
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      triggerRef={triggerRef}
+      Label={({ onClick }) => (
+        <>
+          {label && (
+            <label
+              htmlFor={id}
+              className="block font-semibold text-text-700 mb-1"
+            >
+              {label}
+            </label>
+          )}
+          {forListView ? (
+            <button
+              ref={triggerRef}
+              data-form-element={true}
+              className="flex items-center justify-between w-full px-4 py-1.5 hover:bg-text-100 transition rounded-2xl h-8 gap-4"
+              type="button"
+              onClick={onClick}
+            >
+              <span className="text-text-500">Reminder</span>
+
+              <div
+                className={`flex items-center justify-end w-full ${
+                  height ? height : "h-12"
+                }`}
+                onClick={onClick}
+                onKeyDown={handleKeyDown}
+                tabIndex={0}
+                role="combobox"
+                aria-controls="listbox"
+                aria-haspopup="listbox"
+                aria-expanded={isOpen}
+                aria-labelledby={id}
+              >
+                <div className="flex items-center gap-2">
+                  {selectedOption?.color && (
+                    <div
+                      className="w-3 h-3 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: selectedOption.color }}
+                    ></div>
+                  )}
+                  {Icon && (
+                    <Icon className="w-5 h-5 text-text-400 flex-shrink-0" />
+                  )}
+                  <span
+                    className={`truncate ${
+                      selectedOption ? "text-text-900" : "text-text-500"
+                    }`}
+                  >
+                    {selectedOption ? selectedOption.label : placeholder}
+                  </span>
+                </div>
+                <ChevronDown className="w-4 h-4 text-text-500 flex-shrink-0" />
+              </div>
+            </button>
+          ) : (
+            <div
+              ref={triggerRef}
+              data-form-element={true}
+              className={`flex items-center justify-between w-full ${
+                height ? height : "h-12"
+              } border border-text-300 rounded-full cursor-pointer bg-surface hover:border-text-400 px-4 pr-3 py-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-primary-300 focus:border-text-300`}
+              onClick={onClick}
+              onKeyDown={handleKeyDown}
+              tabIndex={0}
+              role="combobox"
+              aria-controls="listbox"
+              aria-haspopup="listbox"
+              aria-expanded={isOpen}
+              aria-labelledby={id}
+            >
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                {selectedOption?.color && (
+                  <div
+                    className="w-3 h-3 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: selectedOption.color }}
+                  ></div>
+                )}
+                {Icon && (
+                  <Icon className="w-5 h-5 text-text-400 flex-shrink-0" />
+                )}
+                <span
+                  className={`truncate ${
+                    selectedOption ? "text-text-900" : "text-text-400"
+                  }`}
+                >
+                  {selectedOption ? selectedOption.label : placeholder}
+                </span>
+              </div>
+              <ChevronDown className="w-5 h-5 text-text-400 flex-shrink-0 ml-2" />
+            </div>
+          )}
+        </>
+      )}
+      content={
         <ul
-          className="absolute z-10 w-full mt-1 bg-surface border border-text-300 rounded-2xl p-1 shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] max-h-60 overflow-auto"
+          data-form-element={true}
+          className="max-h-60 overflow-auto"
           role="listbox"
         >
           {options.map((option, index) => (
             <li
               key={option.value}
-              className={`px-4 cursor-pointer flex items-center justify-between rounded-full ${height ? height : "py-2"} ${
-                index === highlightedIndex
-                  ? "bg-text-100"
-                  : "hover:bg-text-100"
+              className={`px-4 cursor-pointer flex items-center justify-between rounded-full ${
+                height ? height : "py-2"
+              } ${
+                index === highlightedIndex ? "bg-text-100" : "hover:bg-text-100"
               }`}
               onClick={() => {
-                onChange({ target: { id, value: option.value, label: option.label } });
+                onChange({
+                  target: { id, value: option.value, label: option.label },
+                });
                 setIsOpen(false);
               }}
               onMouseEnter={() => setHighlightedIndex(index)}
@@ -147,8 +219,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             </li>
           ))}
         </ul>
-      )}
-    </div>
+      }
+      contentWidthClass={contentClassName}
+    />
   );
 };
 

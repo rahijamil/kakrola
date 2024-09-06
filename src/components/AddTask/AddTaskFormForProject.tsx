@@ -1,4 +1,10 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import {
@@ -17,39 +23,12 @@ import Priorities from "./Priorities";
 import { useAuthProvider } from "@/context/AuthContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { v4 as uuidv4 } from "uuid";
-import DueDateSelector from "./DueDateSelector";
+import DateSelector from "./DateSelector";
 import AssigneeSelector from "./AssigneeSelector";
 import { TaskInput } from "./TaskInput";
 import AnimatedCircleCheck from "../TaskViewSwitcher/AnimatedCircleCheck";
-
-const getInitialTaskData = ({
-  project,
-  section_id,
-  profile,
-  dueDate,
-}: {
-  project: ProjectType | null;
-  section_id?: SectionType["id"] | null;
-  profile: { id: string } | null;
-  dueDate?: Date | null;
-}): TaskType => ({
-  id: uuidv4(),
-  title: "",
-  description: "",
-  priority: "Priority",
-  project_id: project?.id || null,
-  section_id: section_id || null,
-  parent_task_id: null,
-  profile_id: profile?.id || "",
-  assigned_to_id: null,
-  due_date: dueDate ? dueDate.toISOString() : null,
-  reminder_time: null,
-  is_inbox: project ? false : true,
-  is_completed: false,
-  order: 0,
-  completed_at: null,
-  updated_at: new Date().toISOString(),
-});
+import { getInitialTaskData } from "@/lib/getInitialTaskData";
+import LabelSelector from "./LabelSelector";
 
 const AddTaskFormForProject = ({
   onClose,
@@ -62,19 +41,17 @@ const AddTaskFormForProject = ({
   addTaskAboveBellow,
   taskForEdit,
   biggerTitle,
-  dueDate,
 }: {
   onClose: () => void;
   isSmall?: boolean;
   section_id?: SectionType["id"] | null;
   parentTaskIdForSubTask?: string | number;
   project: ProjectType | null;
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (tasks: TaskType[]) => void;
   tasks: TaskType[];
   addTaskAboveBellow?: { position: "above" | "below"; task: TaskType } | null;
   taskForEdit?: TaskType;
   biggerTitle?: boolean;
-  dueDate?: Date | null;
 }) => {
   const { projects, activeProject } = useTaskProjectDataProvider();
   const { profile } = useAuthProvider();
@@ -85,7 +62,6 @@ const AddTaskFormForProject = ({
         project: activeProject ? activeProject : project,
         section_id,
         profile,
-        dueDate,
       })
   );
 
@@ -142,7 +118,6 @@ const AddTaskFormForProject = ({
         project: activeProject ? activeProject : project,
         section_id,
         profile,
-        dueDate,
       })
     );
 
@@ -252,9 +227,9 @@ const AddTaskFormForProject = ({
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="w-full">
-      <div className="border-b border-text-200 mx-8 bg-transparent flex items-center divide-x divide-text-200 text-xs font-medium px-8 h-10 overflow-hidden">
+      <div className="border-b border-text-200 bg-transparent flex items-center font-medium h-10 overflow-hidden text-xs divide-x divide-text-200 pl-7 whitespace-nowrap">
         <div
-          className={`w-full max-w-[600px] flex items-center gap-2 py-2 pr-4`}
+          className={`w-[40%] flex items-center gap-2 py-2 pr-4`}
         >
           <AnimatedCircleCheck
             handleCheckSubmit={() => {}}
@@ -272,7 +247,7 @@ const AddTaskFormForProject = ({
           />
         </div>
 
-        <div className="min-w-32">
+        <div className="w-[15%]">
           <AssigneeSelector
             task={taskData}
             setTask={setTaskData}
@@ -283,8 +258,8 @@ const AddTaskFormForProject = ({
           />
         </div>
 
-        <div className="min-w-32">
-          <DueDateSelector
+        <div className="w-[15%]">
+          <DateSelector
             task={taskData}
             setTask={setTaskData}
             forListView
@@ -292,7 +267,7 @@ const AddTaskFormForProject = ({
           />
         </div>
 
-        <div className="min-w-32">
+        <div className="w-[15%]">
           <Priorities
             taskData={taskData}
             setTaskData={setTaskData}
@@ -302,91 +277,14 @@ const AddTaskFormForProject = ({
           />
         </div>
 
-        <div className="relative" data-form-element="true">
-          <div
-            className="flex items-center gap-1 hover:bg-text-100 cursor-pointer p-1 px-2 rounded-full border border-text-200"
-            onClick={() => setShowReminder(!showReminder)}
-          >
-            <Bell strokeWidth={1.5} className="w-4 h-4 text-text-500" />
-            {!isSmall && (
-              <span className="text-xs text-text-700">Reminders</span>
-            )}
-          </div>
-          {showReminder && (
-            <>
-              <div className="absolute bg-surface border top-full -left-1/2 rounded-2xl overflow-hidden z-20 p-2">
-                <input
-                  type="datetime-local"
-                  className="p-2 border border-text-300 rounded"
-                  onChange={(e) => console.log("Set reminder:", e.target.value)}
-                />
-              </div>
-
-              <div
-                className="fixed top-0 left-0 bottom-0 right-0 z-10"
-                onClick={() => setShowReminder(false)}
-              ></div>
-            </>
-          )}
-        </div>
-
-        <div className="relative">
-          <div
-            data-form-element="true"
-            className="flex items-center gap-2 hover:bg-text-100 cursor-pointer p-1 rounded-full border border-text-200"
-            onClick={() => setShowMore(!showMore)}
-          >
-            <Ellipsis strokeWidth={1.5} className="w-5 h-5 text-text-500" />
-          </div>
-
-          {showMore && (
-            <>
-              <div className="shadow-xl border border-text-200 rounded-2xl w-[250px] absolute bg-surface right-0 top-full mt-1 z-20 text-xs">
-                <ul className="p-2">
-                  <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-2xl">
-                    <div className="flex items-center gap-2">
-                      <Tag strokeWidth={1.5} className="w-4 h-4" />
-                      <span>Labels</span>
-                    </div>
-
-                    <AtSignIcon className="w-4 h-4" />
-                  </li>
-                  <li className="flex items-center gap-2 px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-2xl">
-                    <MapPin strokeWidth={1.5} className="w-4 h-4" />
-                    <p className="space-x-1">
-                      <span>Location</span>
-                      <span className="uppercase text-[10px] tracking-widest font-bold text-primary-800 bg-primary-100 p-[2px] px-1 rounded-2xl">
-                        Upgrade
-                      </span>
-                    </p>
-                  </li>
-                </ul>
-                <hr />
-                <ul className="p-2">
-                  <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-2xl">
-                    <div className="flex items-center gap-2">
-                      <TagIcon className="w-4 h-4" />
-                      <span>Labels</span>
-                    </div>
-
-                    <AtSignIcon className="w-4 h-4" />
-                  </li>
-                  <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-2xl">
-                    <div className="flex items-center gap-2">
-                      <MapPinIcon className="w-4 h-4" />
-                      <span>Location</span>
-                    </div>
-
-                    <AtSignIcon className="w-4 h-4" />
-                  </li>
-                </ul>
-              </div>
-              <div
-                className="fixed top-0 left-0 bottom-0 right-0 z-10"
-                onClick={() => setShowMore(false)}
-              ></div>
-            </>
-          )}
+        <div className="w-[15%]">
+          <LabelSelector
+            task={taskData}
+            setTask={setTaskData}
+            isSmall={isSmall}
+            forListView
+            dataFromElement
+          />
         </div>
       </div>
 

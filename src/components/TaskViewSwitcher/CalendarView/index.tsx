@@ -78,7 +78,12 @@ const CalendarView = ({
                 }`}
               >
                 <span>
-                  No date: {tasks.filter((task) => !task.due_date).length}
+                  No date:{" "}
+                  {
+                    tasks.filter(
+                      (task) => !task.dates.start_date || !task.dates.end_date
+                    ).length
+                  }
                 </span>
 
                 <div
@@ -139,9 +144,12 @@ const CalendarView = ({
                             {tasks
                               .filter(
                                 (task) =>
-                                  task.due_date &&
-                                  new Date(task.due_date).getDate() ==
-                                    day.getDate()
+                                  (task.dates.start_date &&
+                                    new Date(task.dates.start_date).getDate() ==
+                                      day.getDate()) ||
+                                  (task.dates.end_date &&
+                                    new Date(task.dates.end_date).getDate() ==
+                                      day.getDate())
                               )
                               .sort((a, b) => a.order - b.order)
                               .map((task, taskIndex) => (

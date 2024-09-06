@@ -1,10 +1,10 @@
+import {nextui} from '@nextui-org/theme';
 import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}", // Scan all pages for Tailwind CSS classes
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}", // Scan all components for Tailwind CSS classes
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}", // Scan all app-level files for Tailwind CSS classes
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    "./node_modules/@nextui-org/theme/dist/components/(date-picker|button|ripple|spinner|calendar|date-input|popover).js"
   ],
   theme: {
     extend: {
@@ -40,7 +40,7 @@ const config: Config = {
           800: "var(--color-text-800)",
           900: "var(--color-text-900)",
         },
-      
+
         kakrola: {
           10: "#f7fbfd",
           25: "#f0f7fa",
@@ -127,7 +127,7 @@ const config: Config = {
           700: "#424242",
           800: "#292929",
           900: "#111111",
-        }
+        },
       },
     },
   },
@@ -217,7 +217,7 @@ const config: Config = {
     "bg-gray-900",
     "text-gray-500",
   ],
-  plugins: [],
+  plugins: [nextui()],
 };
 
 export default config;

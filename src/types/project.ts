@@ -43,6 +43,15 @@ export interface TaskLabelType {
   is_favorite: boolean;
 }
 
+// Task Assignee types
+export interface TaskAssigneeType {
+  id: string | number;
+  profile_id: string;
+  name: string;
+  avatar_url: string | null;
+  created_at?: string;
+}
+
 // Task types
 export interface TaskType {
   id: string | number;
@@ -50,13 +59,18 @@ export interface TaskType {
   section_id: string | number | null;
   parent_task_id: string | number | null; // For subtasks
   profile_id: string; // UUID of the profile who created the task
-  assigned_to_id: string | null; // UUID of the profile the task is assigned to
+  assignees: TaskAssigneeType[];
   title: string;
   description: string;
   priority: "P1" | "P2" | "P3" | "Priority";
   is_inbox: boolean;
-  due_date: string | null;
-  reminder_time: string | null;
+  dates: {
+    start_date: string | null; // ISO date (e.g., "2024-09-05")
+    start_time: string | null; // Time (e.g., "15:30")
+    end_date: string | null; // ISO date (e.g., "2024-09-05")
+    end_time: string | null; // Time (e.g., "17:00")
+    reminder: string | null; // 0, 5, 10, 15, 30, 60, 120, 1440, 2880, null
+  };
   is_completed: boolean;
   completed_at: string | null;
   order: number;

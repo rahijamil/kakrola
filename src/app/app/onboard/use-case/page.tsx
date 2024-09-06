@@ -50,7 +50,7 @@ const Step2UseCase = () => {
   const router = useRouter();
   const { templateProjects, templateSsections, templateTasks } = useTemplates();
   const { profile } = useAuthProvider();
-  const { projects, projectMembers } = useTaskProjectDataProvider();
+  const { projectMembers } = useTaskProjectDataProvider();
   const [loading, setLoading] = useState(false);
 
   const handleUseCaseClick = (useCase: UseCase) => {
@@ -119,7 +119,7 @@ const Step2UseCase = () => {
         if (newProject.id) {
           // Determine the new project's order
           const maxOrder = Math.max(
-            ...projectMembers.map((s) => s.project_settings.order),
+            ...projectMembers.map((member) => member.project_settings.order),
             0
           );
           const newOrder = maxOrder + 1;
@@ -184,12 +184,17 @@ const Step2UseCase = () => {
               project_id: (newProject as ProjectType).id,
               section_id: (newSection as SectionType).id,
               parent_task_id: templateTask.parent_template_task_id,
-              assigned_to_id: null,
+              assignees: [],
               title: templateTask.title,
               description: templateTask.description,
               priority: templateTask.priority,
-              due_date: templateTask.due_date,
-              reminder_time: templateTask.reminder_time,
+              dates: {
+                start_date: null,
+                start_time: null,
+                end_date: null,
+                end_time: null,
+                reminder: null,
+              },
               profile_id: profile.id,
               is_inbox: false,
               is_completed: false,

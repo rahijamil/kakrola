@@ -7,7 +7,7 @@ import useTeams from "@/hooks/useTeams";
 
 const TaskProjectDataContext = createContext<{
   projects: ProjectType[];
-  setProjects: React.Dispatch<React.SetStateAction<ProjectType[]>>;
+  setProjects: (projects: ProjectType[]) => void;
   sectionsForProjectSelector: {
     id: SectionType["id"];
     name: SectionType["name"];
@@ -15,12 +15,12 @@ const TaskProjectDataContext = createContext<{
   }[];
   projectsLoading: boolean;
   teams: TeamType[];
-  setTeams: React.Dispatch<React.SetStateAction<TeamType[]>>;
+  setTeams: (teams: TeamType[]) => void;
   teamMemberships: TeamMemberType[];
   activeProject: ProjectType | null;
   setActiveProject: React.Dispatch<React.SetStateAction<ProjectType | null>>;
   projectMembers: ProjectMemberType[];
-  setProjectMembers: React.Dispatch<React.SetStateAction<ProjectMemberType[]>>;
+  setProjectMembers: (members: ProjectMemberType[]) => void;
 }>({
   projects: [],
   setProjects: () => {},

@@ -194,8 +194,8 @@ const AddEditProject = ({
         return;
       }
 
-      setProjects((projects) => {
-        return projects.map((p) => {
+      setProjects(
+        projects.map((p) => {
           if (p.id === project.id) {
             return {
               ...p,
@@ -203,8 +203,8 @@ const AddEditProject = ({
             };
           }
           return p;
-        });
-      });
+        })
+      );
 
       if (projectMembersData) {
         const { error: projectMembersError } = await supabaseBrowser

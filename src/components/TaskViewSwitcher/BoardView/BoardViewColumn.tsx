@@ -60,7 +60,7 @@ const BoardViewColumn = ({
   showSectionMoreOptions: string | null;
   setShowSectionMoreOptions: Dispatch<SetStateAction<string | null>>;
   project: ProjectType | null;
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (tasks: TaskType[]) => void
   sections: SectionType[];
   setShowUngroupedAddSection: Dispatch<SetStateAction<boolean>>;
   showAddTask: string | number | null;

@@ -24,6 +24,7 @@ interface DropdownProps {
     disabled?: boolean;
     rightContent?: ReactNode;
   }[];
+  dataFromElement?: boolean;
   autoClose?: boolean;
   content?: ReactNode;
   contentWidthClass?: string;
@@ -32,6 +33,7 @@ interface DropdownProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   triggerRef: RefObject<HTMLElement> | null;
   direction?: "top-right" | "bottom-left";
+  beforeItemsContent?: ReactNode
 }
 
 import { motion } from "framer-motion";
@@ -43,10 +45,12 @@ const Dropdown: React.FC<DropdownProps> = ({
   content,
   contentWidthClass,
   isOpen,
+  dataFromElement,
   setIsOpen,
   triggerRef,
   direction = "top-right",
   autoClose = true,
+  beforeItemsContent
 }) => {
   const [position, setPosition] = useState<{
     top: string;
@@ -176,7 +180,11 @@ const Dropdown: React.FC<DropdownProps> = ({
               contentWidthClass ? contentWidthClass : "w-72 py-1"
             }`}
             id="fixed_dropdown"
+            data-form-element={dataFromElement}
           >
+            {
+              beforeItemsContent
+            }
             {items.map((item) => (
               <>
                 <div onClick={(ev) => ev.stopPropagation()}>

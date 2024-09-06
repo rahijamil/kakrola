@@ -7,7 +7,7 @@ export const fetchTodayTasks = async (profile_id: ProfileType['id']) => {
     .from("tasks")
     .select("*")
     .eq('profile_id', profile_id)
-    .eq("due_date", new Date().toISOString().split("T")[0]);
+    .eq("dates->end_date", new Date().toISOString().split("T")[0]);
 
   if (error) {
     console.error("Error fetching today's tasks:", error.message);

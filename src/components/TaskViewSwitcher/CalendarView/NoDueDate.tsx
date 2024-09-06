@@ -11,7 +11,7 @@ const NoDueDate = ({
 }: {
   showNoDateTasks?: boolean;
   tasks: TaskType[];
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (tasks: TaskType[]) => void
   project: ProjectType;
 }) => {
   return (
@@ -22,7 +22,7 @@ const NoDueDate = ({
     >
       <div className="p-4 flex items-center gap-2">
         <h3 className="font-bold">No date</h3>
-        <p>{tasks?.filter((t) => !t.due_date).length}</p>
+        <p>{tasks?.filter((t) => !t.dates.start_date || !t.dates.end_date).length}</p>
       </div>
 
       <Droppable droppableId="no_date_tasks" type="calendarview_task">
@@ -36,7 +36,7 @@ const NoDueDate = ({
               {project &&
                 setTasks &&
                 tasks
-                  ?.filter((t) => !t.due_date)
+                  ?.filter((t) => !t.dates.start_date || !t.dates.end_date)
                   .map((task: TaskType, index) => (
                     <li
                       key={task.id}

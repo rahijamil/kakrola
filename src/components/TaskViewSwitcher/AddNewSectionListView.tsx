@@ -27,7 +27,7 @@ const AddNewSectionListView = ({
   sectionAddLoading: boolean;
 }) => {
   return (
-    <div>
+    <>
       <div
         className={`flex items-center gap-2 mx-8 transition ${showAddSection ? "pointer-events-none opacity-0 cursor-default" : "cursor-pointer opacity-0 hover:opacity-100"}`}
         onClick={() => setShowAddSection(section.id)}
@@ -78,7 +78,7 @@ const AddNewSectionListView = ({
           </div>
         </form>
       )}
-    </div>
+    </>
   );
 };
 

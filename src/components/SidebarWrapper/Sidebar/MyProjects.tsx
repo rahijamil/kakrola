@@ -15,10 +15,16 @@ import { useAuthProvider } from "@/context/AuthContext";
 import AddEditProject from "../../AddEditProject";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
   const { profile } = useAuthProvider();
-  const { projects: allProjects, setProjects } = useTaskProjectDataProvider();
+  const {
+    projects: allProjects,
+    setProjects,
+    projectsLoading,
+  } = useTaskProjectDataProvider();
   const pathname = usePathname();
   const [showProjects, setShowProjects] = useState(true);
   const projects = allProjects.filter(
@@ -77,71 +83,75 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
   return (
     <>
       <div className="mt-4 px-2">
-        <div className="relative text-text-600 hover:bg-primary-50 rounded-full transition duration-150">
-          <Link
-            href={`/app/projects`}
-            className={`w-full flex items-center justify-between pl-2 py-[7px] gap-1`}
-          >
-            <div
-              className={`flex items-center ${
-                sidebarWidth > 220 ? "gap-2" : "gap-1"
-              }`}
+        {projectsLoading ? (
+          <Skeleton height={16} width={150} borderRadius={9999} />
+        ) : (
+          <div className="relative text-text-600 hover:bg-primary-50 rounded-full transition duration-150">
+            <Link
+              href={`/app/projects`}
+              className={`w-full flex items-center justify-between pl-2 py-[7px] gap-1`}
             >
               <div
                 className={`flex items-center ${
                   sidebarWidth > 220 ? "gap-2" : "gap-1"
                 }`}
-                style={{
-                  maxWidth: `${
-                    sidebarWidth - (projects.length > 3 ? 150 : 80)
-                  }px`,
-                }}
               >
-                <Image
-                  src={profile?.avatar_url || "/default-avatar.png"}
-                  alt={profile?.full_name || profile?.username || ""}
-                  width={20}
-                  height={20}
-                  className="rounded-full object-cover max-w-[20px] max-h-[20px]"
-                />
-
-                <span
-                  className={`font-medium transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis`}
+                <div
+                  className={`flex items-center ${
+                    sidebarWidth > 220 ? "gap-2" : "gap-1"
+                  }`}
+                  style={{
+                    maxWidth: `${
+                      sidebarWidth - (projects.length > 3 ? 150 : 80)
+                    }px`,
+                  }}
                 >
-                  My Projects
-                </span>
-              </div>
-              {projects.length > 3 && (
-                <span className="bg-text-300 text-text-700 px-1 py-[1px] rounded-full uppercase text-[11px] whitespace-nowrap font-medium">
-                  Used: {projects.length}/{5}
-                </span>
-              )}
-            </div>
-          </Link>
+                  <Image
+                    src={profile?.avatar_url || "/default-avatar.png"}
+                    alt={profile?.full_name || profile?.username || ""}
+                    width={20}
+                    height={20}
+                    className="rounded-full object-cover max-w-[20px] max-h-[20px]"
+                  />
 
-          <div className="opacity-0 group-hover:opacity-100 transition duration-150 flex items-center absolute right-0 top-1/2 -translate-y-1/2">
-            <button
-              className="p-1 hover:bg-primary-100 rounded-full transition duration-150"
-              onClick={() => setShowAddProjectModal(true)}
-            >
-              <Plus
-                strokeWidth={1.5}
-                className={`w-[18px] h-[18px] transition-transform duration-150`}
-              />
-            </button>
-            <button
-              className="p-1 hover:bg-primary-100 rounded-full transition duration-150"
-              onClick={() => setShowProjects(!showProjects)}
-            >
-              <ChevronRight
-                strokeWidth={1.5}
-                className={`w-[18px] h-[18px] transition-transform duration-150 transform ${
-                  showProjects ? "rotate-90" : ""
-                }`}
-              />
-            </button>
+                  <span
+                    className={`font-medium transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis`}
+                  >
+                    My Projects
+                  </span>
+                </div>
+                {projects.length > 3 && (
+                  <span className="bg-text-300 text-text-700 px-1 py-[1px] rounded-full uppercase text-[11px] whitespace-nowrap font-medium">
+                    Used: {projects.length}/{5}
+                  </span>
+                )}
+              </div>
+            </Link>
+
+            <div className="opacity-0 group-hover:opacity-100 transition duration-150 flex items-center absolute right-0 top-1/2 -translate-y-1/2">
+              <button
+                className="p-1 hover:bg-primary-100 rounded-full transition duration-150"
+                onClick={() => setShowAddProjectModal(true)}
+              >
+                <Plus
+                  strokeWidth={1.5}
+                  className={`w-[18px] h-[18px] transition-transform duration-150`}
+                />
+              </button>
+              <button
+                className="p-1 hover:bg-primary-100 rounded-full transition duration-150"
+                onClick={() => setShowProjects(!showProjects)}
+              >
+                <ChevronRight
+                  strokeWidth={1.5}
+                  className={`w-[18px] h-[18px] transition-transform duration-150 transform ${
+                    showProjects ? "rotate-90" : ""
+                  }`}
+                />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {showProjects && (
           <motion.div
@@ -193,6 +203,16 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
             </DragDropContext>
           </motion.div>
         )}
+
+        <div className="space-y-2">
+          {projectsLoading &&
+            [1, 2, 3, 4, 5].map((_i, index) => (
+              <div key={_i} className="flex items-center gap-2">
+                <Skeleton height={28} width={28} borderRadius={9999} />
+                <Skeleton height={16} borderRadius={9999} width={150} />
+              </div>
+            ))}
+        </div>
       </div>
 
       {showAddProjectModal && (

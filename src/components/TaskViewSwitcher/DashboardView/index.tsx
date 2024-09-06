@@ -49,26 +49,26 @@ const DashboardView: React.FC<DashboardViewProps> = ({ tasks, sections }) => {
       {
         name: "Overdue",
         value: tasks.filter(
-          (task) => task.due_date && new Date(task.due_date) < new Date()
+          (task) => task.dates.end_date && new Date(task.dates.end_date) < new Date()
         ).length,
       },
-      {
+      { 
         name: "Today",
         value: tasks.filter(
           (task) =>
-            task.due_date &&
-            new Date(task.due_date).toDateString() === new Date().toDateString()
+            task.dates.end_date &&
+            new Date(task.dates.end_date).toDateString() === new Date().toDateString()
         ).length,
       },
       {
         name: "Upcoming",
         value: tasks.filter(
-          (task) => task.due_date && new Date(task.due_date) > new Date()
+          (task) => task.dates.end_date && new Date(task.dates.end_date) > new Date()
         ).length,
       },
       {
         name: "No Due Date",
-        value: tasks.filter((task) => !task.due_date).length,
+        value: tasks.filter((task) => !task.dates.end_date).length,
       },
     ];
 

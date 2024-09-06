@@ -5,15 +5,17 @@ import TaskProjectDataProvider from "@/context/TaskProjectDataContext";
 import AuthProvider from "@/context/AuthContext";
 import OnboardProvider from "@/context/OnboardContext";
 import GlobalOptionProvider from "@/context/GlobalOptionContext";
+import ClientProviderWrapper from "./ClientProviderWrapper";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], fallback: ["Helvetica", "Arial"] });
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   display: "swap",
+  fallback: ["Helvetica", "Arial", "sans-serif"],
 });
 
-const nunito = Nunito({ subsets: ["latin"] });
+const nunito = Nunito({ subsets: ["latin"], fallback: ["Helvetica", "Arial"] });
 
 export const metadata: Metadata = {
   title: "Kakrola | All Your Work in One Place",
@@ -39,13 +41,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={poppins.className}>
-        <AuthProvider>
-          <TaskProjectDataProvider>
-            <OnboardProvider>
-              <GlobalOptionProvider>{children}</GlobalOptionProvider>
-            </OnboardProvider>
-          </TaskProjectDataProvider>
-        </AuthProvider>
+        <ClientProviderWrapper>
+          <AuthProvider>
+            <TaskProjectDataProvider>
+              <OnboardProvider>
+                <GlobalOptionProvider>
+                  {children}
+                </GlobalOptionProvider>
+              </OnboardProvider>
+            </TaskProjectDataProvider>
+          </AuthProvider>
+        </ClientProviderWrapper>
       </body>
     </html>
   );

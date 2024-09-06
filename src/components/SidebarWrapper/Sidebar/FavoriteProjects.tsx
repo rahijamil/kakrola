@@ -4,6 +4,8 @@ import React from "react";
 import ProjectItem from "./ProjectItem";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const FavoriteProjects = ({
   setShowFavoritesProjects,
@@ -12,14 +14,26 @@ const FavoriteProjects = ({
   setShowFavoritesProjects: any;
   showFavoritesProjects: boolean;
 }) => {
-  const { projects, projectMembers } = useTaskProjectDataProvider();
+  const { projects, projectsLoading, projectMembers } =
+    useTaskProjectDataProvider();
   const pathname = usePathname();
+
+  // Create a set of favorite project IDs
+  const favoriteProjectIds = new Set(
+    projectMembers
+      .filter((member) => member.project_settings.is_favorite)
+      .map((member) => member.project_id)
+  );
+
+  const hasFavoriteProjects = projects.some((project) =>
+    favoriteProjectIds.has(project.id)
+  );
 
   // Create a map of project ID to favorite status from userProjectSettings
   const favoritesMap = new Map(
     projectMembers.map((member) => [
       member.project_id,
-      member.project_settings.is_favorite
+      member.project_settings.is_favorite,
     ])
   );
 
@@ -30,25 +44,35 @@ const FavoriteProjects = ({
 
   return (
     <div className="mt-4 px-2">
-      <div className="w-full flex items-center justify-between p-1 text-text-600 rounded-full transition-colors">
-        <span className="font-medium">Favorites</span>
+      {projectsLoading ? (
+        <Skeleton height={16} width={150} borderRadius={9999} />
+      ) : (
+        <>
+          {hasFavoriteProjects && (
+            <div className="w-full flex items-center justify-between p-1 text-text-600 rounded-full transition-colors">
+              <span className="font-medium">Favorites</span>
 
-        <div className="opacity-0 group-hover:opacity-100 transition flex items-center">
-          <button
-            className="p-1 hover:bg-primary-50 rounded-full transition"
-            onClick={() => setShowFavoritesProjects(!showFavoritesProjects)}
-          >
-            <ChevronRight
-              strokeWidth={1.5}
-              className={`w-[18px] h-[18px] transition-transform transform ${
-                showFavoritesProjects ? "rotate-90" : ""
-              }`}
-            />
-          </button>
-        </div>
-      </div>
+              <div className="opacity-0 group-hover:opacity-100 transition flex items-center">
+                <button
+                  className="p-1 hover:bg-primary-50 rounded-full transition"
+                  onClick={() =>
+                    setShowFavoritesProjects(!showFavoritesProjects)
+                  }
+                >
+                  <ChevronRight
+                    strokeWidth={1.5}
+                    className={`w-[18px] h-[18px] transition-transform transform ${
+                      showFavoritesProjects ? "rotate-90" : ""
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+          )}
+        </>
+      )}
 
-      {showFavoritesProjects && (
+      {showFavoritesProjects && hasFavoriteProjects && (
         <motion.div
           initial={{ opacity: 0.5, height: 0, y: -10 }}
           animate={{
@@ -70,6 +94,16 @@ const FavoriteProjects = ({
           </ul>
         </motion.div>
       )}
+
+      <div className="space-y-2">
+        {projectsLoading &&
+          [1, 2, 3, 4, 5].map((_i, index) => (
+            <div key={_i} className="flex items-center gap-2">
+              <Skeleton height={28} width={28} borderRadius={9999} />
+              <Skeleton height={16} borderRadius={9999} width={150} />
+            </div>
+          ))}
+      </div>
     </div>
   );
 };

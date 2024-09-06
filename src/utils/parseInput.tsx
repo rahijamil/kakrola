@@ -61,7 +61,7 @@ export const parseInput = (input: string, projects: ProjectType[]) => {
     const dateString = dateMatch[1].toLowerCase();
     const dueDate = parseDate(dateString);
     if (dueDate) {
-      parsedData.due_date = dueDate.toISOString();
+      // parsedData.dates?.end_date = dueDate.toISOString();
     }
   }
 
@@ -69,7 +69,7 @@ export const parseInput = (input: string, projects: ProjectType[]) => {
   const assigneeRegex = /\s\+(\w+)/;
   const assigneeMatch = input.match(assigneeRegex);
   if (assigneeMatch) {
-    parsedData.assigned_to_id = assigneeMatch[1];
+    // parsedData.assignees?.push(assigneeMatch[1])
   }
 
   // Parse priority

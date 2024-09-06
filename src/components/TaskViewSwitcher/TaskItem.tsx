@@ -36,7 +36,7 @@ const TaskItem = ({
   subTasks: TaskType[];
   index: number;
   project: ProjectType | null;
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (tasks: TaskType[]) => void
   tasks: TaskType[];
   showModal?: string | null;
   smallAddTask?: boolean;
@@ -99,7 +99,7 @@ const TaskItem = ({
 
   const [editTaskId, setEditTaskId] = useState<TaskType["id"] | null>(null);
 
-  const dateInfo = getDateInfo(task.due_date);
+  const dateInfo = getDateInfo(task.dates.end_date);
 
   return (
     <div className="w-full">

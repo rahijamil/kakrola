@@ -17,7 +17,7 @@ const ViewOptions = React.memo(
     view?: ViewTypes["view"];
     setView: (value: ViewTypes["view"]) => void;
     hideCalendarView?: boolean;
-    setTasks?: Dispatch<SetStateAction<TaskType[]>>;
+    setTasks?: (tasks: TaskType[]) => void
     tasks?: TaskType[];
   }) => {
     const [showCompletedTasks, setShowCompletedTasks] = useState(false);

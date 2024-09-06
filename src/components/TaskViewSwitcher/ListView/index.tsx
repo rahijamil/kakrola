@@ -22,6 +22,14 @@ import ListViewSection from "../ListViewSection";
 import UngroupedTasks from "../UngroupedTasks";
 import { v4 as uuidv4 } from "uuid";
 import { useGlobalOption } from "@/context/GlobalOptionContext";
+import {
+  AlignLeft,
+  AtSign,
+  CalendarRange,
+  CircleChevronUp,
+  Tag,
+  UserPlus,
+} from "lucide-react";
 
 interface ListViewProps {
   groupedTasks: Record<string, TaskType[]>;
@@ -35,7 +43,7 @@ interface ListViewProps {
   showUngroupedAddSection: boolean;
   setShowUngroupedAddSection: Dispatch<SetStateAction<boolean>>;
   project: ProjectType | null;
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (tasks: TaskType[]) => void;
   tasks: TaskType[];
 }
 
@@ -74,7 +82,6 @@ const ListView: React.FC<ListViewProps> = ({
   const [showTaskItemModal, setShowTaskItemModal] = useState<string | null>(
     null
   );
-
 
   const { profile } = useAuthProvider();
   const [sectionAddLoading, setSectionAddLoading] = useState(false);
@@ -452,99 +459,96 @@ const ListView: React.FC<ListViewProps> = ({
         <Droppable droppableId="list" type="column" direction="vertical">
           {(listProvided) => (
             <div
+              className="overflow-x-auto w-full h-full"
               ref={listProvided.innerRef}
               {...listProvided.droppableProps}
-              className="space-y-2 whitespace-nowrap overflow-x-auto h-full"
             >
-              <div className="border-y border-text-200 flex items-center divide-x divide-text-200 text-xs font-medium mx-8 min-w-max">
-                <div className="w-full max-w-[632px] min-w-[632px] p-2">
-                  Task name
-                </div>
-                <div className="min-w-32 p-2">Assignee</div>
-                <div className="min-w-32 p-2">Due date</div>
-                <div className="min-w-32 p-2">Priority</div>
-                <div className="min-w-32 p-2">Labels</div>
+              <table className="w-full min-w-[1000px] border-collapse">
+                <thead>
+                  <tr className="border-y border-text-200 text-xs divide-x divide-text-200 whitespace-nowrap flex">
+                    <th className="p-2 text-left w-[40%] font-medium flex items-center gap-2 pl-8">
+                      <AlignLeft strokeWidth={2} className="w-4 h-4" />
+                      <span>Task name</span>
+                    </th>
+                    <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+                      <UserPlus strokeWidth={2} className="w-4 h-4" />
+                      <span>Assignee</span>
+                    </th>
+                    <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+                      <CalendarRange strokeWidth={2} className="w-4 h-4" />
+                      <span>Dates</span>
+                    </th>
+                    <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+                      <CircleChevronUp strokeWidth={2} className="w-4 h-4" />
+                      <span>Priority</span>
+                    </th>
+                    <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+                      <Tag strokeWidth={2} className="w-4 h-4" />
+                      <span>Labels</span>
+                    </th>
+                  </tr>
+                </thead>
 
-                {/* <div className="min-w-32 p-2">Status</div> */}
-              </div>
-
-              {/* <div className="space-y-4">
-                <UngroupedTasks
-                  tasks={unGroupedTasks}
-                  showUngroupedAddTask={showUngroupedAddTask}
-                  setShowUngroupedAddTask={setShowUngroupedAddTask}
-                  project={project}
-                  setTasks={setTasks}
-                  showShareOption={showShareOption}
-                  setShowShareOption={setShowShareOption}
-                  showTaskItemModal={showTaskItemModal}
-                  setShowTaskItemModal={setShowTaskItemModal}
-                />
-
-                <AddNewSectionListView
-                  section={{ id: "ungrouped", title: "Ungrouped", tasks: [] }}
-                  index={0}
-                  newSectionName={newSectionName}
-                  setNewSectionName={setNewSectionName}
-                  handleAddSection={handleAddSection}
-                  setShowAddSection={setShowAddSection}
-                  showAddSection={showAddSection}
-                  sectionAddLoading={sectionAddLoading}
-                />
-              </div> */}
-
-              {columns
-                .filter((c) => c.id !== "ungrouped")
-                .map((column, columnIndex) => (
-                  <Draggable
-                    key={column.id}
-                    draggableId={column.id}
-                    index={columnIndex}
-                  >
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="space-y-2"
+                <tbody>
+                  {columns
+                    .filter((c) => c.id !== "ungrouped")
+                    .map((column, columnIndex) => (
+                      <Draggable
+                        key={column.id}
+                        draggableId={column.id}
+                        index={columnIndex}
                       >
-                        <ListViewSection
-                          section={
-                            sections.find((s) => s.id.toString() === column.id)!
-                          }
-                          sections={sections}
-                          setSections={setSections}
-                          toggleSection={toggleSection}
-                          groupedTasks={groupedTasks}
-                          showSectionMoreOptions={showSectionMoreOptions}
-                          setShowSectionMoreOptions={setShowSectionMoreOptions}
-                          setShowDeleteConfirm={setShowDeleteConfirm}
-                          setShowArchiveConfirm={setShowArchiveConfirm}
-                          setShowAddTask={setShowAddTask}
-                          setTasks={setTasks}
-                          showAddTask={showAddTask}
-                          tasks={tasks}
-                          project={project}
-                          showTaskItemModal={showTaskItemModal}
-                          setShowTaskItemModal={setShowTaskItemModal}
-                        />
+                        {(provided) => (
+                          <tr
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <td colSpan={5} className="p-0">
+                              <ListViewSection
+                                section={
+                                  sections.find(
+                                    (s) => s.id.toString() === column.id
+                                  )!
+                                }
+                                sections={sections}
+                                setSections={setSections}
+                                toggleSection={toggleSection}
+                                groupedTasks={groupedTasks}
+                                showSectionMoreOptions={showSectionMoreOptions}
+                                setShowSectionMoreOptions={
+                                  setShowSectionMoreOptions
+                                }
+                                setShowDeleteConfirm={setShowDeleteConfirm}
+                                setShowArchiveConfirm={setShowArchiveConfirm}
+                                setShowAddTask={setShowAddTask}
+                                setTasks={setTasks}
+                                showAddTask={showAddTask}
+                                tasks={tasks}
+                                project={project}
+                                showTaskItemModal={showTaskItemModal}
+                                setShowTaskItemModal={setShowTaskItemModal}
+                              />
 
-                        <AddNewSectionListView
-                          section={column}
-                          index={columnIndex}
-                          newSectionName={newSectionName}
-                          setNewSectionName={setNewSectionName}
-                          handleAddSection={handleAddSection}
-                          setShowAddSection={setShowAddSection}
-                          showAddSection={showAddSection}
-                          sectionAddLoading={sectionAddLoading}
-                        />
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
+                              <AddNewSectionListView
+                                section={column}
+                                index={columnIndex}
+                                newSectionName={newSectionName}
+                                setNewSectionName={setNewSectionName}
+                                handleAddSection={handleAddSection}
+                                setShowAddSection={setShowAddSection}
+                                showAddSection={showAddSection}
+                                sectionAddLoading={sectionAddLoading}
+                              />
+                            </td>
+                          </tr>
+                        )}
+                      </Draggable>
+                    ))}
 
-              {listProvided.placeholder}
+                  {listProvided.placeholder}
+                </tbody>
+              </table>
             </div>
           )}
         </Droppable>

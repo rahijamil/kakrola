@@ -27,7 +27,6 @@ const AddTaskModal = ({
           onClose={onClose}
           project={null}
           biggerTitle
-          dueDate={dueDate}
         />
       </motion.div>
     </div>

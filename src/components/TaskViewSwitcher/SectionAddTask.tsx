@@ -23,7 +23,7 @@ const SectionAddTask = ({
   setShowUngroupedAddTask?: Dispatch<SetStateAction<boolean>>;
   isSmall?: boolean;
   project: ProjectType | null;
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (tasks: TaskType[]) => void;
   tasks: TaskType[];
 }) => {
   const isAddTaskVisible = section
@@ -41,7 +41,7 @@ const SectionAddTask = ({
       {isAddTaskVisible && (
         <button
           className={`px-2 text-text-500 hover:text-primary-600 hover:bg-text-50d flex items-center gap-2 w-full group py-2.5 ${
-            activeProject?.settings.view == "List" && "pl-16"
+            activeProject?.settings.view == "List" && "pl-8"
           }`}
           onClick={() => {
             section

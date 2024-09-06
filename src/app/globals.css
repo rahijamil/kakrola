@@ -5,6 +5,7 @@
 @import "./themes.css";
 
 @layer base {
+  
   html {
     @apply scroll-smooth;
   }
@@ -12,6 +13,7 @@
     @apply bg-background text-sm text-text-900;
 
     -webkit-tap-highlight-color: transparent;
+    font-family: 'Poppins', 'Arial', sans-serif;
   }
   .wrapper {
     @apply w-11/12 max-w-7xl mx-auto;

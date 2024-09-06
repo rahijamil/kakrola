@@ -77,8 +77,8 @@ export const Upload: React.FC<UploadProps> = ({
             <Image
               src={fileUrl}
               alt="Uploaded image"
-              width={28}
-              height={28}
+              width={20}
+              height={20}
               className="rounded-full overflow-hidden bg-text-100 max-w-7 max-h-7 object-cover"
             />
             {randomPhrase}

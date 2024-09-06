@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
   <!-- White Background -->
-  <rect width="200" height="200" fill="#ffffff"/>
+  <rect width="200" height="200" rx="16" ry="16" fill="#ffffff"/>
 
   <!-- Hashtag Symbol with Gradient and Shadow -->
   <defs>

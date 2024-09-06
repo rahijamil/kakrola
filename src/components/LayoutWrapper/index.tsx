@@ -1,6 +1,6 @@
 "use client";
 import React, { Dispatch, SetStateAction, useState } from "react";
-import { SlidersHorizontal } from "lucide-react";
+import { CheckCircle, SlidersHorizontal } from "lucide-react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { ProjectType, TaskType } from "@/types/project";
@@ -38,7 +38,7 @@ const LayoutWrapper = ({
   view?: ViewTypes["view"];
   setView?: (value: ViewTypes["view"]) => void;
   hideCalendarView?: boolean;
-  setTasks?: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks?: (tasks: TaskType[]) => void;
   tasks?: TaskType[];
   showNoDateTasks?: boolean;
 }) => {
@@ -51,14 +51,13 @@ const LayoutWrapper = ({
     showArchiveConfirm: false,
     showDeleteConfirm: false,
     editTitle: false,
-    editTitleInListView: false,
   });
 
   const [projectTitle, setProjectTitle] = useState<string>(
     project?.name || headline
   );
 
-  const { setProjects, teams } = useTaskProjectDataProvider();
+  const { setProjects, projects, teams, activeProject } = useTaskProjectDataProvider();
   const { setShowShareOption, showShareOption } = useGlobalOption();
 
   const handleEditTitle = async () => {
@@ -67,8 +66,8 @@ const LayoutWrapper = ({
       projectTitle.trim().length &&
       project.name !== projectTitle.trim()
     ) {
-      setProjects((prevProjects) =>
-        prevProjects.map((p) =>
+      setProjects(
+        projects.map((p) =>
           p.id === project.id ? { ...p, name: projectTitle.trim() } : p
         )
       );
@@ -103,7 +102,17 @@ const LayoutWrapper = ({
         setTasks(
           reorderedTasks.map((t, index) =>
             t.id == result.draggableId
-              ? { ...t, due_date: null, order: index }
+              ? {
+                  ...t,
+                  dates: {
+                    start_date: null,
+                    start_time: null,
+                    end_date: null,
+                    end_time: null,
+                    reminder: null,
+                  },
+                  order: index,
+                }
               : { ...t, order: index }
           )
         );
@@ -113,7 +122,10 @@ const LayoutWrapper = ({
             t.id == result.draggableId
               ? {
                   ...t,
-                  due_date: result.destination?.droppableId as string,
+                  dates: {
+                    ...t.dates,
+                    due_date: result.destination?.droppableId as string,
+                  },
                   order: index,
                 }
               : { ...t, order: index }
@@ -256,59 +268,35 @@ const LayoutWrapper = ({
               </div>
             )}
 
-            <div
-              className={`flex-1 ${
-                view === "List" && !project && "max-w-4xlw-fullmx-auto p-8 pt-0"
-              }`}
-            >
+            <div className={`flex-1 wrapper`}>
               <div className="flex flex-col h-full">
-                {view == "List" && (
-                  <div
-                    className={`${
-                      project && view !== "List" ? "pb-4 mt-4" : "pl-3.5 pb-2"
-                    } ${!setView && "pt-8"}`}
-                  >
-                    {project ? (
-                      <>
-                        {/* {modalState.editTitleInListView ? (
-                          <input
-                            type="text"
-                            className="text-[26px] font-bold border border-text-300 w-full rounded-full p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300"
-                            value={projectTitle}
-                            onBlur={handleEditTitle}
-                            autoFocus
-                            onChange={(ev) => setProjectTitle(ev.target.value)}
-                            onKeyDown={(ev) =>
-                              ev.key === "Enter" && handleEditTitle()
-                            }
-                          />
-                        ) : (
-                          <h1
-                            className="text-[26px] font-bold border border-transparent w-fit hover:w-full hover:border-text-200 rounded-full p-1 py-[14px] cursor-text"
-                            onClick={() =>
-                              toggleModal("editTitleInListView", true)
-                            }
-                          >
-                            {project.name}
-                          </h1>
-                        )} */}
-                      </>
-                    ) : (
-                      <h1
-                        className={`text-[26px] font-bold p-1 py-[14px] ${
-                          (headline == "Filters & Labels" ||
-                            headline == "Upcoming") &&
-                          "mt-6"
-                        }`}
-                      >
-                        {headline}
-                      </h1>
-                    )}
-                  </div>
-                )}
-                <div className={`flex-1 ${view !== "List" && "pt-4"}`}>
-                  {children}
+                <div
+                  className={`${project && "pt-4"} ${
+                    !setView && "pt-8"
+                  }`}
+                >
+                  {project ? (
+                    <div className="flex items-center gap-2">
+                      <CheckCircle size={28} className={`bg-${activeProject?.settings.color}`} />
+                      <input
+                        type="text"
+                        className="text-[26px] font-bold border-none rounded-full focus-visible:outline-none p-1.5 bg-transparent w-full"
+                        value={projectTitle}
+                        onBlur={handleEditTitle}
+                        onChange={(ev) => setProjectTitle(ev.target.value)}
+                        onKeyDown={(ev) =>
+                          ev.key === "Enter" && handleEditTitle()
+                        }
+                      />
+                    </div>
+                  ) : (
+                    <h1 className={`text-[26px] font-bold p-1 py-[14px]`}>
+                      {headline}
+                    </h1>
+                  )}
                 </div>
+
+                <div className={`flex-1`}>{children}</div>
               </div>
             </div>
           </div>

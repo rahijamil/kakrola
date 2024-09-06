@@ -16,6 +16,8 @@ import { ProjectType } from "@/types/project";
 import AddEditProject from "../../AddEditProject";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const TeamProjects = ({
   team,
@@ -24,7 +26,7 @@ const TeamProjects = ({
   team: TeamType;
   sidebarWidth: number;
 }) => {
-  const { projects } = useTaskProjectDataProvider();
+  const { projects, projectsLoading } = useTaskProjectDataProvider();
   const pathname = usePathname();
   const [showProjects, setShowProjects] = useState(true);
   const [teamProjects, setTeamProjects] = useState<ProjectType[]>([]);
@@ -35,7 +37,7 @@ const TeamProjects = ({
       setTeamProjects(projects.filter((p) => p.team_id === team.id));
     }
 
-    console.log(projects)
+    console.log(projects);
   }, [team, projects]);
 
   const handleOnDragEnd = async (result: DropResult) => {
@@ -89,71 +91,75 @@ const TeamProjects = ({
   return (
     <>
       <div className="mt-4 px-2">
-        <div className="relative text-text-600 hover:bg-primary-50 rounded-full transition">
-          <Link
-            href={`/app/${team.id}`}
-            className={`w-full flex items-center justify-between pl-2 py-[7px] gap-1`}
-          >
-            <div
-              className={`flex items-center ${
-                sidebarWidth > 220 ? "gap-2" : "gap-1"
-              }`}
+        {projectsLoading ? (
+          <Skeleton width={20} borderRadius={9999} />
+        ) : (
+          <div className="relative text-text-600 hover:bg-primary-50 rounded-full transition">
+            <Link
+              href={`/app/${team.id}`}
+              className={`w-full flex items-center justify-between pl-2 py-[7px] gap-1`}
             >
               <div
                 className={`flex items-center ${
                   sidebarWidth > 220 ? "gap-2" : "gap-1"
                 }`}
-                style={{
-                  maxWidth: `${sidebarWidth - 80}px`,
-                }}
               >
-                {team.avatar_url ? (
-                  <Image
-                    src={team.avatar_url}
-                    alt={team.name}
-                    width={20}
-                    height={20}
-                    className="rounded-full"
-                  />
-                ) : (
-                  <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-full flex items-center justify-center">
-                    <span className="text-surface text-[10px] font-bold">
-                      {team.name?.slice(0, 1).toUpperCase()}
-                    </span>
-                  </div>
-                )}
-                <span
-                  className={`font-medium transition overflow-hidden whitespace-nowrap text-ellipsis`}
+                <div
+                  className={`flex items-center ${
+                    sidebarWidth > 220 ? "gap-2" : "gap-1"
+                  }`}
+                  style={{
+                    maxWidth: `${sidebarWidth - 80}px`,
+                  }}
                 >
-                  {team.name}
-                </span>
+                  {team.avatar_url ? (
+                    <Image
+                      src={team.avatar_url}
+                      alt={team.name}
+                      width={20}
+                      height={20}
+                      className="rounded-full"
+                    />
+                  ) : (
+                    <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-full flex items-center justify-center">
+                      <span className="text-surface text-[10px] font-bold">
+                        {team.name?.slice(0, 1).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <span
+                    className={`font-medium transition overflow-hidden whitespace-nowrap text-ellipsis`}
+                  >
+                    {team.name}
+                  </span>
+                </div>
               </div>
-            </div>
-          </Link>
+            </Link>
 
-          <div className="opacity-0 group-hover:opacity-100 transition flex items-center absolute right-1 top-1/2 -translate-y-1/2">
-            <button
-              className="p-1 hover:bg-primary-100 rounded-full transition"
-              onClick={() => setTeamId(team.id)}
-            >
-              <Plus
-                strokeWidth={1.5}
-                className={`w-[18px] h-[18px] transition-transform`}
-              />
-            </button>
-            <button
-              className="p-1 hover:bg-primary-100 rounded-full transition"
-              onClick={() => setShowProjects(!showProjects)}
-            >
-              <ChevronRight
-                strokeWidth={1.5}
-                className={`w-[18px] h-[18px] transition-transform transform ${
-                  showProjects ? "rotate-90" : ""
-                }`}
-              />
-            </button>
+            <div className="opacity-0 group-hover:opacity-100 transition flex items-center absolute right-1 top-1/2 -translate-y-1/2">
+              <button
+                className="p-1 hover:bg-primary-100 rounded-full transition"
+                onClick={() => setTeamId(team.id)}
+              >
+                <Plus
+                  strokeWidth={1.5}
+                  className={`w-[18px] h-[18px] transition-transform`}
+                />
+              </button>
+              <button
+                className="p-1 hover:bg-primary-100 rounded-full transition"
+                onClick={() => setShowProjects(!showProjects)}
+              >
+                <ChevronRight
+                  strokeWidth={1.5}
+                  className={`w-[18px] h-[18px] transition-transform transform ${
+                    showProjects ? "rotate-90" : ""
+                  }`}
+                />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {showProjects && (
           <motion.div
@@ -205,6 +211,16 @@ const TeamProjects = ({
             </DragDropContext>
           </motion.div>
         )}
+
+        <div className="space-y-2">
+          {projectsLoading &&
+            [1, 2, 3, 4, 5].map((_i, index) => (
+              <div key={_i} className="flex items-center gap-2">
+                <Skeleton height={28} width={28} borderRadius={9999} />
+                <Skeleton height={20} borderRadius={9999} width={150} />
+              </div>
+            ))}
+        </div>
       </div>
 
       {teamId && (

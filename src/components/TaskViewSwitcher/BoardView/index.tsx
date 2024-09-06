@@ -25,7 +25,7 @@ const BoardView: React.FC<{
   showUngroupedAddSection: boolean;
   setShowUngroupedAddSection: React.Dispatch<React.SetStateAction<boolean>>;
   project: ProjectType | null;
-  setTasks: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks: (tasks: TaskType[]) => void
 }> = ({
   tasks,
   sections,

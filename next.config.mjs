@@ -31,4 +31,17 @@ const nextConfig = {
 export default withPWA({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
+  runtimeCaching: [
+    {
+      urlPattern: /^https?.*/,
+      handler: "NetworkFirst",
+      options: {
+        cacheName: "network-first-cache",
+        expiration: {
+          maxEntries: 50,
+          maxAgeSeconds: 24 * 60 * 60, // 1 day
+        },
+      },
+    },
+  ],
 })(nextConfig);

@@ -36,8 +36,6 @@ export interface TemplateTaskType {
   title: string;
   description: string;
   priority: "P1" | "P2" | "P3" | "Priority";
-  due_date: string | null;
-  reminder_time: string | null;
   order: number;
   created_at?: string;
   updated_at?: string;

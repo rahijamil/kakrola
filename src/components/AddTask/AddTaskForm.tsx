@@ -20,39 +20,11 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import { Textarea } from "../ui";
 import { v4 as uuidv4 } from "uuid";
 import ProjectsSelector from "./ProjectsSelector";
-import DueDateSelector from "./DueDateSelector";
+import DateSelector from "./DateSelector";
 import AssigneeSelector from "./AssigneeSelector";
 import { TaskInput } from "./TaskInput";
 import DescriptionInput from "./DescriptionInput";
-
-const getInitialTaskData = ({
-  project,
-  section_id,
-  profile,
-  dueDate,
-}: {
-  project: ProjectType | null;
-  section_id?: SectionType["id"] | null;
-  profile: { id: string } | null;
-  dueDate?: Date | null;
-}): TaskType => ({
-  id: uuidv4(),
-  title: "",
-  description: "",
-  priority: "Priority",
-  project_id: project?.id || null,
-  section_id: section_id || null,
-  parent_task_id: null,
-  profile_id: profile?.id || "",
-  assigned_to_id: null,
-  due_date: dueDate ? dueDate.toISOString() : null,
-  reminder_time: null,
-  is_inbox: project ? false : true,
-  is_completed: false,
-  order: 0,
-  completed_at: null,
-  updated_at: new Date().toISOString(),
-});
+import { getInitialTaskData } from "@/lib/getInitialTaskData";
 
 const AddTaskForm = ({
   onClose,
@@ -63,7 +35,7 @@ const AddTaskForm = ({
   addTaskAboveBellow,
   taskForEdit,
   biggerTitle,
-  dueDate,
+
   tasks,
   setTasks,
 }: {
@@ -75,9 +47,9 @@ const AddTaskForm = ({
   addTaskAboveBellow?: { position: "above" | "below"; task: TaskType } | null;
   taskForEdit?: TaskType;
   biggerTitle?: boolean;
-  dueDate?: Date | null;
+
   tasks?: TaskType[];
-  setTasks?: Dispatch<SetStateAction<TaskType[]>>;
+  setTasks?: (tasks: TaskType[]) => void;
 }) => {
   const { projects, activeProject } = useTaskProjectDataProvider();
   const { profile } = useAuthProvider();
@@ -88,7 +60,6 @@ const AddTaskForm = ({
         project: activeProject ? activeProject : project,
         section_id,
         profile,
-        dueDate,
       })
   );
 
@@ -123,7 +94,6 @@ const AddTaskForm = ({
         project: activeProject ? activeProject : project,
         section_id,
         profile,
-        dueDate,
       })
     );
 
@@ -259,7 +229,7 @@ const AddTaskForm = ({
         </div>
 
         <div className="flex items-center flex-wrap gap-2 whitespace-nowrap">
-          <DueDateSelector task={taskData} setTask={setTaskData} />
+          <DateSelector task={taskData} setTask={setTaskData} />
 
           <AssigneeSelector
             task={taskData}

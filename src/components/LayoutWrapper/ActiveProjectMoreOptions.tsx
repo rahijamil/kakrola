@@ -56,7 +56,7 @@ const ActiveProjectMoreOptions = ({
 
   // Find the current user project settings for the given project
   const currentProjectMember = projectMembers.find(
-    (settings) => settings.project_id === project.id
+    (member) => member.project_id === project.id
   );
 
   // Determine the current favorite status

@@ -124,8 +124,7 @@ const SaveTemplateModal = ({
                   title: task.title,
                   description: task.description,
                   priority: task.priority,
-                  due_date: task.due_date,
-                  reminder_time: task.reminder_time,
+                  
                   order: task.order,
                 };
 

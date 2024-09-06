@@ -21,6 +21,9 @@ import { useAuthProvider } from "@/context/AuthContext";
 import Image from "next/image";
 import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
 import Dropdown from "@/components/ui/Dropdown";
+import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 type IconType = React.ForwardRefExoticComponent<
   React.SVGProps<SVGSVGElement> & { title?: string; titleId?: string }
@@ -125,6 +128,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
 
   const router = useRouter();
   const { profile } = useAuthProvider();
+  const { projectsLoading } = useTaskProjectDataProvider();
 
   const menuItems: MenuGroup[] = [
     {
@@ -213,27 +217,31 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
     <Dropdown
       setIsOpen={setIsOpen}
       triggerRef={triggerRef}
-      Label={({ onClick }) => (
-        <button
-          onClick={onClick}
-          ref={triggerRef}
-          className="flex items-center gap-1 hover:bg-primary-50 transition p-1 pl-1.5 rounded-2xl"
-        >
-          <div className="flex items-center gap-1">
-            <Image
-              src={profile?.avatar_url || "/default-avatar.png"}
-              alt={profile?.full_name || profile?.username || ""}
-              width={20}
-              height={20}
-              className="rounded-full object-cover max-w-[20px] max-h-[20px]"
-            />
+      Label={({ onClick }) =>
+        projectsLoading ? (
+          <Skeleton height={28} borderRadius={9999} width={100} />
+        ) : (
+          <button
+            onClick={onClick}
+            ref={triggerRef}
+            className="flex items-center gap-1 hover:bg-primary-50 transition p-1 pl-1.5 rounded-2xl"
+          >
+            <div className="flex items-center gap-1">
+              <Image
+                src={profile?.avatar_url || "/default-avatar.png"}
+                alt={profile?.full_name || profile?.username || ""}
+                width={20}
+                height={20}
+                className="rounded-full object-cover max-w-[20px] max-h-[20px]"
+              />
 
-            <p className="font-medium">{profile?.full_name.split(" ")[0]}</p>
-          </div>
+              <p className="font-medium">{profile?.full_name.split(" ")[0]}</p>
+            </div>
 
-          <ChevronDown strokeWidth={1.5} size={16} />
-        </button>
-      )}
+            <ChevronDown strokeWidth={1.5} size={16} />
+          </button>
+        )
+      }
       isOpen={isOpen}
       contentWidthClass="w-60 pb-1"
       content={
@@ -244,8 +252,8 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
                 <Image
                   src={profile?.avatar_url || "/default-avatar.png"}
                   alt="profile"
-                  width={32}
-                  height={32}
+                  width={20}
+                  height={20}
                   className="rounded-full object-cover max-w-[32px] max-h-[32px]"
                 />
 

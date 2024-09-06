@@ -1,6 +1,7 @@
 "use client";
 import { ProfileType } from "@/types/user";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, {
   createContext,
@@ -9,6 +10,31 @@ import React, {
   useEffect,
   useState,
 } from "react";
+
+const fetchProfile = async () => {
+  try {
+    const {
+      data: { user },
+      error,
+    } = await supabaseBrowser.auth.getUser();
+    if (error) throw error;
+
+    if (user) {
+      const { data, error } = await supabaseBrowser
+        .from("profiles")
+        .select("id, username, email, full_name, avatar_url, is_onboarded")
+        .eq("id", user.id)
+        .single();
+      if (error) throw error;
+
+      return data;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error loading user data:", error);
+    return null;
+  }
+};
 
 const AuthContext = createContext<{
   profile: ProfileType | null;
@@ -20,48 +46,33 @@ const AuthContext = createContext<{
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<ProfileType | null>(null);
-  const [loading, setLoading] = useState(true);
 
   const router = useRouter();
 
+  const { data, error, isPending } = useQuery({
+    queryKey: ["profile"],
+    queryFn: fetchProfile,
+    staleTime: 60000, // Cache data for 1 minute
+    refetchOnWindowFocus: false, // Disable refetching on window focus
+    // refetchInterval: 60000, // Refetch every 1 minute
+  });
+
   useEffect(() => {
-    const getAuthUser = async () => {
-      const {
-        data: { user },
-        error,
-      } = await supabaseBrowser.auth.getUser();
+    if (error) {
+      console.error("Error loading user data:", error);
+    }
 
-      if (error) {
-        console.log("Error loading user data!");
+    if (data) {
+      setProfile(data);
+      if (!data.is_onboarded) {
+        router.push("/app/onboard/create-profile");
       }
-
-      if (user) {
-        const { data, error } = await supabaseBrowser
-          .from("profiles")
-          .select(`id, username, email, full_name, avatar_url, is_onboarded`)
-          .eq("id", user?.id)
-          .single();
-        if (error) {
-          console.log("Error loading user data!");
-        }
-        if (data) {
-          setProfile(data);
-
-          if (!data.is_onboarded) {
-            router.push("/app/onboard/create-profile");
-          }
-        }
-      }
-
-      setLoading(false);
-    };
-
-    getAuthUser();
+    }
 
     return () => {
       setProfile(null);
-    }
-  }, []);
+    };
+  }, [data]);
 
   useEffect(() => {
     // Subscribe to real-time changes for projects
@@ -98,7 +109,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [profile]);
 
   return (
-    <AuthContext.Provider value={{ profile, loading }}>
+    <AuthContext.Provider value={{ profile, loading: isPending }}>
       {children}
     </AuthContext.Provider>
   );

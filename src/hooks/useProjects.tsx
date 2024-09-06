@@ -1,15 +1,60 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { ProjectType, SectionType } from "@/types/project";
 import { useAuthProvider } from "@/context/AuthContext";
 import { sortProjects } from "@/utils/sortProjects";
 import { ProjectMemberType } from "@/types/team";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ProfileType } from "@/types/user";
+
+const fetchProjectsAndDetails = async (_profile_id?: ProfileType["id"]) => {
+  try {
+    if (!_profile_id) throw new Error("No profile ID provided");
+
+    const { data, error } = await supabaseBrowser.rpc(
+      "fetch_projects_for_sidebar_with_members",
+      { _profile_id }
+    );
+
+    if (error) {
+      console.error("RPC Fetch Error:", error.message);
+      throw new Error(`Error fetching data: ${error.message}`);
+    }
+
+    if (data) {
+      const projects = (data.projects as ProjectType[]) || [];
+
+      const deduplicatedProjects = Array.from(
+        new Map(projects.map((project) => [project.id, project])).values()
+      );
+
+      const projectMembers =
+        (data.project_members as ProjectMemberType[]) || [];
+      const sections = ((data.sections as SectionType[]) || []).filter(
+        (section: any) =>
+          section.id !== null &&
+          section.name !== null &&
+          section.project_id !== null
+      );
+
+      return {
+        projectMemberData: projectMembers,
+        projects: sortProjects(deduplicatedProjects, projectMembers),
+        sections,
+      };
+    } else {
+      return { projectMemberData: [], projects: [], sections: [] };
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return { projectMemberData: [], projects: [], sections: [] };
+  }
+};
 
 const useProjects = () => {
   const { profile } = useAuthProvider();
-  const [projects, setProjects] = useState<ProjectType[]>([]);
-  const [projectMembers, setProjectMembers] = useState<ProjectMemberType[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [sectionsForProjectSelector, setSectionsForProjectSelector] = useState<
     {
       id: SectionType["id"];
@@ -18,117 +63,145 @@ const useProjects = () => {
     }[]
   >([]);
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      if (!profile?.id) return;
-      setLoading(true);
+  const queryClient = useQueryClient();
 
-      try {
-        // Fetch projects where the user is a member
-        const { data: projectMemberData, error: projectMemberError } =
-          await supabaseBrowser
-            .from("project_members")
-            .select("*")
-            .eq("profile_id", profile.id);
-
-        if (projectMemberError) {
-          console.error("Error fetching project members:", projectMemberError);
-        } else {
-          setProjectMembers(projectMemberData);
-
-          const projectIds = projectMemberData.map(
-            (membership) => membership.project_id
-          );
-          const { data: projectData, error: projectError } =
-            await supabaseBrowser
-              .from("projects")
-              .select("*")
-              .in("id", projectIds);
-
-          if (projectError) {
-            console.error("Error fetching projects:", projectError);
-          } else {
-            setProjects(
-              sortProjects(
-                projectData || [],
-                projectMemberData as ProjectMemberType[]
-              )
-            );
-
-            // Fetch sections for each project
-            const { data: sectionData, error: sectionError } =
-              await supabaseBrowser
-                .from("sections")
-                .select("*")
-                .in("project_id", projectIds);
-
-            if (sectionError) {
-              console.error("Error fetching sections:", sectionError);
-            } else {
-              setSectionsForProjectSelector(sectionData || []);
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProjects();
-  }, [profile?.id]);
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["projects", profile?.id],
+    queryFn: () => fetchProjectsAndDetails(profile?.id),
+    staleTime: 300000, // Adjust as needed
+    refetchOnWindowFocus: false,
+    enabled: !!profile?.id,
+  });
 
   useEffect(() => {
-    if (!profile?.id) return;
-
-    const subscription = supabaseBrowser
-      .channel("projects-channel")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "projects",
-          filter: `profile_id=eq.${profile.id}`,
-        },
-        (payload) => {
-          if (payload.eventType === "INSERT") {
-            const isExist = projects.some(
-              (project) => project.id === payload.new.id
-            );
-
-            if (!isExist) {
-              setProjects((prev) => [...prev, payload.new as ProjectType]);
-            }
-          } else if (payload.eventType === "UPDATE") {
-            setProjects((prev) =>
-              prev.map((project) =>
-                project.id === payload.new.id
-                  ? (payload.new as ProjectType)
-                  : project
-              )
-            );
-          } else if (payload.eventType === "DELETE") {
-            setProjects((prev) =>
-              prev.filter((project) => project.id !== payload.old.id)
-            );
-          }
-        }
-      )
-      .subscribe();
+    if (isError) {
+      console.error("Error fetching data:", error);
+    }
+    if (data) {
+      setSectionsForProjectSelector(data.sections);
+    }
 
     return () => {
-      supabaseBrowser.removeChannel(subscription);
+      setSectionsForProjectSelector([]);
     };
-  }, [profile?.id]);
+  }, [data, error, isError]);
+
+  // useEffect(() => {
+  //   if (!profile?.id) return;
+
+  //   const subscription = supabaseBrowser
+  //     .channel("projects-channel")
+  //     .on(
+  //       "postgres_changes",
+  //       {
+  //         event: "*",
+  //         schema: "public",
+  //         table: "projects",
+  //         filter: `profile_id=eq.${profile.id}`,
+  //       },
+  //       (payload) => {
+  //         queryClient.setQueryData(
+  //           ["projects", profile.id],
+  //           (oldProjects: ProjectType[] = []) => {
+  //             const existingProjectMap = new Map<number, ProjectType>();
+  //             oldProjects.forEach((p) => existingProjectMap.set(p.id, p));
+
+  //             if (payload.eventType === "INSERT") {
+  //               if (!existingProjectMap.has(payload.new.id)) {
+  //                 existingProjectMap.set(
+  //                   payload.new.id,
+  //                   payload.new as ProjectType
+  //                 );
+  //               }
+  //             } else if (payload.eventType === "UPDATE") {
+  //               existingProjectMap.set(
+  //                 payload.new.id,
+  //                 payload.new as ProjectType
+  //               );
+  //             } else if (payload.eventType === "DELETE") {
+  //               existingProjectMap.delete(payload.old.id);
+  //             }
+
+  //             return Array.from(existingProjectMap.values());
+  //           }
+  //         );
+  //       }
+  //     )
+  //     .subscribe();
+
+  //   const membersSubscription = supabaseBrowser
+  //     .channel("project-members-channel")
+  //     .on(
+  //       "postgres_changes",
+  //       {
+  //         event: "*",
+  //         schema: "public",
+  //         table: "project_members",
+  //         filter: `profile_id=eq.${profile.id}`,
+  //       },
+  //       (payload) => {
+  //         queryClient.setQueryData(
+  //           ["project_members", profile.id],
+  //           (oldMembers: ProjectMemberType[] = []) => {
+  //             const existingMemberMap = new Map<number, ProjectMemberType>();
+  //             oldMembers.forEach((m) => existingMemberMap.set(m.id, m));
+
+  //             if (payload.eventType === "INSERT") {
+  //               existingMemberMap.set(
+  //                 payload.new.id,
+  //                 payload.new as ProjectMemberType
+  //               );
+  //             } else if (payload.eventType === "UPDATE") {
+  //               existingMemberMap.set(
+  //                 payload.new.id,
+  //                 payload.new as ProjectMemberType
+  //               );
+  //             } else if (payload.eventType === "DELETE") {
+  //               existingMemberMap.delete(payload.old.id);
+  //             }
+
+  //             return Array.from(existingMemberMap.values());
+  //           }
+  //         );
+  //       }
+  //     )
+  //     .subscribe();
+
+  //   return () => {
+  //     supabaseBrowser.removeChannel(subscription);
+  //     supabaseBrowser.removeChannel(membersSubscription);
+  //   };
+  // }, [profile?.id, queryClient]);
 
   return {
-    projects,
-    setProjects,
-    projectMembers,
-    setProjectMembers,
-    loading,
+    projects: data?.projects || [],
+    setProjects: (newProjects: ProjectType[]) =>
+      queryClient.setQueryData(
+        ["projects", profile?.id],
+        (oldData: {
+          projectMemberData: ProjectMemberType[];
+          projects: ProjectType[];
+          sections: SectionType[];
+        }) => ({
+          ...oldData,
+          projects: newProjects,
+        })
+      ),
+    projectMembers: (data?.projectMemberData as ProjectMemberType[]) || [],
+    setProjectMembers: (members: ProjectMemberType[]) =>
+      queryClient.setQueryData(
+        ["projects", profile?.id],
+        (oldData: {
+          projectMemberData: ProjectMemberType[];
+          projects: ProjectType[];
+          sections: SectionType[];
+        }) => ({
+          ...oldData,
+          projectMemberData: members,
+        })
+      ),
+    loading: isLoading,
+    error: isError ? error : null,
     sectionsForProjectSelector,
   };
 };

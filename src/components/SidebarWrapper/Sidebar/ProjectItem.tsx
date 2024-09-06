@@ -12,6 +12,8 @@ import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { CheckCircle, Ellipsis, Hash } from "lucide-react";
 import ProjectDeleteConfirm from "./ProjectDeleteConfirm";
 import ProjectArchiveConfirm from "./ProjectArchiveConfirm";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const ProjectItem = ({
   project,
@@ -22,40 +24,18 @@ const ProjectItem = ({
   pathname: string;
   isDragging?: boolean;
 }) => {
-  const { projects, setProjects } = useTaskProjectDataProvider();
+  const { projectsLoading } = useTaskProjectDataProvider();
   const [tasks, setTasks] = useState<TaskType[]>([]);
-  const [showProjectMoreDropdown, setShowProjectMoreDropdown] =
-    useState<boolean>(false);
-
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
-
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const moreRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (showProjectMoreDropdown && moreRef.current && dropdownRef.current) {
-        const moreRect = moreRef.current.getBoundingClientRect();
-        const dropDownRect = dropdownRef.current.getBoundingClientRect();
-        setDropdownPosition({
-          top: moreRect.bottom - dropDownRect.height / 2,
-          left: moreRect.right,
-        });
-      }
-    }, 0);
-
-    return () => clearTimeout(timeout);
-  }, [showProjectMoreDropdown]);
 
   useEffect(() => {
     const fetchTasks = async () => {
       const { data: tasksData, error: tasksError } = await supabaseBrowser
         .from("tasks")
-        .select("*")
+        .select("id")
         .eq("project_id", project.id);
 
       if (!tasksError) {
-        setTasks(tasksData || []);
+        setTasks((tasksData as any) || []);
       }
     };
 
@@ -76,56 +56,62 @@ const ProjectItem = ({
 
   return (
     <li>
-      <div
-        ref={moreRef}
-        className={`sidebar_project_item flex-1 flex items-center justify-between transition-colors rounded-full text-text-900 ${
-          isDragging
-            ? "bg-surface shadow-[0_0_8px_1px_rgba(0,0,0,0.2)]"
-            : pathname === `/app/project/${project.slug}`
-            ? "bg-primary-100"
-            : "hover:bg-primary-50"
-        }`}
-      >
-        <Link
-          href={`/app/project/${project.slug}`}
-          className={`p-[1px] w-full`}
-          draggable={false}
+      {projectsLoading ? (
+        <div className="flex items-center justify-between gap-2">
+          <Skeleton height={20} width={20} borderRadius={9999} />
+          <Skeleton height={20} borderRadius={9999} width={200} />
+        </div>
+      ) : (
+        <div
+          className={`sidebar_project_item flex-1 flex items-center justify-between transition-colors rounded-full text-text-900 ${
+            isDragging
+              ? "bg-surface shadow-[0_0_8px_1px_rgba(0,0,0,0.2)]"
+              : pathname === `/app/project/${project.slug}`
+              ? "bg-primary-100"
+              : "hover:bg-primary-50"
+          }`}
         >
-          <div className="flex items-center">
-            <div className="p-2">
-              <CheckCircle
-                className={`w-4 h-4 text-${project.settings.color}`}
-                strokeWidth={2}
+          <Link
+            href={`/app/project/${project.slug}`}
+            className={`p-[1px] w-full`}
+            draggable={false}
+          >
+            <div className="flex items-center">
+              <div className="p-2">
+                <CheckCircle
+                  className={`w-4 h-4 text-${project.settings.color}`}
+                  strokeWidth={2}
+                />
+              </div>
+              {project.name}
+            </div>
+          </Link>
+
+          <div className="relative mr-1">
+            <div className="w-7 h-7 flex items-center justify-center">
+              {tasks.filter((task) => task.project_id == project.id).length >
+                0 && (
+                <p className="text-text-500">
+                  {tasks.filter((task) => task.project_id == project.id).length}
+                </p>
+              )}
+
+              <SidebarProjectMoreOptions
+                project={project}
+                stateActions={{
+                  setShowDeleteConfirm,
+                  setShowArchiveConfirm,
+                  setShowCommentOrActivity,
+                  setExportAsCSV,
+                  setImportFromCSV,
+                  setProjectEdit,
+                  setAboveBellow,
+                }}
               />
             </div>
-            {project.name}
-          </div>
-        </Link>
-
-        <div className="relative mr-1">
-          <div className="w-7 h-7 flex items-center justify-center">
-            {tasks.filter((task) => task.project_id == project.id).length >
-              0 && (
-              <p className="text-text-500">
-                {tasks.filter((task) => task.project_id == project.id).length}
-              </p>
-            )}
-
-            <SidebarProjectMoreOptions
-              project={project}
-              stateActions={{
-                setShowDeleteConfirm,
-                setShowArchiveConfirm,
-                setShowCommentOrActivity,
-                setExportAsCSV,
-                setImportFromCSV,
-                setProjectEdit,
-                setAboveBellow,
-              }}
-            />
           </div>
         </div>
-      </div>
+      )}
 
       {showDeleteConfirm && (
         <ProjectDeleteConfirm

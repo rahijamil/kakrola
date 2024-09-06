@@ -1,16 +1,16 @@
 "use client";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import TaskViewSwitcher from "@/components/TaskViewSwitcher";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/Spinner";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { ProjectType, SectionType, TaskType } from "@/types/project";
+import { ProjectType } from "@/types/project";
 import { ViewTypes } from "@/types/viewTypes";
-import { supabaseBrowser } from "@/utils/supabase/client";
+import useProjectDetails from "@/hooks/useProjectDetails";
 import Image from "next/image";
 import Link from "next/link";
-import { fetchSectionsAndTasksByProjectId } from "@/utils/fetchSectionsAndTasksByProjectId";
+import { supabaseBrowser } from "@/utils/supabase/client";
 
 const ProjectDetails = ({
   params: { project_slug },
@@ -23,10 +23,12 @@ const ProjectDetails = ({
   const [currentProject, setCurrentProject] = useState<ProjectType | null>(
     null
   );
-  const [tasks, setTasks] = useState<TaskType[]>([]);
-  const [sections, setSections] = useState<SectionType[]>([]);
   const [notFound, setNotFound] = useState<boolean>(false);
   const [showNoDateTasks, setShowNoDateTasks] = useState(false);
+
+  const projectId = currentProject?.id || null;
+  const { data, isLoading, isError, error, setSections, setTasks } =
+    useProjectDetails(projectId);
 
   useEffect(() => {
     if (projectsLoading) return;
@@ -53,15 +55,6 @@ const ProjectDetails = ({
   useEffect(() => {
     if (currentProject?.id) {
       document.title = `${currentProject.name} - Kakrola`;
-
-      fetchSectionsAndTasksByProjectId(currentProject.id)
-        .then((data) => {
-          setSections(data.sections);
-          setTasks(data.tasks);
-        })
-        .catch((error) => {
-          console.error("Error fetching project sections and tasks:", error);
-        });
     } else {
       document.title = "Kakrola";
     }
@@ -71,8 +64,8 @@ const ProjectDetails = ({
     async (view: ViewTypes["view"]) => {
       if (!currentProject?.id) return;
 
-      setProjects((prev) =>
-        prev.map((p) =>
+      setProjects(
+        projects.map((p) =>
           p.id === currentProject?.id
             ? { ...p, settings: { ...p.settings, view } }
             : p
@@ -114,6 +107,23 @@ const ProjectDetails = ({
     );
   }
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center w-full h-screen">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (isError) {
+    console.error("Error fetching data:", error);
+    return (
+      <div className="flex items-center justify-center w-full h-screen">
+        <p>Error loading project details</p>
+      </div>
+    );
+  }
+
   if (currentProject?.id) {
     return (
       <LayoutWrapper
@@ -122,41 +132,42 @@ const ProjectDetails = ({
         setView={updateProjectView}
         project={currentProject}
         setTasks={setTasks}
-        tasks={tasks}
+        tasks={data?.tasks || []}
         showNoDateTasks={showNoDateTasks}
       >
         <TaskViewSwitcher
           project={currentProject}
-          tasks={tasks}
+          tasks={data?.tasks || []}
           setTasks={setTasks}
-          sections={sections}
+          sections={data?.sections || []}
           setSections={setSections}
           view={currentProject.settings.view}
           showNoDateTasks={showNoDateTasks}
           setShowNoDateTasks={setShowNoDateTasks}
         />
 
-        {tasks.length === 0 && currentProject.settings.view === "List" && (
-          <div className="flex items-center justify-center flex-col gap-1 h-[30vh] select-none">
-            <Image
-              src="/project.png"
-              width={220}
-              height={200}
-              alt="Empty project"
-              className="rounded-full object-cover"
-              draggable={false}
-            />
-            <div className="text-center space-y-1 w-72">
-              <h3 className="font-medium text-base">
-                Start small (or dream big)...
-              </h3>
-              <p className="text-sm text-text-600">
-                Add your tasks or find a template to get started with your
-                project.
-              </p>
+        {data?.tasks.length === 0 &&
+          currentProject.settings.view === "List" && (
+            <div className="flex items-center justify-center flex-col gap-1 h-[30vh] select-none">
+              <Image
+                src="/project.png"
+                width={220}
+                height={200}
+                alt="Empty project"
+                className="rounded-full object-cover"
+                draggable={false}
+              />
+              <div className="text-center space-y-1 w-72">
+                <h3 className="font-medium text-base">
+                  Start small (or dream big)...
+                </h3>
+                <p className="text-sm text-text-600">
+                  Add your tasks or find a template to get started with your
+                  project.
+                </p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </LayoutWrapper>
     );
   } else {

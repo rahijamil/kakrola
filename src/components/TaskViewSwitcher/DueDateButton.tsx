@@ -6,29 +6,29 @@ import { X } from "lucide-react";
 const DueDateButton = ({
   taskData,
   setTaskData,
-  setShowDueDateSelector,
-  showDueDateSelector,
+  setShowDateSelector,
+  showDateSelector,
 }: {
   taskData: TaskType;
   setTaskData: Dispatch<SetStateAction<TaskType>>;
-  showDueDateSelector: boolean;
-  setShowDueDateSelector: Dispatch<SetStateAction<boolean>>;
+  showDateSelector: boolean;
+  setShowDateSelector: Dispatch<SetStateAction<boolean>>;
 }) => {
 
-  const dateInfo = getDateInfo(taskData.due_date);
+  const dateInfo = getDateInfo(taskData.dates.end_date);
 
   return (
     <button
-      onClick={() => setShowDueDateSelector(true)}
+      onClick={() => setShowDateSelector(true)}
       className={`flex items-center relative rounded-full transition py-[6px] px-2 group w-full text-xs ${
-        taskData.due_date !== null
-          ? showDueDateSelector
+        taskData.dates.end_date !== null
+          ? showDateSelector
             ? "bg-primary-100 cursor-pointer"
             : "hover:bg-text-100 cursor-pointer"
           : "cursor-default"
       }`}
     >
-      {taskData.due_date ? (
+      {taskData.dates.end_date ? (
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
             {dateInfo?.icon}
@@ -42,11 +42,11 @@ const DueDateButton = ({
         </div>
       )}
 
-      {taskData.due_date && (
+      {taskData.dates.end_date && (
         <div
           onClick={(ev) => {
             ev.stopPropagation();
-            setTaskData({ ...taskData, due_date: null });
+            setTaskData({ ...taskData, dates: {...taskData.dates, end_date: null} });
           }}
           className="p-1 rounded-full hover:bg-surface absolute top-1/2 -translate-y-1/2 right-1"
         >
