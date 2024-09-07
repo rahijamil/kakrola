@@ -1,7 +1,7 @@
 import { useAuthProvider } from "@/context/AuthContext";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { TaskType } from "@/types/project";
-import { Check, ChevronDown, Hash, Inbox } from "lucide-react";
+import { Check, ChevronDown, CheckCircle, Inbox } from "lucide-react";
 import Image from "next/image";
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Input } from "../ui/input";
@@ -63,35 +63,42 @@ const ProjectsSelector = ({
       setIsOpen={setIsOpen}
       Label={({ onClick }) =>
         forTaskModal ? (
-          <button
-            onClick={() => setIsOpen(true)}
-            className={`flex items-center justify-between rounded-full cursor-pointer transition p-[6px] px-2 group w-full ${
-              isOpen ? "bg-primary-100" : "hover:bg-text-100"
+          <div
+            onClick={onClick}
+            className={`flex items-center justify-between group cursor-pointer transition py-2 px-4 w-full rounded-full ${
+              isOpen ? "bg-primary-50" : "hover:bg-text-100"
             }`}
           >
-            {task.is_inbox ? (
-              <div className="flex items-center gap-2 text-xs">
-                <Inbox strokeWidth={1.5} className="w-3 h-3" />
-                Inbox
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 text-xs">
-                <div className="flex items-center gap-2">
-                  <Hash strokeWidth={1.5} className="w-3 h-3" />
-                  {projects.find((p) => p.id == task.project_id)?.name}
+            <button
+              ref={triggerRef}
+              className={`flex items-center justify-between`}
+            >
+              {task.is_inbox ? (
+                <div className="flex items-center gap-2 text-xs">
+                  <Inbox strokeWidth={1.5} className="w-3 h-3" />
+                  Inbox
                 </div>
-                <div>/</div>
-                <div className="flex items-center gap-2">
-                  {sections.find((s) => s.id == task.section_id)?.name}
+              ) : (
+                <div className="flex items-center gap-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle strokeWidth={1.5} className="w-3 h-3" />
+                    {projects.find((p) => p.id == task.project_id)?.name}
+                  </div>
+                  <div>/</div>
+                  <div className="flex items-center gap-2">
+                    {sections.find((s) => s.id == task.section_id)?.name}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </button>
 
             <ChevronDown
               strokeWidth={1.5}
-              className="w-4 h-4 opacity-0 group-hover:opacity-100 transition"
+              className={`w-4 h-4 transition ${
+                !isOpen && "opacity-0 group-hover:opacity-100"
+              }`}
             />
-          </button>
+          </div>
         ) : (
           <div
             ref={triggerRef}
@@ -109,7 +116,7 @@ const ProjectsSelector = ({
               {task.is_inbox ? (
                 <Inbox strokeWidth={1.5} className="w-4 h-4" />
               ) : (
-                <Hash strokeWidth={1.5} className="w-4 h-4" />
+                <CheckCircle strokeWidth={1.5} className="w-4 h-4" />
               )}
               <span className="font-bold text-xs truncate">
                 {task.project_id
@@ -184,7 +191,7 @@ const ProjectsSelector = ({
                       onClose();
                     }}
                   >
-                    <Hash strokeWidth={1.5} className="w-4 h-4 mr-2" />
+                    <CheckCircle strokeWidth={1.5} className="w-4 h-4 mr-2" />
                     {project.name}
                     {task.project_id === project.id &&
                       task.section_id == null && (
@@ -279,7 +286,10 @@ const ProjectsSelector = ({
                             onClose();
                           }}
                         >
-                          <Hash strokeWidth={1.5} className="w-4 h-4 mr-2" />
+                          <CheckCircle
+                            strokeWidth={1.5}
+                            className="w-4 h-4 mr-2"
+                          />
                           {project.name}
                           {task.project_id === project.id && (
                             <Check

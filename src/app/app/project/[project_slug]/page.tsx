@@ -11,6 +11,8 @@ import useProjectDetails from "@/hooks/useProjectDetails";
 import Image from "next/image";
 import Link from "next/link";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import { ActivityAction, createActivityLog, EntityType } from "@/types/activitylog";
+import { useAuthProvider } from "@/context/AuthContext";
 
 const ProjectDetails = ({
   params: { project_slug },
@@ -27,8 +29,10 @@ const ProjectDetails = ({
   const [showNoDateTasks, setShowNoDateTasks] = useState(false);
 
   const projectId = currentProject?.id || null;
-  const { data, isLoading, isError, error, setSections, setTasks } =
+  const { tasks, sections, setSections, setTasks, error, isPending, isError } =
     useProjectDetails(projectId);
+
+    const {profile} = useAuthProvider()
 
   useEffect(() => {
     if (projectsLoading) return;
@@ -62,6 +66,8 @@ const ProjectDetails = ({
 
   const updateProjectView = useCallback(
     async (view: ViewTypes["view"]) => {
+      if(!profile?.id) return;
+
       if (!currentProject?.id) return;
 
       setProjects(
@@ -78,9 +84,41 @@ const ProjectDetails = ({
         .eq("id", currentProject?.id);
 
       if (error) console.log(error);
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.UPDATED_PROJECT,
+        entity_type: EntityType.PROJECT,
+        entity_id: currentProject?.id,
+        metadata: {
+          old_data: {
+            settings: currentProject?.settings,
+          },
+          new_data: {
+            settings: { ...currentProject?.settings, view },
+          },
+        },
+      })
     },
     [currentProject?.id, setProjects]
   );
+
+  if (isPending) {
+    return (
+      <div className="flex items-center justify-center w-full h-screen">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (isError) {
+    console.error("Error fetching data:", error);
+    return (
+      <div className="flex items-center justify-center w-full h-screen">
+        <p>Error loading project details</p>
+      </div>
+    );
+  }
 
   if (notFound) {
     return (
@@ -107,23 +145,6 @@ const ProjectDetails = ({
     );
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center w-full h-screen">
-        <Spinner />
-      </div>
-    );
-  }
-
-  if (isError) {
-    console.error("Error fetching data:", error);
-    return (
-      <div className="flex items-center justify-center w-full h-screen">
-        <p>Error loading project details</p>
-      </div>
-    );
-  }
-
   if (currentProject?.id) {
     return (
       <LayoutWrapper
@@ -132,42 +153,41 @@ const ProjectDetails = ({
         setView={updateProjectView}
         project={currentProject}
         setTasks={setTasks}
-        tasks={data?.tasks || []}
+        tasks={tasks || []}
         showNoDateTasks={showNoDateTasks}
       >
         <TaskViewSwitcher
           project={currentProject}
-          tasks={data?.tasks || []}
+          tasks={tasks || []}
           setTasks={setTasks}
-          sections={data?.sections || []}
+          sections={sections || []}
           setSections={setSections}
           view={currentProject.settings.view}
           showNoDateTasks={showNoDateTasks}
           setShowNoDateTasks={setShowNoDateTasks}
         />
 
-        {data?.tasks.length === 0 &&
-          currentProject.settings.view === "List" && (
-            <div className="flex items-center justify-center flex-col gap-1 h-[30vh] select-none">
-              <Image
-                src="/project.png"
-                width={220}
-                height={200}
-                alt="Empty project"
-                className="rounded-full object-cover"
-                draggable={false}
-              />
-              <div className="text-center space-y-1 w-72">
-                <h3 className="font-medium text-base">
-                  Start small (or dream big)...
-                </h3>
-                <p className="text-sm text-text-600">
-                  Add your tasks or find a template to get started with your
-                  project.
-                </p>
-              </div>
+        {tasks?.length === 0 && currentProject.settings.view === "List" && (
+          <div className="flex items-center justify-center flex-col gap-1 h-[30vh] select-none">
+            <Image
+              src="/project.png"
+              width={220}
+              height={200}
+              alt="Empty project"
+              className="rounded-full object-cover"
+              draggable={false}
+            />
+            <div className="text-center space-y-1 w-72">
+              <h3 className="font-medium text-base">
+                Start small (or dream big)...
+              </h3>
+              <p className="text-sm text-text-600">
+                Add your tasks or find a template to get started with your
+                project.
+              </p>
             </div>
-          )}
+          </div>
+        )}
       </LayoutWrapper>
     );
   } else {

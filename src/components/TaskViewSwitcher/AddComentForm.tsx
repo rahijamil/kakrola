@@ -8,7 +8,7 @@ import {Textarea} from "../ui";
 
 const AddComentForm = ({ onCancelClick }: { onCancelClick?: () => void }) => {
   return (
-    <div className="border border-text-200 rounded-full p-4 focus-within:border-text-400">
+    <div className="border border-text-200 rounded-2xl p-4 focus-within:border-text-400">
       <Textarea
         placeholder="Comment"
         className="resize-none"

@@ -15,6 +15,8 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import SectionMoreOptions from "../SectionMoreOptions";
 import useTheme from "@/hooks/useTheme";
 import useFoundFixedDropdown from "@/hooks/useFoundFixedDropdown";
+import { ActivityAction, createActivityLog, EntityType } from "@/types/activitylog";
+import { useAuthProvider } from "@/context/AuthContext";
 
 const BoardViewColumn = ({
   column,
@@ -60,7 +62,7 @@ const BoardViewColumn = ({
   showSectionMoreOptions: string | null;
   setShowSectionMoreOptions: Dispatch<SetStateAction<string | null>>;
   project: ProjectType | null;
-  setTasks: (tasks: TaskType[]) => void
+  setTasks: (tasks: TaskType[]) => void;
   sections: SectionType[];
   setShowUngroupedAddSection: Dispatch<SetStateAction<boolean>>;
   showAddTask: string | number | null;
@@ -86,8 +88,11 @@ const BoardViewColumn = ({
   const [showTaskDeleteConfirm, setShowTaskDeleteConfirm] = useState<
     string | null
   >(null);
+  const {profile} = useAuthProvider()
 
   const handleUpdateColumnTitle = async () => {
+    if(!profile?.id) return;
+
     if (columnTitle.trim().length && columnTitle.trim() !== column.title) {
       setSections(
         sections.map((section) => {
@@ -111,6 +116,20 @@ const BoardViewColumn = ({
       if (error) {
         console.log(error);
       }
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.UPDATED_SECTION,
+        entity_id: column.id,
+        entity_type: EntityType.SECTION,
+        metadata: {
+          old_data: column,
+          new_data: {
+            ...column,
+            name: columnTitle.trim(),
+          }
+        },
+      });
     }
 
     setEditColumnTitle(false);

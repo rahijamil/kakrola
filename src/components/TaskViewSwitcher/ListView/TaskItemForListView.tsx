@@ -14,6 +14,12 @@ import DateSelector from "@/components/AddTask/DateSelector";
 import AssigneeSelector from "@/components/AddTask/AssigneeSelector";
 import Priorities from "@/components/AddTask/Priorities";
 import LabelSelector from "@/components/AddTask/LabelSelector";
+import { useAuthProvider } from "@/context/AuthContext";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
 
 const TaskItemForListView = ({
   task,
@@ -56,7 +62,11 @@ const TaskItemForListView = ({
 
   const [taskData, setTaskData] = useState<TaskType>(task);
 
+  const { profile } = useAuthProvider();
+
   const handleTaskDelete = async () => {
+    if (!profile?.id) return;
+
     const updatedTasks = tasks.filter((t) => t.id !== task.id);
 
     setTasks(updatedTasks);
@@ -69,9 +79,21 @@ const TaskItemForListView = ({
     if (error) {
       console.log(error);
     }
+
+    createActivityLog({
+      actor_id: profile.id,
+      action: ActivityAction.DELETED_TASK,
+      entity_id: task.id,
+      entity_type: EntityType.TASK,
+      metadata: {
+        old_data: task,
+      },
+    });
   };
 
   const handleCheckClickDebounced = debounce(async () => {
+    if (!profile?.id) return;
+
     try {
       // Update local tasks
       setTasks(
@@ -89,6 +111,24 @@ const TaskItemForListView = ({
 
       if (error) {
         throw error;
+      }
+
+      if (task.is_completed) {
+        createActivityLog({
+          actor_id: profile.id,
+          action: ActivityAction.REOPENED_TASK,
+          entity_id: task.id,
+          entity_type: EntityType.TASK,
+          metadata: {},
+        });
+      } else {
+        createActivityLog({
+          actor_id: profile.id,
+          action: ActivityAction.COMPLETED_TASK,
+          entity_id: task.id,
+          entity_type: EntityType.TASK,
+          metadata: {},
+        });
       }
     } catch (error) {
       console.log(error);
@@ -143,7 +183,9 @@ const TaskItemForListView = ({
             >
               <>
                 <td
-                  className={`w-[40%] pl-8 flex items-center justify-between gap-4 group ring-1 ring-transparent h-10 ${editTaskTitle ? "bg-primary-10" : "hover:ring-primary-300"}`}
+                  className={`w-[40%] pl-8 flex items-center justify-between gap-4 group ring-1 ring-transparent h-10 ${
+                    editTaskTitle ? "bg-primary-10" : "hover:ring-primary-300"
+                  }`}
                   onClick={() => setShowAddTask && setShowAddTask(null)}
                 >
                   <div className="flex items-center gap-2 w-full">

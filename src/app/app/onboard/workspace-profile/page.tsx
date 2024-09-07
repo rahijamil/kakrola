@@ -19,6 +19,11 @@ import { useOnboard } from "@/context/OnboardContext";
 import Spinner from "@/components/ui/Spinner";
 import { useAuthProvider } from "@/context/AuthContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
 
 const Step4ProfileWorkspace = () => {
   const router = useRouter();
@@ -69,6 +74,16 @@ const Step4ProfileWorkspace = () => {
           .select("id")
           .single();
         if (error) throw error;
+
+        createActivityLog({
+          actor_id: profile.id,
+          action: ActivityAction.CREATED_TEAM,
+          entity_type: EntityType.TEAM,
+          entity_id: data.id,
+          metadata: {
+            new_data: data,
+          },
+        });
 
         router.push(`/app/onboard/invite-members?teamId=${data.id}`);
       }

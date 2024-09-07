@@ -11,6 +11,11 @@ import { useAuthProvider } from "@/context/AuthContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import Spinner from "@/components/ui/Spinner";
 import { avatarUploader } from "@/utils/avatarUploader";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
 
 export default function AccountSettingsPage() {
   const { profile } = useAuthProvider();
@@ -42,6 +47,8 @@ export default function AccountSettingsPage() {
   };
 
   const removeAvatar = async () => {
+    if (!profile?.id) return;
+
     setRemoveLoading(true);
     setError(null);
 
@@ -72,6 +79,21 @@ export default function AccountSettingsPage() {
       if (updateError) throw updateError;
 
       setAvatarUrl("/default_avatar.png");
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.UPDATED_PROFILE,
+        entity_type: EntityType.USER,
+        entity_id: profile?.id,
+        metadata: {
+          old_data: {
+            avatar_url: profile?.avatar_url,
+          },
+          new_data: {
+            avatar_url: null,
+          },
+        },
+      });
     } catch (error) {
       console.error("Error removing avatar:", error);
       setError("Failed to remove avatar. Please try again.");
@@ -83,6 +105,8 @@ export default function AccountSettingsPage() {
   const [isUpdatingName, setIsUpdatingName] = useState(false);
 
   const handleNameChange = async () => {
+    if (!profile?.id) return;
+
     setIsUpdatingName(true);
     setError(null);
 
@@ -93,6 +117,21 @@ export default function AccountSettingsPage() {
         .eq("id", profile?.id);
 
       if (updateError) throw updateError;
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.UPDATED_PROFILE,
+        entity_type: EntityType.USER,
+        entity_id: profile?.id,
+        metadata: {
+          old_data: {
+            full_name: profile?.full_name,
+          },
+          new_data: {
+            full_name: name,
+          },
+        },
+      });
     } catch (error) {
       console.error("Error updating name:", error);
       setError("Failed to update name. Please try again.");

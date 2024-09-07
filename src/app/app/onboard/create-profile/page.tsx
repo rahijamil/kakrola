@@ -13,6 +13,7 @@ import { useAuthProvider } from "@/context/AuthContext";
 import Spinner from "@/components/ui/Spinner";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { avatarUploader } from "@/utils/avatarUploader";
+import { ActivityAction, createActivityLog, EntityType } from "@/types/activitylog";
 
 const Step1CreateProfile = () => {
   const { profile } = useAuthProvider();
@@ -40,12 +41,16 @@ const Step1CreateProfile = () => {
 
   const handleSubmit = async () => {
     try {
-      setLoading(true);
+     
 
       if (!name.trim() && !fileUrl && !profile?.id) {
         setLoading(false);
         return;
       }
+
+      if(!profile?.id) return;
+
+      setLoading(true);
 
       if (profile?.full_name !== name.trim()) {
         const { error } = await supabaseBrowser
@@ -58,6 +63,21 @@ const Step1CreateProfile = () => {
         if (error) {
           throw error;
         }
+
+        createActivityLog({
+          actor_id: profile.id,
+          action: ActivityAction.UPDATED_PROFILE,
+          entity_type: EntityType.USER,
+          entity_id: profile.id,
+          metadata: {
+            old_data: {
+              full_name: profile?.full_name,
+            },
+            new_data: {
+              full_name: name.trim(),
+            },
+          },
+        })
       }
 
       if (useWithTeam) {

@@ -6,6 +6,7 @@ import Spinner from "../ui/Spinner";
 import { v4 as uuidv4 } from "uuid";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { ActivityAction, createActivityLog, EntityType } from "@/types/activitylog";
 
 const AddNewSectionBoardView = ({
   setShowUngroupedAddSection,
@@ -114,6 +115,16 @@ const AddNewSectionBoardView = ({
           )
           .sort((a, b) => a.order - b.order)
       );
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.CREATED_SECTION,
+        entity_id: data.id,
+        entity_type: EntityType.SECTION,
+        metadata: {
+          new_data: newSection,
+        },
+      });
     } catch (error) {
       console.error("Error inserting section:", error);
       // Revert the optimistic update if there's an error

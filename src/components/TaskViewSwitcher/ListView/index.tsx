@@ -30,6 +30,11 @@ import {
   Tag,
   UserPlus,
 } from "lucide-react";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
 
 interface ListViewProps {
   groupedTasks: Record<string, TaskType[]>;
@@ -123,6 +128,8 @@ const ListView: React.FC<ListViewProps> = ({
 
   const onDragEnd = useCallback(
     async (result: DropResult) => {
+      if (!profile?.id) return;
+
       const { source, destination, type } = result;
 
       if (!destination) return;
@@ -273,6 +280,8 @@ const ListView: React.FC<ListViewProps> = ({
     section_id: string | number,
     is_collapsed: boolean
   ) => {
+    if (!profile?.id) return;
+
     setSections(
       sections.map((section) =>
         section.id === section_id
@@ -291,6 +300,21 @@ const ListView: React.FC<ListViewProps> = ({
     if (sectionsError) {
       console.error(sectionsError);
     }
+
+    createActivityLog({
+      actor_id: profile?.id,
+      action: ActivityAction.UPDATED_SECTION,
+      entity_id: section_id,
+      entity_type: EntityType.SECTION,
+      metadata: {
+        old_data: {
+          is_collapsed: !is_collapsed,
+        },
+        new_data: {
+          is_collapsed,
+        },
+      },
+    });
   };
 
   const handleAddSection = async (
@@ -377,6 +401,14 @@ const ListView: React.FC<ListViewProps> = ({
           })
           .sort((a, b) => a.order - b.order)
       );
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.CREATED_SECTION,
+        entity_id: data.id,
+        entity_type: EntityType.SECTION,
+        metadata: {},
+      });
     } catch (error) {
       console.error("Error inserting section:", error);
       // Revert the optimistic update if there's an error
@@ -390,7 +422,7 @@ const ListView: React.FC<ListViewProps> = ({
   };
 
   const handleSectionDelete = async (section: { id: number } | null) => {
-    if (section) {
+    if (section && profile?.id) {
       setTasks(tasks.filter((task) => task.section_id !== section.id));
       setSections(sections.filter((s) => s.id !== section.id));
       setShowDeleteConfirm(null);
@@ -401,6 +433,16 @@ const ListView: React.FC<ListViewProps> = ({
         .eq("section_id", section.id);
       if (!error) {
         await supabaseBrowser.from("sections").delete().eq("id", section.id);
+
+        createActivityLog({
+          actor_id: profile.id,
+          action: ActivityAction.DELETED_SECTION,
+          entity_id: section.id,
+          entity_type: EntityType.SECTION,
+          metadata: {
+            old_data: section,
+          },
+        });
       }
     } else {
       setTasks(tasks.filter((task) => task.section_id !== null));
@@ -411,7 +453,7 @@ const ListView: React.FC<ListViewProps> = ({
   };
 
   const handleSectionArchive = async (section: { id: number } | null) => {
-    if (section) {
+    if (section && profile?.id) {
       if (showArchiveConfirm?.is_archived) {
         setSections(
           sections.map((s) =>
@@ -425,6 +467,17 @@ const ListView: React.FC<ListViewProps> = ({
           .from("sections")
           .update({ is_archived: false })
           .eq("id", section.id);
+
+        createActivityLog({
+          actor_id: profile.id,
+          action: ActivityAction.UNARCHIVED_SECTION,
+          entity_id: section.id,
+          entity_type: EntityType.SECTION,
+          metadata: {
+            old_data: section,
+            new_data: { ...section, is_archived: false },
+          },
+        });
       } else {
         setTasks(
           tasks.map((t) =>
@@ -449,6 +502,17 @@ const ListView: React.FC<ListViewProps> = ({
           .from("sections")
           .update({ is_archived: true })
           .eq("id", section.id);
+
+        createActivityLog({
+          actor_id: profile.id,
+          action: ActivityAction.ARCHIVED_SECTION,
+          entity_id: section.id,
+          entity_type: EntityType.SECTION,
+          metadata: {
+            old_data: section,
+            new_data: { ...section, is_archived: true },
+          },
+        });
       }
     }
   };
@@ -497,6 +561,7 @@ const ListView: React.FC<ListViewProps> = ({
                         key={column.id}
                         draggableId={column.id}
                         index={columnIndex}
+                        isDragDisabled={!!showTaskItemModal}
                       >
                         {(provided) => (
                           <tr

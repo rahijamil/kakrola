@@ -12,6 +12,7 @@ import {
   ArrowRight,
   Calendar,
   CalendarArrowDown,
+  ChevronDown,
   CircleSlash,
   Plus,
   Sun,
@@ -308,38 +309,68 @@ const DateSelector = ({
       setIsOpen={setIsOpen}
       Label={({ onClick }) =>
         forTaskModal ? (
-          <div>
+          <div
+            onClick={onClick}
+            className={`rounded-full transition py-2 px-4 group w-full flex items-center justify-between  ${
+              isOpen
+                ? "bg-primary-50 cursor-pointer"
+                : "hover:bg-text-100 cursor-pointer"
+            }`}
+          >
             <button
-              onClick={() => task.dates.end_date == null && setIsOpen(true)}
-              className={`flex items-center justify-between rounded-full transition p-[6px] px-2 group w-full ${
-                task.dates.end_date == null
-                  ? isOpen
-                    ? "bg-primary-100 cursor-pointer"
-                    : "hover:bg-text-100 cursor-pointer"
-                  : "cursor-default"
-              }`}
+              ref={triggerRef}
+              className={`flex items-center justify-between `}
             >
-              <p
-                className={`font-semibold text-xs ${
-                  task.dates.end_date !== null && "cursor-text"
-                }`}
-              >
-                Dates
-              </p>
+              {task.dates.start_date || task.dates.end_date ? (
+                <>
+                  <div className="flex items-center gap-1">
+                    {task.dates.start_date && (
+                      <span>
+                        {format(task.dates.start_date, "dd LLL yyyy")}
+                      </span>
+                    )}
 
-              {task.dates.end_date == null && (
-                <Plus strokeWidth={1.5} className="w-4 h-4" />
+                    {task.dates.end_date && (
+                      <div>
+                        <ArrowRight strokeWidth={1.5} className="w-4 h-4" />
+                      </div>
+                    )}
+
+                    {task.dates.end_date && (
+                      <span>{format(task.dates.end_date, "dd LLL yyyy")}</span>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      setTask({
+                        ...task,
+                        dates: {
+                          start_date: null,
+                          start_time: null,
+                          end_date: null,
+                          end_time: null,
+                          reminder: null,
+                        },
+                      });
+                    }}
+                    className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-200 rounded-full hidden group-data-[state=due-date]:group-hover:inline-block absolute top-1/2 -translate-y-1/2 right-2"
+                  >
+                    <X strokeWidth={1.5} className="w-4 h-4 text-text-500" />
+                  </button>
+                </>
+              ) : (
+                <span className="text-text-700">No dates</span>
               )}
             </button>
 
-            {task.dates.end_date !== null && (
-              <DueDateButton
-                taskData={task}
-                setTaskData={setTask}
-                setShowDateSelector={setIsOpen}
-                showDateSelector={isOpen}
-              />
-            )}
+            <ChevronDown
+              strokeWidth={1.5}
+              className={`w-4 h-4 transition ${
+                !isOpen && "opacity-0 group-hover:opacity-100"
+              }`}
+            />
           </div>
         ) : forListView ? (
           <div

@@ -22,6 +22,11 @@ import AnimatedCircleCheck from "@/components/TaskViewSwitcher/AnimatedCircleChe
 import { ViewTypes } from "@/types/viewTypes";
 import { ProjectMemberType } from "@/types/team";
 import { RoleType } from "@/types/role";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
 
 const projectViewsToSelect: {
   id: number;
@@ -194,6 +199,17 @@ const AddEditProject = ({
         return;
       }
 
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.UPDATED_PROJECT,
+        entity_type: EntityType.PROJECT,
+        entity_id: project.id,
+        metadata: {
+          old_data: project,
+          new_data: data,
+        },
+      });
+
       setProjects(
         projects.map((p) => {
           if (p.id === project.id) {
@@ -220,6 +236,17 @@ const AddEditProject = ({
           console.error(projectMembersError);
           return;
         }
+
+        createActivityLog({
+          actor_id: profile.id,
+          action: ActivityAction.UPDATED_PROJECT,
+          entity_type: EntityType.PROJECT,
+          entity_id: project.id,
+          metadata: {
+            old_data: initialProjectMembersData,
+            new_data: projectMembersData,
+          },
+        });
       }
     } else {
       const { data, error } = await supabaseBrowser.rpc(
@@ -241,6 +268,14 @@ const AddEditProject = ({
         setLoading(false);
         return;
       }
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.CREATED_PROJECT,
+        entity_type: EntityType.PROJECT,
+        entity_id: data.project_id,
+        metadata: {},
+      });
 
       if (data) {
         // const [newProject, newMember] = data;
@@ -310,51 +345,37 @@ const AddEditProject = ({
       const newOrder = (prevOrder + nextOrder) / 2;
 
       // Insert the new project
-      const { data: newProject, error: insertError } = await supabaseBrowser
-        .from("projects")
-        .insert({
-          ...projectData,
-        })
-        .select()
-        .single();
+      const { data, error } = await supabaseBrowser.rpc(
+        "insert_project_with_member",
+        {
+          _team_id: projectData.team_id,
+          _profile_id: profile.id,
+          _project_name: projectData.name,
+          _project_slug: projectData.slug,
+          _project_color: projectData.settings.color,
+          _view: projectData.settings.view,
+          _selected_views: projectData.settings.selected_views,
+          _is_favorite: projectMembersData.project_settings.is_favorite,
+          _order: newOrder,
+        }
+      );
 
-      if (insertError) {
-        setError(insertError.message);
-        setLoading(false);
-        return;
-      }
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.CREATED_PROJECT,
+        entity_type: EntityType.PROJECT,
+        entity_id: data.project_id,
+        metadata: {},
+      });
 
-      // Update userProjectSettings with the new order
-      const newProjectMembersData: Omit<ProjectMemberType, "id"> = {
-        project_id: newProject.id,
-        profile_id: profile.id,
-        role: RoleType.ADMIN,
-        project_settings: {
-          is_favorite:
-            projectMembersData?.project_settings.is_favorite || false,
-          order: newOrder,
-        },
-      };
+      // // Update local state without needing to reorder everything
+      // const updatedProjects = [
+      //   ...projects.slice(0, currentIndex + (position === "below" ? 1 : 0)),
+      //   newProject,
+      //   ...projects.slice(currentIndex + (position === "below" ? 1 : 0)),
+      // ];
 
-      const { error: settingsError } = await supabaseBrowser
-        .from("project_members")
-        .insert(newProjectMembersData);
-
-      if (settingsError) {
-        setError(settingsError.message);
-        setLoading(false);
-        console.error(settingsError);
-        return;
-      }
-
-      // Update local state without needing to reorder everything
-      const updatedProjects = [
-        ...projects.slice(0, currentIndex + (position === "below" ? 1 : 0)),
-        newProject,
-        ...projects.slice(currentIndex + (position === "below" ? 1 : 0)),
-      ];
-
-      setProjects(updatedProjects);
+      // setProjects(updatedProjects);
     }
 
     setLoading(false);

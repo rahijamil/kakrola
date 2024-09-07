@@ -3,6 +3,12 @@ import ConfirmAlert from "../../AlertBox/ConfirmAlert";
 import { ProjectType } from "@/types/project";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
+import { useAuthProvider } from "@/context/AuthContext";
 
 const ProjectArchiveConfirm = ({
   project,
@@ -12,8 +18,11 @@ const ProjectArchiveConfirm = ({
   setShowArchiveConfirm: Dispatch<SetStateAction<boolean>>;
 }) => {
   const { projects, setProjects } = useTaskProjectDataProvider();
+  const { profile } = useAuthProvider();
 
   const handleArchive = async () => {
+    if (!profile?.id) return;
+
     const updatedProjects = projects.map((p) => {
       if (p.id === project.id) {
         return { ...p, is_archived: true };
@@ -29,6 +38,17 @@ const ProjectArchiveConfirm = ({
     if (error) {
       console.error(error);
     }
+
+    createActivityLog({
+      actor_id: profile.id,
+      action: ActivityAction.UPDATED_PROJECT,
+      entity_id: project.id,
+      entity_type: EntityType.PROJECT,
+      metadata: {
+        old_data: project,
+        new_data: { ...project, is_archived: true },
+      },
+    });
   };
 
   return (

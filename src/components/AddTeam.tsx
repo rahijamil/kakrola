@@ -28,6 +28,7 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import Textarea from "./ui/textarea";
 import Link from "next/link";
 import { Permission, RoleType } from "@/types/role";
+import { ActivityAction, createActivityLog, EntityType } from "@/types/activitylog";
 
 // Updated TeamData type
 interface TeamData extends BaseTeamType {
@@ -136,6 +137,14 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
             // Consider handling this error, possibly by deleting the created team
             return;
           }
+
+          createActivityLog({
+            actor_id: profile.id,
+            action: ActivityAction.CREATED_TEAM,
+            entity_type: EntityType.TEAM,
+            entity_id: createdTeamData.id,
+            metadata: {},
+          });
         }
       }
 

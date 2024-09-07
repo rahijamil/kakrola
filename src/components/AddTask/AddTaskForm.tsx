@@ -25,6 +25,11 @@ import AssigneeSelector from "./AssigneeSelector";
 import { TaskInput } from "./TaskInput";
 import DescriptionInput from "./DescriptionInput";
 import { getInitialTaskData } from "@/lib/getInitialTaskData";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
 
 const AddTaskForm = ({
   onClose,
@@ -105,6 +110,9 @@ const AddTaskForm = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!profile?.id) return;
+
     if (!taskData.title) {
       return;
     }
@@ -138,6 +146,16 @@ const AddTaskForm = ({
         if (tasks) {
           // Ensure UI reflects any updates from the database
           updatedTasks = tasks.map((t) => (t.id === taskData.id ? data : t));
+
+          createActivityLog({
+            actor_id: profile.id,
+            action: ActivityAction.CREATED_TASK,
+            entity_type: EntityType.TASK,
+            entity_id: data.id,
+            metadata: {
+              new_data: data,
+            },
+          });
         }
       } else {
         // Create a temporary task with a UUID
@@ -190,6 +208,16 @@ const AddTaskForm = ({
         updatedTasks = updatedTasks.map((t) =>
           t.id === tempId ? { ...t, id: data.id } : t
         );
+
+        createActivityLog({
+          actor_id: profile.id,
+          action: ActivityAction.CREATED_TASK,
+          entity_type: EntityType.TASK,
+          entity_id: data.id,
+          metadata: {
+            new_data: data,
+          },
+        });
       }
 
       if (setTasks) {

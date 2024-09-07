@@ -20,6 +20,12 @@ import SaveTemplateModal from "../SidebarWrapper/Sidebar/SidebarProjectMoreOptio
 import LayoutView from "../LayoutView";
 import Link from "next/link";
 import { useGlobalOption } from "@/context/GlobalOptionContext";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
+import { useAuthProvider } from "@/context/AuthContext";
 
 const LayoutWrapper = ({
   children,
@@ -57,10 +63,14 @@ const LayoutWrapper = ({
     project?.name || headline
   );
 
-  const { setProjects, projects, teams, activeProject } = useTaskProjectDataProvider();
+  const { setProjects, projects, teams, activeProject } =
+    useTaskProjectDataProvider();
   const { setShowShareOption, showShareOption } = useGlobalOption();
+  const { profile } = useAuthProvider();
 
   const handleEditTitle = async () => {
+    if (!profile?.id) return;
+
     if (
       project &&
       projectTitle.trim().length &&
@@ -78,6 +88,17 @@ const LayoutWrapper = ({
         .eq("id", project.id);
 
       if (error) console.log(error);
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.UPDATED_PROJECT,
+        entity_type: EntityType.PROJECT,
+        entity_id: project.id,
+        metadata: {
+          old_data: project,
+          new_data: { ...project, name: projectTitle.trim() },
+        },
+      });
     }
     setModalState((prev) => ({
       ...prev,
@@ -270,14 +291,13 @@ const LayoutWrapper = ({
 
             <div className={`flex-1 wrapper`}>
               <div className="flex flex-col h-full">
-                <div
-                  className={`${project && "pt-4"} ${
-                    !setView && "pt-8"
-                  }`}
-                >
+                <div className={`${project && "pt-4"} ${!setView && "pt-8"}`}>
                   {project ? (
                     <div className="flex items-center gap-2">
-                      <CheckCircle size={28} className={`bg-${activeProject?.settings.color}`} />
+                      <CheckCircle
+                        size={28}
+                        className={`bg-${activeProject?.settings.color}`}
+                      />
                       <input
                         type="text"
                         className="text-[26px] font-bold border-none rounded-full focus-visible:outline-none p-1.5 bg-transparent w-full"

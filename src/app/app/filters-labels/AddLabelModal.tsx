@@ -4,6 +4,11 @@ import { Input } from "@/components/ui/input";
 import Spinner from "@/components/ui/Spinner";
 import { ToggleSwitch } from "@/components/ui/ToggleSwitch";
 import { useAuthProvider } from "@/context/AuthContext";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
 import { TaskLabelType } from "@/types/project";
 import { generateSlug } from "@/utils/generateSlug";
 import { supabaseBrowser } from "@/utils/supabase/client";
@@ -46,9 +51,21 @@ const AddLabelModal = ({ onClose }: { onClose: () => void }) => {
 
         const { data, error } = await supabaseBrowser
           .from("task_labels")
-          .insert(dataToInsert);
+          .insert(dataToInsert)
+          .select()
+          .single();
 
         if (error) throw error;
+
+        createActivityLog({
+          actor_id: profile.id,
+          action: ActivityAction.CREATED_LABEL,
+          entity_type: EntityType.LABEL,
+          entity_id: data.id,
+          metadata: {
+            new_data: data,
+          },
+        });
       }
     } catch (error: any) {
       console.error(`Error: ${error.message}`);

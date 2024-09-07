@@ -3,6 +3,12 @@ import ConfirmAlert from "../../AlertBox/ConfirmAlert";
 import { ProjectType } from "@/types/project";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
+import { useAuthProvider } from "@/context/AuthContext";
 
 const ProjectDeleteConfirm = ({
   project,
@@ -12,28 +18,13 @@ const ProjectDeleteConfirm = ({
   setShowDeleteConfirm: Dispatch<SetStateAction<boolean>>;
 }) => {
   const { projects, setProjects } = useTaskProjectDataProvider();
+  const { profile } = useAuthProvider();
 
   const handleProjectDelete = async () => {
+    if (!profile?.id) return;
+
     const updatedProjects = projects.filter((proj) => proj.id !== project.id);
     setProjects(updatedProjects);
-
-    // Delete tasks
-    const { error } = await supabaseBrowser
-      .from("tasks")
-      .delete()
-      .eq("project_id", project.id);
-    if (error) {
-      console.error(error);
-    }
-
-    // Delete sections
-    const { error: deleteError } = await supabaseBrowser
-      .from("sections")
-      .delete()
-      .eq("project_id", project.id);
-    if (deleteError) {
-      console.error(deleteError);
-    }
 
     // Delete project
     const { error: projectError } = await supabaseBrowser
@@ -43,6 +34,16 @@ const ProjectDeleteConfirm = ({
     if (projectError) {
       console.error(projectError);
     }
+
+    createActivityLog({
+      actor_id: profile.id,
+      action: ActivityAction.DELETED_PROJECT,
+      entity_id: project.id,
+      entity_type: EntityType.PROJECT,
+      metadata: {
+        old_data: project,
+      },
+    });
   };
 
   return (

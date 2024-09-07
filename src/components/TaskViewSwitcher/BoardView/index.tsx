@@ -11,6 +11,12 @@ import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import BoardViewColumn from "./BoardViewColumn";
 import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
+import { useAuthProvider } from "@/context/AuthContext";
 
 const BoardView: React.FC<{
   tasks: TaskType[];
@@ -25,7 +31,7 @@ const BoardView: React.FC<{
   showUngroupedAddSection: boolean;
   setShowUngroupedAddSection: React.Dispatch<React.SetStateAction<boolean>>;
   project: ProjectType | null;
-  setTasks: (tasks: TaskType[]) => void
+  setTasks: (tasks: TaskType[]) => void;
 }> = ({
   tasks,
   sections,
@@ -44,6 +50,8 @@ const BoardView: React.FC<{
   const [showSectionMoreOptions, setShowSectionMoreOptions] = useState<
     string | null
   >(null);
+
+  const { profile } = useAuthProvider();
 
   const columns = useMemo(() => {
     const columnsObj: Record<
@@ -85,6 +93,8 @@ const BoardView: React.FC<{
   }, [columns.length, setShowUngroupedAddSection]);
 
   const onDragEnd = async (result: DropResult) => {
+    if (!profile?.id) return;
+
     const { source, destination, type } = result;
 
     if (!destination) return;
@@ -120,6 +130,20 @@ const BoardView: React.FC<{
             .eq("id", section.id);
 
           if (error) throw error;
+
+          createActivityLog({
+            actor_id: profile.id,
+            action: ActivityAction.UPDATED_SECTION,
+            entity_id: section.id,
+            entity_type: EntityType.SECTION,
+            metadata: {
+              old_data: section,
+              new_data: {
+                ...section,
+                order: section.order,
+              },
+            },
+          });
         }
       } catch (error) {
         console.error("Error updating section order:", error);
@@ -230,6 +254,8 @@ const BoardView: React.FC<{
   };
 
   const handleSectionDelete = async (section: { id: number } | null) => {
+    if (!profile?.id) return;
+
     if (section) {
       // first update localstate
       setTasks(tasks.filter((task) => task.section_id !== section.id));
@@ -237,16 +263,6 @@ const BoardView: React.FC<{
       setSections(sections.filter((s) => s.id !== section.id));
 
       setShowDeleteConfirm(null);
-
-      // delete all tasks in the section
-      const { error } = await supabaseBrowser
-        .from("tasks")
-        .delete()
-        .eq("section_id", section.id);
-      if (error) {
-        console.error(error);
-        return;
-      }
 
       // delete the section
       const { error: sectionError } = await supabaseBrowser
@@ -256,6 +272,16 @@ const BoardView: React.FC<{
       if (sectionError) {
         console.error(sectionError);
       }
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.DELETED_SECTION,
+        entity_id: section.id,
+        entity_type: EntityType.SECTION,
+        metadata: {
+          old_data: section,
+        },
+      });
     } else {
       // update localstate
       setTasks(tasks.filter((task) => task.section_id !== null));
@@ -274,6 +300,8 @@ const BoardView: React.FC<{
   };
 
   const handleSectionArchive = async (section: { id: number } | null) => {
+    if (!profile?.id) return;
+
     if (section) {
       if (showArchiveConfirm?.is_archived) {
         setSections(
@@ -292,6 +320,17 @@ const BoardView: React.FC<{
         if (sectionError) {
           console.error(sectionError);
         }
+
+        createActivityLog({
+          actor_id: profile?.id,
+          action: ActivityAction.UNARCHIVED_SECTION,
+          entity_id: section.id,
+          entity_type: EntityType.SECTION,
+          metadata: {
+            old_data: section,
+            new_data: { ...section, is_archived: false },
+          },
+        });
       } else {
         // first update localstate
         setTasks(
@@ -327,6 +366,17 @@ const BoardView: React.FC<{
         if (sectionError) {
           console.error(sectionError);
         }
+
+        createActivityLog({
+          actor_id: profile?.id,
+          action: ActivityAction.ARCHIVED_SECTION,
+          entity_id: section.id,
+          entity_type: EntityType.SECTION,
+          metadata: {
+            old_data: section,
+            new_data: { ...section, is_archived: true },
+          },
+        });
       }
     }
   };

@@ -17,6 +17,12 @@ import { debounce } from "lodash";
 import { getDateInfo } from "@/utils/getDateInfo";
 import AnimatedCircleCheck from "./AnimatedCircleCheck";
 import { useGlobalOption } from "@/context/GlobalOptionContext";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
+import { useAuthProvider } from "@/context/AuthContext";
 
 const TaskItem = ({
   task,
@@ -36,7 +42,7 @@ const TaskItem = ({
   subTasks: TaskType[];
   index: number;
   project: ProjectType | null;
-  setTasks: (tasks: TaskType[]) => void
+  setTasks: (tasks: TaskType[]) => void;
   tasks: TaskType[];
   showModal?: string | null;
   smallAddTask?: boolean;
@@ -57,8 +63,11 @@ const TaskItem = ({
   } | null>(null);
 
   const { setShowShareOption, showShareOption } = useGlobalOption();
+  const { profile } = useAuthProvider();
 
   const handleTaskDelete = async () => {
+    if (!profile?.id) return;
+
     const updatedTasks = tasks.filter((t) => t.id !== task.id);
 
     setTasks(updatedTasks);
@@ -71,10 +80,21 @@ const TaskItem = ({
     if (error) {
       console.log(error);
     }
+
+    createActivityLog({
+      actor_id: profile.id,
+      action: ActivityAction.DELETED_TASK,
+      entity_id: task.id,
+      entity_type: EntityType.TASK,
+      metadata: {
+        old_data: task,
+      },
+    });
   };
 
   const handleCheckClickDebounced = debounce(async () => {
     try {
+      if (!profile?.id) return;
       // Update local tasks
       setTasks(
         tasks.map((t) =>
@@ -92,6 +112,20 @@ const TaskItem = ({
       if (error) {
         throw error;
       }
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.UPDATED_TASK,
+        entity_id: task.id,
+        entity_type: EntityType.TASK,
+        metadata: {
+          old_data: task,
+          new_data: {
+            ...task,
+            is_completed: !task.is_completed,
+          }
+        },
+      });
     } catch (error) {
       console.log(error);
     }

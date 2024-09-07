@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Input } from "../ui/input";
 import Image from "next/image";
-import { Check, Plus, User, UserPlus, X } from "lucide-react";
+import { Check, ChevronDown, Plus, User, UserPlus, X } from "lucide-react";
 import { ProjectType, TaskType } from "@/types/project";
 import Dropdown from "../ui/Dropdown";
 import { useQuery } from "@tanstack/react-query";
@@ -88,78 +88,62 @@ const AssigneeSelector = ({
       triggerRef={triggerRef}
       Label={({ onClick }) =>
         forTaskModal ? (
-          <div>
+          <div
+            onClick={onClick}
+            className={`rounded-full transition p-2 px-4 group w-full flex items-center justify-between ${
+              isOpen
+                ? "bg-primary-50 cursor-pointer"
+                : "hover:bg-text-100 cursor-pointer"
+            }`}
+          >
             <button
               ref={triggerRef}
-              onClick={onClick}
-              className={`flex items-center justify-between rounded-full transition p-[6px] px-2 group w-full ${
-                task.assignees.length === 0
-                  ? isOpen
-                    ? "bg-primary-100 cursor-pointer"
-                    : "hover:bg-text-100 cursor-pointer"
-                  : "cursor-default"
-              }`}
+              className={`flex items-center justify-between`}
             >
-              <p
-                className={`font-semibold text-xs ${
-                  task.assignees.length > 0 && "cursor-text"
-                }`}
-              >
-                Assignee
-              </p>
-
-              {task.assignees.length === 0 && (
-                <Plus strokeWidth={1.5} className="w-4 h-4" />
+              {task.assignees.length === 0 ? (
+                <span>No assignee</span>
+              ) : (
+                task.assignees.map((assignee) => (
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={
+                        getProfileById(assignee.profile_id)?.avatar_url ||
+                        "/default_avatar.png"
+                      }
+                      width={18}
+                      height={18}
+                      alt={
+                        getProfileById(assignee.profile_id)?.full_name ||
+                        getProfileById(assignee.profile_id)?.username ||
+                        "avatar"
+                      }
+                      className="rounded-full object-cover max-w-[18px] max-h-[18px]"
+                    />
+                    {
+                      getProfileById(assignee.profile_id)?.full_name.split(
+                        " "
+                      )[0]
+                    }
+                    {getProfileById(assignee.profile_id)?.full_name.split(
+                      " "
+                    )[1] // Check if the second name exists
+                      ? " " +
+                        getProfileById(assignee.profile_id)?.full_name.split(
+                          " "
+                        )[1][0] +
+                        "." // Display the initial of the second name
+                      : ""}
+                  </div>
+                ))
               )}
             </button>
 
-            {task.assignees.map((assignee) => (
-              <button
-                onClick={() => setIsOpen(true)}
-                className={`flex items-center relative rounded-full transition py-[6px] px-2 group w-full text-xs ${
-                  task.assignees.length > 0
-                    ? isOpen
-                      ? "bg-primary-100 cursor-pointer"
-                      : "hover:bg-text-100 cursor-pointer"
-                    : "cursor-default"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Image
-                    src={
-                      getProfileById(assignee.profile_id)?.avatar_url ||
-                      "/default_avatar.png"
-                    }
-                    width={18}
-                    height={18}
-                    alt={
-                      getProfileById(assignee.profile_id)?.full_name ||
-                      getProfileById(assignee.profile_id)?.username ||
-                      "avatar"
-                    }
-                    className="rounded-full object-cover max-w-[18px] max-h-[18px]"
-                  />
-                  {getProfileById(assignee.profile_id)?.full_name.split(" ")[0]}
-                  {getProfileById(assignee.profile_id)?.full_name.split(" ")[1] // Check if the second name exists
-                    ? " " +
-                      getProfileById(assignee.profile_id)?.full_name.split(
-                        " "
-                      )[1][0] +
-                      "." // Display the initial of the second name
-                    : ""}
-                </div>
-
-                <div
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    setTask({ ...task, assignees: [] });
-                  }}
-                  className="p-1 rounded-full hover:bg-surface absolute top-1/2 -translate-y-1/2 right-1"
-                >
-                  <X strokeWidth={1.5} size={16} />
-                </div>
-              </button>
-            ))}
+            <ChevronDown
+              strokeWidth={1.5}
+              className={`w-4 h-4 transition ${
+                !isOpen && "opacity-0 group-hover:opacity-100"
+              }`}
+            />
           </div>
         ) : forListView ? (
           <div
@@ -265,43 +249,54 @@ const AssigneeSelector = ({
       }
       dataFromElement
       autoClose={false}
-      items={assigneeProfiles
-        .filter(
-          (profile) =>
-            profile.full_name
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase().trim()) ||
-            profile.username
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase().trim()) ||
-            profile.email
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase().trim())
-        )
-        .map((profile, index) => ({
-          id: index,
-          label: profile.full_name,
-          icon: (
-            <Image
-              src={profile.avatar_url || "/default_avatar.png"}
-              width={20}
-              height={20}
-              alt={profile.full_name || profile.username || "avatar"}
-              className="rounded-full object-cover max-w-5 max-h-5"
-            />
-          ),
-          onClick: () => handleProfileClick(profile),
-          rightContent: (
-            <AnimatedTaskCheckbox
-              priority={"P3"}
-              playSound={false}
-              handleCheckSubmit={() => handleProfileClick(profile)}
-              is_completed={task.assignees.some(
-                (assignee) => assignee.profile_id === profile.id
-              )}
-            />
-          ),
-        }))}
+      items={[
+        {
+          id: 0,
+          label: "Unassigned",
+          icon: <User strokeWidth={1.5} className="w-4 h-4 text-text-500" />,
+          onClick: () => {
+            setTask({ ...task, assignees: [] });
+            setIsOpen(false);
+          },
+        },
+        ...assigneeProfiles
+          .filter(
+            (profile) =>
+              profile.full_name
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase().trim()) ||
+              profile.username
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase().trim()) ||
+              profile.email
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase().trim())
+          )
+          .map((profile, index) => ({
+            id: index + 1,
+            label: profile.full_name,
+            icon: (
+              <Image
+                src={profile.avatar_url || "/default_avatar.png"}
+                width={20}
+                height={20}
+                alt={profile.full_name || profile.username || "avatar"}
+                className="rounded-full object-cover max-w-5 max-h-5"
+              />
+            ),
+            onClick: () => handleProfileClick(profile),
+            rightContent: (
+              <AnimatedTaskCheckbox
+                priority={"P3"}
+                playSound={false}
+                handleCheckSubmit={() => handleProfileClick(profile)}
+                is_completed={task.assignees.some(
+                  (assignee) => assignee.profile_id === profile.id
+                )}
+              />
+            ),
+          })),
+      ]}
       beforeItemsContent={
         <Input
           placeholder="Search users..."

@@ -5,7 +5,7 @@ import { SectionType, TaskType } from "@/types/project";
 const useProjectDetails = (projectId: number | null) => {
   const queryClient = useQueryClient();
 
-  const query = useQuery({
+  const {data, error, isPending, isError} = useQuery({
     queryKey: ["projectDetails", projectId],
     queryFn: () => {
       if (projectId === null) {
@@ -26,16 +26,23 @@ const useProjectDetails = (projectId: number | null) => {
   };
 
   const setTasks = (tasks: TaskType[]) => {
-    queryClient.setQueryData(["projectDetails", projectId], (oldData: any) => ({
-      ...oldData,
-      tasks,
-    }));
+    queryClient.setQueryData(
+      ["projectDetails", projectId],
+      (oldData: { sections: SectionType[]; tasks: TaskType[] }) => ({
+        ...oldData,
+        tasks,
+      })
+    );
   };
 
   return {
-    ...query,
+    sections: data?.sections,
+    tasks: data?.tasks,
     setSections,
     setTasks,
+    isPending,
+    error,
+    isError
   };
 };
 

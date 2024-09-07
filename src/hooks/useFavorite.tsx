@@ -1,5 +1,6 @@
 import { useAuthProvider } from "@/context/AuthContext";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { ActivityAction, createActivityLog, EntityType } from "@/types/activitylog";
 import { ProjectType } from "@/types/project";
 import { ProjectMemberType } from "@/types/team";
 import { supabaseBrowser } from "@/utils/supabase/client";
@@ -9,6 +10,8 @@ const useFavorite = ({ project }: { project: ProjectType }) => {
   const { profile } = useAuthProvider();
 
   const handleFavorite = async () => {
+    if(!profile?.id) return;
+
     // Find the current user project settings for the given project
     const currentProjectMemberSettings = projectMembers.find(
       (member) =>
@@ -49,6 +52,20 @@ const useFavorite = ({ project }: { project: ProjectType }) => {
     if (error) {
       console.error("Error updating user project settings:", error);
     }
+
+    createActivityLog({
+      actor_id: profile.id,
+      action: ActivityAction.UPDATED_PROJECT,
+      entity_id: project.id,
+      entity_type: EntityType.PROJECT,
+      metadata: {
+        old_data: project,
+        new_data: {
+          ...project,
+          ...updateProjectMemberSettings,
+        },
+      }
+    })
   };
 
   return {

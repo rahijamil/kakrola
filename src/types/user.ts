@@ -10,10 +10,3 @@ export interface ProfileType {
   last_login_at?: Date;
   is_onboarded?: boolean;
 }
-
-// Comment structure
-export interface CommentType {
-  id: number;
-  text: string;
-  author: ProfileType;
-}

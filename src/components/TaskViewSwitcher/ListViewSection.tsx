@@ -15,6 +15,8 @@ import { Droppable } from "@hello-pangea/dnd";
 import TaskItem from "./TaskItem";
 import SectionAddTask from "./SectionAddTask";
 import TaskItemForListView from "./ListView/TaskItemForListView";
+import { ActivityAction, createActivityLog, EntityType } from "@/types/activitylog";
+import { useAuthProvider } from "@/context/AuthContext";
 
 const ListViewSection = ({
   section,
@@ -73,7 +75,10 @@ const ListViewSection = ({
     string | null
   >(null);
 
+  const {profile} = useAuthProvider();
+
   const handleUpdateColumnTitle = async () => {
+    if(!profile?.id) return;
     if (columnTitle.trim().length && columnTitle.trim() !== section.name) {
       setSections(
         sections.map((s) => {
@@ -101,6 +106,20 @@ const ListViewSection = ({
 
     setEditColumnTitle(false);
     setColumnTitle(section.name);
+
+    createActivityLog({
+      actor_id: profile.id,
+      action: ActivityAction.UPDATED_SECTION,
+      entity_id: section.id,
+      entity_type: EntityType.SECTION,
+      metadata: {
+        old_data: section,
+        new_data: {
+          ...section,
+          name: columnTitle.trim(),
+        },
+      },
+    });
   };
 
   return (

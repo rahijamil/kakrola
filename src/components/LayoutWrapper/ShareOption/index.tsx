@@ -10,6 +10,7 @@ import MemberItem from "./MemberItem";
 import InviteEmailInput from "./InviteEmailInput";
 import { InviteStatus, InviteType, ProjectMemberType } from "@/types/team";
 import PendingItem from "./PendingItem";
+import { ActivityAction, createActivityLog } from "@/types/activitylog";
 
 interface MemberData extends ProjectMemberType {
   profile: ProfileType;
@@ -33,6 +34,8 @@ const ShareOption = ({
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const fetchPendingUsers = async () => {
+    if(!profile?.id) return;
+
     const { data, error } = await supabaseBrowser
       .from("invites")
       .select()

@@ -78,13 +78,12 @@ const Priorities = ({
         <>
           {forTaskItemModal ? (
             <div
-              ref={triggerRef}
-              className={`flex items-center justify-between rounded-full transition p-[6px] px-2 group cursor-pointer ${
-                isOpen ? "bg-primary-100" : "hover:bg-text-100"
+              className={`flex items-center justify-between rounded-full transition py-2 px-4 group cursor-pointer ${
+                isOpen ? "bg-primary-50" : "hover:bg-text-100"
               }`}
               onClick={onClick}
             >
-              <div className="flex items-center gap-2 text-xs">
+              <div ref={triggerRef} className="flex items-center gap-2 text-xs">
                 <PriorityIcon priority={taskData.priority} />
                 <span className="text-xs">
                   {selectedPriority?.value == "Priority"
@@ -95,7 +94,9 @@ const Priorities = ({
 
               <ChevronDown
                 strokeWidth={1.5}
-                className="w-4 h-4 opacity-0 group-hover:opacity-100 transition"
+                className={`w-4 h-4 transition ${
+                  !isOpen && "opacity-0 group-hover:opacity-100"
+                }`}
               />
             </div>
           ) : forListView ? (

@@ -1,23 +1,6 @@
-import React, {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
-import {
-  AtSignIcon,
-  Bell,
-  Ellipsis,
-  MapPin,
-  MapPinIcon,
-  SendHorizonal,
-  Tag,
-  TagIcon,
-  X,
-} from "lucide-react";
 
 import Priorities from "./Priorities";
 import { useAuthProvider } from "@/context/AuthContext";
@@ -29,6 +12,11 @@ import { TaskInput } from "./TaskInput";
 import AnimatedCircleCheck from "../TaskViewSwitcher/AnimatedCircleCheck";
 import { getInitialTaskData } from "@/lib/getInitialTaskData";
 import LabelSelector from "./LabelSelector";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
 
 const AddTaskFormForProject = ({
   onClose,
@@ -64,9 +52,6 @@ const AddTaskFormForProject = ({
         profile,
       })
   );
-
-  const [showReminder, setShowReminder] = useState<boolean>(false);
-  const [showMore, setShowMore] = useState<boolean>(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -133,6 +118,10 @@ const AddTaskFormForProject = ({
       return;
     }
 
+    if (!profile?.id) {
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -157,6 +146,18 @@ const AddTaskFormForProject = ({
           .single();
 
         if (error) throw error;
+
+        // Log the task update activity
+        createActivityLog({
+          actor_id: profile.id,
+          action: ActivityAction.UPDATED_TASK,
+          entity_type: EntityType.TASK,
+          entity_id: taskData.id,
+          metadata: {
+            old_data: taskForEdit,
+            new_data: data,
+          },
+        });
 
         // Ensure UI reflects any updates from the database
         updatedTasks = tasks.map((t) => (t.id === taskData.id ? data : t));
@@ -203,6 +204,17 @@ const AddTaskFormForProject = ({
 
         if (error) throw error;
 
+        // Log the task creation activity
+        createActivityLog({
+          actor_id: profile.id,
+          action: ActivityAction.CREATED_TASK,
+          entity_type: EntityType.TASK,
+          entity_id: data.id,
+          metadata: {
+            new_data: data,
+          },
+        });
+
         // Replace the temporary ID with the actual ID from the database
         updatedTasks = updatedTasks.map((t) =>
           t.id === tempId ? { ...t, id: data.id } : t
@@ -228,9 +240,7 @@ const AddTaskFormForProject = ({
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="w-full">
       <div className="border-b border-text-200 bg-transparent flex items-center font-medium h-10 overflow-hidden text-xs divide-x divide-text-200 pl-7 whitespace-nowrap">
-        <div
-          className={`w-[40%] flex items-center gap-2 py-2 pr-4`}
-        >
+        <div className={`w-[40%] flex items-center gap-2 py-2 pr-4`}>
           <AnimatedCircleCheck
             handleCheckSubmit={() => {}}
             priority={taskData.priority}

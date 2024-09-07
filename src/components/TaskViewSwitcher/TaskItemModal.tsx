@@ -16,7 +16,10 @@ import AddComentForm from "./AddComentForm";
 import TaskItem from "./TaskItem";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import {
+  CalendarRange,
+  CheckCircle,
   ChevronDown,
+  ChevronUpCircle,
   Circle,
   CircleCheck,
   Ellipsis,
@@ -26,6 +29,7 @@ import {
   Paperclip,
   Plus,
   Text,
+  User,
   X,
 } from "lucide-react";
 import { Textarea } from "../ui";
@@ -37,6 +41,7 @@ import DateSelector from "../AddTask/DateSelector";
 import DueDateButton from "./DueDateButton";
 import AnimatedCircleCheck from "./AnimatedCircleCheck";
 import { motion } from "framer-motion";
+import TaskDescription from "./TaskDescription";
 
 const TaskItemModal = ({
   task,
@@ -52,25 +57,13 @@ const TaskItemModal = ({
   onClose: () => void;
   onCheckClick: () => void;
   project: ProjectType | null;
-  setTasks: (tasks: TaskType[]) => void
+  setTasks: (tasks: TaskType[]) => void;
   tasks: TaskType[];
 }) => {
   const { profile } = useAuthProvider();
-  const [contentEditable, setContentEditable] = useState<boolean>(false);
   const [showCommentForm, setShowCommentForm] = useState<boolean>(false);
   const [showAddSubtask, setShowAddSubtask] = useState<boolean>(false);
   const [taskData, setTaskData] = useState<TaskType>(task);
-
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
-
-  const handleSaveTitleDesc = async () => {
-    const { error } = await supabaseBrowser
-      .from("tasks")
-      .update({ title: taskData.title, description: taskData.description })
-      .eq("id", task.id);
-
-    setContentEditable(false);
-  };
 
   useEffect(() => {
     document.body.classList.add("overflow-y-hidden");
@@ -95,7 +88,20 @@ const TaskItemModal = ({
         onClick={(ev) => ev.stopPropagation()}
       >
         <div className="p-2 px-4 flex items-center justify-between border-b border-text-200">
-          <div></div>
+          <div>
+            <button
+              className="flex items-center gap-2 hover:bg-text-100 rounded-full p-2 transition"
+              onClick={onCheckClick}
+            >
+              <AnimatedCircleCheck
+                handleCheckSubmit={onCheckClick}
+                is_completed={taskData.is_completed}
+                priority={task.priority}
+              />
+
+              <span>Mark complete</span>
+            </button>
+          </div>
 
           <div className="flex items-center gap-2">
             {/* <button className="p-1 hover:bg-text-100 transition rounded-full">
@@ -110,204 +116,78 @@ const TaskItemModal = ({
           </div>
         </div>
 
-        <div className="flex flex-[.99]">
-          <div className="flex gap-1 bg-background p-4 flex-1">
-            <AnimatedCircleCheck
-              handleCheckSubmit={onCheckClick}
-              is_completed={taskData.is_completed}
-              priority={task.priority}
+        <div className="flex-1 p-8 space-y-8">
+          <div>
+            <input
+              type="text"
+              className={`text-[26px] font-bold border-none focus-visible:outline-none bg-transparent w-full ${
+                taskData.is_completed ? "line-through text-text-500" : ""
+              }`}
+              value={taskData.title}
+              onChange={(ev) =>
+                setTaskData((prevTaskData) => ({
+                  ...prevTaskData,
+                  title: ev.target.value,
+                }))
+              }
+              onKeyDown={(ev) =>
+                ev.key === "Enter" && console.log(taskData.title)
+              }
+            />
+          </div>
+
+          <div className="grid grid-cols-[20%_80%] items-center text-xs gap-y-2">
+            <div className="flex items-center gap-2">
+              <CheckCircle strokeWidth={2} size={16} />
+              <p className="font-semibold text-xs">Project</p>
+            </div>
+            <ProjectsSelector
+              setTask={setTaskData}
+              isInbox
+              task={taskData}
+              forTaskModal
             />
 
-            <div className="w-full">
-              <div className="w-full space-y-2">
-                <div
-                  className={`${
-                    contentEditable && "border"
-                  } rounded-2xl overflow-hidden border-text-200 focus-within:border-text-400`}
-                >
-                  <Input
-                    className={`${
-                      taskData.is_completed ? "line-through text-text-500" : ""
-                    } text-full font-bold w-full p-2 pb-[10px]`}
-                    value={taskData.title}
-                    onClick={() => setContentEditable(true)}
-                    onChange={(ev) =>
-                      setTaskData((prevTaskData) => ({
-                        ...prevTaskData,
-                        title: ev.target.value,
-                      }))
-                    }
-                  />
-
-                  <div
-                    className="flex gap-[2px] pl-2 cursor-text"
-                    onClick={() => {
-                      setContentEditable(true);
-                      descriptionRef.current?.focus();
-                    }}
-                  >
-                    <Text
-                      strokeWidth={1.5}
-                      className="w-4 h-4 mt-[2px] text-text-400"
-                    />
-                    <Textarea
-                      fullWidth
-                      placeholder={"Description"}
-                      className="resize-none"
-                      rows={contentEditable ? 3 : 2}
-                      ref={descriptionRef}
-                      value={taskData.description}
-                      onChange={(ev) =>
-                        setTaskData((prevTaskData) => ({
-                          ...prevTaskData,
-                          description: ev.target.value,
-                        }))
-                      }
-                    />
-                  </div>
-                </div>
-
-                {contentEditable && (
-                  <div className="flex justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setContentEditable(false)}
-                      className="px-4 py-2 text-text-600 bg-text-200 rounded hover:bg-text-300 text-xs font-semibold"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleSaveTitleDesc}
-                      className="px-4 py-2 text-white bg-primary-500 rounded hover:bg-primary-700 text-xs font-semibold"
-                    >
-                      Save
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-6">
-                {!showAddSubtask && (
-                  <button
-                    className="text-xs hover:bg-text-100 transition rounded-full flex items-center gap-2 px-2 py-[6px] text-text-600"
-                    onClick={() => setShowAddSubtask(true)}
-                  >
-                    <Plus strokeWidth={1.5} className="w-4 h-4" />
-
-                    <span className="text-xs font-semibold">Add sub-task</span>
-                  </button>
-                )}
-                {showAddSubtask && (
-                  <div className="rounded-2xl border border-text-200 focus-within:border-text-400 bg-surface">
-                    <AddTaskForm
-                      onClose={() => setShowAddSubtask(false)}
-                      parentTaskIdForSubTask={task.id}
-                      project={project}
-                      setTasks={setTasks}
-                      tasks={tasks}
-                      section_id={task.section_id}
-                    />
-                  </div>
-                )}
-              </div>
-
-              <ul className="mt-6">
-                {subTasks.map((subTask, index) => (
-                  <li key={subTask.id}>
-                    <TaskItem
-                      task={subTask}
-                      setTasks={setTasks}
-                      index={index}
-                      project={project}
-                      subTasks={tasks
-                        .map((t) => (t.parent_task_id == subTask.id ? t : null))
-                        .filter((t) => t != null)}
-                      tasks={tasks}
-                    />
-                  </li>
-                ))}
-              </ul>
-
-              <div className="my-4 bg-text-200 h-[1px]" />
-
-              {/* {!showCommentForm && (
-                <div className="flex items-center gap-2">
-                  <Image
-                    src={profile?.avatar_url || "/default_avatar.png"}
-                    width={20}
-                    height={20}
-                    alt={profile?.full_name || profile?.username || "avatar"}
-                    className="rounded-full object-cover max-w-[28px] max-h-[28px]"
-                  />
-
-                  <div
-                    className="flex items-center justify-between w-full border border-text-200 rounded-full py-1 px-4 hover:bg-text-100 cursor-pointer transition"
-                    onClick={() => setShowCommentForm(true)}
-                  >
-                    <p className="">Comment</p>
-                    <Paperclip
-                      strokeWidth={1.5}
-                      className="w-4 h-4 text-text-700"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {showCommentForm && (
-                <AddComentForm
-                  onCancelClick={() => setShowCommentForm(false)}
-                />
-              )} */}
+            <div className="flex items-center gap-2">
+              <User strokeWidth={2} size={16} />
+              <p
+                className={`font-semibold text-xs \ ${
+                  task.assignees.length > 0 && "cursor-text"
+                }`}
+              >
+                Assignee
+              </p>
             </div>
-          </div>
-          <div className="bg-primary-10 p-4 w-64">
-            <div>
-              <div className="space-y-2">
-                <p className="font-semibold text-xs pl-2">Project</p>
 
-                <ProjectsSelector
-                  setTask={setTaskData}
-                  isInbox
-                  task={taskData}
-                  forTaskModal
-                />
-              </div>
-              <div className="h-[1px] bg-text-200 m-2"></div>
-            </div>
-            <div>
-              <div className="space-y-2">
-                <AssigneeSelector
-                  task={taskData}
-                  setTask={setTaskData}
-                  forTaskModal
-                  project={project}
-                />
-              </div>
-              <div className="h-[1px] bg-text-200 m-2"></div>
-            </div>
-            <div>
-              <div className="space-y-2">
-                <DateSelector
-                  forTaskModal
-                  task={taskData}
-                  setTask={setTaskData}
-                />
-              </div>
-              <div className="h-[1px] bg-text-200 m-2"></div>
-            </div>
-            <div>
-              <div className="space-y-2">
-                <p className="font-semibold text-xs pl-2">Priority</p>
+            <AssigneeSelector
+              task={taskData}
+              setTask={setTaskData}
+              forTaskModal
+              project={project}
+            />
 
-                <Priorities
-                  taskData={taskData}
-                  setTaskData={setTaskData}
-                  forTaskItemModal
-                />
-              </div>
-              <div className="h-[1px] bg-text-200 m-2"></div>
+            <div className="flex items-start gap-2">
+              <CalendarRange strokeWidth={2} size={16} />
+              <p
+                className={`font-semibold text-xs ${
+                  task.dates.end_date !== null && "cursor-text"
+                }`}
+              >
+                Dates
+              </p>
             </div>
+            <DateSelector forTaskModal task={taskData} setTask={setTaskData} />
+
+            <div className="flex items-center gap-2">
+              <ChevronUpCircle strokeWidth={2} size={16} />
+              <p className="font-semibold text-xs">Priority</p>
+            </div>
+
+            <Priorities
+              taskData={taskData}
+              setTaskData={setTaskData}
+              forTaskItemModal
+            />
 
             {/* <div>
               <div className="space-y-2">
@@ -341,6 +221,85 @@ const TaskItemModal = ({
               </div>
               <div className="h-[1px] bg-text-200 m-2"></div>
             </div> */}
+          </div>
+
+          <div>
+            <TaskDescription 
+            
+            // taskData={taskData}
+            //  setTaskData={setTaskData}
+              />
+
+            <div className="mt-6">
+              {!showAddSubtask && (
+                <button
+                  className="text-xs hover:bg-text-100 transition rounded-full flex items-center gap-2 px-2 py-[6px] text-text-600 border border-text-200"
+                  onClick={() => setShowAddSubtask(true)}
+                >
+                  <Plus strokeWidth={2} className="w-4 h-4" />
+
+                  <span className="text-xs font-semibold">Add subtask</span>
+                </button>
+              )}
+              {showAddSubtask && (
+                <div className="rounded-2xl border border-text-200 focus-within:border-text-400 bg-surface">
+                  <AddTaskForm
+                    onClose={() => setShowAddSubtask(false)}
+                    parentTaskIdForSubTask={task.id}
+                    project={project}
+                    setTasks={setTasks}
+                    tasks={tasks}
+                    section_id={task.section_id}
+                  />
+                </div>
+              )}
+            </div>
+
+            <ul className="mt-6">
+              {subTasks.map((subTask, index) => (
+                <li key={subTask.id}>
+                  <TaskItem
+                    task={subTask}
+                    setTasks={setTasks}
+                    index={index}
+                    project={project}
+                    subTasks={tasks
+                      .map((t) => (t.parent_task_id == subTask.id ? t : null))
+                      .filter((t) => t != null)}
+                    tasks={tasks}
+                  />
+                </li>
+              ))}
+            </ul>
+
+            <div className="my-4 bg-text-200 h-[1px]" />
+
+            {!showCommentForm && (
+              <div className="flex items-center gap-2">
+                <Image
+                  src={profile?.avatar_url || "/default_avatar.png"}
+                  width={28}
+                  height={28}
+                  alt={profile?.full_name || profile?.username || "avatar"}
+                  className="rounded-full object-cover max-w-[28px] max-h-[28px]"
+                />
+
+                <div
+                  className="flex items-center justify-between w-full border border-text-200 rounded-full py-1 px-4 hover:bg-text-100 cursor-pointer transition"
+                  onClick={() => setShowCommentForm(true)}
+                >
+                  <p className="">Comment</p>
+                  <Paperclip
+                    strokeWidth={1.5}
+                    className="w-4 h-4 text-text-700"
+                  />
+                </div>
+              </div>
+            )}
+
+            {showCommentForm && (
+              <AddComentForm onCancelClick={() => setShowCommentForm(false)} />
+            )}
           </div>
         </div>
       </motion.div>
