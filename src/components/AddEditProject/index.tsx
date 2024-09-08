@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import { Dialog, DialogHeader, DialogTitle } from "../ui";
-import { ProjectType } from "@/types/project";
+import { ProjectType, TaskPriority } from "@/types/project";
 import { CircleHelp, SquareGanttChart, SquareKanban } from "lucide-react";
 import { ToggleSwitch } from "../ui/ToggleSwitch";
 import { Input } from "../ui/input";
@@ -502,7 +502,7 @@ const AddEditProject = ({
                               },
                             })
                           }
-                          priority={"P3"}
+                          priority={TaskPriority.P3}
                           is_completed={projectData.settings.view === v.name}
                           playSound={false}
                           disabled

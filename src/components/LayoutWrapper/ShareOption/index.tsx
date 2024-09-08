@@ -11,6 +11,7 @@ import InviteEmailInput from "./InviteEmailInput";
 import { InviteStatus, InviteType, ProjectMemberType } from "@/types/team";
 import PendingItem from "./PendingItem";
 import { ActivityAction, createActivityLog } from "@/types/activitylog";
+import ShareAvatar from "./ShareAvatar";
 
 interface MemberData extends ProjectMemberType {
   profile: ProfileType;
@@ -34,7 +35,7 @@ const ShareOption = ({
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const fetchPendingUsers = async () => {
-    if(!profile?.id) return;
+    if (!profile?.id) return;
 
     const { data, error } = await supabaseBrowser
       .from("invites")
@@ -98,13 +99,11 @@ const ShareOption = ({
       triggerRef={triggerRef}
       Label={({ onClick }) => (
         <div className="flex items-center gap-1">
-          <Image
-            src={profile?.avatar_url || "/default_avatar.png"}
-            alt="Avatar"
-            width={20}
-            height={20}
-            className="rounded-full object-cover max-w-5 max-h-5"
-          />
+          <div className="flex items-center">
+            {membersData.map((member) => (
+              <ShareAvatar key={member.id} member={member} />
+            ))}
+          </div>
           <button
             ref={triggerRef}
             className={`${

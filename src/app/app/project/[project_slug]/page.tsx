@@ -11,7 +11,11 @@ import useProjectDetails from "@/hooks/useProjectDetails";
 import Image from "next/image";
 import Link from "next/link";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import { ActivityAction, createActivityLog, EntityType } from "@/types/activitylog";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
 
 const ProjectDetails = ({
@@ -32,7 +36,7 @@ const ProjectDetails = ({
   const { tasks, sections, setSections, setTasks, error, isPending, isError } =
     useProjectDetails(projectId);
 
-    const {profile} = useAuthProvider()
+  const { profile } = useAuthProvider();
 
   useEffect(() => {
     if (projectsLoading) return;
@@ -66,7 +70,7 @@ const ProjectDetails = ({
 
   const updateProjectView = useCallback(
     async (view: ViewTypes["view"]) => {
-      if(!profile?.id) return;
+      if (!profile?.id) return;
 
       if (!currentProject?.id) return;
 
@@ -98,7 +102,7 @@ const ProjectDetails = ({
             settings: { ...currentProject?.settings, view },
           },
         },
-      })
+      });
     },
     [currentProject?.id, setProjects]
   );

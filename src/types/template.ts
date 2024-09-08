@@ -1,3 +1,4 @@
+import { TaskPriority } from "./project";
 import { ViewTypes } from "./viewTypes";
 
 export interface TemplateCreatorInfo {
@@ -35,7 +36,7 @@ export interface TemplateTaskType {
   parent_template_task_id: string | number | null;
   title: string;
   description: string;
-  priority: "P1" | "P2" | "P3" | "Priority";
+  priority: TaskPriority
   order: number;
   created_at?: string;
   updated_at?: string;

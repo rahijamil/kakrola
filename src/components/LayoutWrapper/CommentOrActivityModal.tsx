@@ -80,7 +80,7 @@ const CommentOrActivityModal = ({
           )}
         </div>
 
-        {showCommentOrActivity === "comment" && <AddComentForm />}
+        {/* {showCommentOrActivity === "comment" && <AddComentForm onCancelClick={onClose} task={} />} */}
       </div>
     </Dialog>
   );

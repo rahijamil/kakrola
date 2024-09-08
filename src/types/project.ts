@@ -52,6 +52,20 @@ export interface TaskAssigneeType {
   created_at?: string;
 }
 
+export enum TaskPriority {
+  P1 = "P1",
+  P2 = "P2",
+  P3 = "P3",
+  Priority = "Priority",
+}
+
+enum TaskStatus {
+  ToDo = "To Do",
+  InProgress = "In Progress",
+  OnHold = "On Hold",
+  Completed = "Completed",
+}
+
 // Task types
 export interface TaskType {
   id: string | number;
@@ -62,8 +76,9 @@ export interface TaskType {
   assignees: TaskAssigneeType[];
   title: string;
   description: string;
-  priority: "P1" | "P2" | "P3" | "Priority";
+  priority: TaskPriority;
   is_inbox: boolean;
+  // status: TaskStatus;
   dates: {
     start_date: string | null; // ISO date (e.g., "2024-09-05")
     start_time: string | null; // Time (e.g., "15:30")

@@ -1,4 +1,4 @@
-import { ProjectType, SectionType, TaskType } from "@/types/project";
+import { ProjectType, SectionType, TaskPriority, TaskType } from "@/types/project";
 import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 
@@ -14,7 +14,7 @@ export const getInitialTaskData = ({
   id: uuidv4(),
   title: "",
   description: "",
-  priority: "Priority",
+  priority: TaskPriority.Priority,
   project_id: project?.id || null,
   section_id: section_id || null,
   parent_task_id: null,

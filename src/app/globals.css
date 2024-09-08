@@ -75,18 +75,29 @@
 
   /* Quill Editor */
   .custom-quill-editor {
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
   }
   .custom-quill-editor .ql-toolbar {
     @apply rounded-t-2xl bg-transparent border-b border-text-200;
   }
 
-  .custom-quill-editor .ql-toolbar button{
-    @apply rounded-full hover:bg-text-100 transition text-text-500 hover:text-text-500;
+  .custom-quill-editor .ql-toolbar button {
+    @apply rounded-full hover:bg-text-100 transition flex items-center justify-center aspect-square;
+    display: inline-flex !important;
+  }
+
+  .custom-quill-editor .ql-toolbar button:hover svg,
+  .ql-toolbar button.ql-active svg {
+    color: var(--color-primary-500) !important;
   }
 
   .custom-quill-editor .ql-container {
     @apply rounded-b-2xl overflow-hidden;
+  }
+
+  .custom-quill-editor .ql-tooltip {
+    top: 1rem !important;
+    left: 1rem !important;
   }
 
   .custom-quill-editor .ql-editor {

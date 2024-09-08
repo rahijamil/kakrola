@@ -10,7 +10,7 @@ import React, { useRef, useState } from "react";
 import Dropdown from "./ui/Dropdown";
 import AnimatedTaskCheckbox from "./TaskViewSwitcher/AnimatedCircleCheck";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import { ProjectType } from "@/types/project";
+import { ProjectType, TaskPriority } from "@/types/project";
 
 const allViews: {
   id: number;
@@ -142,7 +142,7 @@ const LayoutView = ({
           onClick: () => handleSelectedViews(v),
           rightContent: (
             <AnimatedTaskCheckbox
-              priority={v.name === "List" ? "Priority" : "P3"}
+              priority={v.name === "List" ? TaskPriority.Priority : TaskPriority.P3}
               playSound={false}
               handleCheckSubmit={() => handleSelectedViews(v)}
               is_completed={v.visible}

@@ -11,7 +11,7 @@ import useTemplates from "@/hooks/useTemplates";
 import { useAuthProvider } from "@/context/AuthContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { TemplateProjectType } from "@/types/template";
-import { ProjectType, SectionType, TaskType } from "@/types/project";
+import { ProjectType, SectionType, TaskPriority, TaskType } from "@/types/project";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import Spinner from "@/components/ui/Spinner";
 import { ProjectMemberType } from "@/types/team";
@@ -270,7 +270,7 @@ const Step2UseCase = () => {
                   <div>
                     <AnimatedCircleCheck
                       handleCheckSubmit={() => {}}
-                      priority={"P3"}
+                      priority={TaskPriority.P3}
                       is_completed={selectedUseCases.includes(useCase)}
                       playSound={false}
                     />

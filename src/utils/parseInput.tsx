@@ -1,4 +1,4 @@
-import { ProjectType, TaskType } from "@/types/project";
+import { ProjectType, TaskPriority, TaskType } from "@/types/project";
 
 const parseDate = (dateString: string): Date | null => {
   const today = new Date();
@@ -77,10 +77,10 @@ export const parseInput = (input: string, projects: ProjectType[]) => {
   const priorityMatch = input.match(priorityRegex);
   if (priorityMatch) {
     const priorityMap: { [key: string]: TaskType["priority"] } = {
-      "1": "P1",
-      "2": "P2",
-      "3": "P3",
-      "4": "Priority",
+      "1": TaskPriority.P1,
+      "2": TaskPriority.P2,
+      "3": TaskPriority.P3,
+      "4": TaskPriority.Priority,
     };
     parsedData.priority = priorityMap[priorityMatch[1]];
   }

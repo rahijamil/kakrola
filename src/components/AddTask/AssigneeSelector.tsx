@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Input } from "../ui/input";
 import Image from "next/image";
 import { Check, ChevronDown, Plus, User, UserPlus, X } from "lucide-react";
-import { ProjectType, TaskType } from "@/types/project";
+import { ProjectType, TaskPriority, TaskType } from "@/types/project";
 import Dropdown from "../ui/Dropdown";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAssigneeProfiles } from "@/lib/queries";
@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 import AnimatedTaskCheckbox from "../TaskViewSwitcher/AnimatedCircleCheck";
 import { ProfileType } from "@/types/user";
 import { debounce } from "lodash";
+import useAssignee from "@/hooks/useAssignee";
 
 const AssigneeSelector = ({
   task,
@@ -42,15 +43,9 @@ const AssigneeSelector = ({
 
   const triggerRef = useRef(null);
 
-  const { data: assigneeProfiles = [], isLoading: isProfilesLoading } =
-    useQuery({
-      queryKey: ["profiles", project?.id],
-      queryFn: () => fetchAssigneeProfiles(project?.id),
-      enabled: !!project?.id,
-      staleTime: 1000 * 60 * 10, // 10 minutes
-    });
+  const { assigneeProfiles } = useAssignee({ project_id: project?.id });
 
-  const getProfileById = (profileId: string | null) => {
+  const getAssigneeProfileById = (profileId: string | null) => {
     return assigneeProfiles.find((profile) => profile.id === profileId);
   };
 
@@ -107,28 +102,28 @@ const AssigneeSelector = ({
                   <div className="flex items-center gap-2">
                     <Image
                       src={
-                        getProfileById(assignee.profile_id)?.avatar_url ||
+                        getAssigneeProfileById(assignee.profile_id)?.avatar_url ||
                         "/default_avatar.png"
                       }
                       width={18}
                       height={18}
                       alt={
-                        getProfileById(assignee.profile_id)?.full_name ||
-                        getProfileById(assignee.profile_id)?.username ||
+                        getAssigneeProfileById(assignee.profile_id)?.full_name ||
+                        getAssigneeProfileById(assignee.profile_id)?.username ||
                         "avatar"
                       }
                       className="rounded-full object-cover max-w-[18px] max-h-[18px]"
                     />
                     {
-                      getProfileById(assignee.profile_id)?.full_name.split(
+                      getAssigneeProfileById(assignee.profile_id)?.full_name.split(
                         " "
                       )[0]
                     }
-                    {getProfileById(assignee.profile_id)?.full_name.split(
+                    {getAssigneeProfileById(assignee.profile_id)?.full_name.split(
                       " "
                     )[1] // Check if the second name exists
                       ? " " +
-                        getProfileById(assignee.profile_id)?.full_name.split(
+                        getAssigneeProfileById(assignee.profile_id)?.full_name.split(
                           " "
                         )[1][0] +
                         "." // Display the initial of the second name
@@ -162,22 +157,22 @@ const AssigneeSelector = ({
                 <div className="flex items-center gap-1">
                   <Image
                     src={
-                      getProfileById(assignee.profile_id)?.avatar_url ||
+                      getAssigneeProfileById(assignee.profile_id)?.avatar_url ||
                       "/default_avatar.png"
                     }
                     width={20}
                     height={20}
                     alt={
-                      getProfileById(assignee.profile_id)?.full_name ||
-                      getProfileById(assignee.profile_id)?.username ||
+                      getAssigneeProfileById(assignee.profile_id)?.full_name ||
+                      getAssigneeProfileById(assignee.profile_id)?.username ||
                       "avatar"
                     }
                     className="rounded-full object-cover max-w-5 max-h-5"
                   />
-                  {/* {getProfileById(assignee.profile_id)?.full_name.split(" ")[0]}
-                  {getProfileById(assignee.profile_id)?.full_name.split(" ")[1] // Check if the second name exists
+                  {/* {getAssigneeProfileById(assignee.profile_id)?.full_name.split(" ")[0]}
+                  {getAssigneeProfileById(assignee.profile_id)?.full_name.split(" ")[1] // Check if the second name exists
                     ? " " +
-                      getProfileById(assignee.profile_id)?.full_name.split(
+                      getAssigneeProfileById(assignee.profile_id)?.full_name.split(
                         " "
                       )[1][0] +
                       "." // Display the initial of the second name
@@ -207,28 +202,28 @@ const AssigneeSelector = ({
                   <div className="flex items-center gap-1">
                     <Image
                       src={
-                        getProfileById(assignee.profile_id)?.avatar_url ||
+                        getAssigneeProfileById(assignee.profile_id)?.avatar_url ||
                         "/default_avatar.png"
                       }
                       width={20}
                       height={20}
                       alt={
-                        getProfileById(assignee.profile_id)?.full_name ||
-                        getProfileById(assignee.profile_id)?.username ||
+                        getAssigneeProfileById(assignee.profile_id)?.full_name ||
+                        getAssigneeProfileById(assignee.profile_id)?.username ||
                         "avatar"
                       }
                       className="rounded-full object-cover max-w-5 max-h-5"
                     />
                     {
-                      getProfileById(assignee.profile_id)?.full_name.split(
+                      getAssigneeProfileById(assignee.profile_id)?.full_name.split(
                         " "
                       )[0]
                     }
-                    {getProfileById(assignee.profile_id)?.full_name.split(
+                    {getAssigneeProfileById(assignee.profile_id)?.full_name.split(
                       " "
                     )[1] // Check if the second name exists
                       ? " " +
-                        getProfileById(assignee.profile_id)?.full_name.split(
+                        getAssigneeProfileById(assignee.profile_id)?.full_name.split(
                           " "
                         )[1][0] +
                         "." // Display the initial of the second name
@@ -287,7 +282,7 @@ const AssigneeSelector = ({
             onClick: () => handleProfileClick(profile),
             rightContent: (
               <AnimatedTaskCheckbox
-                priority={"P3"}
+                priority={TaskPriority.P3}
                 playSound={false}
                 handleCheckSubmit={() => handleProfileClick(profile)}
                 is_completed={task.assignees.some(

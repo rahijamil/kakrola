@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 
-import { TaskType } from "@/types/project";
+import { TaskPriority, TaskType } from "@/types/project";
 import { Check, ChevronDown, Flag, X } from "lucide-react";
 import { FlagIcon } from "@heroicons/react/16/solid";
 import Dropdown from "../ui/Dropdown";
@@ -140,7 +140,7 @@ const Priorities = ({
                   type="button"
                   onClick={(ev) => {
                     ev.stopPropagation();
-                    setTaskData({ ...taskData, priority: "Priority" });
+                    setTaskData({ ...taskData, priority: TaskPriority.Priority });
                   }}
                   className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-200 rounded-full hidden group-data-[state=priority]:group-hover:inline-block absolute top-1/2 -translate-y-1/2 right-2"
                 >
@@ -180,7 +180,7 @@ const Priorities = ({
                   type="button"
                   onClick={(ev) => {
                     ev.stopPropagation();
-                    setTaskData({ ...taskData, priority: "Priority" });
+                    setTaskData({ ...taskData, priority: TaskPriority.Priority });
                   }}
                   className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-full"
                 >

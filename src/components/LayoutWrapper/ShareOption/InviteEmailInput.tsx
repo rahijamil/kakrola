@@ -173,6 +173,7 @@ const InviteEmailInput = ({
                 />
               </div>
             )}
+            
             <input
               ref={inputRef}
               type="text"
@@ -186,7 +187,7 @@ const InviteEmailInput = ({
               }}
               onKeyDown={handleKeyDown}
               aria-label="Search or add email"
-              className="flex-1 bg-transparent focus:outline-none border-none placeholder-gray-500 w-full pt-1 pl-1"
+              className={`flex-1 bg-transparent focus:outline-none border-none placeholder-gray-500 w-full pl-1 ${emails.length > 0 ? "pt-1" : "pt-0.5"}`}
             />
           </div>
         </div>

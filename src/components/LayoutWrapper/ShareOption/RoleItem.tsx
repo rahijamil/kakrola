@@ -5,6 +5,7 @@ import { ProfileType } from "@/types/user";
 import React, { useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { RoleType } from "@/types/role";
+import { TaskPriority } from "@/types/project";
 
 interface MemberData extends ProjectMemberType {
   profile: ProfileType;
@@ -56,7 +57,7 @@ const RoleItem = ({
           divide: true,
           rightContent: (
             <AnimatedTaskCheckbox
-              priority={"P3"}
+              priority={TaskPriority.P3}
               playSound={false}
               handleCheckSubmit={() => onChange(RoleType.ADMIN)}
               is_completed={value === RoleType.ADMIN}
@@ -72,7 +73,7 @@ const RoleItem = ({
           summary: "Can add, edit and delete anything in the project.",
           rightContent: (
             <AnimatedTaskCheckbox
-              priority={"P3"}
+              priority={TaskPriority.P3}
               playSound={false}
               handleCheckSubmit={() => onChange(RoleType.MEMBER)}
               is_completed={value === RoleType.MEMBER}
@@ -89,7 +90,7 @@ const RoleItem = ({
           summary: "Can comment, but can't edit anything in the project.",
           rightContent: (
             <AnimatedTaskCheckbox
-              priority={"P3"}
+              priority={TaskPriority.P3}
               playSound={false}
               handleCheckSubmit={() => onChange(RoleType.COMMENTER)}
               is_completed={value === RoleType.COMMENTER}
@@ -106,7 +107,7 @@ const RoleItem = ({
           summary: "Can view, but can't add comments or edit the project.",
           rightContent: (
             <AnimatedTaskCheckbox
-              priority={"P3"}
+              priority={TaskPriority.P3}
               playSound={false}
               handleCheckSubmit={() => onChange(RoleType.VIEWER)}
               is_completed={value === RoleType.VIEWER}

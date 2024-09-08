@@ -68,32 +68,32 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     // Subscribe to real-time changes for projects
-    const profileSubscription = supabaseBrowser
-      .channel("profiles-all-channel")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "profiles",
-          filter: `id=eq.${data?.id}`,
-        },
-        (payload) => {
-          if (payload.eventType === "UPDATE" && payload.new.id === data?.id) {
-            queryClient.setQueryData(["profile"], payload.new);
-          } else if (
-            payload.eventType === "DELETE" &&
-            payload.old.id === data?.id
-          ) {
-            queryClient.setQueryData(["profile"], null);
-          }
-        }
-      )
-      .subscribe();
+    // const profileSubscription = supabaseBrowser
+    //   .channel("profiles-all-channel")
+    //   .on(
+    //     "postgres_changes",
+    //     {
+    //       event: "*",
+    //       schema: "public",
+    //       table: "profiles",
+    //       filter: `id=eq.${data?.id}`,
+    //     },
+    //     (payload) => {
+    //       if (payload.eventType === "UPDATE" && payload.new.id === data?.id) {
+    //         queryClient.setQueryData(["profile"], payload.new);
+    //       } else if (
+    //         payload.eventType === "DELETE" &&
+    //         payload.old.id === data?.id
+    //       ) {
+    //         queryClient.setQueryData(["profile"], null);
+    //       }
+    //     }
+    //   )
+    //   .subscribe();
 
-    return () => {
-      supabaseBrowser.removeChannel(profileSubscription);
-    };
+    // return () => {
+    //   supabaseBrowser.removeChannel(profileSubscription);
+    // };
   }, [data]);
 
   return (

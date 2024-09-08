@@ -57,7 +57,7 @@ const getButtonClasses = (
   const sizeClasses = {
     default: rightContent ? "pl-5 h-12 pr-2 gap-4" : "px-6 h-12",
     xs: "h-7 px-3",
-    sm: "h-9 px-3",
+    sm: "h-8 px-4",
     lg: "h-12 px-8",
     icon: "h-10 w-10",
   };

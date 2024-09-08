@@ -1,44 +1,134 @@
 import { AlignLeft } from "lucide-react";
-import React, { useRef, useState } from "react";
-import ReactQuill from "react-quill";
+import React, { useEffect, useRef, useState } from "react";
+import hljs from "highlight.js";
+import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import Dropdown from "../ui/Dropdown";
+import "highlight.js/styles/github.css";
+import { motion } from "framer-motion";
+import { Button } from "../ui/button";
+import { TaskType } from "@/types/project";
+import { useAuthProvider } from "@/context/AuthContext";
+import { supabaseBrowser } from "@/utils/supabase/client";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
+
+const icons = Quill.import("ui/icons");
+// Link icons
+icons[
+  "link"
+] = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
+
+// Image icons
+icons[
+  "image"
+] = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>`;
+
+// Video icons
+icons[
+  "video"
+] = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-play"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>`;
+
+// Blockquote icons
+icons[
+  "blockquote"
+] = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-quote"><path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/><path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/></svg>`;
+
+// Code icons
+icons[
+  "code"
+] = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-code"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`;
+
+// Code Block icons
+icons[
+  "code-block"
+] = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-code"><path d="M10 9.5 8 12l2 2.5"/><path d="m14 9.5 2 2.5-2 2.5"/><rect width="18" height="18" x="3" y="3" rx="2"/></svg>`;
 
 const modules = {
   toolbar: [
     [{ header: "1" }, { header: "2" }],
-    [{ list: "ordered" }, { list: "bullet" }],
-    ["bold", "italic", "underline"],
-    ["link", "image"],
+    [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+    ["bold", "italic", "underline", "strike"],
+    ["link", "image", "video"],
     [{ align: [] }],
-    [{ color: [] }, { background: [] }],
+    ["blockquote", "code", "code-block"],
     ["clean"], // remove formatting button
   ],
+  syntax: {
+    highlight: (text: string) => hljs.highlightAuto(text).value,
+  },
 };
 
 const formats = [
   "header",
   "list",
-  "bullet",
   "bold",
   "italic",
   "underline",
+  "strike",
   "link",
   "image",
+  "video",
   "align",
-  "color",
-  "background",
+  "blockquote",
+  "code",
+  "code-block",
 ];
 
-const TaskDescription = () => {
-  const [editorState, setEditorState] = useState("");
+const TaskDescription = ({ taskData }: { taskData: TaskType }) => {
+  const [editorState, setEditorState] = useState(taskData.description);
   const [isEdit, setIsEdit] = useState(false);
-  const triggerRef = useRef(null);
+  const quillRef = useRef<any>(null);
+
+  const { profile } = useAuthProvider();
+
+  useEffect(() => {
+    if (isEdit) {
+      if (quillRef.current) {
+        console.log(quillRef.current.editor.root.focus());
+      }
+    }
+  }, [isEdit]);
 
   const handleChange = (value: any) => {
     setEditorState(value);
+  };
 
-    console.log(value);
+  const handleSaveTaskDescription = async () => {
+    if (!profile?.id) return;
+    try {
+      if (taskData.description.trim() && taskData.description !== editorState) {
+        const { data, error } = await supabaseBrowser
+          .from("tasks")
+          .update({
+            description: taskData.description,
+          })
+          .eq("id", taskData.id);
+
+        if (error) {
+          console.log(error);
+        }
+
+        createActivityLog({
+          actor_id: profile.id,
+          action: ActivityAction.UPDATED_TASK,
+          entity_id: taskData.id,
+          entity_type: EntityType.TASK,
+          metadata: {
+            old_data: {
+              description: editorState,
+            },
+            new_data: {
+              description: taskData.description,
+            },
+          },
+        });
+      }
+    } catch (error) {
+      console.error(`Error updating task description: ${error}`);
+    }
   };
 
   return (
@@ -48,26 +138,42 @@ const TaskDescription = () => {
         <p className="font-semibold text-xs">Description</p>
       </div>
 
-      {/* <Dropdown
-        isOpen={isEdit}
-        setIsOpen={setIsEdit}
-        triggerRef={triggerRef}
-        Label={({ onClick }) => (
-          <div
-            onClick={onClick}
-            className="cursor-pointer hover:bg-text-100 transition rounded-2xl p-2 px-4 w-full text-left"
-          >
-            <div
-              ref={triggerRef}
-              className="text-text-600 text-xs line-clamp-1"
-              dangerouslySetInnerHTML={{
-                  __html: editorState || "No description"
-              }}
-            ></div>
-          </div>
-        )}
-        content={
+      {isEdit ? (
+        <motion.div
+          initial={{
+            scaleY: 0.8,
+            y: -10, // Upwards for top-right, downwards for bottom-left
+            opacity: 0,
+            transformOrigin: "top", // Change origin
+            height: 0,
+          }}
+          animate={{
+            scaleY: 1,
+            y: [0, -5, 0], // Subtle bounce in the respective direction
+            opacity: 1,
+            transformOrigin: "top",
+            height: "auto",
+          }}
+          exit={{
+            scaleY: 0.8,
+            y: -10,
+            opacity: 0,
+            transformOrigin: "top",
+            height: 0,
+          }}
+          transition={{
+            duration: 0.2,
+            ease: [0.25, 0.1, 0.25, 1],
+            y: {
+              type: "spring",
+              stiffness: 300,
+              damping: 15,
+            },
+          }}
+          className="space-y-4 mt-2"
+        >
           <ReactQuill
+            ref={quillRef}
             theme="snow"
             modules={modules}
             formats={formats}
@@ -76,9 +182,35 @@ const TaskDescription = () => {
             placeholder="What is this task about?"
             className="custom-quill-editor"
           />
-        }
-        contentWidthClass="w-[90%] max-w-[600px] py-1"
-      /> */}
+          <div className="flex justify-end gap-2 text-xs">
+            <Button
+              variant="ghost"
+              type="button"
+              size="sm"
+              onClick={() => setIsEdit(false)}
+            >
+              Cancel
+            </Button>
+
+            <Button type="button" size="sm" onClick={handleSaveTaskDescription}>
+              Save
+            </Button>
+          </div>
+        </motion.div>
+      ) : (
+        <div
+          onClick={() => setIsEdit(true)}
+          className="cursor-pointer hover:bg-text-100 transition rounded-2xl p-2 px-4 w-full text-left"
+        >
+          <div
+            // ref={triggerRef}
+            className="text-text-600 text-xs line-clamp-1"
+            dangerouslySetInnerHTML={{
+              __html: editorState || "No description",
+            }}
+          ></div>
+        </div>
+      )}
     </div>
   );
 };

@@ -302,6 +302,14 @@ const DateSelector = ({
     return new Date(dates.start_date);
   };
 
+  useEffect(() => {
+    if (showEndDate) {
+      endInputRef.current?.focus();
+    } else {
+      startInputRef.current?.focus();
+    }
+  }, [showEndDate]);
+
   return (
     <Dropdown
       triggerRef={triggerRef}

@@ -1,47 +1,30 @@
-import React, {
-  Dispatch,
-  MouseEvent,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { Input } from "../ui";
-import { ProjectType, SectionType, TaskType } from "@/types/project";
+import React, { useEffect, useState } from "react";
+import { ProjectType, TaskType } from "@/types/project";
 
-import AddTaskForm from "../AddTask/AddTaskForm";
 import Priorities from "../AddTask/Priorities";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import AddComentForm from "./AddComentForm";
-import TaskItem from "./TaskItem";
-import { supabaseBrowser } from "@/utils/supabase/client";
 import {
   CalendarRange,
   CheckCircle,
-  ChevronDown,
   ChevronUpCircle,
-  Circle,
-  CircleCheck,
-  Ellipsis,
-  Hash,
-  Inbox,
-  LockKeyhole,
-  Paperclip,
-  Plus,
-  Text,
   User,
   X,
 } from "lucide-react";
-import { Textarea } from "../ui";
 import { useAuthProvider } from "@/context/AuthContext";
 import Image from "next/image";
 import ProjectsSelector from "../AddTask/ProjectsSelector";
 import AssigneeSelector from "../AddTask/AssigneeSelector";
 import DateSelector from "../AddTask/DateSelector";
-import DueDateButton from "./DueDateButton";
 import AnimatedCircleCheck from "./AnimatedCircleCheck";
 import { motion } from "framer-motion";
 import TaskDescription from "./TaskDescription";
+import SubTasks from "./SubTasks";
+import { supabaseBrowser } from "@/utils/supabase/client";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
 
 const TaskItemModal = ({
   task,
@@ -62,7 +45,6 @@ const TaskItemModal = ({
 }) => {
   const { profile } = useAuthProvider();
   const [showCommentForm, setShowCommentForm] = useState<boolean>(false);
-  const [showAddSubtask, setShowAddSubtask] = useState<boolean>(false);
   const [taskData, setTaskData] = useState<TaskType>(task);
 
   useEffect(() => {
@@ -73,6 +55,185 @@ const TaskItemModal = ({
     };
   }, []);
 
+  const logActivity = (oldData?: any, newData?: any) => {
+    if (!profile?.id) return;
+
+    createActivityLog({
+      actor_id: profile.id,
+      action: ActivityAction.UPDATED_TASK,
+      entity_id: task.id,
+      entity_type: EntityType.TASK,
+      metadata: { old_data: oldData, new_data: newData },
+    });
+  };
+
+  useEffect(() => {
+    const updateTask = async () => {
+      try {
+        if (!profile?.id) return;
+        setTasks(tasks.map((t) => (t.id === task.id ? taskData : t)));
+
+        if (
+          taskData.project_id !== task.project_id ||
+          taskData.section_id !== task.section_id
+        ) {
+          const { data, error } = await supabaseBrowser
+            .from("tasks")
+            .update({
+              project_id: taskData.project_id,
+              section_id: taskData.section_id,
+            })
+            .eq("id", task.id);
+
+          if (error) {
+            throw error;
+          }
+
+          logActivity(
+            {
+              project_id: task.project_id,
+              section_id: task.section_id,
+            },
+            {
+              project_id: taskData.project_id,
+              section_id: taskData.section_id,
+            }
+          );
+        }
+
+        if (
+          taskData.assignees.flatMap((a) => a.id).join(",") !==
+          task.assignees.flatMap((a) => a.id).join(",")
+        ) {
+          const { data, error } = await supabaseBrowser
+            .from("tasks")
+            .update({
+              assignees: taskData.assignees,
+            })
+            .eq("id", task.id);
+
+          if (error) {
+            throw error;
+          }
+
+          logActivity(
+            {
+              assignees: task.assignees,
+            },
+            {
+              assignees: taskData.assignees,
+            }
+          );
+        }
+
+        if (
+          taskData.dates.start_date !== task.dates.start_date ||
+          taskData.dates.end_date !== task.dates.end_date ||
+          taskData.dates.start_time !== task.dates.start_time ||
+          taskData.dates.end_time !== task.dates.end_time ||
+          taskData.dates.reminder !== task.dates.reminder
+        ) {
+          const { data, error } = await supabaseBrowser
+            .from("tasks")
+            .update({
+              dates: taskData.dates,
+            })
+            .eq("id", task.id);
+
+          if (error) {
+            throw error;
+          }
+
+          createActivityLog({
+            actor_id: profile.id,
+            action: ActivityAction.UPDATED_TASK,
+            entity_id: task.id,
+            entity_type: EntityType.TASK,
+            metadata: {
+              old_data: {
+                dates: task.dates,
+              },
+              new_data: {
+                dates: taskData.dates,
+              },
+            },
+          });
+
+          logActivity(
+            {
+              dates: task.dates,
+            },
+            {
+              dates: taskData.dates,
+            }
+          );
+        }
+
+        if (taskData.priority !== task.priority) {
+          const { data, error } = await supabaseBrowser
+            .from("tasks")
+            .update({
+              priority: taskData.priority,
+            })
+            .eq("id", task.id);
+
+          if (error) {
+            throw error;
+          }
+
+          logActivity(
+            {
+              priority: task.priority,
+            },
+            {
+              priority: taskData.priority,
+            }
+          );
+        }
+      } catch (error) {
+        console.error(`Error updating task: ${error}`);
+      }
+    };
+
+    updateTask();
+  }, [
+    taskData.project_id,
+    taskData.section_id,
+    taskData.assignees,
+    taskData.dates,
+    taskData.priority,
+  ]);
+
+  const handleSaveTaskTitle = async () => {
+    if (!profile?.id) return;
+
+    try {
+      if (taskData.title.trim() && taskData.title !== task.title) {
+        const { data, error } = await supabaseBrowser
+          .from("tasks")
+          .update({
+            title: taskData.title,
+          })
+          .eq("id", task.id);
+
+        if (error) {
+          console.log(error);
+        }
+
+        logActivity(
+          {
+            title: task.title,
+          },
+          {
+            title: taskData.title,
+          }
+        );
+      }
+    } catch (error) {
+      console.error(`Error updating task title: ${error}`);
+    }
+  };
+
   return (
     <div
       className="fixed inset-0 z-10 cursor-default"
@@ -80,17 +241,43 @@ const TaskItemModal = ({
       onClick={onClose}
     >
       <motion.div
-        initial={{ opacity: 0, x: "100%" }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: "100%" }}
-        transition={{ duration: 0.2 }}
-        className="bg-background rounded-l-2xl w-11/12 max-w-[52rem] min-h-full h-fit flex flex-col fixed top-0 right-0 bottom-0 border-l border-text-200 shadow-md"
+        initial={{
+          scaleX: 0.8,
+          x: 10,
+          opacity: 0.8,
+          transformOrigin: "right",
+          width: 0,
+        }}
+        animate={{
+          scaleX: 1,
+          x: [0, 5, 0], // Subtle bounce in the respective direction
+          opacity: 1,
+          transformOrigin: "right",
+          width: "90%",
+        }}
+        exit={{
+          scaleX: 0.8,
+          x: 10,
+          opacity: 0,
+          transformOrigin: "right",
+          width: 0,
+        }}
+        transition={{
+          duration: 0.3,
+          ease: [0.25, 0.1, 0.25, 1],
+          x: {
+            type: "spring",
+            stiffness: 300,
+            damping: 15,
+          },
+        }}
+        className="bg-background rounded-l-2xl w-11/12 max-w-[52rem] overflow-y-auto flex flex-col fixed top-0 right-0 bottom-0 border-l border-text-200 shadow-md"
         onClick={(ev) => ev.stopPropagation()}
       >
         <div className="p-2 px-4 flex items-center justify-between border-b border-text-200">
           <div>
             <button
-              className="flex items-center gap-2 hover:bg-text-100 rounded-full p-2 transition"
+              className="flex items-center gap-2 hover:bg-text-100 rounded-full p-2 transition text-xs"
               onClick={onCheckClick}
             >
               <AnimatedCircleCheck
@@ -116,7 +303,7 @@ const TaskItemModal = ({
           </div>
         </div>
 
-        <div className="flex-1 p-8 space-y-8">
+        <div className="flex-1 p-8 space-y-8 flex flex-col">
           <div>
             <input
               type="text"
@@ -130,66 +317,70 @@ const TaskItemModal = ({
                   title: ev.target.value,
                 }))
               }
-              onKeyDown={(ev) =>
-                ev.key === "Enter" && console.log(taskData.title)
-              }
+              onKeyDown={(ev) => ev.key === "Enter" && handleSaveTaskTitle()}
+              onBlur={handleSaveTaskTitle}
             />
           </div>
 
-          <div className="grid grid-cols-[20%_80%] items-center text-xs gap-y-2">
-            <div className="flex items-center gap-2">
-              <CheckCircle strokeWidth={2} size={16} />
-              <p className="font-semibold text-xs">Project</p>
-            </div>
-            <ProjectsSelector
-              setTask={setTaskData}
-              isInbox
-              task={taskData}
-              forTaskModal
-            />
+          <div className="space-y-3 flex-1">
+            <div className="grid grid-cols-[20%_80%] items-center text-xs gap-y-3">
+              <div className="flex items-center gap-2">
+                <CheckCircle strokeWidth={2} size={16} />
+                <p className="font-semibold text-xs">Project</p>
+              </div>
+              <ProjectsSelector
+                setTask={setTaskData}
+                isInbox
+                task={taskData}
+                forTaskModal
+              />
 
-            <div className="flex items-center gap-2">
-              <User strokeWidth={2} size={16} />
-              <p
-                className={`font-semibold text-xs \ ${
-                  task.assignees.length > 0 && "cursor-text"
-                }`}
-              >
-                Assignee
-              </p>
-            </div>
+              <div className="flex items-center gap-2">
+                <User strokeWidth={2} size={16} />
+                <p
+                  className={`font-semibold text-xs ${
+                    task.assignees.length > 0 && "cursor-text"
+                  }`}
+                >
+                  Assignee
+                </p>
+              </div>
 
-            <AssigneeSelector
-              task={taskData}
-              setTask={setTaskData}
-              forTaskModal
-              project={project}
-            />
+              <AssigneeSelector
+                task={taskData}
+                setTask={setTaskData}
+                forTaskModal
+                project={project}
+              />
 
-            <div className="flex items-start gap-2">
-              <CalendarRange strokeWidth={2} size={16} />
-              <p
-                className={`font-semibold text-xs ${
-                  task.dates.end_date !== null && "cursor-text"
-                }`}
-              >
-                Dates
-              </p>
-            </div>
-            <DateSelector forTaskModal task={taskData} setTask={setTaskData} />
+              <div className="flex items-start gap-2">
+                <CalendarRange strokeWidth={2} size={16} />
+                <p
+                  className={`font-semibold text-xs ${
+                    task.dates.end_date !== null && "cursor-text"
+                  }`}
+                >
+                  Dates
+                </p>
+              </div>
+              <DateSelector
+                forTaskModal
+                task={taskData}
+                setTask={setTaskData}
+              />
 
-            <div className="flex items-center gap-2">
-              <ChevronUpCircle strokeWidth={2} size={16} />
-              <p className="font-semibold text-xs">Priority</p>
-            </div>
+              <div className="flex items-center gap-2">
+                <ChevronUpCircle strokeWidth={2} size={16} />
+                <p className="font-semibold text-xs">Priority</p>
+              </div>
 
-            <Priorities
-              taskData={taskData}
-              setTaskData={setTaskData}
-              forTaskItemModal
-            />
+              <Priorities
+                taskData={taskData}
+                setTaskData={setTaskData}
+                forTaskItemModal
+              />
 
-            {/* <div>
+              {/* <div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between hover:bg-text-100 rounded-full cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Labels</p>
@@ -221,58 +412,32 @@ const TaskItemModal = ({
               </div>
               <div className="h-[1px] bg-text-200 m-2"></div>
             </div> */}
-          </div>
-
-          <div>
-            <TaskDescription 
-            
-            // taskData={taskData}
-            //  setTaskData={setTaskData}
-              />
-
-            <div className="mt-6">
-              {!showAddSubtask && (
-                <button
-                  className="text-xs hover:bg-text-100 transition rounded-full flex items-center gap-2 px-2 py-[6px] text-text-600 border border-text-200"
-                  onClick={() => setShowAddSubtask(true)}
-                >
-                  <Plus strokeWidth={2} className="w-4 h-4" />
-
-                  <span className="text-xs font-semibold">Add subtask</span>
-                </button>
-              )}
-              {showAddSubtask && (
-                <div className="rounded-2xl border border-text-200 focus-within:border-text-400 bg-surface">
-                  <AddTaskForm
-                    onClose={() => setShowAddSubtask(false)}
-                    parentTaskIdForSubTask={task.id}
-                    project={project}
-                    setTasks={setTasks}
-                    tasks={tasks}
-                    section_id={task.section_id}
-                  />
-                </div>
-              )}
             </div>
 
-            <ul className="mt-6">
-              {subTasks.map((subTask, index) => (
-                <li key={subTask.id}>
-                  <TaskItem
-                    task={subTask}
-                    setTasks={setTasks}
-                    index={index}
-                    project={project}
-                    subTasks={tasks
-                      .map((t) => (t.parent_task_id == subTask.id ? t : null))
-                      .filter((t) => t != null)}
-                    tasks={tasks}
-                  />
-                </li>
-              ))}
-            </ul>
+            <TaskDescription taskData={taskData} />
 
-            <div className="my-4 bg-text-200 h-[1px]" />
+            <SubTasks
+              task={task}
+              setTasks={setTasks}
+              tasks={tasks}
+              project={project}
+              subTasks={subTasks}
+            />
+          </div>
+
+          <div className="bg-text-50 p-8 rounded-2xl">
+            <div>
+              <ul className="flex items-center gap-4">
+                <li className="font-semibold text-xs py-2 bg-text-50 transition cursor-pointer border-b-2 text-text-700 border-text-700 hover:border-text-700">
+                  Comments
+                </li>
+                <li className="font-semibold text-xs py-2 bg-transparent transition cursor-pointer border-b-2 text-text-500 border-transparent hover:border-text-700">
+                  Activity
+                </li>
+              </ul>
+            </div>
+
+            <div className="mb-8 bg-text-200 h-[1px]" />
 
             {!showCommentForm && (
               <div className="flex items-center gap-2">
@@ -285,20 +450,28 @@ const TaskItemModal = ({
                 />
 
                 <div
-                  className="flex items-center justify-between w-full border border-text-200 rounded-full py-1 px-4 hover:bg-text-100 cursor-pointer transition"
+                  className="flex items-center justify-between w-full border border-text-200 rounded-full py-2 px-4 bg-white hover:bg-text-100 cursor-pointer transition text-xs"
                   onClick={() => setShowCommentForm(true)}
                 >
-                  <p className="">Comment</p>
-                  <Paperclip
-                    strokeWidth={1.5}
-                    className="w-4 h-4 text-text-700"
-                  />
+                  <p className="">Write a comment</p>
                 </div>
               </div>
             )}
 
             {showCommentForm && (
-              <AddComentForm onCancelClick={() => setShowCommentForm(false)} />
+              <div className="flex items-start gap-2 w-full">
+                <Image
+                  src={profile?.avatar_url || "/default_avatar.png"}
+                  width={28}
+                  height={28}
+                  alt={profile?.full_name || profile?.username || "avatar"}
+                  className="rounded-full object-cover max-w-[28px] max-h-[28px]"
+                />
+                <AddComentForm
+                  onCancelClick={() => setShowCommentForm(false)}
+                  task={task}
+                />
+              </div>
             )}
           </div>
         </div>

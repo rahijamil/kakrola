@@ -232,7 +232,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
                 alt={profile?.full_name || profile?.username || ""}
                 width={20}
                 height={20}
-                className="rounded-full object-cover max-w-[20px] max-h-[20px]"
+                className="rounded-full object-cover max-w-5 max-h-5"
               />
 
               <p className="font-medium">{profile?.full_name.split(" ")[0]}</p>
@@ -252,8 +252,8 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
                 <Image
                   src={profile?.avatar_url || "/default-avatar.png"}
                   alt="profile"
-                  width={20}
-                  height={20}
+                  width={32}
+                  height={32}
                   className="rounded-full object-cover max-w-[32px] max-h-[32px]"
                 />
 
