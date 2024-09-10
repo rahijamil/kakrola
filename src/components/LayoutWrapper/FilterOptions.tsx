@@ -6,7 +6,7 @@ import { Check, SlidersHorizontal } from "lucide-react";
 import { TaskType } from "@/types/project";
 import Dropdown from "../ui/Dropdown";
 
-const ViewOptions = React.memo(
+const FilterOptions = React.memo(
   ({
     view,
     setView,
@@ -54,7 +54,7 @@ const ViewOptions = React.memo(
             ref={triggerRef}
             className={`${
               isOpen ? "bg-text-50" : "hover:bg-text-100"
-            } transition px-3 p-1 pr-2 rounded-full cursor-pointer flex items-center gap-1 text-text-500`}
+            } transition px-3 p-1 pr-2 rounded-lg cursor-pointer flex items-center gap-1 text-text-500`}
             onClick={onClick}
           >
             <SlidersHorizontal
@@ -68,12 +68,12 @@ const ViewOptions = React.memo(
           <div className="text-xs p-1">
             <div className="space-y-2">
               <div
-                className="flex justify-between items-center hover:bg-text-100 transition cursor-pointer py-[6px] px-3 rounded-2xl"
+                className="flex justify-between items-center hover:bg-text-100 transition cursor-pointer py-[6px] px-3 rounded-lg"
                 onClick={toggleShowCompletedTasks}
               >
                 <div className="flex items-center gap-3">
                   <div
-                    className={`border w-5 h-5 rounded-full flex items-center justify-center ${
+                    className={`border w-5 h-5 rounded-md flex items-center justify-center ${
                       showCompletedTasks
                         ? "border-primary-600 bg-primary-500"
                         : "border-text-400 bg-surface"
@@ -92,6 +92,7 @@ const ViewOptions = React.memo(
                 <ToggleSwitch
                   checked={showCompletedTasks}
                   onCheckedChange={setShowCompletedTasks}
+                  size="sm"
                 />
               </div>
             </div>
@@ -105,6 +106,6 @@ const ViewOptions = React.memo(
   }
 );
 
-ViewOptions.displayName = "ViewOptions";
+FilterOptions.displayName = "ViewOptions";
 
-export default ViewOptions;
+export default FilterOptions;

@@ -17,6 +17,7 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import Spinner from "../ui/Spinner";
+import { useRole } from "@/context/RoleContext";
 
 const icons = Quill.import("ui/icons");
 // Link icons
@@ -163,7 +164,7 @@ const MentionInput = ({
       />
 
       {showMentionList && filteredProfiles.length > 0 && (
-        <ul className="absolute bg-background border border-text-200 shadow-md mb-2 max-h-40 overflow-y-auto w-full z-10 rounded-2xl bottom-full">
+        <ul className="absolute bg-background border border-text-200 shadow-md mb-2 max-h-40 overflow-y-auto w-full z-10 rounded-lg bottom-full">
           {filteredProfiles.map((profile) => (
             <li
               key={profile.id}
@@ -174,7 +175,7 @@ const MentionInput = ({
                 <img
                   src={profile.avatar_url || "/default_avatar.png"}
                   alt={profile.full_name}
-                  className="w-6 h-6 rounded-full"
+                  className="w-6 h-6 rounded-lg"
                 />
                 <div>
                   <p className="font-semibold">{profile.full_name}</p>
@@ -219,6 +220,7 @@ const AddComentForm = ({
         reactions: [],
         is_edited: false,
       };
+
       const { data, error } = await supabaseBrowser
         .from("comments")
         .insert(commentData)

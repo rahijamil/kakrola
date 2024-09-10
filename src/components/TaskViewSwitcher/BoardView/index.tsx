@@ -401,7 +401,7 @@ const BoardView: React.FC<{
             <div
               ref={boardProvided.innerRef}
               {...boardProvided.droppableProps}
-              className="flex overflow-x-auto space-x-2 p-8 pt-0 h-full"
+              className="flex overflow-x-auto space-x-1 h-full"
             >
               {columns.map((column, columnIndex) => (
                 <BoardViewColumn

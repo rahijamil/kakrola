@@ -134,7 +134,7 @@ const SidebarWrapper = () => {
           ></div>
 
           <button
-            className={`w-6 h-6 items-center justify-center absolute bottom-12 left-[calc(100%-14px)] z-10 rounded-full bg-background border border-primary-500 hover:bg-primary-500 hover:text-surface text-primary-500 shadow-md cursor-pointer ${
+            className={`w-6 h-6 items-center justify-center absolute bottom-12 left-[calc(100%-14px)] z-10 rounded-lg bg-background border border-primary-500 hover:bg-primary-500 hover:text-surface text-primary-500 shadow-md cursor-pointer ${
               isCollapsed
                 ? "flex group-hover:bg-primary-500 group-hover:border-primary-500 group-hover:text-surface"
                 : "hidden group-hover:flex"

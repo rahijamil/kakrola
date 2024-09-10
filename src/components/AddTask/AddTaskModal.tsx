@@ -5,12 +5,12 @@ import { motion } from "framer-motion";
 
 interface AddTaskModalProps {
   onClose: () => void;
-  dueDate?: Date | null;
+  endDate?: Date | null;
 }
 
 const AddTaskModal = ({
   onClose,
-  dueDate,
+  endDate,
 }: AddTaskModalProps) => {
   return (
     <div
@@ -20,13 +20,14 @@ const AddTaskModal = ({
       <motion.div
         initial={{ scale: 0.8, y: 20 }}
         animate={{ scale: 1, y: 0 }}
-        className="bg-surface rounded-2xl shadow-[1px_1px_32px_1px_rgba(0,0,0,0.3)] p-2 w-[550px]"
+        className="bg-surface rounded-lg shadow-[1px_1px_32px_1px_rgba(0,0,0,0.3)] p-2 w-[550px]"
         onClick={(ev) => ev.stopPropagation()}
       >
         <AddTaskForm
           onClose={onClose}
           project={null}
           biggerTitle
+          endDate={endDate}
         />
       </motion.div>
     </div>

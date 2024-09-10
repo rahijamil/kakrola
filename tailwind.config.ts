@@ -216,6 +216,10 @@ const config: Config = {
     "bg-gray-800",
     "bg-gray-900",
     "text-gray-500",
+
+
+    "text-indigo-500",
+    "text-pink-500"
   ],
   plugins: [nextui()],
 };

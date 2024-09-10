@@ -43,7 +43,7 @@ const ResponsiveTable = ({
             .filter((c) => c.id !== "ungrouped")
             .map((column, columnIndex) => (
               <React.Fragment key={column.id}>
-                <tr className="bg-gray-50">
+                <tr className="bg-text-50">
                   <td colSpan={5} className="p-2">
                     <div className="flex items-center gap-2">
                       <ChevronRight className="w-4 h-4" />

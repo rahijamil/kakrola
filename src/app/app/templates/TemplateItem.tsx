@@ -10,7 +10,7 @@ const TemplateItem = ({ project }: { project: TemplateProjectType }) => {
 
   return (
     <div
-      className={`rounded-2xl overflow-hidden transition-all duration-150 border border-text-100 shadow-[1px_1px_8px_rgba(0,0,0,0.1)] hover:shadow-[2px_2px_16px_rgba(0,0,0,0.2)] cursor-pointer relative group w-72 flex flex-col`}
+      className={`rounded-lg overflow-hidden transition-all duration-150 border border-text-100 shadow-[1px_1px_8px_rgba(0,0,0,0.1)] hover:shadow-[2px_2px_16px_rgba(0,0,0,0.2)] cursor-pointer relative group w-72 flex flex-col`}
     >
       <div
         className={`w-full flex-1 aspect-video relative flex justify-center items-center bg-${
@@ -20,7 +20,7 @@ const TemplateItem = ({ project }: { project: TemplateProjectType }) => {
         {/* <Image src={project.preview_image} alt={project.name} fill /> */}
 
         <span
-          className={`text-5xl rounded-full w-20 h-20 flex items-center justify-center bg-${
+          className={`text-5xl rounded-lg w-20 h-20 flex items-center justify-center bg-${
             project.color.split("-")[0]
           }-200 text-${project.color}`}
           style={{ fontFamily: "fantasy" }}
@@ -68,7 +68,7 @@ const TemplateItem = ({ project }: { project: TemplateProjectType }) => {
           Label={({ onClick }) => (
             <button
               ref={triggerRef}
-              className={`p-1.5 transition rounded-full ${
+              className={`p-1.5 transition rounded-lg ${
                 isOpen ? "bg-text-100" : "hover:bg-text-100"
               }`}
               onClick={(ev) => {

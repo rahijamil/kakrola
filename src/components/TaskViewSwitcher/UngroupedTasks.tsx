@@ -10,7 +10,7 @@ interface UngroupedTasksProps {
   showUngroupedAddTask: boolean;
   setShowUngroupedAddTask: React.Dispatch<React.SetStateAction<boolean>>;
   project: ProjectType | null;
-  setTasks: (tasks: TaskType[]) => void
+  setTasks: (tasks: TaskType[]) => void;
   showTaskItemModal: string | null;
   setShowTaskItemModal: Dispatch<SetStateAction<string | null>>;
 }
@@ -29,10 +29,10 @@ const UngroupedTasks: React.FC<UngroupedTasksProps> = ({
   >(null);
 
   return (
-    <div className="pl-4">
+    <>
       <Droppable droppableId="ungrouped" type="task">
         {(provided) => (
-          <ul
+          <div
             {...provided.droppableProps}
             ref={provided.innerRef}
             className={`${tasks.length == 0 && "p-1"}`}
@@ -40,34 +40,28 @@ const UngroupedTasks: React.FC<UngroupedTasksProps> = ({
             {tasks
               .filter((t) => !t.parent_task_id)
               .map((task, index) => (
-                <Fragment key={task.id}>
-                  <li className="border-b border-text-200 p-1 pl-0 flex items-center gap-3 cursor-pointer">
-                    <TaskItemForListView
-                      showDeleteConfirm={showTaskDeleteConfirm}
-                      setShowDeleteConfirm={setShowTaskDeleteConfirm}
-                      task={task}
-                      setTasks={setTasks}
-                      subTasks={tasks.filter(
-                        (t) => t.parent_task_id === task.id
-                      )}
-                      index={index}
-                      project={project}
-                      tasks={tasks}
-                      setShowModal={setShowTaskItemModal}
-                      showModal={showTaskItemModal}
-                    />
-                  </li>
+                <>
+                  <TaskItemForListView
+                    key={task.id}
+                    showDeleteConfirm={showTaskDeleteConfirm}
+                    setShowDeleteConfirm={setShowTaskDeleteConfirm}
+                    task={task}
+                    setTasks={setTasks}
+                    subTasks={tasks.filter((t) => t.parent_task_id === task.id)}
+                    index={index}
+                    project={project}
+                    tasks={tasks}
+                    setShowModal={setShowTaskItemModal}
+                    showModal={showTaskItemModal}
+                  />
 
-                  {tasks.filter((t) => t.parent_task_id === task.id).length >
+                  {/* {tasks.filter((t) => t.parent_task_id === task.id).length >
                     0 && (
                     <ul>
                       {tasks
                         .filter((t) => t.parent_task_id === task.id)
                         .map((childTask, childIndex) => (
-                          <li
-                            key={childTask.id}
-                            className="border-b border-text-200 p-1 pl-0 flex items-center gap-3 cursor-pointer"
-                          >
+                          <li key={childTask.id}>
                             <TaskItemForListView
                               task={childTask}
                               setTasks={setTasks}
@@ -81,11 +75,11 @@ const UngroupedTasks: React.FC<UngroupedTasksProps> = ({
                           </li>
                         ))}
                     </ul>
-                  )}
-                </Fragment>
+                  )} */}
+                </>
               ))}
             {provided.placeholder}
-          </ul>
+          </div>
         )}
       </Droppable>
 
@@ -96,7 +90,7 @@ const UngroupedTasks: React.FC<UngroupedTasksProps> = ({
         setTasks={setTasks}
         tasks={tasks}
       />
-    </div>
+    </>
   );
 };
 

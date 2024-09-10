@@ -141,7 +141,7 @@ const InviteEmailInput = ({
   return (
     <div className="relative">
       <div className="flex gap-2">
-        <div className="rounded-2xl border border-text-300 hover:border-text-400 focus-within:border-text-400 bg-transparent focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-300 overflow-hidden w-full">
+        <div className="rounded-lg border border-text-300 hover:border-text-400 focus-within:border-text-400 bg-transparent focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-300 overflow-hidden w-full">
           <div className="flex flex-col p-1">
             {emails.length > 0 && (
               <div className="flex justify-between gap-1">
@@ -149,7 +149,7 @@ const InviteEmailInput = ({
                   {emails.map((email) => (
                     <div
                       key={email}
-                      className={`flex items-center px-2 py-1 rounded-full shadow-sm w-fit border ${
+                      className={`flex items-center px-2 py-1 rounded-lg shadow-sm w-fit border ${
                         !emailRegex.test(email)
                           ? "border-red-500 text-red-500 bg-red-50"
                           : "bg-text-100 border-text-300 text-text-700"
@@ -204,7 +204,7 @@ const InviteEmailInput = ({
       )}
       {error && <p className="mt-2 p-2 text-red-500 text-xs">{error}</p>}
       {suggestions.length > 0 && (
-        <div className="mt-2 p-2 shadow-lg border border-text-200 bg-background rounded-xl z-10">
+        <div className="mt-2 p-2 shadow-lg border border-text-200 bg-background rounded-lg z-10">
           <p className="text-xs font-medium mb-1">
             Keep typing an email to invite
           </p>

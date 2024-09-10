@@ -100,7 +100,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({ tasks, sections }) => {
 
   return (
     <div className="px-6 md:px-8 pb-8">
-      <div className="wrapper space-y-6 p-6bg-whiterounded-2xlshadow-lgborderborder-gray-200overflow-y-automax-h-[calc(100vh-110px)]">
+      <div className="wrapper space-y-6 p-6bg-whiterounded-lgshadow-lgborderborder-gray-200overflow-y-automax-h-[calc(100vh-110px)]">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           <OverviewCard
             title="Total Tasks"
@@ -235,7 +235,7 @@ const ChartCard: React.FC<{
   children: React.ReactNode;
   icon: React.ReactNode;
 }> = ({ title, children, icon }) => (
-  <div className="bg-white p-4 rounded-2xl shadow-md border border-gray-200 transition-transform transform hover:scale-105">
+  <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200 transition-transform transform hover:scale-105">
     <div className="flex items-center justify-between mb-3">
       <h2 className="text-base font-semibold text-gray-800">{title}</h2>
       <div>{icon}</div>
@@ -251,7 +251,7 @@ const OverviewCard: React.FC<{
   icon: React.ReactNode;
 }> = ({ title, value, color, icon }) => (
   <div
-    className={`p-4 rounded-2xl shadow-md border ${color} transition-transform transform hover:scale-105`}
+    className={`p-4 rounded-lg shadow-md border ${color} transition-transform transform hover:scale-105`}
   >
     <div className="flex items-center justify-between mb-2">
       <h3 className="text-base font-semibold text-gray-800">{title}</h3>

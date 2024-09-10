@@ -17,6 +17,8 @@ import {
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
+import { useRole } from "@/context/RoleContext";
+import { canCreateTask, canEditTask } from "@/types/hasPermission";
 
 const AddTaskFormForProject = ({
   onClose,
@@ -112,6 +114,8 @@ const AddTaskFormForProject = ({
     }
   };
 
+  const { role } = useRole();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!taskData.title) {
@@ -129,13 +133,17 @@ const AddTaskFormForProject = ({
     let updatedTasks: TaskType[] = [];
 
     try {
-      if (isEditing) {
+      if (isEditing && taskData.project_id) {
         // Optimistically update the task in the UI
         updatedTasks = tasks.map((t) =>
           t.id === taskData.id ? { ...t, ...taskData } : t
         );
         setTasks(updatedTasks);
         setLoading(false);
+
+        const userRole = role(taskData.project_id);
+        const canUpdateSection = userRole ? canEditTask(userRole) : false;
+        if (!canUpdateSection) return;
 
         // Update the existing task in Supabase
         const { data, error } = await supabaseBrowser
@@ -193,6 +201,11 @@ const AddTaskFormForProject = ({
         setLoading(false);
         // Reset form and close
         resetTaskData();
+
+        if(!taskData.project_id) return
+        const userRole = role(taskData.project_id);
+        const canUpdateSection = userRole ? canCreateTask(userRole) : false;
+        if (!canUpdateSection) return;
 
         // Insert the new task into Supabase
         const { id: tempId, ...taskDataWithoutId } = newTask;

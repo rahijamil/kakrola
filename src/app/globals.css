@@ -82,7 +82,7 @@
   }
 
   .custom-quill-editor .ql-toolbar button {
-    @apply rounded-full hover:bg-text-100 transition flex items-center justify-center aspect-square;
+    @apply rounded-lg hover:bg-text-100 transition flex items-center justify-center aspect-square;
     display: inline-flex !important;
   }
 

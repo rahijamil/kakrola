@@ -1,48 +1,70 @@
 import { ProjectType, TaskType } from "@/types/project";
 import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import SidebarProjectMoreOptions from "./SidebarProjectMoreOptions";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import ConfirmAlert from "../../AlertBox/ConfirmAlert";
 import CommentOrActivityModal from "../../LayoutWrapper/CommentOrActivityModal";
 import ExportCSVModal from "./SidebarProjectMoreOptions/ExportCSVModal";
 import ImportCSVModal from "./SidebarProjectMoreOptions/ImportCSVModal";
 import AddEditProject from "../../AddEditProject";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
-import { CheckCircle, Ellipsis, Hash } from "lucide-react";
+import { CheckCircle, Ellipsis, Hash, Users } from "lucide-react";
 import ProjectDeleteConfirm from "./ProjectDeleteConfirm";
 import ProjectArchiveConfirm from "./ProjectArchiveConfirm";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { useQuery } from "@tanstack/react-query";
+import ProjectLeaveConfirm from "./ProjectLeaveConfirm";
 
 const ProjectItem = ({
   project,
   pathname,
   isDragging,
+  setIsDragDisabled,
 }: {
   project: ProjectType;
   pathname: string;
   isDragging?: boolean;
+  setIsDragDisabled?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { projectsLoading } = useTaskProjectDataProvider();
   const [tasks, setTasks] = useState<TaskType[]>([]);
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      const { data: tasksData, error: tasksError } = await supabaseBrowser
-        .from("tasks")
+  const { data: thisProjectAllMembers } = useQuery({
+    queryKey: ["project_members", project.id],
+    queryFn: async () => {
+      const { data, error } = await supabaseBrowser
+        .from("project_members")
         .select("id")
         .eq("project_id", project.id);
-
-      if (!tasksError) {
-        setTasks((tasksData as any) || []);
+      if (error) console.error("Failed to fetch project members", error);
+      if (!error) {
+        return data;
       }
-    };
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled: !!project.id,
+  });
 
-    fetchTasks();
-  }, [project.id]);
+  // useEffect(() => {
+  //   const fetchTasks = async () => {
+  //     const { data: tasksData, error: tasksError } = await supabaseBrowser
+  //       .from("tasks")
+  //       .select("id")
+  //       .eq("project_id", project.id);
+
+  //     if (tasksError) console.error("Failed to fetch tasks", tasksError);
+
+  //     if (!tasksError) {
+  //       setTasks((tasksData as any) || []);
+  //     }
+  //   };
+
+  //   fetchTasks();
+  // }, [project.id]);
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState<boolean>(false);
   const [showArchiveConfirm, setShowArchiveConfirm] = useState<boolean>(false);
   const [showCommentOrActivity, setShowCommentOrActivity] = useState<
     "comment" | "activity" | null
@@ -63,7 +85,7 @@ const ProjectItem = ({
         </div>
       ) : (
         <div
-          className={`sidebar_project_item flex-1 flex items-center justify-between transition-colors rounded-full text-text-900 ${
+          className={`sidebar_project_item flex-1 flex items-center justify-between transition-colors rounded-lg text-text-900 pl-2 ${
             isDragging
               ? "bg-surface shadow-[0_0_8px_1px_rgba(0,0,0,0.2)]"
               : pathname === `/app/project/${project.slug}`
@@ -84,6 +106,10 @@ const ProjectItem = ({
                 />
               </div>
               {project.name}
+
+              {thisProjectAllMembers?.length! > 1 && (
+                <Users strokeWidth={1.5} className="w-4 h-4 ml-2" />
+              )}
             </div>
           </Link>
 
@@ -100,6 +126,7 @@ const ProjectItem = ({
                 project={project}
                 stateActions={{
                   setShowDeleteConfirm,
+                  setShowLeaveConfirm,
                   setShowArchiveConfirm,
                   setShowCommentOrActivity,
                   setExportAsCSV,
@@ -107,10 +134,18 @@ const ProjectItem = ({
                   setProjectEdit,
                   setAboveBellow,
                 }}
+                setIsDragDisabled={setIsDragDisabled}
               />
             </div>
           </div>
         </div>
+      )}
+
+      {showLeaveConfirm && (
+        <ProjectLeaveConfirm
+          setShowLeaveConfirm={setShowLeaveConfirm}
+          project={project}
+        />
       )}
 
       {showDeleteConfirm && (

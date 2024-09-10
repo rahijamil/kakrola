@@ -30,7 +30,7 @@ const RoleItem = ({
         <button
           ref={triggerRef}
           onClick={onClick}
-          className={`text-xs text-text-500 transition pl-2 p-1 rounded-2xl flex items-center gap-1 whitespace-nowrap ${
+          className={`text-xs text-text-500 transition pl-2 p-1 rounded-lg flex items-center gap-1 whitespace-nowrap ${
             isOpen ? "bg-text-200" : "hover:bg-text-200"
           }`}
         >

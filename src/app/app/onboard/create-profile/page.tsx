@@ -131,7 +131,7 @@ const Step1CreateProfile = () => {
             <button
               type="button"
               onClick={() => setUseWithTeam(!useWithTeam)}
-              className="flex items-center justify-between w-full cursor-pointer rounded-full border border-text-300 hover:border-text-400 focus:border-text-300 bg-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-50 px-4 h-12"
+              className="flex items-center justify-between w-full cursor-pointer rounded-lg border border-text-300 hover:border-text-400 focus:border-text-300 bg-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-50 px-4 h-12"
             >
               <span className="text-sm font-medium text-text-700">
                 I want to use Kakrola with my team

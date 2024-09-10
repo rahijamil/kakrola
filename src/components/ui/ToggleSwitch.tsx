@@ -38,11 +38,11 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       }}
       className={`${
         checked ? "bg-primary-600" : "bg-text-300"
-      } relative inline-flex ${switchClasses} items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none`}
+      } relative inline-flex ${switchClasses} items-center rounded-lg transition-colors duration-200 ease-in-out focus:outline-none`}
     >
       <span className="sr-only">Enable feature</span>
       <span
-        className={`inline-block ${dotClasses} transform bg-surface rounded-full transition-transform duration-200 ease-in-out ${translateClasses}`}
+        className={`inline-block ${dotClasses} transform bg-surface rounded transition-transform duration-200 ease-in-out ${translateClasses}`}
       />
     </button>
   );

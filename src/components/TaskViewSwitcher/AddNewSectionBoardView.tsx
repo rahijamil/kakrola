@@ -142,7 +142,7 @@ const AddNewSectionBoardView = ({
       {(columnId ? showAddSection !== columnId : !showUngroupedAddSection) && (
         <>
           {(columns ? columns.length - 1 == index : true) ? (
-            <div className="bg-text-50 p-3 py-2 rounded-full min-w-[300px] h-fit ml-5">
+            <div className="bg-text-50 p-3 py-2 rounded-lg w-72 md:w-[300px] h-fit ml-3">
               <button
                 className="text-text-500 hover:text-primary-600 flex items-center gap-2 w-full group py-1 whitespace-nowrap"
                 onClick={() =>

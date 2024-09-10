@@ -56,8 +56,8 @@ const AnimatedTaskCheckbox = ({
       default:
         return {
           hex: "#6B7280",
-          class1: "bg-gray-500",
-          class2: "bg-gray-50",
+          class1: "bg-text-500",
+          class2: "bg-text-50",
         };
     }
   };

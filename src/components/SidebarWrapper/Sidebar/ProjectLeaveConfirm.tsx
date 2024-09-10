@@ -9,66 +9,61 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
-import { useRole } from "@/context/RoleContext";
-import { canDeleteProject } from "@/types/hasPermission";
 
-const ProjectDeleteConfirm = ({
+const ProjectLeaveConfirm = ({
   project,
-  setShowDeleteConfirm,
+  setShowLeaveConfirm,
 }: {
   project: ProjectType;
-  setShowDeleteConfirm: Dispatch<SetStateAction<boolean>>;
+  setShowLeaveConfirm: Dispatch<SetStateAction<boolean>>;
 }) => {
   const { projects, setProjects } = useTaskProjectDataProvider();
   const { profile } = useAuthProvider();
 
-  const {role} = useRole()
-
-  const handleProjectDelete = async () => {
+  const handleProjectLeave = async () => {
     if (!profile?.id) return;
-
-    const userRole = role(project.id);
-    const canUpdateSection = userRole ? canDeleteProject(userRole) : false;
-    if (!canUpdateSection) return;
 
     const updatedProjects = projects.filter((proj) => proj.id !== project.id);
     setProjects(updatedProjects);
 
     // Delete project
     const { error: projectError } = await supabaseBrowser
-      .from("projects")
+      .from("project_members")
       .delete()
-      .eq("id", project.id);
+      .eq("project_id", project.id)
+      .eq("profile_id", profile.id);
     if (projectError) {
       console.error(projectError);
     }
 
     createActivityLog({
       actor_id: profile.id,
-      action: ActivityAction.DELETED_PROJECT,
+      action: ActivityAction.LEAVED_PROJECT,
       entity_id: project.id,
       entity_type: EntityType.PROJECT,
       metadata: {
-        old_data: project,
+        old_data: {
+          profile,
+          project,
+        },
       },
     });
   };
 
   return (
     <ConfirmAlert
-      title="Delete project?"
+      title="Leave?"
       description={
         <>
-          This will permanently delete{" "}
-          <span className="font-semibold">&quot;{project.name}&quot;</span> and
-          all its tasks. This can&apos;t be undone.
+          Are you sure you want to leave{" "}
+          <span className="font-semibold">&quot;{project.name}&quot;</span>?
         </>
       }
-      submitBtnText="Delete"
-      onCancel={() => setShowDeleteConfirm(false)}
-      onConfirm={handleProjectDelete}
+      submitBtnText="Leave"
+      onCancel={() => setShowLeaveConfirm(false)}
+      onConfirm={handleProjectLeave}
     />
   );
 };
 
-export default ProjectDeleteConfirm;
+export default ProjectLeaveConfirm;

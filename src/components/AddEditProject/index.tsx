@@ -1,14 +1,23 @@
 "use client";
-import React, {
-  FormEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { Dialog, DialogHeader, DialogTitle } from "../ui";
+import React, { FormEvent, useCallback, useMemo, useState } from "react";
+import { DialogTitle } from "../ui";
 import { ProjectType, TaskPriority } from "@/types/project";
-import { CircleHelp, SquareGanttChart, SquareKanban } from "lucide-react";
+import {
+  AlignLeft,
+  CalendarDays,
+  CalendarRange,
+  Check,
+  CheckCircle,
+  CircleChevronUp,
+  FoldHorizontal,
+  MoreHorizontal,
+  SquareGanttChart,
+  SquareKanban,
+  Tag,
+  UnfoldHorizontal,
+  UserPlus,
+  X,
+} from "lucide-react";
 import { ToggleSwitch } from "../ui/ToggleSwitch";
 import { Input } from "../ui/input";
 import { useAuthProvider } from "@/context/AuthContext";
@@ -27,6 +36,12 @@ import {
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
+import { useRole } from "@/context/RoleContext";
+import { canEditProject } from "@/types/hasPermission";
+import { Button } from "../ui/button";
+import LayoutView from "../LayoutView";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const projectViewsToSelect: {
   id: number;
@@ -37,13 +52,19 @@ const projectViewsToSelect: {
   {
     id: 1,
     name: "List",
-    icon: <SquareKanban size={16} strokeWidth={1.5} className="-rotate-90" />,
+    icon: <SquareKanban size={24} strokeWidth={1.5} className="-rotate-90" />,
     visible: true,
   },
   {
     id: 2,
     name: "Board",
-    icon: <SquareKanban size={16} strokeWidth={1.5} />,
+    icon: <SquareKanban size={24} strokeWidth={1.5} />,
+    visible: true,
+  },
+  {
+    id: 3,
+    name: "Calendar",
+    icon: <CalendarDays size={24} strokeWidth={1.5} />,
     visible: true,
   },
 ];
@@ -63,7 +84,7 @@ const AddEditProject = ({
   const { projects, setProjects, teams, projectMembers } =
     useTaskProjectDataProvider();
 
-  const initialProjectData = useMemo(
+  const initialProjectData: Omit<ProjectType, "id"> = useMemo(
     () =>
       project && !aboveBellow
         ? project
@@ -103,7 +124,8 @@ const AddEditProject = ({
     [project?.id, profile?.id, findProjectMember]
   );
 
-  const [projectData, setProjectData] = useState(initialProjectData);
+  const [projectData, setProjectData] =
+    useState<Omit<ProjectType, "id">>(initialProjectData);
   const [projectMembersData, setProjectMembersData] = useState(
     initialProjectMembersData
   );
@@ -159,6 +181,8 @@ const AddEditProject = ({
     []
   );
 
+  const { role } = useRole();
+
   const handleAddProject = async (ev: FormEvent) => {
     ev.preventDefault();
 
@@ -173,6 +197,10 @@ const AddEditProject = ({
     setError(null);
 
     if (project?.id) {
+      const userRole = role(project.id);
+      const canUpdateSection = userRole ? canEditProject(userRole) : false;
+      if (!canUpdateSection) return;
+
       const data: Partial<ProjectType> = {};
       const fields = ["name"] as const;
 
@@ -383,91 +411,95 @@ const AddEditProject = ({
   };
 
   return (
-    <Dialog size="xs" onClose={onClose}>
-      <>
-        <DialogHeader>
-          <DialogTitle>Add project</DialogTitle>
-          <button className="p-2 rounded-full hover:bg-text-100 transition">
-            <CircleHelp strokeWidth={1.5} className="w-5 h-5 text-text-500" />
-          </button>
-        </DialogHeader>
-
-        <form
-          onSubmit={(ev) => {
-            if (aboveBellow) {
-              handleAddProjectAboveBellow(ev, aboveBellow);
-            } else {
-              handleAddProject(ev);
-            }
-          }}
+    <div className="bg-background fixed inset-0 z-20 flex flex-col">
+      <div className="flex justify-end p-4 pr-6">
+        <button
+          className="p-1 rounded-lg hover:bg-text-100 transition"
+          onClick={onClose}
         >
-          <div className="p-4 pb-8 space-y-4">
-            <Input
-              type="text"
-              value={projectData?.name}
-              onChange={(e) => {
-                handleProjectDataChange("name", e.target.value);
-                handleProjectDataChange("slug", generateSlug(e.target.value));
-              }}
-              required
-              autoFocus
-              label="Name"
-              Icon={SquareGanttChart}
-              placeholder="Project name"
-              className="h-12"
-            />
+          <X size={20} strokeWidth={1.5} />
+        </button>
+      </div>
 
-            <ColorSelector
-              value={projectData.settings.color}
-              onChange={(color) =>
-                handleProjectDataChange("settings", {
-                  ...projectData.settings,
-                  color,
-                })
+      <div className="w-11/12 mx-auto flex flex-1 gap-16">
+        <div className="w-full space-y-8 max-w-sm">
+          <h1 className="font-medium text-3xl">New project</h1>
+
+          <form
+            onSubmit={(ev) => {
+              if (aboveBellow) {
+                handleAddProjectAboveBellow(ev, aboveBellow);
+              } else {
+                handleAddProject(ev);
               }
-            />
+            }}
+            className="space-y-8"
+          >
+            <div className="space-y-8">
+              <Input
+                type="text"
+                value={projectData?.name}
+                onChange={(e) => {
+                  handleProjectDataChange("name", e.target.value);
+                  handleProjectDataChange("slug", generateSlug(e.target.value));
+                }}
+                required
+                autoFocus
+                label="Name"
+                Icon={SquareGanttChart}
+                placeholder="Project name"
+              />
 
-            <WorkspaceSelector
-              currentWorkspace={currentWorkspace}
-              workspaces={workspaces}
-              onSelect={(workspace) =>
-                handleProjectDataChange("team_id", workspace.team_id)
-              }
-            />
-
-            <div>
-              <button
-                className="flex items-center space-x-2 w-full"
-                type="button"
-                onClick={() =>
-                  setProjectMembersData((prev) => ({
-                    ...prev,
-                    project_settings: {
-                      ...projectMembersData?.project_settings,
-                      is_favorite:
-                        !projectMembersData?.project_settings.is_favorite,
-                    },
-                  }))
+              <ColorSelector
+                value={projectData.settings.color}
+                onChange={(color) =>
+                  handleProjectDataChange("settings", {
+                    ...projectData.settings,
+                    color,
+                  })
                 }
-              >
-                <ToggleSwitch
-                  checked={projectMembersData.project_settings.is_favorite}
-                  onCheckedChange={(value) =>
+              />
+
+              <WorkspaceSelector
+                currentWorkspace={currentWorkspace}
+                workspaces={workspaces}
+                onSelect={(workspace) =>
+                  handleProjectDataChange("team_id", workspace.team_id)
+                }
+              />
+
+              <div>
+                <button
+                  className="flex items-center space-x-2 w-full"
+                  type="button"
+                  onClick={() =>
                     setProjectMembersData((prev) => ({
                       ...prev,
                       project_settings: {
-                        ...projectMembersData.project_settings,
-                        is_favorite: value,
+                        ...projectMembersData?.project_settings,
+                        is_favorite:
+                          !projectMembersData?.project_settings.is_favorite,
                       },
                     }))
                   }
-                />
+                >
+                  <ToggleSwitch
+                    checked={projectMembersData.project_settings.is_favorite}
+                    onCheckedChange={(value) =>
+                      setProjectMembersData((prev) => ({
+                        ...prev,
+                        project_settings: {
+                          ...projectMembersData.project_settings,
+                          is_favorite: value,
+                        },
+                      }))
+                    }
+                  />
 
-                <span className="">Add to favorites</span>
-              </button>
-            </div>
+                  <span className="">Add to favorites</span>
+                </button>
+              </div>
 
-            <div className="space-y-2 pt-3">
               <div className="space-y-1">
                 <p className="block font-bold text-text-700">View</p>
                 <ul className="flex gap-4 items-center">
@@ -475,23 +507,27 @@ const AddEditProject = ({
                     <li
                       key={v.id}
                       tabIndex={0}
-                      className={`flex items-center justify-between cursor-pointer h-12 rounded-full px-4 border w-full ${
+                      className={`flex items-center justify-center cursor-pointer rounded-lg px-4 border w-full aspect-square relative ${
                         projectData.settings.view === v.name
-                          ? "border-primary-500"
-                          : "border-text-200"
-                      } focus:outline-none hover:bg-text-50`}
+                          ? "border-primary-500 bg-primary-25"
+                          : "border-text-200 hover:bg-text-50"
+                      } focus:outline-none`}
                       onClick={() =>
                         setProjectData({
                           ...projectData,
-                          settings: { ...projectData.settings, view: v.name },
+                          settings: {
+                            ...projectData.settings,
+                            view: v.name,
+                          },
                         })
                       }
                     >
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-col items-center gap-1">
                         {v.icon}
                         <span className="text-text-700">{v.name}</span>
                       </div>
-                      <div>
+
+                      <div className="absolute top-1.5 right-1.5">
                         <AnimatedCircleCheck
                           handleCheckSubmit={() =>
                             setProjectData({
@@ -512,48 +548,445 @@ const AddEditProject = ({
                   ))}
                 </ul>
               </div>
-
-              <p className="text-text-500 text-xs">
-                Layout is synced between teammates in shared projects. Learn
-                more.
-              </p>
             </div>
-          </div>
 
-          {error && (
-            <p className="text-red-500 p-4 pt-0 text-center text-xs whitespace-normal">
-              {error}
-            </p>
-          )}
+            {error && (
+              <p className="text-red-500 p-4 pt-0 text-center text-xs whitespace-normal">
+                {error}
+              </p>
+            )}
 
-          <div className="flex justify-end gap-4 select-none border-t border-text-200 p-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-text-600 bg-text-200 rounded hover:bg-text-300 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-text-100"
-              disabled={loading}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 text-white bg-primary-500 rounded hover:bg-primary-700 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-primary-600"
-              disabled={loading}
-            >
+            <Button type="submit" fullWidth disabled={loading}>
               {loading ? (
                 <div className="flex items-center gap-2">
                   <Spinner color="white" />
 
-                  <span>Adding...</span>
+                  <span>Creating...</span>
                 </div>
               ) : (
-                "Add"
+                "Create Project"
               )}
-            </button>
+            </Button>
+          </form>
+        </div>
+
+        <div className="rounded-lg border border-text-400 cursor-default select-none pointer-events-none w-full p-4 space-y-2 h-[666px]">
+          <div className="flex items-center justify-between gap-8">
+            <div className="flex items-center gap-2">
+              <CheckCircle
+                size={28}
+                className={`text-${projectData.settings.color}`}
+              />
+              <h1 className="text-[26px] font-bold p-1.5 h-8">
+                {projectData.name}
+              </h1>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Skeleton
+                width={24}
+                height={24}
+                enableAnimation={false}
+                borderRadius={"8px"}
+              />
+              <Skeleton
+                width={24}
+                height={24}
+                enableAnimation={false}
+                borderRadius={"8px"}
+              />
+              <Skeleton
+                width={24}
+                height={24}
+                enableAnimation={false}
+                borderRadius={"8px"}
+              />
+            </div>
           </div>
-        </form>
-      </>
-    </Dialog>
+
+          <div>
+            <LayoutView
+              view={projectData.settings.view}
+              setView={(v) => {}}
+              forPreview
+            />
+
+            <div>
+              {projectData.settings.view == "List" ? (
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="border-y border-text-200 text-xs whitespace-nowrap grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200">
+                      <th className="p-2 text-left font-medium flex items-center gap-2 pl-8">
+                        <AlignLeft strokeWidth={2} className="w-4 h-4" />
+                        <span>Task name</span>
+                      </th>
+                      <th className="p-2 text-left font-medium flex items-center gap-2">
+                        <UserPlus strokeWidth={2} className="w-4 h-4" />
+                        <span>Assignee</span>
+                      </th>
+                      <th className="p-2 text-left font-medium flex items-center gap-2">
+                        <CalendarRange strokeWidth={2} className="w-4 h-4" />
+                        <span>Dates</span>
+                      </th>
+                      <th className="p-2 text-left font-medium flex items-center gap-2">
+                        <CircleChevronUp strokeWidth={2} className="w-4 h-4" />
+                        <span>Priority</span>
+                      </th>
+                      <th className="p-2 text-left font-medium flex items-center gap-2">
+                        <Tag strokeWidth={2} className="w-4 h-4" />
+                        <span>Labels</span>
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td colSpan={5} className="p-0 w-full pb-4">
+                        <tr className="border-b border-text-200 block">
+                          <td colSpan={5} className=" p-2">
+                            <h3 className="font-bold">To do</h3>
+                          </td>
+                        </tr>
+                        <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                          <td className="p-2 flex items-center gap-2">
+                            <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
+                              <Check strokeWidth={1.5} size={16} />
+                            </div>
+
+                            <div className="w-full">
+                              <Skeleton enableAnimation={false} width={"60%"} />
+                            </div>
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                        </tr>
+                        <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                          <td className="p-2 flex items-center gap-2">
+                            <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
+                              <Check strokeWidth={1.5} size={16} />
+                            </div>
+
+                            <div className="w-full">
+                              <Skeleton enableAnimation={false} width={"60%"} />
+                            </div>
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                        </tr>
+                        <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                          <td className="p-2 flex items-center gap-2">
+                            <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
+                              <Check strokeWidth={1.5} size={16} />
+                            </div>
+
+                            <div className="w-full">
+                              <Skeleton enableAnimation={false} width={"60%"} />
+                            </div>
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                        </tr>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colSpan={5} className="p-0 w-full pb-4">
+                        <tr className="border-b border-text-200 block">
+                          <td colSpan={5} className=" p-2">
+                            <h3 className="font-bold">In Progress</h3>
+                          </td>
+                        </tr>
+                        <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                          <td className="p-2 flex items-center gap-2">
+                            <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
+                              <Check strokeWidth={1.5} size={16} />
+                            </div>
+
+                            <div className="w-full">
+                              <Skeleton enableAnimation={false} width={"60%"} />
+                            </div>
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                        </tr>
+                        <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                          <td className="p-2 flex items-center gap-2">
+                            <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
+                              <Check strokeWidth={1.5} size={16} />
+                            </div>
+
+                            <div className="w-full">
+                              <Skeleton enableAnimation={false} width={"60%"} />
+                            </div>
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                        </tr>
+                        <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                          <td className="p-2 flex items-center gap-2">
+                            <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
+                              <Check strokeWidth={1.5} size={16} />
+                            </div>
+
+                            <div className="w-full">
+                              <Skeleton enableAnimation={false} width={"60%"} />
+                            </div>
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                        </tr>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td colSpan={5} className="p-0 w-full pb-12">
+                        <tr className="border-b border-text-200 block">
+                          <td colSpan={5} className=" p-2">
+                            <h3 className="font-bold">Complete</h3>
+                          </td>
+                        </tr>
+                        <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                          <td className="p-2 flex items-center gap-2">
+                            <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
+                              <Check strokeWidth={1.5} size={16} />
+                            </div>
+
+                            <div className="w-full">
+                              <Skeleton enableAnimation={false} width={"60%"} />
+                            </div>
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                        </tr>
+                        <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                          <td className="p-2 flex items-center gap-2">
+                            <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
+                              <Check strokeWidth={1.5} size={16} />
+                            </div>
+
+                            <div className="w-full">
+                              <Skeleton enableAnimation={false} width={"60%"} />
+                            </div>
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                        </tr>
+                        <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                          <td className="p-2 flex items-center gap-2">
+                            <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
+                              <Check strokeWidth={1.5} size={16} />
+                            </div>
+
+                            <div className="w-full">
+                              <Skeleton enableAnimation={false} width={"60%"} />
+                            </div>
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                          <td className="p-2">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </td>
+                        </tr>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              ) : projectData.settings.view == "Board" ? (
+                <div className="space-x-4 flex">
+                  <div className="bg-text-100 p-2 rounded-lg w-72 space-y-2">
+                    <div className="flex justify-between items-center gap-8">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-bold pl-[6px]">To do</h3>
+                        <p className="text-sm text-text-600">3</p>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <FoldHorizontal
+                          strokeWidth={1.5}
+                          className="w-5 h-5 text-text-700"
+                        />
+
+                        <MoreHorizontal
+                          strokeWidth={1.5}
+                          className="w-5 h-5 text-text-700"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
+                          <Check strokeWidth={1.5} size={16} />
+                        </div>
+
+                        <div className="w-full">
+                          <Skeleton enableAnimation={false} width={"60%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
+                          <Check strokeWidth={1.5} size={16} />
+                        </div>
+
+                        <div className="w-full">
+                          <Skeleton enableAnimation={false} width={"70%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
+                          <Check strokeWidth={1.5} size={16} />
+                        </div>
+
+                        <div className="w-full">
+                          <Skeleton enableAnimation={false} width={"60%"} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-text-100 p-2 rounded-lg w-72 space-y-2">
+                    <div className="flex justify-between items-center gap-8">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-bold pl-[6px]">In progress</h3>
+                        <p className="text-sm text-text-600">1</p>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <FoldHorizontal
+                          strokeWidth={1.5}
+                          className="w-5 h-5 text-text-700"
+                        />
+
+                        <MoreHorizontal
+                          strokeWidth={1.5}
+                          className="w-5 h-5 text-text-700"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
+                          <Check strokeWidth={1.5} size={16} />
+                        </div>
+
+                        <div className="w-full">
+                          <Skeleton enableAnimation={false} width={"60%"} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    className={`bg-text-100 p-2 flex flex-col py-4 px-2 h-fit items-center justify-center gap-4 rounded-lg hover:transition-colors cursor-pointer `}
+                  >
+                    <button className={`p-1 pointer-events-none`}>
+                      <UnfoldHorizontal
+                        strokeWidth={1.5}
+                        className="w-5 h-5 text-text-700"
+                      />
+                    </button>
+
+                    <h3 className="font-bold vertical-text">Complete</h3>
+
+                    <p className="text-sm text-text-600 vertical-text">4</p>
+                  </div>
+                </div>
+              ) : (
+                <></>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

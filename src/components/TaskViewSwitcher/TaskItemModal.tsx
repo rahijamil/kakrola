@@ -25,6 +25,8 @@ import {
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
+import { useRole } from "@/context/RoleContext";
+import { canEditTask } from "@/types/hasPermission";
 
 const TaskItemModal = ({
   task,
@@ -67,10 +69,21 @@ const TaskItemModal = ({
     });
   };
 
+  const {role} = useRole()
+
   useEffect(() => {
     const updateTask = async () => {
       try {
         if (!profile?.id) return;
+
+        if (!taskData.is_inbox && taskData.project_id) {
+          const userRole = role(taskData.project_id);
+          const canEdit = userRole ? canEditTask(userRole) : false;
+    
+          if (!canEdit) return;
+        }
+
+
         setTasks(tasks.map((t) => (t.id === task.id ? taskData : t)));
 
         if (
@@ -277,7 +290,7 @@ const TaskItemModal = ({
         <div className="p-2 px-4 flex items-center justify-between border-b border-text-200">
           <div>
             <button
-              className="flex items-center gap-2 hover:bg-text-100 rounded-full p-2 transition text-xs"
+              className="flex items-center gap-2 hover:bg-text-100 rounded-lg p-2 transition text-xs"
               onClick={onCheckClick}
             >
               <AnimatedCircleCheck
@@ -291,11 +304,11 @@ const TaskItemModal = ({
           </div>
 
           <div className="flex items-center gap-2">
-            {/* <button className="p-1 hover:bg-text-100 transition rounded-full">
+            {/* <button className="p-1 hover:bg-text-100 transition rounded-lg">
               <Ellipsis strokeWidth={1.5} className="w-6 h-6" />
             </button> */}
             <button
-              className="p-1 hover:bg-text-100 transition rounded-full"
+              className="p-1 hover:bg-text-100 transition rounded-lg"
               onClick={onClose}
             >
               <X strokeWidth={1.5} className="w-6 h-6" />
@@ -382,7 +395,7 @@ const TaskItemModal = ({
 
               {/* <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-text-100 rounded-full cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-text-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Labels</p>
                   <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
@@ -391,7 +404,7 @@ const TaskItemModal = ({
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-text-100 rounded-full cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-text-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
                   <p className="font-semibold text-xs">Reminders</p>
                   <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
@@ -400,10 +413,10 @@ const TaskItemModal = ({
             </div>
             <div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-text-100 rounded-full cursor-pointer transition p-[6px] px-2 group">
+                <div className="flex items-center justify-between hover:bg-text-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
                   <p className="space-x-1 font-semibold text-xs">
                     <span>Location</span>
-                    <span className="uppercase text-[10px] tracking-widest font-bold text-primary-800 bg-primary-100 p-[2px] px-1 rounded-full">
+                    <span className="uppercase text-[10px] tracking-widest font-bold text-primary-800 bg-primary-100 p-[2px] px-1 rounded-lg">
                       Upgrade
                     </span>
                   </p>
@@ -414,7 +427,7 @@ const TaskItemModal = ({
             </div> */}
             </div>
 
-            <TaskDescription taskData={taskData} />
+            {/* <TaskDescription taskData={taskData} /> */}
 
             <SubTasks
               task={task}
@@ -425,7 +438,7 @@ const TaskItemModal = ({
             />
           </div>
 
-          <div className="bg-text-50 p-8 rounded-2xl">
+          <div className="bg-text-50 p-8 rounded-lg">
             <div>
               <ul className="flex items-center gap-4">
                 <li className="font-semibold text-xs py-2 bg-text-50 transition cursor-pointer border-b-2 text-text-700 border-text-700 hover:border-text-700">
@@ -446,11 +459,11 @@ const TaskItemModal = ({
                   width={28}
                   height={28}
                   alt={profile?.full_name || profile?.username || "avatar"}
-                  className="rounded-full object-cover max-w-[28px] max-h-[28px]"
+                  className="rounded-md object-cover max-w-[28px] max-h-[28px]"
                 />
 
                 <div
-                  className="flex items-center justify-between w-full border border-text-200 rounded-full py-2 px-4 bg-white hover:bg-text-100 cursor-pointer transition text-xs"
+                  className="flex items-center justify-between w-full border border-text-200 rounded-lg py-2 px-4 bg-white hover:bg-text-100 cursor-pointer transition text-xs"
                   onClick={() => setShowCommentForm(true)}
                 >
                   <p className="">Write a comment</p>
@@ -465,12 +478,12 @@ const TaskItemModal = ({
                   width={28}
                   height={28}
                   alt={profile?.full_name || profile?.username || "avatar"}
-                  className="rounded-full object-cover max-w-[28px] max-h-[28px]"
+                  className="rounded-md object-cover max-w-[28px] max-h-[28px]"
                 />
-                <AddComentForm
+                {/* <AddComentForm
                   onCancelClick={() => setShowCommentForm(false)}
                   task={task}
-                />
+                /> */}
               </div>
             )}
           </div>

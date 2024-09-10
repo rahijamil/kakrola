@@ -64,7 +64,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
   <>
     {path ? (
       <Link
-        className={`w-full text-left px-4 py-1.5 text-sm text-text-700 hover:bg-text-100 transition flex items-center justify-between rounded-2xl ${
+        className={`w-full text-left px-4 py-1.5 text-sm text-text-700 hover:bg-text-100 transition flex items-center justify-between rounded-lg ${
           isActive ? "bg-text-50" : ""
         }`}
         href={path}
@@ -89,7 +89,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
       </Link>
     ) : (
       <button
-        className={`w-full text-left px-4 py-1.5 text-sm text-text-700 hover:bg-text-100 transition flex items-center justify-between rounded-2xl ${
+        className={`w-full text-left px-4 py-1.5 text-sm text-text-700 hover:bg-text-100 transition flex items-center justify-between rounded-lg ${
           isActive ? "bg-text-50" : ""
         }`}
         onClick={onClick}
@@ -224,7 +224,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
           <button
             onClick={onClick}
             ref={triggerRef}
-            className="flex items-center gap-1 hover:bg-primary-50 transition p-1 pl-1.5 rounded-2xl"
+            className="flex items-center gap-1 hover:bg-primary-50 transition p-1 pl-1.5 rounded-lg"
           >
             <div className="flex items-center gap-1">
               <Image
@@ -232,7 +232,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
                 alt={profile?.full_name || profile?.username || ""}
                 width={20}
                 height={20}
-                className="rounded-full object-cover max-w-5 max-h-5"
+                className="rounded-md object-cover max-w-5 max-h-5"
               />
 
               <p className="font-medium">{profile?.full_name.split(" ")[0]}</p>
@@ -254,7 +254,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
                   alt="profile"
                   width={32}
                   height={32}
-                  className="rounded-full object-cover max-w-[32px] max-h-[32px]"
+                  className="rounded-md object-cover max-w-[32px] max-h-[32px]"
                 />
 
                 <h2 className="font-bold">{profile.full_name}</h2>
@@ -281,7 +281,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
                   />
 
                   {item.subMenu && activeSubmenu === item.label && (
-                    <div className="absolute bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-2xl border border-text-200 top-0 left-full z-20 w-60 py-1">
+                    <div className="absolute bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg border border-text-200 top-0 left-full z-20 w-60 py-1">
                       {item.subMenu.map((subItem, subIndex) => (
                         <MenuItem
                           key={subIndex}

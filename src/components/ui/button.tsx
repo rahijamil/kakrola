@@ -20,7 +20,7 @@ const getButtonClasses = (
   leftAlign?: boolean,
   rightContent?: boolean
 ) => {
-  const baseClasses = `inline-flex items-center gap-2 rounded-full font-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ${
+  const baseClasses = `inline-flex items-center gap-2 rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ${
     leftAlign ? "justify-start text-left" : "justify-center"
   }`;
 
@@ -55,10 +55,10 @@ const getButtonClasses = (
   };
 
   const sizeClasses = {
-    default: rightContent ? "pl-5 h-12 pr-2 gap-4" : "px-6 h-12",
+    default: rightContent ? "pl-5 h-10 pr-2 gap-4" : "px-6 h-10",
     xs: "h-7 px-3",
     sm: "h-8 px-4",
-    lg: "h-12 px-8",
+    lg: "h-10 px-6",
     icon: "h-10 w-10",
   };
 

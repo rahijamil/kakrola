@@ -15,8 +15,14 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import SectionMoreOptions from "../SectionMoreOptions";
 import useTheme from "@/hooks/useTheme";
 import useFoundFixedDropdown from "@/hooks/useFoundFixedDropdown";
-import { ActivityAction, createActivityLog, EntityType } from "@/types/activitylog";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
+import { useRole } from "@/context/RoleContext";
+import { canEditSection } from "@/types/hasPermission";
 
 const BoardViewColumn = ({
   column,
@@ -88,10 +94,19 @@ const BoardViewColumn = ({
   const [showTaskDeleteConfirm, setShowTaskDeleteConfirm] = useState<
     string | null
   >(null);
-  const {profile} = useAuthProvider()
-
+  const { profile } = useAuthProvider();
+  const {role} = useRole();
   const handleUpdateColumnTitle = async () => {
-    if(!profile?.id) return;
+    if (!profile?.id) return;
+
+    const findSection = sections.find((s) => s.id == column.id);
+
+    if (!findSection?.is_inbox && findSection?.project_id) {
+      const userRole = role(findSection.project_id);
+      const canEdit = userRole ? canEditSection(userRole) : false;
+
+      if (!canEdit) return;
+    }
 
     if (columnTitle.trim().length && columnTitle.trim() !== column.title) {
       setSections(
@@ -127,7 +142,7 @@ const BoardViewColumn = ({
           new_data: {
             ...column,
             name: columnTitle.trim(),
-          }
+          },
         },
       });
     }
@@ -171,7 +186,7 @@ const BoardViewColumn = ({
                 {...boardDraggaleProvided.draggableProps}
                 {...boardDraggaleProvided.dragHandleProps}
                 onClick={() => setCollapseColumn(false)}
-                className={`${bgColorClass} ${hoverBgColorClass} flex flex-col py-4 px-2 h-fit items-center justify-center gap-4 rounded-2xl hover:transition-colors cursor-pointer ${
+                className={`${bgColorClass} ${hoverBgColorClass} flex flex-col py-4 px-2 h-fit items-center justify-center gap-4 rounded-lg hover:transition-colors cursor-pointer ${
                   column.is_archived && "opacity-70"
                 }`}
               >
@@ -193,7 +208,7 @@ const BoardViewColumn = ({
                 ref={boardDraggaleProvided.innerRef}
                 {...boardDraggaleProvided.draggableProps}
                 {...boardDraggaleProvided.dragHandleProps}
-                className={`${bgColorClass} rounded-2xl min-w-72 md:min-w-80 w-80 h-fit max-h-[calc(100vh-150px)] overflow-y-auto cursor-default ${
+                className={`${bgColorClass} rounded-lg w-72 md:w-[300px] h-fit max-h-[calc(100vh-150px)] overflow-y-auto cursor-default ${
                   column.is_archived && "opacity-70"
                 }`}
               >
@@ -226,7 +241,7 @@ const BoardViewColumn = ({
                     <input
                       value={columnTitle}
                       onChange={(ev) => setColumnTitle(ev.target.value)}
-                      className="font-bold rounded-2xl px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 w-full"
+                      className="font-bold rounded-lg px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 w-full"
                       onKeyDown={(ev) => {
                         if (ev.key === "Enter") {
                           handleUpdateColumnTitle();
@@ -240,7 +255,7 @@ const BoardViewColumn = ({
 
                   <div className="flex items-center">
                     <button
-                      className={`p-1 hover:transition rounded-2xl ${hoverBgColorClass}`}
+                      className={`p-1 hover:transition rounded-lg ${hoverBgColorClass}`}
                       onClick={() => setCollapseColumn(true)}
                     >
                       <FoldHorizontal
@@ -285,7 +300,7 @@ const BoardViewColumn = ({
                           <>
                             <div
                               key={task.id}
-                              className={`rounded-xl hover:ring-2 hover:ring-primary-300 hover:transition ring-1 ring-text-200`}
+                              className={`rounded-lg hover:ring-2 hover:ring-primary-300 hover:transition ring-1 ring-text-200`}
                             >
                               <TaskItem
                                 key={task.id}

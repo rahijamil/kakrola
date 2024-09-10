@@ -33,7 +33,7 @@ interface DropdownProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   triggerRef: RefObject<HTMLElement> | null;
   direction?: "top-right" | "bottom-left";
-  beforeItemsContent?: ReactNode
+  beforeItemsContent?: ReactNode;
 }
 
 import { motion } from "framer-motion";
@@ -50,7 +50,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   triggerRef,
   direction = "top-right",
   autoClose = true,
-  beforeItemsContent
+  beforeItemsContent,
 }) => {
   const [position, setPosition] = useState<{
     top: string;
@@ -176,20 +176,17 @@ const Dropdown: React.FC<DropdownProps> = ({
               right: position.right,
               transform: position.transform,
             }}
-            className={`z-50 bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-2xl fixed overflow-hidden px-1 ${
+            className={`z-50 bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg fixed overflow-hidden px-1 ${
               contentWidthClass ? contentWidthClass : "w-72 py-1"
             }`}
             id="fixed_dropdown"
             data-form-element={dataFromElement}
           >
-            {
-              beforeItemsContent
-            }
+            {beforeItemsContent}
             {items.map((item) => (
               <>
-                <div onClick={(ev) => ev.stopPropagation()}>
+                <div key={item.id} onClick={(ev) => ev.stopPropagation()}>
                   <button
-                    key={item.id}
                     onClick={() => {
                       if (item.onClick && !item.content) {
                         item.onClick();
@@ -200,19 +197,24 @@ const Dropdown: React.FC<DropdownProps> = ({
                         toggleContent();
                       }
                     }}
-                    className={`w-full text-left px-4 py-1.5 hover:bg-text-100 transition flex items-center justify-between gap-4 rounded-2xl disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent ${
+                    className={`w-full text-left px-4 py-1.5 hover:bg-text-100 transition flex items-center justify-between gap-4 rounded-lg disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent ${
                       item.className
                     } ${item.textColor ? item.textColor : "text-text-700"}`}
                     disabled={item.disabled}
                   >
                     <div className="space-y-1">
-                      <div className="flex items-center gap-4">
-                        {item.icon} {item.label}
-                      </div>
+                      <div className="flex items-start gap-4">
+                        {item.icon}
 
-                      {item.summary && (
-                        <p className="text-xs text-text-500">{item.summary}</p>
-                      )}
+                        <div className="">
+                          <p className={`${item.summary ? "font-medium" : ""}`}>{item.label}</p>
+                          {item.summary && (
+                            <p className="text-xs text-text-500">
+                              {item.summary}
+                            </p>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     {item.content && (

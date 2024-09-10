@@ -49,12 +49,12 @@ const FavoriteProjects = ({
       ) : (
         <>
           {hasFavoriteProjects && (
-            <div className="w-full flex items-center justify-between p-1 text-text-600 rounded-full transition-colors">
+            <div className="w-full flex items-center justify-between p-1 text-text-600 rounded-lg transition-colors">
               <span className="font-medium">Favorites</span>
 
               <div className="opacity-0 group-hover:opacity-100 transition flex items-center">
                 <button
-                  className="p-1 hover:bg-primary-50 rounded-full transition"
+                  className="p-1 hover:bg-primary-50 rounded-lg transition"
                   onClick={() =>
                     setShowFavoritesProjects(!showFavoritesProjects)
                   }

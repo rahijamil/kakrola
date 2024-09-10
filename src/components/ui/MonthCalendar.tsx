@@ -95,7 +95,7 @@ const MonthCalendar = ({
               {isCurrentMonth ? (
                 <button
                   type="button"
-                  className={`w-full h-full rounded-full flex items-center justify-center ring-1 ring-transparent hover:ring-primary-300 transition ${todayClass}`}
+                  className={`w-full h-full rounded-lg flex items-center justify-center ring-1 ring-transparent hover:ring-primary-300 transition ${todayClass}`}
                   onClick={() => handleSelect(day)}
                 >
                   <span className="text-xs">{format(day, "d")}</span>

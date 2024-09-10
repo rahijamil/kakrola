@@ -23,6 +23,8 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
+import { useRole } from "@/context/RoleContext";
+import { canDeleteTask, canEditTask } from "@/types/hasPermission";
 
 const TaskItem = ({
   task,
@@ -64,9 +66,17 @@ const TaskItem = ({
 
   const { setShowShareOption, showShareOption } = useGlobalOption();
   const { profile } = useAuthProvider();
+  const {role} = useRole()
 
   const handleTaskDelete = async () => {
     if (!profile?.id) return;
+
+    if (!task.is_inbox && task.project_id) {
+      const userRole = role(task.project_id);
+      const canEdit = userRole ? canDeleteTask(userRole) : false;
+
+      if (!canEdit) return;
+    }
 
     const updatedTasks = tasks.filter((t) => t.id !== task.id);
 
@@ -95,6 +105,15 @@ const TaskItem = ({
   const handleCheckClickDebounced = debounce(async () => {
     try {
       if (!profile?.id) return;
+
+      if (!task.is_inbox && task.project_id) {
+        const userRole = role(task.project_id);
+        const canEdit = userRole ? canEditTask(userRole) : false;
+  
+        if (!canEdit) return;
+      }
+
+
       // Update local tasks
       setTasks(
         tasks.map((t) =>
@@ -170,7 +189,7 @@ const TaskItem = ({
               className="transition w-full"
             >
               <div
-                className="flex items-start justify-between gap-2 taskitem_group bg-background p-1 pl-2 w-full rounded-xl cursor-pointer relative"
+                className="flex items-start justify-between gap-2 taskitem_group bg-background p-1 pl-2 w-full rounded-lg cursor-pointer relative"
                 onClick={() => setShowModal && setShowModal(task.id.toString())}
               >
                 <div className="flex gap-2">
@@ -243,7 +262,7 @@ const TaskItem = ({
                   </div>
 
                   <button
-                    className="p-1 hover:bg-text-100 transition rounded-full"
+                    className="p-1 hover:bg-text-100 transition rounded-lg"
                     onClick={(ev) => {
                       ev.stopPropagation();
                       typeof setShowShareOption == "function" &&

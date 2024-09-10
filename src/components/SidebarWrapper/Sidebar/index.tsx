@@ -27,6 +27,7 @@ import axios from "axios";
 import AddTeam from "@/components/AddTeam";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import AddEditProject from "@/components/AddEditProject";
 
 const menuItems: {
   id: number;
@@ -60,6 +61,9 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [showAddTeam, setShowAddTeam] = useState<boolean | number>(false);
+
+  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+  const [teamId, setTeamId] = useState<number | null>(null);
 
   const router = useRouter();
 
@@ -113,20 +117,20 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
               }`}
             >
               <button
-                className={`text-text-700 hover:bg-primary-50 rounded-full transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
+                className={`text-text-700 hover:bg-primary-50 rounded-lg transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
               >
                 <Search strokeWidth={1.5} width={20} />
               </button>
 
               <button
-                className={`text-text-700 hover:bg-primary-50 rounded-full transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
+                className={`text-text-700 hover:bg-primary-50 rounded-lg transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
               >
                 <Bell strokeWidth={1.5} width={20} />
               </button>
 
               <button
                 onClick={() => setShowAddTaskModal(true)}
-                className="flex items-center gap-1 text-primary-600 font-semibold hover:bg-primary-50 rounded-full transition-colors duration-150 z-10 w-8 h-8 justify-center"
+                className="flex items-center gap-1 text-primary-600 font-semibold hover:bg-primary-50 rounded-lg transition-colors duration-150 z-10 w-8 h-8 justify-center"
               >
                 <div className="w-5 h-5 bg-primary-500 rounded-full">
                   <Plus className="w-5 h-5 text-surface" strokeWidth={1.5} />
@@ -152,7 +156,7 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
                   {item.path ? (
                     <Link
                       href={item.path}
-                      className={`flex items-center p-2 rounded-full transition-colors duration-150 text-text-900 ${
+                      className={`flex items-center p-2 rounded-lg transition-colors duration-150 text-text-900 ${
                         item.path === pathname
                           ? "bg-primary-100"
                           : "hover:bg-primary-50"
@@ -163,7 +167,7 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
                     </Link>
                   ) : (
                     <button
-                      className={`flex items-center p-2 rounded-full transition-colors duration-150 w-full ${
+                      className={`flex items-center p-2 rounded-lg transition-colors duration-150 w-full ${
                         item.path === pathname
                           ? "bg-primary-500 text-surface"
                           : "hover:bg-primary-50 text-text-700"
@@ -184,13 +188,17 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
             showFavoritesProjects={showFavoritesProjects}
           />
 
-          <MyProjects sidebarWidth={sidebarWidth} />
+          <MyProjects
+            sidebarWidth={sidebarWidth}
+            setShowAddProjectModal={setShowAddProjectModal}
+          />
 
           {teams.map((team) => (
             <TeamProjects
               key={team.id}
               team={team}
               sidebarWidth={sidebarWidth}
+              setTeamId={setTeamId}
             />
           ))}
         </nav>
@@ -198,7 +206,7 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
         <div className="p-2">
           <Link
             href={"/app/templates"}
-            className={`flex items-center p-2 rounded-full transition-colors duration-150 text-text-900 ${
+            className={`flex items-center p-2 rounded-lg transition-colors duration-150 text-text-900 ${
               pathname.startsWith("/app/templates")
                 ? "bg-primary-100"
                 : "hover:bg-primary-50"
@@ -244,6 +252,14 @@ const TasksSidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
       )}
 
       {showAddTeam && <AddTeam onClose={() => setShowAddTeam(false)} />}
+
+      {showAddProjectModal && (
+        <AddEditProject onClose={() => setShowAddProjectModal(false)} />
+      )}
+
+      {teamId && (
+        <AddEditProject workspaceId={teamId} onClose={() => setTeamId(null)} />
+      )}
     </>
   );
 };

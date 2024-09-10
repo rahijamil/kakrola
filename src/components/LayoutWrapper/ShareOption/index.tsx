@@ -10,7 +10,6 @@ import MemberItem from "./MemberItem";
 import InviteEmailInput from "./InviteEmailInput";
 import { InviteStatus, InviteType, ProjectMemberType } from "@/types/team";
 import PendingItem from "./PendingItem";
-import { ActivityAction, createActivityLog } from "@/types/activitylog";
 import ShareAvatar from "./ShareAvatar";
 
 interface MemberData extends ProjectMemberType {
@@ -108,7 +107,7 @@ const ShareOption = ({
             ref={triggerRef}
             className={`${
               showShareOption ? "bg-text-100" : "hover:bg-text-100"
-            } transition p-1 px-3 pr-2 rounded-full cursor-pointer flex items-center gap-1 text-text-500`}
+            } transition p-1 px-3 pr-2 rounded-lg cursor-pointer flex items-center gap-1 text-text-500`}
             onClick={onClick}
           >
             <UserPlus strokeWidth={1.5} className="w-4 h-4" />

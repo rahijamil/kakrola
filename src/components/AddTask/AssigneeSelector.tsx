@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useRef, useState } from "react";
+import React, { Dispatch, Fragment, SetStateAction, useRef, useState } from "react";
 import { Input } from "../ui/input";
 import Image from "next/image";
 import { Check, ChevronDown, Plus, User, UserPlus, X } from "lucide-react";
@@ -85,7 +85,7 @@ const AssigneeSelector = ({
         forTaskModal ? (
           <div
             onClick={onClick}
-            className={`rounded-full transition p-2 px-4 group w-full flex items-center justify-between ${
+            className={`rounded-lg transition p-2 px-4 group w-full flex items-center justify-between ${
               isOpen
                 ? "bg-primary-50 cursor-pointer"
                 : "hover:bg-text-100 cursor-pointer"
@@ -99,7 +99,7 @@ const AssigneeSelector = ({
                 <span>No assignee</span>
               ) : (
                 task.assignees.map((assignee) => (
-                  <div className="flex items-center gap-2">
+                  <div key={assignee.id} className="flex items-center gap-2">
                     <Image
                       src={
                         getAssigneeProfileById(assignee.profile_id)?.avatar_url ||
@@ -112,7 +112,7 @@ const AssigneeSelector = ({
                         getAssigneeProfileById(assignee.profile_id)?.username ||
                         "avatar"
                       }
-                      className="rounded-full object-cover max-w-[18px] max-h-[18px]"
+                      className="rounded-md object-cover max-w-[18px] max-h-[18px]"
                     />
                     {
                       getAssigneeProfileById(assignee.profile_id)?.full_name.split(
@@ -154,7 +154,7 @@ const AssigneeSelector = ({
           >
             {task.assignees.length > 0 ? (
               task.assignees.map((assignee) => (
-                <div className="flex items-center gap-1">
+                <div key={assignee.id} className="flex items-center gap-1">
                   <Image
                     src={
                       getAssigneeProfileById(assignee.profile_id)?.avatar_url ||
@@ -167,7 +167,7 @@ const AssigneeSelector = ({
                       getAssigneeProfileById(assignee.profile_id)?.username ||
                       "avatar"
                     }
-                    className="rounded-full object-cover max-w-5 max-h-5"
+                    className="rounded-md object-cover max-w-5 max-h-5"
                   />
                   {/* {getAssigneeProfileById(assignee.profile_id)?.full_name.split(" ")[0]}
                   {getAssigneeProfileById(assignee.profile_id)?.full_name.split(" ")[1] // Check if the second name exists
@@ -198,7 +198,7 @@ const AssigneeSelector = ({
           >
             {task.assignees.length > 0 ? (
               task.assignees.map((assignee) => (
-                <>
+                <Fragment key={assignee.id}>
                   <div className="flex items-center gap-1">
                     <Image
                       src={
@@ -212,7 +212,7 @@ const AssigneeSelector = ({
                         getAssigneeProfileById(assignee.profile_id)?.username ||
                         "avatar"
                       }
-                      className="rounded-full object-cover max-w-5 max-h-5"
+                      className="rounded-md object-cover max-w-5 max-h-5"
                     />
                     {
                       getAssigneeProfileById(assignee.profile_id)?.full_name.split(
@@ -229,11 +229,11 @@ const AssigneeSelector = ({
                         "." // Display the initial of the second name
                       : ""}
                   </div>
-                </>
+                </Fragment>
               ))
             ) : (
               <div className="flex items-center gap-1">
-                <div className="rounded-full w-5 h-5 flex items-center justify-center bg-surface text-text-500">
+                <div className="rounded-lg w-5 h-5 flex items-center justify-center bg-surface text-text-500">
                   <UserPlus size={16} />
                 </div>
                 <p className="text-xs">Assign</p>
@@ -276,7 +276,7 @@ const AssigneeSelector = ({
                 width={20}
                 height={20}
                 alt={profile.full_name || profile.username || "avatar"}
-                className="rounded-full object-cover max-w-5 max-h-5"
+                className="rounded-md object-cover max-w-5 max-h-5"
               />
             ),
             onClick: () => handleProfileClick(profile),

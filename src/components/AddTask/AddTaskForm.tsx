@@ -1,4 +1,10 @@
-import React, { Dispatch, SetStateAction, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import {
@@ -30,6 +36,9 @@ import {
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
+import { useRole } from "@/context/RoleContext";
+import { canEditTask } from "@/types/hasPermission";
+import { format } from "date-fns";
 
 const AddTaskForm = ({
   onClose,
@@ -40,7 +49,7 @@ const AddTaskForm = ({
   addTaskAboveBellow,
   taskForEdit,
   biggerTitle,
-
+  endDate,
   tasks,
   setTasks,
 }: {
@@ -52,7 +61,7 @@ const AddTaskForm = ({
   addTaskAboveBellow?: { position: "above" | "below"; task: TaskType } | null;
   taskForEdit?: TaskType;
   biggerTitle?: boolean;
-
+  endDate?: Date | null;
   tasks?: TaskType[];
   setTasks?: (tasks: TaskType[]) => void;
 }) => {
@@ -108,6 +117,8 @@ const AddTaskForm = ({
     }
   };
 
+  const { role } = useRole();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -124,7 +135,11 @@ const AddTaskForm = ({
     let updatedTasks: TaskType[] = [];
 
     try {
-      if (isEditing) {
+      if (isEditing && taskData.project_id) {
+        const userRole = role(taskData.project_id);
+        const canUpdateSection = userRole ? canEditTask(userRole) : false;
+        if (!canUpdateSection) return;
+
         if (tasks && setTasks) {
           // Optimistically update the task in the UI
           updatedTasks = tasks.map((t) =>
@@ -194,6 +209,11 @@ const AddTaskForm = ({
         // Reset form and close
         resetTaskData();
 
+        if (!taskData.project_id) return;
+        const userRole = role(taskData.project_id);
+        const canUpdateSection = userRole ? canEditTask(userRole) : false;
+        if (!canUpdateSection) return;
+
         // Insert the new task into Supabase
         const { id: tempId, ...taskDataWithoutId } = newTask;
         const { data, error } = await supabaseBrowser
@@ -257,7 +277,7 @@ const AddTaskForm = ({
         </div>
 
         <div className="flex items-center flex-wrap gap-2 whitespace-nowrap">
-          <DateSelector task={taskData} setTask={setTaskData} />
+          <DateSelector task={taskData} setTask={setTaskData} endDate={endDate} />
 
           <AssigneeSelector
             task={taskData}
@@ -274,7 +294,7 @@ const AddTaskForm = ({
 
           <div className="relative">
             <div
-              className="flex items-center gap-1 hover:bg-text-100 cursor-pointer p-1 px-2 rounded-full border border-text-200"
+              className="flex items-center gap-1 hover:bg-text-100 cursor-pointer p-1 px-2 rounded-lg border border-text-200"
               onClick={() => setShowReminder(!showReminder)}
             >
               <Bell strokeWidth={1.5} className="w-4 h-4 text-text-500" />
@@ -284,7 +304,7 @@ const AddTaskForm = ({
             </div>
             {showReminder && (
               <>
-                <div className="absolute bg-surface border top-full -left-1/2 rounded-2xl overflow-hidden z-20 p-2">
+                <div className="absolute bg-surface border top-full -left-1/2 rounded-lg overflow-hidden z-20 p-2">
                   <input
                     type="datetime-local"
                     className="p-2 border border-text-300 rounded"
@@ -304,7 +324,7 @@ const AddTaskForm = ({
 
           <div className="relative">
             <div
-              className="flex items-center gap-2 hover:bg-text-100 cursor-pointer p-1 rounded-full border border-text-200"
+              className="flex items-center gap-2 hover:bg-text-100 cursor-pointer p-1 rounded-lg border border-text-200"
               onClick={() => setShowMore(!showMore)}
             >
               <Ellipsis strokeWidth={1.5} className="w-5 h-5 text-text-500" />
@@ -312,9 +332,9 @@ const AddTaskForm = ({
 
             {showMore && (
               <>
-                <div className="shadow-xl border border-text-200 rounded-2xl w-[250px] absolute bg-surface right-0 top-full mt-1 z-20 text-xs">
+                <div className="shadow-xl border border-text-200 rounded-lg w-[250px] absolute bg-surface right-0 top-full mt-1 z-20 text-xs">
                   <ul className="p-2">
-                    <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-2xl">
+                    <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-lg">
                       <div className="flex items-center gap-2">
                         <Tag strokeWidth={1.5} className="w-4 h-4" />
                         <span>Labels</span>
@@ -322,11 +342,11 @@ const AddTaskForm = ({
 
                       <AtSignIcon className="w-4 h-4" />
                     </li>
-                    <li className="flex items-center gap-2 px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-2xl">
+                    <li className="flex items-center gap-2 px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-lg">
                       <MapPin strokeWidth={1.5} className="w-4 h-4" />
                       <p className="space-x-1">
                         <span>Location</span>
-                        <span className="uppercase text-[10px] tracking-widest font-bold text-primary-800 bg-primary-100 p-[2px] px-1 rounded-2xl">
+                        <span className="uppercase text-[10px] tracking-widest font-bold text-primary-800 bg-primary-100 p-[2px] px-1 rounded-lg">
                           Upgrade
                         </span>
                       </p>
@@ -334,7 +354,7 @@ const AddTaskForm = ({
                   </ul>
                   <hr />
                   <ul className="p-2">
-                    <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-2xl">
+                    <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-lg">
                       <div className="flex items-center gap-2">
                         <TagIcon className="w-4 h-4" />
                         <span>Labels</span>
@@ -342,7 +362,7 @@ const AddTaskForm = ({
 
                       <AtSignIcon className="w-4 h-4" />
                     </li>
-                    <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-2xl">
+                    <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-lg">
                       <div className="flex items-center gap-2">
                         <MapPinIcon className="w-4 h-4" />
                         <span>Location</span>
@@ -382,14 +402,14 @@ const AddTaskForm = ({
                 resetTaskData();
                 onClose();
               }}
-              className="px-3 py-[6px] text-[13px] text-text-600 transition bg-text-200 hover:bg-text-100 rounded-full"
+              className="px-3 py-[6px] text-[13px] text-text-600 transition bg-text-200 hover:bg-text-100 rounded-lg"
               disabled={loading}
             >
               {isSmall ? <X strokeWidth={1.5} className="w-5 h-5" /> : "Cancel"}
             </button>
             <button
               type="submit"
-              className="px-3 py-[6px] text-[13px] text-white bg-primary-500 rounded-full hover:bg-primary-700 disabled:bg-primary-600 disabled:cursor-not-allowed transition disabled:opacity-50"
+              className="px-3 py-[6px] text-[13px] text-white bg-primary-500 rounded-lg hover:bg-primary-700 disabled:bg-primary-600 disabled:cursor-not-allowed transition disabled:opacity-50"
               disabled={!taskData.title.trim() || loading}
             >
               {loading ? (

@@ -23,7 +23,7 @@ const ConfirmAlert = ({
       onClick={onCancel}
     >
       <div
-        className="bg-surface rounded-2xl p-4 space-y-5 w-11/12 max-w-[450px] whitespace-normal"
+        className="bg-surface rounded-lg p-4 space-y-5 w-11/12 max-w-[450px] whitespace-normal"
         onClick={(ev) => ev.stopPropagation()}
       >
         <div className={`space-y-1 ${!title && "pt-2"}`}>

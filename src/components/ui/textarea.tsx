@@ -28,7 +28,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             />
           )}
           <textarea
-            className={`flex w-full rounded-2xl border border-text-300 hover:border-text-400 focus-visible:border-text-300 bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 disabled:cursor-not-allowed disabled:opacity-50 ${
+            className={`flex w-full rounded-lg border border-text-300 hover:border-text-400 focus-visible:border-text-300 bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 disabled:cursor-not-allowed disabled:opacity-50 ${
               fullWidth ? "w-full" : ""
             } ${className} ${Icon && "pl-10"}`}
             ref={ref}

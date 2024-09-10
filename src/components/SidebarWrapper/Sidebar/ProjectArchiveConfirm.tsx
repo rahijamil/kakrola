@@ -9,6 +9,8 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
+import { useRole } from "@/context/RoleContext";
+import { canEditProject } from "@/types/hasPermission";
 
 const ProjectArchiveConfirm = ({
   project,
@@ -19,9 +21,14 @@ const ProjectArchiveConfirm = ({
 }) => {
   const { projects, setProjects } = useTaskProjectDataProvider();
   const { profile } = useAuthProvider();
+  const { role } = useRole();
 
   const handleArchive = async () => {
     if (!profile?.id) return;
+
+    const userRole = role(project.id);
+    const canUpdateSection = userRole ? canEditProject(userRole) : false;
+    if (!canUpdateSection) return;
 
     const updatedProjects = projects.map((p) => {
       if (p.id === project.id) {

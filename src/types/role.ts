@@ -37,8 +37,6 @@ export enum Permission {
   CREATE_TASK = "CREATE_TASK", // Create new tasks.
   EDIT_TASK = "EDIT_TASK", // Edit existing tasks.
   DELETE_TASK = "DELETE_TASK", // Delete tasks.
-  ASSIGN_TASK = "ASSIGN_TASK", // Assign tasks to team members.
-  COMPLETE_TASK = "COMPLETE_TASK", // Mark tasks as complete.
   VIEW_TASK_DETAILS = "VIEW_TASK_DETAILS", // View task details and information.
 
   // Label Permissions
@@ -47,6 +45,12 @@ export enum Permission {
   DELETE_LABEL = "DELETE_LABEL", // Delete labels.
   ASSIGN_LABEL = "ASSIGN_LABEL", // Assign labels to tasks.
   VIEW_LABEL_DETAILS = "VIEW_LABEL_DETAILS", // View label details and information.
+
+  // Comment Permissions (New)
+  CREATE_COMMENT = "CREATE_COMMENT", // Create new comments on tasks.
+  EDIT_COMMENT = "EDIT_COMMENT", // Edit existing comments.
+  DELETE_COMMENT = "DELETE_COMMENT", // Delete comments.
+  VIEW_COMMENTS = "VIEW_COMMENTS", // View all comments within the project.
 
   // Invite Management
   MANAGE_INVITES = "MANAGE_INVITES", // Manage invites for team or project membership.
@@ -87,8 +91,6 @@ export const rolePermissions: Record<RoleType, Permission[]> = {
     Permission.CREATE_TASK,
     Permission.EDIT_TASK,
     Permission.DELETE_TASK,
-    Permission.ASSIGN_TASK,
-    Permission.COMPLETE_TASK,
     Permission.VIEW_TASK_DETAILS,
 
     // Label Permissions
@@ -97,6 +99,12 @@ export const rolePermissions: Record<RoleType, Permission[]> = {
     Permission.DELETE_LABEL,
     Permission.ASSIGN_LABEL,
     Permission.VIEW_LABEL_DETAILS,
+
+    // Comment Permissions
+    Permission.CREATE_COMMENT,
+    Permission.EDIT_COMMENT,
+    Permission.DELETE_COMMENT,
+    Permission.VIEW_COMMENTS,
 
     // General Permissions
     Permission.MANAGE_INVITES,
@@ -113,15 +121,23 @@ export const rolePermissions: Record<RoleType, Permission[]> = {
     // Task Permissions
     Permission.CREATE_TASK,
     Permission.EDIT_TASK,
-    Permission.ASSIGN_TASK,
-    Permission.COMPLETE_TASK,
     Permission.VIEW_TASK_DETAILS,
 
     // Label Permissions
     Permission.VIEW_LABEL_DETAILS,
+
+    // Comment Permissions
+    Permission.CREATE_COMMENT,
+    Permission.EDIT_COMMENT,
+    Permission.VIEW_COMMENTS,
   ],
 
-  [RoleType.COMMENTER]: [],
+  [RoleType.COMMENTER]: [
+    // Comment Permissions
+    Permission.CREATE_COMMENT,
+    Permission.EDIT_COMMENT,
+    Permission.VIEW_COMMENTS,
+  ],
 
   [RoleType.VIEWER]: [
     // View Permissions
@@ -130,5 +146,6 @@ export const rolePermissions: Record<RoleType, Permission[]> = {
     Permission.VIEW_SECTION_DETAILS,
     Permission.VIEW_TASK_DETAILS,
     Permission.VIEW_LABEL_DETAILS,
+    Permission.VIEW_COMMENTS,
   ],
 };

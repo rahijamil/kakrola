@@ -53,7 +53,7 @@ const Today = () => {
               width={200}
               height={200}
               alt="Today"
-              className="rounded-full object-cover"
+              className="rounded-md object-cover"
               draggable={false}
             />
             <div className="text-center space-y-1 w-72">

@@ -28,9 +28,9 @@ const PendingItem = ({ invite }: { invite: InviteType }) => {
   };
 
   return (
-    <div className="flex justify-between gap-4 items-center p-2 hover:bg-text-50 cursor-default rounded-2xl transition">
+    <div className="flex justify-between gap-4 items-center p-2 hover:bg-text-50 cursor-default rounded-lg transition">
       <div className="flex items-center gap-2">
-        <div className="rounded-full w-6 h-6 bg-text-200 flex items-center justify-center">
+        <div className="rounded-lg w-6 h-6 bg-text-200 flex items-center justify-center">
           {invite.email?.slice(0, 1).toUpperCase()}
         </div>
 

@@ -2,8 +2,7 @@
 import { ProjectType, SectionType } from "@/types/project";
 import React, { createContext, ReactNode, useContext, useState } from "react";
 import { TeamType, TeamMemberType, ProjectMemberType } from "@/types/team";
-import useProjects from "@/hooks/useProjects";
-import useTeams from "@/hooks/useTeams";
+import useTaskProjectData from "@/hooks/useTaskProjectData";
 
 const TaskProjectDataContext = createContext<{
   projects: ProjectType[];
@@ -39,13 +38,27 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
   const {
     projects,
     setProjects,
+    sections,
+    teams,
+    setTeams,
     projectMembers,
     setProjectMembers,
-    loading: projectsLoading,
-    sectionsForProjectSelector,
-  } = useProjects();
+    teamMembers,
+    isLoading,
+    isError,
+    error,
+  } = useTaskProjectData();
 
-  const { teams, setTeams, teamMemberships } = useTeams();
+  // const {
+  //   projects,
+  //   setProjects,
+  //   projectMembers,
+  //   setProjectMembers,
+  //   loading: projectsLoading,
+  //   sectionsForProjectSelector,
+  // } = useProjects();
+
+  // const { teams, setTeams, teamMemberships } = useTeams();
 
   const [activeProject, setActiveProject] = useState<ProjectType | null>(null);
 
@@ -54,11 +67,11 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
       value={{
         projects,
         setProjects,
-        sectionsForProjectSelector,
-        projectsLoading,
+        sectionsForProjectSelector: sections,
+        projectsLoading: isLoading,
         teams,
         setTeams,
-        teamMemberships,
+        teamMemberships: [],
         activeProject,
         setActiveProject,
         projectMembers,

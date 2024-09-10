@@ -65,7 +65,7 @@ const ActiveProjectMoreOptions = ({
     : false;
 
   const handleCopyProjectLink = () => {
-    navigator.clipboard.writeText(`https://ekta.com/project/${project.slug}`);
+    navigator.clipboard.writeText(`https://kakrola.com/project/${project.slug}`);
   };
 
   return (
@@ -78,7 +78,7 @@ const ActiveProjectMoreOptions = ({
           ref={triggerRef}
           className={`${
             isOpen ? "bg-text-100" : "hover:bg-text-100"
-          } transition p-1 rounded-full cursor-pointer ml-1`}
+          } transition p-1 rounded-lg cursor-pointer ml-1`}
           onClick={onClick}
         >
           <Ellipsis strokeWidth={1.5} className="w-5 h-5 text-text-500" />

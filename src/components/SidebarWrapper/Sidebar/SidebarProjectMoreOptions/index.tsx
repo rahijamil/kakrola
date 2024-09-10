@@ -1,4 +1,10 @@
-import React, { Dispatch, RefObject, SetStateAction, useRef } from "react";
+import React, {
+  Dispatch,
+  RefObject,
+  SetStateAction,
+  useEffect,
+  useRef,
+} from "react";
 import {
   Archive,
   ArrowDown,
@@ -10,6 +16,7 @@ import {
   HeartOff,
   HeartOffIcon,
   Link,
+  LogOut,
   Logs,
   Pencil,
   Trash2,
@@ -23,11 +30,20 @@ import Dropdown from "@/components/ui/Dropdown";
 import { usePathname } from "next/navigation";
 import useFavorite from "@/hooks/useFavorite";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import {
+  canArchiveProject,
+  canCreateProject,
+  canDeleteProject,
+  canEditProject,
+} from "@/types/hasPermission";
+import { useRole } from "@/context/RoleContext";
+import { RoleType } from "@/types/role";
 
 const SidebarProjectMoreOptions = ({
   project,
   stateActions: {
     setShowDeleteConfirm,
+    setShowLeaveConfirm,
     setShowArchiveConfirm,
     setShowCommentOrActivity,
     setExportAsCSV,
@@ -35,10 +51,12 @@ const SidebarProjectMoreOptions = ({
     setProjectEdit,
     setAboveBellow,
   },
+  setIsDragDisabled,
 }: {
   project: ProjectType;
   stateActions: {
     setShowDeleteConfirm: Dispatch<SetStateAction<boolean>>;
+    setShowLeaveConfirm: Dispatch<SetStateAction<boolean>>;
     setShowArchiveConfirm: Dispatch<SetStateAction<boolean>>;
     setShowCommentOrActivity: Dispatch<
       SetStateAction<"comment" | "activity" | null>
@@ -48,6 +66,7 @@ const SidebarProjectMoreOptions = ({
     setProjectEdit: Dispatch<SetStateAction<boolean>>;
     setAboveBellow: Dispatch<SetStateAction<"above" | "below" | null>>;
   };
+  setIsDragDisabled?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const triggerRef = useRef(null);
   const [isOpen, setIsOpen] = React.useState(false);
@@ -58,19 +77,36 @@ const SidebarProjectMoreOptions = ({
 
   const { projectMembers } = useTaskProjectDataProvider();
 
+  const { role } = useRole();
+
+  const projectRole = role(project.id);
+
+  const canCreate = projectRole ? canCreateProject(projectRole) : false;
+  const canEdit = projectRole ? canEditProject(projectRole) : false;
+  const canDelete = projectRole ? canDeleteProject(projectRole) : false;
+  const canArchive = projectRole ? canArchiveProject(projectRole) : false;
+
   // Find the current user project settings for the given project
-  const currentUserProjectSettings = projectMembers.find(
+  const currentUserProject = projectMembers.find(
     (member) => member.project_id === project.id
   );
 
   // Determine the current favorite status
-  const isFavorite = currentUserProjectSettings
-    ? currentUserProjectSettings.project_settings.is_favorite
+  const isFavorite = currentUserProject
+    ? currentUserProject.project_settings.is_favorite
     : false;
 
   const handleCopyProjectLink = () => {
-    navigator.clipboard.writeText(`https://ekta.com/project/${project.slug}`);
+    navigator.clipboard.writeText(
+      `https://kakrola.com/project/${project.slug}`
+    );
   };
+
+  useEffect(() => {
+    if (isOpen && setIsDragDisabled) {
+      setIsDragDisabled(true);
+    }
+  }, [isOpen, setIsDragDisabled]);
 
   return (
     <Dropdown
@@ -88,39 +124,60 @@ const SidebarProjectMoreOptions = ({
             pathname === `/app/project/${project.slug}`
               ? "bg-primary-200"
               : "bg-primary-100"
-          } hover:bg-primary-200 rounded-full sidebar_project_item_options w-7 h-7 ${
+          } hover:bg-primary-200 rounded-lg sidebar_project_item_options w-7 h-7 ${
             isOpen ? "bg-primary-200" : "opacity-0"
           }`}
         >
           <Ellipsis className="w-5 h-5 text-text-700" strokeWidth={1.5} />
         </div>
       )}
+      beforeItemsContent={
+        currentUserProject?.role != RoleType.ADMIN ? (
+          <p className="text-xs mb-1 p-2 whitespace-normal bg-text-50 rounded-lg">
+            Some features are not available to project
+            {currentUserProject?.role == RoleType.MEMBER
+              ? " members"
+              : currentUserProject?.role == RoleType.COMMENTER
+              ? " commenters"
+              : " viewers"}
+            .
+          </p>
+        ) : null
+      }
       items={[
-        {
-          id: 1,
-          label: "Add project above",
-          icon: <ArrowUp strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: () => {
-            setAboveBellow("above");
-          },
-        },
-        {
-          id: 2,
-          label: "Add project below",
-          icon: <ArrowUp strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: () => {
-            setAboveBellow("below");
-          },
-          divide: true,
-        },
-        {
-          id: 3,
-          label: "Edit",
-          icon: <Pencil strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: () => {
-            setProjectEdit(true);
-          },
-        },
+        ...(canCreate
+          ? [
+              {
+                id: 1,
+                label: "Add project above",
+                icon: <ArrowUp strokeWidth={1.5} className="w-4 h-4" />,
+                onClick: () => {
+                  setAboveBellow("above");
+                },
+              },
+              {
+                id: 2,
+                label: "Add project below",
+                icon: <ArrowUp strokeWidth={1.5} className="w-4 h-4" />,
+                onClick: () => {
+                  setAboveBellow("below");
+                },
+                divide: true,
+              },
+            ]
+          : []),
+        ...(canEdit
+          ? [
+              {
+                id: 3,
+                label: "Edit",
+                icon: <Pencil strokeWidth={1.5} className="w-4 h-4" />,
+                onClick: () => {
+                  setProjectEdit(true);
+                },
+              },
+            ]
+          : []),
         {
           id: 4,
           label: isFavorite ? "Remove from favorites" : "Add to favorites",
@@ -172,23 +229,41 @@ const SidebarProjectMoreOptions = ({
           },
           divide: true,
         },
-        {
-          id: 10,
-          label: "Archive",
-          icon: <Archive strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: () => {
-            setShowArchiveConfirm(true);
-          },
-        },
-        {
-          id: 11,
-          label: "Delete",
-          textColor: "text-red-600",
-          icon: <Trash2 strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: () => {
-            setShowDeleteConfirm(true);
-          },
-        },
+        ...(canArchive
+          ? [
+              {
+                id: 10,
+                label: "Archive",
+                icon: <Archive strokeWidth={1.5} className="w-4 h-4" />,
+                onClick: () => {
+                  setShowArchiveConfirm(true);
+                },
+              },
+            ]
+          : []),
+        ...(canDelete
+          ? [
+              {
+                id: 11,
+                label: "Delete",
+                textColor: "text-red-600",
+                icon: <Trash2 strokeWidth={1.5} className="w-4 h-4" />,
+                onClick: () => {
+                  setShowDeleteConfirm(true);
+                },
+              },
+            ]
+          : [
+              {
+                id: 11,
+                label: "Leave",
+                textColor: "text-red-600",
+                icon: <LogOut strokeWidth={1.5} className="w-4 h-4" />,
+                onClick: () => {
+                  setShowLeaveConfirm(true);
+                },
+              },
+            ]),
       ]}
     />
   );

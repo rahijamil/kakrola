@@ -30,7 +30,7 @@ const SubTasks = ({
         <div>
           {!showAddSubtask && (
             <button
-              className="text-xs flex items-center gap-2 py-[6px] text-text-600 cursor-pointer hover:bg-text-100 transition rounded-2xl p-2 px-4 w-full text-left"
+              className="text-xs flex items-center gap-2 py-[6px] text-text-600 cursor-pointer hover:bg-text-100 transition rounded-lg p-2 px-4 w-full text-left"
               onClick={() => setShowAddSubtask(true)}
             >
               <Plus strokeWidth={1.5} className="w-4 h-4" />
@@ -67,7 +67,7 @@ const SubTasks = ({
                   damping: 15,
                 },
               }}
-              className="rounded-2xl border border-text-200 focus-within:border-text-400 bg-surface"
+              className="rounded-lg border border-text-200 focus-within:border-text-400 bg-surface"
             >
               <AddTaskForm
                 onClose={() => setShowAddSubtask(false)}

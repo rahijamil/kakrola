@@ -69,7 +69,7 @@ export const Upload: React.FC<UploadProps> = ({
       />
       <button
         type="button"
-        className="flex items-center h-12 border border-text-300 hover:border-text-400 focus:border-text-300 px-3 rounded-full gap-2 w-full focus:outline-none focus:ring-2 focus:ring-primary-300 ring-offset-2"
+        className="flex items-center h-12 border border-text-300 hover:border-text-400 focus:border-text-300 px-3 rounded-lg gap-2 w-full focus:outline-none focus:ring-2 focus:ring-primary-300 ring-offset-2"
         onClick={handleClick}
       >
         {fileUrl ? (
@@ -79,7 +79,7 @@ export const Upload: React.FC<UploadProps> = ({
               alt="Uploaded image"
               width={20}
               height={20}
-              className="rounded-full overflow-hidden bg-text-100 max-w-7 max-h-7 object-cover"
+              className="rounded-md overflow-hidden bg-text-100 max-w-7 max-h-7 object-cover"
             />
             {randomPhrase}
           </>

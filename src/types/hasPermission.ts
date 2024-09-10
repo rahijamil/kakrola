@@ -100,14 +100,6 @@ export function canDeleteTask(role: RoleType): boolean {
   return hasPermission(role, Permission.DELETE_TASK);
 }
 
-export function canAssignTask(role: RoleType): boolean {
-  return hasPermission(role, Permission.ASSIGN_TASK);
-}
-
-export function canCompleteTask(role: RoleType): boolean {
-  return hasPermission(role, Permission.COMPLETE_TASK);
-}
-
 export function canViewTaskDetails(role: RoleType): boolean {
   return hasPermission(role, Permission.VIEW_TASK_DETAILS);
 }
@@ -131,6 +123,23 @@ export function canAssignLabel(role: RoleType): boolean {
 
 export function canViewLabelDetails(role: RoleType): boolean {
   return hasPermission(role, Permission.VIEW_LABEL_DETAILS);
+}
+
+// Comment Permissions
+export function canCreateComment(role: RoleType): boolean {
+  return hasPermission(role, Permission.CREATE_COMMENT);
+}
+
+export function canEditComment(role: RoleType): boolean {
+  return hasPermission(role, Permission.EDIT_COMMENT);
+}
+
+export function canDeleteComment(role: RoleType): boolean {
+  return hasPermission(role, Permission.DELETE_COMMENT);
+}
+
+export function canViewComments(role: RoleType): boolean {
+  return hasPermission(role, Permission.VIEW_COMMENTS);
 }
 
 // Invite Management

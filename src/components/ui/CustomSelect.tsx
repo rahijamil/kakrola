@@ -98,7 +98,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             <button
               ref={triggerRef}
               data-form-element={true}
-              className="flex items-center justify-between w-full px-4 py-1.5 hover:bg-text-100 transition rounded-2xl h-8 gap-4"
+              className="flex items-center justify-between w-full px-4 py-1.5 hover:bg-text-100 transition rounded-lg h-8 gap-4"
               type="button"
               onClick={onClick}
             >
@@ -120,7 +120,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                 <div className="flex items-center gap-2">
                   {selectedOption?.color && (
                     <div
-                      className="w-3 h-3 rounded-full flex-shrink-0"
+                      className="w-3 h-3 rounded-lg flex-shrink-0"
                       style={{ backgroundColor: selectedOption.color }}
                     ></div>
                   )}
@@ -143,8 +143,8 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
               ref={triggerRef}
               data-form-element={true}
               className={`flex items-center justify-between w-full ${
-                height ? height : "h-12"
-              } border border-text-300 rounded-full cursor-pointer bg-surface hover:border-text-400 px-4 pr-3 py-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-primary-300 focus:border-text-300`}
+                height ? height : "h-10"
+              } border border-text-300 rounded-lg cursor-pointer bg-surface hover:border-text-400 px-4 pr-3 py-2 focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-primary-300 focus:border-text-300`}
               onClick={onClick}
               onKeyDown={handleKeyDown}
               tabIndex={0}
@@ -157,7 +157,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 {selectedOption?.color && (
                   <div
-                    className="w-3 h-3 rounded-full flex-shrink-0"
+                    className="w-3 h-3 rounded-lg flex-shrink-0"
                     style={{ backgroundColor: selectedOption.color }}
                   ></div>
                 )}
@@ -186,7 +186,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           {options.map((option, index) => (
             <li
               key={option.value}
-              className={`px-4 cursor-pointer flex items-center justify-between rounded-full ${
+              className={`px-4 cursor-pointer flex items-center justify-between rounded-lg ${
                 height ? height : "py-2"
               } ${
                 index === highlightedIndex ? "bg-text-100" : "hover:bg-text-100"
@@ -204,7 +204,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 {option.color && (
                   <div
-                    className="w-3 h-3 rounded-full flex-shrink-0"
+                    className="w-3 h-3 rounded-lg flex-shrink-0"
                     style={{ backgroundColor: option.color }}
                   ></div>
                 )}

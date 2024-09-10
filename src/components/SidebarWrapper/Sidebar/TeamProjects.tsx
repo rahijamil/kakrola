@@ -18,26 +18,26 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import ProjectPlusDropdown from "./ProjectPlusDropdown";
 
 const TeamProjects = ({
   team,
   sidebarWidth,
+  setTeamId,
 }: {
   team: TeamType;
   sidebarWidth: number;
+  setTeamId: Dispatch<SetStateAction<number | null>>;
 }) => {
   const { projects, projectsLoading } = useTaskProjectDataProvider();
   const pathname = usePathname();
   const [showProjects, setShowProjects] = useState(true);
   const [teamProjects, setTeamProjects] = useState<ProjectType[]>([]);
-  const [teamId, setTeamId] = useState<number | null>(null);
 
   useEffect(() => {
     if (team) {
       setTeamProjects(projects.filter((p) => p.team_id === team.id));
     }
-
-    console.log(projects);
   }, [team, projects]);
 
   const handleOnDragEnd = async (result: DropResult) => {
@@ -94,7 +94,7 @@ const TeamProjects = ({
         {projectsLoading ? (
           <Skeleton width={20} borderRadius={9999} />
         ) : (
-          <div className="relative text-text-600 hover:bg-primary-50 rounded-full transition">
+          <div className="relative text-text-600 hover:bg-primary-50 rounded-lg transition flex items-center justify-between pr-1">
             <Link
               href={`/app/${team.id}`}
               className={`w-full flex items-center justify-between pl-2 py-[7px] gap-1`}
@@ -118,10 +118,10 @@ const TeamProjects = ({
                       alt={team.name}
                       width={20}
                       height={20}
-                      className="rounded-full"
+                      className="rounded-md"
                     />
                   ) : (
-                    <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-full flex items-center justify-center">
+                    <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-md flex items-center justify-center">
                       <span className="text-surface text-[10px] font-bold">
                         {team.name?.slice(0, 1).toUpperCase()}
                       </span>
@@ -136,23 +136,16 @@ const TeamProjects = ({
               </div>
             </Link>
 
-            <div className="opacity-0 group-hover:opacity-100 transition flex items-center absolute right-1 top-1/2 -translate-y-1/2">
+            <div className="opacity-0 group-hover:opacity-100 transition duration-150 flex items-center">
+              <ProjectPlusDropdown teamId={team.id} setTeamId={setTeamId} />
+
               <button
-                className="p-1 hover:bg-primary-100 rounded-full transition"
-                onClick={() => setTeamId(team.id)}
-              >
-                <Plus
-                  strokeWidth={1.5}
-                  className={`w-[18px] h-[18px] transition-transform`}
-                />
-              </button>
-              <button
-                className="p-1 hover:bg-primary-100 rounded-full transition"
+                className="p-1 hover:bg-primary-100 rounded-lg transition duration-150"
                 onClick={() => setShowProjects(!showProjects)}
               >
                 <ChevronRight
                   strokeWidth={1.5}
-                  className={`w-[18px] h-[18px] transition-transform transform ${
+                  className={`w-[18px] h-[18px] transition-transform duration-150 transform ${
                     showProjects ? "rotate-90" : ""
                   }`}
                 />
@@ -222,15 +215,6 @@ const TeamProjects = ({
             ))}
         </div>
       </div>
-
-      {teamId && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <AddEditProject
-            workspaceId={teamId}
-            onClose={() => setTeamId(null)}
-          />
-        </div>
-      )}
     </>
   );
 };

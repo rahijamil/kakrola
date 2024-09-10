@@ -40,7 +40,7 @@ const SectionAddTask = ({
     <>
       {isAddTaskVisible && (
         <button
-          className={`px-2 text-text-500 hover:text-primary-600 hover:bg-text-50d flex items-center gap-2 w-full group py-2.5 ${
+          className={`px-2 text-text-500 hover:text-primary-500 hover:bg-text-50d flex items-center gap-2 w-full group py-2.5 ${
             activeProject?.settings.view == "List" && "pl-8"
           }`}
           onClick={() => {
@@ -49,7 +49,7 @@ const SectionAddTask = ({
               : setShowUngroupedAddTask && setShowUngroupedAddTask(true);
           }}
         >
-          <PlusIcon className="w-[18px] h-[18px] text-primary-600 group-hover:text-surface transition group-hover:bg-primary-600 rounded-full" />
+          <PlusIcon className="w-[18px] h-[18px] text-primary-500 group-hover:text-surface transition group-hover:bg-primary-500 rounded-full" />
           <span>Add task</span>
         </button>
       )}

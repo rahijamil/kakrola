@@ -83,7 +83,7 @@ const SectionMoreOptions = ({
       <button
         onClick={() => handleColor(color)}
         type="button"
-        className={`${bgClassName} aspect-video w-full cursor-pointer hover:opacity-80 transition rounded-full ${
+        className={`${bgClassName} aspect-video w-full cursor-pointer hover:opacity-80 transition rounded-lg ${
           sections.find((s) => s.id === column.id)?.color === color &&
           "border-2 border-text-900"
         }`}
@@ -108,7 +108,7 @@ const SectionMoreOptions = ({
       Label={({ onClick }) => (
         <button
           ref={triggerRef}
-          className={`p-1.5 transition rounded-full ${
+          className={`p-1.5 transition rounded-lg ${
             isOpen ? bgColorClass : hoverBgColorClass
           }`}
           onClick={onClick}

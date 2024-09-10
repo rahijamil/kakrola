@@ -6,7 +6,7 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import { ProjectType, TaskType } from "@/types/project";
 import { ViewTypes } from "@/types/viewTypes";
 import ShareOption from "./ShareOption";
-import ViewOptions from "./ViewOptions";
+import FilterOptions from "./FilterOptions";
 import ActiveProjectMoreOptions from "./ActiveProjectMoreOptions";
 import ProjectDeleteConfirm from "../SidebarWrapper/Sidebar/ProjectDeleteConfirm";
 import ProjectArchiveConfirm from "../SidebarWrapper/Sidebar/ProjectArchiveConfirm";
@@ -26,6 +26,8 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
+import { useRole } from "@/context/RoleContext";
+import { canEditProject } from "@/types/hasPermission";
 
 const LayoutWrapper = ({
   children,
@@ -67,6 +69,7 @@ const LayoutWrapper = ({
     useTaskProjectDataProvider();
   const { setShowShareOption, showShareOption } = useGlobalOption();
   const { profile } = useAuthProvider();
+  const { role } = useRole();
 
   const handleEditTitle = async () => {
     if (!profile?.id) return;
@@ -81,6 +84,10 @@ const LayoutWrapper = ({
           p.id === project.id ? { ...p, name: projectTitle.trim() } : p
         )
       );
+
+      const userRole = role(project.id);
+      const canUpdateSection = userRole ? canEditProject(userRole) : false;
+      if (!canUpdateSection) return;
 
       const { error } = await supabaseBrowser
         .from("projects")
@@ -166,13 +173,13 @@ const LayoutWrapper = ({
             className={`flex flex-col h-full w-full flex-1 transition-all duration-300`}
           >
             {view && setView && (
-              <div className="flex items-center justify-between p-4 py-3 sticky top-0 bg-background mb-1 z-10">
+              <div className="flex items-center justify-between p-4 py-3 sticky top-0 mb-1 z-10">
                 {!["Today", "Inbox"].includes(headline) && (
                   <div className="flex items-center gap-4">
                     <div className="flex items-center w-64 whitespace-nowrap">
                       <Link
                         href={`/app/projects`}
-                        className="hover:bg-text-100 p-1 py-0.5 rounded-full transition-colors"
+                        className="hover:bg-text-100 p-1 py-0.5 rounded-lg transition-colors"
                       >
                         {teams.find((t) => t.id === project?.team_id)?.name ??
                           "My Projects"}
@@ -182,7 +189,7 @@ const LayoutWrapper = ({
                         modalState.editTitle ? (
                           <input
                             type="text"
-                            className="font-semibold border border-text-300 rounded-full p-1 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 bg-transparent"
+                            className="font-semibold border border-text-300 rounded-lg p-1 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 bg-transparent"
                             value={projectTitle}
                             onBlur={handleEditTitle}
                             autoFocus
@@ -193,7 +200,7 @@ const LayoutWrapper = ({
                           />
                         ) : (
                           <h1
-                            className="font-semibold border border-transparent hover:border-text-200 rounded-full w-full p-1 py-0.5 cursor-text inline-block overflow-hidden text-ellipsis"
+                            className="font-semibold border border-transparent hover:border-text-200 rounded-lg w-full p-1 py-0.5 cursor-text inline-block overflow-hidden text-ellipsis"
                             onClick={() => toggleModal("editTitle", true)}
                           >
                             {project.name}
@@ -212,7 +219,7 @@ const LayoutWrapper = ({
                       )}
                     </div>
 
-                    <div>
+                    {/* <div>
                       {project && (
                         <LayoutView
                           view={view}
@@ -220,7 +227,7 @@ const LayoutWrapper = ({
                           project={project}
                         />
                       )}
-                    </div>
+                    </div> */}
                   </div>
                 )}
 
@@ -236,7 +243,7 @@ const LayoutWrapper = ({
                         </li>
                       )}
                     <li>
-                      <ViewOptions
+                      <FilterOptions
                         hideCalendarView={hideCalendarView}
                         view={view}
                         setView={setView}
@@ -293,22 +300,32 @@ const LayoutWrapper = ({
               <div className="flex flex-col h-full">
                 <div className={`${project && "pt-4"} ${!setView && "pt-8"}`}>
                   {project ? (
-                    <div className="flex items-center gap-2">
-                      <CheckCircle
-                        size={28}
-                        className={`bg-${activeProject?.settings.color}`}
-                      />
-                      <input
-                        type="text"
-                        className="text-[26px] font-bold border-none rounded-full focus-visible:outline-none p-1.5 bg-transparent w-full"
-                        value={projectTitle}
-                        onBlur={handleEditTitle}
-                        onChange={(ev) => setProjectTitle(ev.target.value)}
-                        onKeyDown={(ev) =>
-                          ev.key === "Enter" && handleEditTitle()
-                        }
-                      />
-                    </div>
+                    <>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle
+                          size={28}
+                          className={`text-${activeProject?.settings.color}`}
+                        />
+                        <input
+                          type="text"
+                          className="text-[26px] font-bold border-none rounded-lg focus-visible:outline-none p-1.5 bg-transparent w-full"
+                          value={projectTitle}
+                          onBlur={handleEditTitle}
+                          onChange={(ev) => setProjectTitle(ev.target.value)}
+                          onKeyDown={(ev) =>
+                            ev.key === "Enter" && handleEditTitle()
+                          }
+                        />
+                      </div>
+
+                      {view && setView && (
+                        <LayoutView
+                          view={view}
+                          setView={setView}
+                          project={project}
+                        />
+                      )}
+                    </>
                   ) : (
                     <h1 className={`text-[26px] font-bold p-1 py-[14px]`}>
                       {headline}

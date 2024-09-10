@@ -46,7 +46,7 @@ const LabelSelector = ({
             <button
               ref={triggerRef}
               onClick={onClick}
-              className={`flex items-center justify-between rounded-full transition p-[6px] px-2 group w-full ${
+              className={`flex items-center justify-between rounded-lg transition p-[6px] px-2 group w-full ${
                 task.assignees.length === 0
                   ? isOpen
                     ? "bg-primary-100 cursor-pointer"
@@ -69,8 +69,9 @@ const LabelSelector = ({
 
             {task.assignees.map((assignee) => (
               <button
+                key={assignee.id}
                 onClick={() => setIsOpen(true)}
-                className={`flex items-center relative rounded-full transition py-[6px] px-2 group w-full text-xs ${
+                className={`flex items-center relative rounded-lg transition py-[6px] px-2 group w-full text-xs ${
                   task.assignees.length > 0
                     ? isOpen
                       ? "bg-primary-100 cursor-pointer"
@@ -84,7 +85,7 @@ const LabelSelector = ({
                     width={18}
                     height={18}
                     alt={"avatar"}
-                    className="rounded-full object-cover max-w-[18px] max-h-[18px]"
+                    className="rounded-md object-cover max-w-[18px] max-h-[18px]"
                   />
                 </div>
 
@@ -93,7 +94,7 @@ const LabelSelector = ({
                     ev.stopPropagation();
                     setTask({ ...task, assignees: [] });
                   }}
-                  className="p-1 rounded-full hover:bg-surface absolute top-1/2 -translate-y-1/2 right-1"
+                  className="p-1 rounded-lg hover:bg-surface absolute top-1/2 -translate-y-1/2 right-1"
                 >
                   <X strokeWidth={1.5} size={16} />
                 </div>
@@ -114,13 +115,13 @@ const LabelSelector = ({
           >
             {task.assignees.length > 0 ? (
               task.assignees.map((assignee) => (
-                <div className="flex items-center gap-1">
+                <div key={assignee.id} className="flex items-center gap-1">
                   <Image
                     src={"/default_avatar.png"}
                     width={20}
                     height={20}
                     alt={"avatar"}
-                    className="rounded-full object-cover max-w-5 max-h-5"
+                    className="rounded-md object-cover max-w-5 max-h-5"
                   />
                   {/* {getProfileById(assignee.profile_id)?.full_name.split(" ")[0]}
                   {getProfileById(assignee.profile_id)?.full_name.split(" ")[1] // Check if the second name exists
@@ -150,21 +151,19 @@ const LabelSelector = ({
           >
             {task.assignees.length > 0 ? (
               task.assignees.map((assignee) => (
-                <>
-                  <div className="flex items-center gap-1">
-                    <Image
-                      src={"/default_avatar.png"}
-                      width={20}
-                      height={20}
-                      alt={"avatar"}
-                      className="rounded-full object-cover max-w-5 max-h-5"
-                    />
-                  </div>
-                </>
+                <div key={assignee.id} className="flex items-center gap-1">
+                  <Image
+                    src={"/default_avatar.png"}
+                    width={20}
+                    height={20}
+                    alt={"avatar"}
+                    className="rounded-md object-cover max-w-5 max-h-5"
+                  />
+                </div>
               ))
             ) : (
               <div className="flex items-center gap-1">
-                <div className="rounded-full w-5 h-5 flex items-center justify-center bg-surface text-text-500">
+                <div className="rounded-lg w-5 h-5 flex items-center justify-center bg-surface text-text-500">
                   <UserPlus size={16} />
                 </div>
                 <p className="text-xs">Assign</p>
@@ -175,9 +174,7 @@ const LabelSelector = ({
       }
       dataFromElement
       autoClose={false}
-      items={[
-        
-      ]}
+      items={[]}
       beforeItemsContent={
         <Input
           placeholder="Search labels..."

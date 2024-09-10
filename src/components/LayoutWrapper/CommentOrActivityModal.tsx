@@ -28,7 +28,7 @@ const CommentOrActivityModal = ({
         </div>
 
         <button
-          className="p-1 hover:bg-text-100 transition rounded-full"
+          className="p-1 hover:bg-text-100 transition rounded-lg"
           onClick={onClose}
         >
           <XMarkIcon className="w-6 h-6" />
@@ -36,9 +36,9 @@ const CommentOrActivityModal = ({
       </div>
 
       <div className="px-4">
-        <ul className="flex items-center p-1 rounded-full bg-text-200 w-fit">
+        <ul className="flex items-center p-1 rounded-lg bg-text-200 w-fit">
           <li
-            className={`p-1 px-4 rounded-full font-medium cursor-pointer transition ${
+            className={`p-1 px-4 rounded-lg font-medium cursor-pointer transition ${
               showCommentOrActivity === "comment" ? "bg-surface" : ""
             }`}
             onClick={() => setShowCommentOrActivity("comment")}
@@ -46,7 +46,7 @@ const CommentOrActivityModal = ({
             Comments
           </li>
           <li
-            className={`p-1 px-4 rounded-full font-medium cursor-pointer transition ${
+            className={`p-1 px-4 rounded-lg font-medium cursor-pointer transition ${
               showCommentOrActivity === "activity" ? "bg-surface" : ""
             }`}
             onClick={() => setShowCommentOrActivity("activity")}
@@ -66,7 +66,7 @@ const CommentOrActivityModal = ({
                   width={220}
                   height={200}
                   alt="Today"
-                  className="rounded-full object-cover"
+                  className="rounded-md object-cover"
                   draggable={false}
                 />
                 <p className="text-sm text-text-500 font-normal text-center">

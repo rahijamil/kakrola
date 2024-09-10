@@ -65,7 +65,7 @@ const ProjectsSelector = ({
         forTaskModal ? (
           <div
             onClick={onClick}
-            className={`flex items-center justify-between group cursor-pointer transition py-2 px-4 w-full rounded-full ${
+            className={`flex items-center justify-between group cursor-pointer transition py-2 px-4 w-full rounded-lg ${
               isOpen ? "bg-primary-50" : "hover:bg-text-100"
             }`}
           >
@@ -102,7 +102,7 @@ const ProjectsSelector = ({
         ) : (
           <div
             ref={triggerRef}
-            className={`flex items-center gap-2 cursor-pointer px-2 py-1.5 rounded-full ${
+            className={`flex items-center gap-2 cursor-pointer px-2 py-1.5 rounded-lg ${
               isOpen ? "bg-text-50" : "hover:bg-text-100"
             }`}
             onClick={onClick}
@@ -145,7 +145,7 @@ const ProjectsSelector = ({
             {/* Show Inbox if it matches the search query */}
             {isInbox && inboxMatches && (
               <div
-                className="flex items-center px-3 py-1.5 rounded-2xl transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
+                className="flex items-center px-3 py-1.5 rounded-lg transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
                 onClick={() => {
                   setTask({
                     ...task,
@@ -165,13 +165,13 @@ const ProjectsSelector = ({
 
             {/* Show My Projects header only if there's no search query */}
             {!searchQuery && (
-              <div className="font-bold px-3 py-1.5 rounded-2xl flex items-center gap-2">
+              <div className="font-bold px-3 py-1.5 rounded-lg flex items-center gap-2">
                 <Image
                   src={profile?.avatar_url || "/default_avatar.png"}
                   alt={profile?.full_name || profile?.username || "avatar"}
                   width={20}
                   height={20}
-                  className="rounded-full object-cover max-w-[20px] max-h-[20px]"
+                  className="rounded-md object-cover max-w-[20px] max-h-[20px]"
                 />
                 <span>My Projects</span>
               </div>
@@ -180,7 +180,7 @@ const ProjectsSelector = ({
               {personalProjects.map((project) => (
                 <div key={project.id}>
                   <li
-                    className="flex items-center ml-3 px-3 py-1.5 rounded-2xl transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
+                    className="flex items-center ml-3 px-3 py-1.5 rounded-lg transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
                     onClick={() => {
                       setTask({
                         ...task,
@@ -208,7 +208,7 @@ const ProjectsSelector = ({
                       .map((section) => (
                         <li
                           key={section.id}
-                          className="flex items-center justify-between ml-6 px-3 py-1.5 rounded-2xl transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
+                          className="flex items-center justify-between ml-6 px-3 py-1.5 rounded-lg transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
                           onClick={() => {
                             setTask({
                               ...task,
@@ -252,17 +252,17 @@ const ProjectsSelector = ({
               projects.length > 0 ? (
                 <div key={team.id}>
                   {!searchQuery && (
-                    <div className="font-bold px-3 py-1.5 rounded-2xl flex items-center gap-2">
+                    <div className="font-bold px-3 py-1.5 rounded-lg flex items-center gap-2">
                       {team.avatar_url ? (
                         <Image
                           src={team.avatar_url}
                           alt={team.name}
                           width={20}
                           height={20}
-                          className="rounded-full"
+                          className="rounded-md"
                         />
                       ) : (
-                        <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-full flex items-center justify-center">
+                        <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-lg flex items-center justify-center">
                           <span className="text-white text-[10px] font-medium">
                             {team.name?.slice(0, 1).toUpperCase()}
                           </span>
@@ -275,7 +275,7 @@ const ProjectsSelector = ({
                     {projects.map((project) => (
                       <div key={project.id}>
                         <li
-                          className="flex items-center ml-3 px-3 py-1.5 rounded-2xl transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
+                          className="flex items-center ml-3 px-3 py-1.5 rounded-lg transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
                           onClick={() => {
                             setTask({
                               ...task,
@@ -307,7 +307,7 @@ const ProjectsSelector = ({
                             .map((section) => (
                               <li
                                 key={section.id}
-                                className="flex items-center justify-between ml-6 px-3 py-1.5 rounded-2xl transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
+                                className="flex items-center justify-between ml-6 px-3 py-1.5 rounded-lg transition-colors text-text-700 hover:bg-text-100 cursor-pointer"
                                 onClick={() => {
                                   setTask({
                                     ...task,

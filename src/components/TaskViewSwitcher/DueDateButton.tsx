@@ -20,7 +20,7 @@ const DueDateButton = ({
   return (
     <button
       onClick={() => setShowDateSelector(true)}
-      className={`flex items-center relative rounded-full transition py-[6px] px-2 group w-full text-xs ${
+      className={`flex items-center relative rounded-lg transition py-[6px] px-2 group w-full text-xs ${
         taskData.dates.end_date !== null
           ? showDateSelector
             ? "bg-primary-100 cursor-pointer"
@@ -48,7 +48,7 @@ const DueDateButton = ({
             ev.stopPropagation();
             setTaskData({ ...taskData, dates: {...taskData.dates, end_date: null} });
           }}
-          className="p-1 rounded-full hover:bg-surface absolute top-1/2 -translate-y-1/2 right-1"
+          className="p-1 rounded-lg hover:bg-surface absolute top-1/2 -translate-y-1/2 right-1"
         >
           <X strokeWidth={1.5} size={16} />
         </div>

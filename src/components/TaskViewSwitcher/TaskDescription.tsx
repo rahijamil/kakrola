@@ -14,6 +14,8 @@ import {
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
+import { useRole } from "@/context/RoleContext";
+import { canEditTask } from "@/types/hasPermission";
 
 const icons = Quill.import("ui/icons");
 // Link icons
@@ -96,8 +98,18 @@ const TaskDescription = ({ taskData }: { taskData: TaskType }) => {
     setEditorState(value);
   };
 
+  const { role } = useRole();
+
   const handleSaveTaskDescription = async () => {
     if (!profile?.id) return;
+
+    if (!taskData.is_inbox && taskData.project_id) {
+      const userRole = role(taskData.project_id);
+      const canEdit = userRole ? canEditTask(userRole) : false;
+
+      if (!canEdit) return;
+    }
+
     try {
       if (taskData.description.trim() && taskData.description !== editorState) {
         const { data, error } = await supabaseBrowser
@@ -200,7 +212,7 @@ const TaskDescription = ({ taskData }: { taskData: TaskType }) => {
       ) : (
         <div
           onClick={() => setIsEdit(true)}
-          className="cursor-pointer hover:bg-text-100 transition rounded-2xl p-2 px-4 w-full text-left"
+          className="cursor-pointer hover:bg-text-100 transition rounded-lg p-2 px-4 w-full text-left"
         >
           <div
             // ref={triggerRef}

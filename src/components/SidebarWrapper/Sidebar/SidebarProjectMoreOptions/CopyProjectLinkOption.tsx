@@ -9,7 +9,7 @@ const CopyProjectLinkOption = ({
   project_slug: string;
 }) => {
   const handleCopyProjectLink = () => {
-    navigator.clipboard.writeText(`https://ekta.com/project/${project_slug}`);
+    navigator.clipboard.writeText(`https://kakrola.com/project/${project_slug}`);
     onClose();
   };
 

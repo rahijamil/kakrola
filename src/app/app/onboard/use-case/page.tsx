@@ -250,7 +250,7 @@ const Step2UseCase = () => {
                 <li
                   key={useCase.id}
                   tabIndex={0}
-                  className={`flex items-center justify-between cursor-pointer h-12 rounded-full px-4 border ${
+                  className={`flex items-center justify-between cursor-pointer h-12 rounded-lg px-4 border ${
                     selectedUseCases.includes(useCase)
                       ? "border-primary-500"
                       : "border-text-200"
@@ -284,7 +284,7 @@ const Step2UseCase = () => {
               onClick={handleSubmit}
               disabled={!selectedUseCases.length || loading}
               rightContent={
-                <div className="bg-background text-primary-500 rounded-full w-8 h-8 flex items-center justify-center">
+                <div className="bg-background text-primary-500 rounded-lg w-8 h-8 flex items-center justify-center">
                   <Hash className="w-5 h-5" />
                 </div>
               }

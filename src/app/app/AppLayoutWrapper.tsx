@@ -2,9 +2,11 @@
 import { useAuthProvider } from "@/context/AuthContext";
 import React from "react";
 import Image from "next/image";
+import useTheme from "@/hooks/useTheme";
 
 const AppLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   const { loading } = useAuthProvider();
+  const { theme } = useTheme();
 
   // const loading = true;
 

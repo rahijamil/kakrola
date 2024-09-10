@@ -145,7 +145,7 @@ const TemplatesPage = () => {
                 <li>
                   <Link
                     href={"/app/templates"}
-                    className={`flex items-center p-2 py-1.5 gap-3 rounded-full transition-colors duration-150 text-text-900 ${
+                    className={`flex items-center p-2 py-1.5 gap-3 rounded-lg transition-colors duration-150 text-text-900 ${
                       "/app/templates" === pathname
                         ? "bg-text-100"
                         : "hover:bg-text-100"
@@ -166,7 +166,7 @@ const TemplatesPage = () => {
                   <li key={category.id}>
                     <Link
                       href={category.path}
-                      className={`flex items-center p-2 py-1.5 gap-3 rounded-full transition-colors duration-150 text-text-900 ${
+                      className={`flex items-center p-2 py-1.5 gap-3 rounded-lg transition-colors duration-150 text-text-900 ${
                         category.path === pathname
                           ? "bg-text-100"
                           : "hover:bg-text-100"

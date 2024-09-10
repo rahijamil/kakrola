@@ -158,7 +158,7 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
       onClick={onClose}
     >
       <div
-        className="bg-surface rounded-2xl shadow-xl w-full max-w-md mx-4"
+        className="bg-surface rounded-lg shadow-xl w-full max-w-md mx-4"
         onClick={(ev) => ev.stopPropagation()}
       >
         <div className="flex justify-between items-center p-4 border-b border-text-200">
@@ -171,7 +171,7 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
           </h2>
           <button
             onClick={onClose}
-            className="text-text-500 hover:text-text-700 hover:bg-text-100 transition p-1 rounded-full"
+            className="text-text-500 hover:text-text-700 hover:bg-text-100 transition p-1 rounded-lg"
           >
             <X size={20} />
           </button>

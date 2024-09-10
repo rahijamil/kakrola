@@ -1,6 +1,6 @@
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { ChevronRight, Plus } from "lucide-react";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -17,8 +17,9 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import ProjectPlusDropdown from "./ProjectPlusDropdown";
 
-const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
+const MyProjects = ({ sidebarWidth, setShowAddProjectModal }: { sidebarWidth: number, setShowAddProjectModal: Dispatch<SetStateAction<boolean>> }) => {
   const { profile } = useAuthProvider();
   const {
     projects: allProjects,
@@ -30,6 +31,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
   const projects = allProjects.filter(
     (p) => !p.team_id && !p.slug.startsWith("test-")
   );
+  const [isDragDisabled, setIsDragDisabled] = useState(false);
 
   const handleOnDragEnd = async (result: DropResult) => {
     const { source, destination } = result;
@@ -78,15 +80,17 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
     }
   };
 
-  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
-
   return (
     <>
       <div className="mt-4 px-2">
         {projectsLoading ? (
           <Skeleton height={16} width={150} borderRadius={9999} />
         ) : (
-          <div className="relative text-text-600 hover:bg-primary-50 rounded-full transition duration-150">
+          <div
+            className={`relative text-text-600 rounded-lg transition duration-150 hover:bg-primary-50 flex items-center justify-between pr-1 ${
+              pathname.startsWith("/app/projects") && "bg-primary-100"
+            }`}
+          >
             <Link
               href={`/app/projects`}
               className={`w-full flex items-center justify-between pl-2 py-[7px] gap-1`}
@@ -111,7 +115,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
                     alt={profile?.full_name || profile?.username || ""}
                     width={20}
                     height={20}
-                    className="rounded-full object-cover max-w-[20px] max-h-[20px]"
+                    className="rounded-md object-cover max-w-[20px] max-h-[20px]"
                   />
 
                   <span
@@ -121,25 +125,18 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
                   </span>
                 </div>
                 {projects.length > 3 && (
-                  <span className="bg-text-300 text-text-700 px-1 py-[1px] rounded-full uppercase text-[11px] whitespace-nowrap font-medium">
+                  <span className="bg-text-300 text-text-700 px-1 py-[1px] rounded-lg uppercase text-[11px] whitespace-nowrap font-medium">
                     Used: {projects.length}/{5}
                   </span>
                 )}
               </div>
             </Link>
 
-            <div className="opacity-0 group-hover:opacity-100 transition duration-150 flex items-center absolute right-0 top-1/2 -translate-y-1/2">
+            <div className="opacity-0 group-hover:opacity-100 transition duration-150 flex items-center">
+              <ProjectPlusDropdown forPersonal setShowAddProjectModal={setShowAddProjectModal}/>
+
               <button
-                className="p-1 hover:bg-primary-100 rounded-full transition duration-150"
-                onClick={() => setShowAddProjectModal(true)}
-              >
-                <Plus
-                  strokeWidth={1.5}
-                  className={`w-[18px] h-[18px] transition-transform duration-150`}
-                />
-              </button>
-              <button
-                className="p-1 hover:bg-primary-100 rounded-full transition duration-150"
+                className="p-1 hover:bg-primary-100 rounded-lg transition duration-150"
                 onClick={() => setShowProjects(!showProjects)}
               >
                 <ChevronRight
@@ -174,6 +171,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
                           key={project.id}
                           draggableId={project.id.toString()}
                           index={index}
+                          isDragDisabled={isDragDisabled}
                         >
                           {(provided, snapshot) => {
                             return (
@@ -189,6 +187,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
                                   project={project}
                                   pathname={pathname}
                                   isDragging={snapshot.isDragging}
+                                  setIsDragDisabled={setIsDragDisabled}
                                 />
                               </div>
                             );
@@ -215,11 +214,7 @@ const MyProjects = ({ sidebarWidth }: { sidebarWidth: number }) => {
         </div>
       </div>
 
-      {showAddProjectModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <AddEditProject onClose={() => setShowAddProjectModal(false)} />
-        </div>
-      )}
+
     </>
   );
 };

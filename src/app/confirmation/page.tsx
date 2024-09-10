@@ -41,7 +41,7 @@ const ConfirmationPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="w-full max-w-md p-6 bg-white shadow-md rounded-2xl border border-primary-50 text-center"
+            className="w-full max-w-md p-6 bg-white shadow-md rounded-lg border border-primary-50 text-center"
           >
             {/* Illustration or Icon */}
             <div className="mb-4">

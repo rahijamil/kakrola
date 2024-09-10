@@ -22,7 +22,7 @@ const HeroSection = () => {
               <Button
               className="uppercase shadow-lg hover:shadow-xl transition-all hero_button"
                 rightContent={
-                  <div className="bg-background text-primary-500 rounded-full w-8 h-8 flex items-center justify-center">
+                  <div className="bg-background text-primary-500 rounded-lg w-8 h-8 flex items-center justify-center">
                     <Rocket className="w-5 h-5" strokeWidth={1.5} />
                   </div>
                 }
@@ -35,7 +35,7 @@ const HeroSection = () => {
       </div>
 
       <div className="flex flex-col items-center justify-center relative mt-24 sm:mt-32 px-4">
-        <div className="relative aspect-video border w-full max-w-5xl z-10 rounded-2xl overflow-hidden shadow-md">
+        <div className="relative aspect-video border w-full max-w-5xl z-10 rounded-lg overflow-hidden shadow-md">
           <Image
             src="/images/feature1.png"
             objectFit="cover"

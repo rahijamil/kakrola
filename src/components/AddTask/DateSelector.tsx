@@ -6,18 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import { TaskType } from "@/types/project";
-import {
-  Armchair,
-  ArrowLeft,
-  ArrowRight,
-  Calendar,
-  CalendarArrowDown,
-  ChevronDown,
-  CircleSlash,
-  Plus,
-  Sun,
-  X,
-} from "lucide-react";
+import { ArrowRight, Calendar, ChevronDown, X } from "lucide-react";
 import {
   format,
   addDays,
@@ -96,6 +85,7 @@ const DateSelector = ({
   forTaskModal,
   forListView,
   dataFromElement,
+  endDate,
 }: {
   task: TaskType;
   setTask: Dispatch<SetStateAction<TaskType>>;
@@ -103,6 +93,7 @@ const DateSelector = ({
   forTaskModal?: boolean;
   forListView?: boolean;
   dataFromElement?: boolean;
+  endDate?: Date | null;
 }) => {
   const [showTimeInput, setShowTimeInput] = useState(false);
   const [showEndDate, setShowEndDate] = useState(false);
@@ -133,6 +124,27 @@ const DateSelector = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (endDate) {
+      setTask((prev) => ({
+        ...prev,
+        dates: {
+          ...prev.dates,
+          start_date: format(new Date(), "dd LLL yyyy"),
+          end_date: format(endDate, "dd LLL yyyy"),
+        },
+      }))
+
+      setDates((prev) => ({
+        ...prev,
+        start_date: format(new Date(), "dd LLL yyyy"),
+        end_date: format(endDate, "dd LLL yyyy"),
+      }));
+
+      setShowEndDate(true);
+    }
+  }, [endDate]);
 
   const handleDateSelect = (newDate: Date | undefined) => {
     if (!newDate) return;
@@ -319,7 +331,7 @@ const DateSelector = ({
         forTaskModal ? (
           <div
             onClick={onClick}
-            className={`rounded-full transition py-2 px-4 group w-full flex items-center justify-between  ${
+            className={`rounded-lg transition py-2 px-4 group w-full flex items-center justify-between  ${
               isOpen
                 ? "bg-primary-50 cursor-pointer"
                 : "hover:bg-text-100 cursor-pointer"
@@ -338,7 +350,7 @@ const DateSelector = ({
                       </span>
                     )}
 
-                    {task.dates.end_date && (
+                    {task.dates.start_date && task.dates.end_date && (
                       <div>
                         <ArrowRight strokeWidth={1.5} className="w-4 h-4" />
                       </div>
@@ -363,7 +375,7 @@ const DateSelector = ({
                         },
                       });
                     }}
-                    className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-200 rounded-full hidden group-data-[state=due-date]:group-hover:inline-block absolute top-1/2 -translate-y-1/2 right-2"
+                    className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-200 rounded-lg hidden group-data-[state=due-date]:group-hover:inline-block absolute top-1/2 -translate-y-1/2 right-2"
                   >
                     <X strokeWidth={1.5} className="w-4 h-4 text-text-500" />
                   </button>
@@ -399,7 +411,7 @@ const DateSelector = ({
                     <span>{format(task.dates.start_date, "dd LLL yyyy")}</span>
                   )}
 
-                  {task.dates.end_date && (
+                  {task.dates.start_date && task.dates.end_date && (
                     <div>
                       <ArrowRight strokeWidth={1.5} className="w-4 h-4" />
                     </div>
@@ -424,7 +436,7 @@ const DateSelector = ({
                       },
                     });
                   }}
-                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-200 rounded-full hidden group-data-[state=due-date]:group-hover:inline-block absolute top-1/2 -translate-y-1/2 right-2"
+                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-200 rounded-lg hidden group-data-[state=due-date]:group-hover:inline-block absolute top-1/2 -translate-y-1/2 right-2"
                 >
                   <X strokeWidth={1.5} className="w-4 h-4 text-text-500" />
                 </button>
@@ -439,7 +451,7 @@ const DateSelector = ({
         ) : (
           <div
             ref={triggerRef}
-            className={`flex items-center gap-1 cursor-pointer p-1 px-2 text-xs rounded-full border border-text-200 ${
+            className={`flex items-center gap-1 cursor-pointer p-1 px-2 text-xs rounded-lg border border-text-200 ${
               isOpen ? "bg-text-50" : "hover:bg-text-100"
             }`}
             onClick={onClick}
@@ -453,9 +465,11 @@ const DateSelector = ({
                       {startDateInfo?.label}
                     </span>
                   </div>
-                  <div>
-                    <ArrowRight strokeWidth={1.5} className="w-4 h-4" />
-                  </div>
+                  {task.dates.start_date && task.dates.end_date && (
+                    <div>
+                      <ArrowRight strokeWidth={1.5} className="w-4 h-4" />
+                    </div>
+                  )}
                   <div className="flex items-center gap-1">
                     {endDateInfo?.icon}
                     <span className={endDateInfo?.color}>
@@ -472,7 +486,7 @@ const DateSelector = ({
                       dates: { ...task.dates, end_date: null },
                     });
                   }}
-                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-full"
+                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-lg"
                 >
                   <X strokeWidth={1.5} className="w-3 h-3 text-text-500" />
                 </button>
@@ -636,7 +650,7 @@ const DateSelector = ({
             </div>
 
             <button
-              className="flex items-center justify-between w-full px-4 py-1.5 hover:bg-text-100 transition rounded-2xl"
+              className="flex items-center justify-between w-full px-4 py-1.5 hover:bg-text-100 transition rounded-lg"
               type="button"
               onClick={() => setShowEndDate((prev) => !prev)}
             >
@@ -650,7 +664,7 @@ const DateSelector = ({
             </button>
 
             <button
-              className="flex items-center justify-between w-full px-4 py-1.5 hover:bg-text-100 transition rounded-2xl"
+              className="flex items-center justify-between w-full px-4 py-1.5 hover:bg-text-100 transition rounded-lg"
               type="button"
               onClick={() => setShowTimeInput((prev) => !prev)}
             >

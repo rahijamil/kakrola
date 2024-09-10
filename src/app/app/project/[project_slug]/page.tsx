@@ -17,14 +17,20 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
+import { canEditProject } from "@/types/hasPermission";
 
 const ProjectDetails = ({
   params: { project_slug },
 }: {
   params: { project_slug: string };
 }) => {
-  const { projects, setProjects, projectsLoading, setActiveProject } =
-    useTaskProjectDataProvider();
+  const {
+    projects,
+    setProjects,
+    projectsLoading,
+    setActiveProject,
+    projectMembers,
+  } = useTaskProjectDataProvider();
 
   const [currentProject, setCurrentProject] = useState<ProjectType | null>(
     null
@@ -70,9 +76,17 @@ const ProjectDetails = ({
 
   const updateProjectView = useCallback(
     async (view: ViewTypes["view"]) => {
-      if (!profile?.id) return;
+      if (!profile?.id || !currentProject?.id) return;
 
-      if (!currentProject?.id) return;
+      const role = projectMembers.find(
+        (member) => member.profile_id == profile.id
+      )?.role;
+
+      // create api to check if team member
+      if (currentProject.team_id) {
+      }
+
+      if (!role || !canEditProject(role)) return;
 
       setProjects(
         projects.map((p) =>
@@ -132,7 +146,7 @@ const ProjectDetails = ({
           width={220}
           height={200}
           alt="Project not found"
-          className="rounded-full object-cover"
+          className="rounded-md object-cover"
           draggable={false}
         />
         <div className="text-center space-y-2 w-72">
@@ -178,7 +192,7 @@ const ProjectDetails = ({
               width={220}
               height={200}
               alt="Empty project"
-              className="rounded-full object-cover"
+              className="rounded-md object-cover"
               draggable={false}
             />
             <div className="text-center space-y-1 w-72">

@@ -180,14 +180,14 @@ const SaveTemplateModal = ({
       onClick={onClose}
     >
       <div
-        className="rounded-2xl overflow-hidden w-11/12 max-w-md bg-surface"
+        className="rounded-lg overflow-hidden w-11/12 max-w-md bg-surface"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 py-3">
           <h3 className="font-semibold text-[15px]">Save as template</h3>
 
           <button
-            className="p-1 rounded-full hover:bg-text-100 transition"
+            className="p-1 rounded-lg hover:bg-text-100 transition"
             onClick={onClose}
           >
             <X strokeWidth={1.5} size={20} />
@@ -197,7 +197,7 @@ const SaveTemplateModal = ({
         <div className="w-full h-full border-t border-text-100 p-3 px-5 pb-4 space-y-4 text-xs">
           <div className="flex items-center p-3">
             <span
-              className={`text-5xl rounded-full w-16 h-16 flex items-center justify-center bg-${
+              className={`text-5xl rounded-lg w-16 h-16 flex items-center justify-center bg-${
                 templateData.color.split("-")[0]
               }-100 text-${templateData.color}`}
               style={{ fontFamily: "fantasy" }}
@@ -244,7 +244,7 @@ const SaveTemplateModal = ({
                 alt="avatar"
                 width={20}
                 height={20}
-                className={"rounded-full max-w-5 max-h-5 object-cover"}
+                className={"rounded-md max-w-5 max-h-5 object-cover"}
               />
 
               <p>{profile?.full_name}</p>

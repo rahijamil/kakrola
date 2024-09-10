@@ -3,6 +3,7 @@ import {
   CalendarDays,
   ChevronDown,
   LayoutDashboard,
+  Plus,
   SquareKanban,
 } from "lucide-react";
 import Image from "next/image";
@@ -61,18 +62,22 @@ const LayoutView = ({
   showHelper,
   hideCalendarView,
   project,
+  forPreview,
 }: {
   view: ViewTypes["view"];
   setView: (v: ViewTypes["view"]) => void;
   showHelper?: boolean;
   hideCalendarView?: boolean;
-  project: ProjectType;
+  project?: ProjectType;
+  forPreview?: boolean;
 }) => {
   const [views, setViews] = useState(
     allViews.map((v) => ({
       ...v,
       visible:
-        v.name === "List" || v.name === "Board" || project.settings.selected_views.includes(v.name), // Ensure List/Board is always visible
+        v.name === "List" || v.name === "Board" || forPreview
+          ? true
+          : project?.settings.selected_views.includes(v.name), // Ensure List/Board is always visible
     }))
   );
 
@@ -98,7 +103,11 @@ const LayoutView = ({
   };
 
   return (
-    <div className="flex items-center gap-1">
+    <div
+      className={`flex items-center gap-1 ${
+        view !== "List" && "border-b border-text-200 mb-4"
+      }`}
+    >
       <ul className="flex items-center gap-1">
         {views
           .filter((v) => v.visible)
@@ -107,51 +116,61 @@ const LayoutView = ({
               !(v.name === "Calendar" && hideCalendarView) && (
                 <li
                   key={v.id}
-                  className={`flex items-center justify-center gap-1 rounded-2xl cursor-pointer flex-1 transition px-3 p-1 pr-2 text-text-500 ${
-                    v.name === view ? "bg-text-100" : "hover:bg-text-100"
+                  className={`border-b-2 pb-1 ${
+                    v.name == view ? "border-text-700" : "border-transparent"
                   }`}
-                  onClick={() => setView(v.name)}
                 >
-                  {v.icon}
-                  <span className="">{v.name}</span>
+                  <button
+                    className={`flex items-center justify-center gap-1 rounded-lg cursor-pointer flex-1 transition px-2 p-1 hover:bg-text-100 hover:text-text-700 text-text-500 ${
+                      v.name === view && "text-text-700"
+                    }`}
+                    onClick={() => setView(v.name)}
+                  >
+                    {v.icon}
+                    <span className="">{v.name}</span>
+                  </button>
                 </li>
               )
           )}
       </ul>
 
-      <Dropdown
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        triggerRef={triggerRef}
-        Label={({ onClick }) => (
-          <div
-            ref={triggerRef}
-            className={`rounded-full cursor-pointer transition p-1.5 text-text-500 ${
-              "" ? "bg-text-100" : "hover:bg-text-100"
-            }`}
-            onClick={onClick}
-          >
-            <ChevronDown size={16} />
-          </div>
-        )}
-        items={views.map((v) => ({
-          id: v.id,
-          label: v.name,
-          icon: v.icon,
-          disabled: v.name === "List", // List view is disabled
-          onClick: () => handleSelectedViews(v),
-          rightContent: (
-            <AnimatedTaskCheckbox
-              priority={v.name === "List" ? TaskPriority.Priority : TaskPriority.P3}
-              playSound={false}
-              handleCheckSubmit={() => handleSelectedViews(v)}
-              is_completed={v.visible}
-              disabled={v.name === "List"}
-            />
-          ),
-        }))}
-        autoClose={false}
-      />
+      {!forPreview && (
+        <Dropdown
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          triggerRef={triggerRef}
+          Label={({ onClick }) => (
+            <div
+              ref={triggerRef}
+              className={`rounded-lg cursor-pointer transition p-1.5 text-text-500 mb-1.5 ${
+                "" ? "bg-text-100" : "hover:bg-text-100"
+              }`}
+              onClick={onClick}
+            >
+              <Plus size={16} />
+            </div>
+          )}
+          items={views.map((v) => ({
+            id: v.id,
+            label: v.name,
+            icon: v.icon,
+            disabled: v.name === "List", // List view is disabled
+            onClick: () => handleSelectedViews(v),
+            rightContent: (
+              <AnimatedTaskCheckbox
+                priority={
+                  v.name === "List" ? TaskPriority.Priority : TaskPriority.P3
+                }
+                playSound={false}
+                handleCheckSubmit={() => handleSelectedViews(v)}
+                is_completed={v.visible!}
+                disabled={v.name === "List"}
+              />
+            ),
+          }))}
+          autoClose={false}
+        />
+      )}
     </div>
   );
 };

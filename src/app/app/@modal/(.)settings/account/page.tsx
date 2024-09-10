@@ -10,12 +10,19 @@ import Link from "next/link";
 import { useAuthProvider } from "@/context/AuthContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import Spinner from "@/components/ui/Spinner";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
 
 export default function AccountSettingsPage() {
   const { profile } = useAuthProvider();
   const [name, setName] = useState(profile?.full_name || "");
   const [email, setEmail] = useState(profile?.email);
-  const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || "/default_avatar.png");
+  const [avatarUrl, setAvatarUrl] = useState(
+    profile?.avatar_url || "/default_avatar.png"
+  );
   const [twoFactorAuth, setTwoFactorAuth] = useState(false);
 
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -28,7 +35,7 @@ export default function AccountSettingsPage() {
 
     try {
       const file = event.target.files?.[0];
-      if (!file) return;
+      if (!file || !profile?.id) return;
 
       const fileExt = file.name.split(".").pop();
       const fileName = `${file.name.split(".")[0]}-${profile?.id}.${fileExt}`;
@@ -58,6 +65,21 @@ export default function AccountSettingsPage() {
       if (updateError) throw updateError;
 
       setAvatarUrl(publicUrl);
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.UPDATED_PROFILE,
+        entity_id: profile.id,
+        entity_type: EntityType.USER,
+        metadata: {
+          old_data: {
+            avatar_url: "/default_avatar.png",
+          },
+          new_data: {
+            avatar_url: publicUrl,
+          },
+        },
+      });
     } catch (error) {
       console.error("Error uploading avatar:", error);
       setError("Failed to upload avatar. Please try again.");
@@ -68,6 +90,8 @@ export default function AccountSettingsPage() {
   };
 
   const removeAvatar = async () => {
+    if (!profile?.id) return;
+
     setRemoveLoading(true);
     setError(null);
 
@@ -98,6 +122,21 @@ export default function AccountSettingsPage() {
       if (updateError) throw updateError;
 
       setAvatarUrl("/default_avatar.png");
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.UPDATED_PROFILE,
+        entity_id: profile.id,
+        entity_type: EntityType.USER,
+        metadata: {
+          old_data: {
+            avatar_url: profile.avatar_url,
+          },
+          new_data: {
+            avatar_url: "/default_avatar.png",
+          },
+        },
+      });
     } catch (error) {
       console.error("Error removing avatar:", error);
       setError("Failed to remove avatar. Please try again.");
@@ -109,6 +148,8 @@ export default function AccountSettingsPage() {
   const [isUpdatingName, setIsUpdatingName] = useState(false);
 
   const handleNameChange = async () => {
+    if (!profile?.id) return;
+
     setIsUpdatingName(true);
     setError(null);
 
@@ -119,6 +160,21 @@ export default function AccountSettingsPage() {
         .eq("id", profile?.id);
 
       if (updateError) throw updateError;
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.UPDATED_PROFILE,
+        entity_id: profile.id,
+        entity_type: EntityType.USER,
+        metadata: {
+          old_data: {
+            full_name: profile.full_name,
+          },
+          new_data: {
+            full_name: name,
+          },
+        },
+      });
     } catch (error) {
       console.error("Error updating name:", error);
       setError("Failed to update name. Please try again.");
@@ -149,7 +205,7 @@ export default function AccountSettingsPage() {
             <label className="font-semibold">Profile</label>
 
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 min-w-16 min-h-16 rounded-full relative bg-text-200 overflow-hidden">
+              <div className="w-16 h-16 min-w-16 min-h-16 rounded-lg relative bg-text-200 overflow-hidden">
                 <Image
                   src={avatarUrl || "/default-avatar.png"}
                   alt="Profile Picture"
@@ -170,7 +226,7 @@ export default function AccountSettingsPage() {
                   />
                   <label
                     htmlFor="avatar-upload"
-                    className={`border cursor-pointer h-9 inline-flex items-center justify-center gap-2 rounded-full px-3 border-primary-600 text-primary-600 ${
+                    className={`border cursor-pointer h-9 inline-flex items-center justify-center gap-2 rounded-lg px-3 border-primary-600 text-primary-600 ${
                       uploadLoading ? "opacity-50" : "hover:bg-text-100"
                     }`}
                   >

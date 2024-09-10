@@ -20,6 +20,8 @@ import {
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
+import { useRole } from "@/context/RoleContext";
+import { canDeleteTask, canEditTask } from "@/types/hasPermission";
 
 const TaskItemForListView = ({
   task,
@@ -63,72 +65,146 @@ const TaskItemForListView = ({
   const [taskData, setTaskData] = useState<TaskType>(task);
 
   const { profile } = useAuthProvider();
+  const { role } = useRole();
 
   const handleTaskDelete = async () => {
     if (!profile?.id) return;
 
-    const updatedTasks = tasks.filter((t) => t.id !== task.id);
+    if (!task.is_inbox && task.project_id) {
+      const userRole = role(task.project_id);
 
-    setTasks(updatedTasks);
+      const canDelTask = userRole ? canDeleteTask(userRole) : false;
+      if (!canDelTask) return;
 
-    const { error } = await supabaseBrowser
-      .from("tasks")
-      .delete()
-      .eq("id", task.id);
+      const updatedTasks = tasks.filter((t) => t.id !== task.id);
 
-    if (error) {
-      console.log(error);
+      setTasks(updatedTasks);
+
+      const { error } = await supabaseBrowser
+        .from("tasks")
+        .delete()
+        .eq("id", task.id);
+
+      if (error) {
+        console.log(error);
+      }
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.DELETED_TASK,
+        entity_id: task.id,
+        entity_type: EntityType.TASK,
+        metadata: {
+          old_data: task,
+        },
+      });
+    } else {
+      const updatedTasks = tasks.filter((t) => t.id !== task.id);
+
+      setTasks(updatedTasks);
+
+      const { error } = await supabaseBrowser
+        .from("tasks")
+        .delete()
+        .eq("id", task.id);
+
+      if (error) {
+        console.log(error);
+      }
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.DELETED_TASK,
+        entity_id: task.id,
+        entity_type: EntityType.TASK,
+        metadata: {
+          old_data: task,
+        },
+      });
     }
-
-    createActivityLog({
-      actor_id: profile.id,
-      action: ActivityAction.DELETED_TASK,
-      entity_id: task.id,
-      entity_type: EntityType.TASK,
-      metadata: {
-        old_data: task,
-      },
-    });
   };
 
   const handleCheckClickDebounced = debounce(async () => {
     if (!profile?.id) return;
 
     try {
-      // Update local tasks
-      setTasks(
-        tasks.map((t) =>
-          t.id === task.id ? { ...t, is_completed: !t.is_completed } : t
-        )
-      );
+      if (!task.is_inbox && task.project_id) {
+        const userRole = role(task.project_id);
 
-      const { error } = await supabaseBrowser
-        .from("tasks")
-        .update({
-          is_completed: !task.is_completed,
-        })
-        .eq("id", task.id);
+        const canUpdateTask = userRole ? canEditTask(userRole) : false;
+        if (!canUpdateTask) return;
 
-      if (error) {
-        throw error;
-      }
+        // Update local tasks
+        setTasks(
+          tasks.map((t) =>
+            t.id === task.id ? { ...t, is_completed: !t.is_completed } : t
+          )
+        );
 
-      if (task.is_completed) {
-        createActivityLog({
-          actor_id: profile.id,
-          action: ActivityAction.REOPENED_TASK,
-          entity_id: task.id,
-          entity_type: EntityType.TASK,
-          metadata: {},
-        });
+        const { error } = await supabaseBrowser
+          .from("tasks")
+          .update({
+            is_completed: !task.is_completed,
+          })
+          .eq("id", task.id);
+
+        if (error) {
+          throw error;
+        }
+
+        if (task.is_completed) {
+          createActivityLog({
+            actor_id: profile.id,
+            action: ActivityAction.REOPENED_TASK,
+            entity_id: task.id,
+            entity_type: EntityType.TASK,
+            metadata: {},
+          });
+        } else {
+          createActivityLog({
+            actor_id: profile.id,
+            action: ActivityAction.COMPLETED_TASK,
+            entity_id: task.id,
+            entity_type: EntityType.TASK,
+            metadata: {},
+          });
+        }
       } else {
-        createActivityLog({
-          actor_id: profile.id,
-          action: ActivityAction.COMPLETED_TASK,
-          entity_id: task.id,
-          entity_type: EntityType.TASK,
-          metadata: {},
-        });
+        // Update local tasks
+        setTasks(
+          tasks.map((t) =>
+            t.id === task.id ? { ...t, is_completed: !t.is_completed } : t
+          )
+        );
+
+        const { error } = await supabaseBrowser
+          .from("tasks")
+          .update({
+            is_completed: !task.is_completed,
+          })
+          .eq("id", task.id);
+
+        if (error) {
+          throw error;
+        }
+
+        if (task.is_completed) {
+          createActivityLog({
+            actor_id: profile.id,
+            action: ActivityAction.REOPENED_TASK,
+            entity_id: task.id,
+            entity_type: EntityType.TASK,
+            metadata: {},
+          });
+        } else {
+          createActivityLog({
+            actor_id: profile.id,
+            action: ActivityAction.COMPLETED_TASK,
+            entity_id: task.id,
+            entity_type: EntityType.TASK,
+            metadata: {},
+          });
+        }
       }
     } catch (error) {
       console.log(error);
@@ -223,7 +299,7 @@ const TaskItemForListView = ({
                               title: ev.target.value,
                             })
                           }
-                          className="outline-none w-full bg-surface rounded-full px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 h-7"
+                          className="outline-none w-full bg-surface rounded-lg px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 h-7"
                           onKeyDown={(ev) => {
                             if (ev.key === "Enter") {
                               handleUpdateTaskTitle();
@@ -239,7 +315,7 @@ const TaskItemForListView = ({
                       {subTasks.length > 0 && (
                         <button
                           onClick={(ev) => ev.stopPropagation()}
-                          className="flex items-center gap-[2px] text-text-500 hover:bg-text-100 rounded-2xl transition hover:text-text-700 p-0.5 px-1"
+                          className="flex items-center gap-[2px] text-text-500 hover:bg-text-100 rounded-lg transition hover:text-text-700 p-0.5 px-1"
                         >
                           <Workflow strokeWidth={1.5} className="w-3 h-3" />
                           <span className="text-xs">
@@ -256,7 +332,7 @@ const TaskItemForListView = ({
                       onClick={() =>
                         setShowModal && setShowModal(task.id.toString())
                       }
-                      className={`px-2 py-1 transition rounded-full hover:bg-text-100 items-center gap-1 text-text-500 ${
+                      className={`px-2 py-1 transition rounded-lg hover:bg-text-100 items-center gap-1 text-text-500 ${
                         !editTaskTitle ? "hidden group-hover:flex" : "flex"
                       }`}
                     >

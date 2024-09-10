@@ -33,14 +33,14 @@ const MemberItem = ({ member }: { member: MemberData }) => {
   };
 
   return (
-    <div className="flex justify-between gap-4 items-center p-2 hover:bg-text-50 cursor-default rounded-2xl transition">
+    <div className="flex justify-between gap-4 items-center p-2 hover:bg-text-50 cursor-default rounded-lg transition">
       <div className="flex items-center gap-2">
         <Image
           src={member.profile.avatar_url || "/default_avatar.png"}
           alt="Avatar"
           width={24}
           height={24}
-          className="rounded-full object-cover max-w-6 max-h-6"
+          className="rounded-md object-cover max-w-6 max-h-6"
         />
 
         <div className="flex flex-col whitespace-nowrap">

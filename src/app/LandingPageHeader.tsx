@@ -29,10 +29,10 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
   return (
     <header>
       <nav
-        className={`fixed left-1/2 -translate-x-1/2 whitespace-nowrap z-30 bg-[#fff]/70 backdrop-blur-md shadow-md top-2 transition-all duration-300 rounded-full w-11/12 lg:max-w-5xl border border-primary-200`}
+        className={`fixed left-1/2 -translate-x-1/2 whitespace-nowrap z-30 bg-[#fff]/70 backdrop-blur-md shadow-md top-2 transition-all duration-300 rounded-lg w-11/12 lg:max-w-5xl border border-primary-200`}
       >
-        <div className="max-w-7xl mx-auto px-4 pl-5">
-          <div className="flex justify-between items-center h-16 lg:h-20">
+        <div className="max-w-7xl mx-auto px-3">
+          <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex-shrink-0 flex items-center">
               <KakrolaLogo size="md" isTitle />
             </Link>
@@ -43,7 +43,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
                   <Link
                     key={item.id}
                     href={item.path}
-                    className="text-sm font-medium text-text-700 hover:bg-primary-50 transition px-4 py-2 rounded-full"
+                    className="text-sm font-medium text-text-700 hover:bg-primary-50 transition px-4 py-2 rounded-lg"
                   >
                     {item.label}
                   </Link>
@@ -68,7 +68,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
                   <>
                     <Link
                       href="/auth/login"
-                      className="text-sm font-medium text-text-700 hover:bg-primary-50 transition px-4 py-2 rounded-full"
+                      className="text-sm font-medium text-text-700 hover:bg-primary-50 transition px-4 py-2 rounded-lg"
                     >
                       Log in
                     </Link>
@@ -77,7 +77,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
                       <Button
                         className="uppercase shadow-lg hover:shadow-xl transition-all"
                         rightContent={
-                          <div className="bg-background text-primary-500 rounded-full w-8 h-8 flex items-center justify-center">
+                          <div className="bg-background text-primary-500 rounded-lg w-8 h-8 flex items-center justify-center">
                             <Rocket className="w-5 h-5" strokeWidth={1.5} />
                           </div>
                         }
@@ -121,7 +121,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
                   <Link
                     key={item.id}
                     href={item.path}
-                    className="block px-3 py-2 rounded-2xl text-base font-medium text-text-700 hover:text-primary-600 hover:bg-primary-50 transition"
+                    className="block px-3 py-2 rounded-lg text-base font-medium text-text-700 hover:text-primary-600 hover:bg-primary-50 transition"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {item.label}

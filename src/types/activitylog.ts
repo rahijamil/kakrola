@@ -8,6 +8,7 @@ export enum ActivityAction {
   ARCHIVED_PROJECT = "archived_project",
   UNARCHIVED_PROJECT = "unarchived_project",
   DELETED_PROJECT = "deleted_project",
+  LEAVED_PROJECT = "leaved_project",
 
   // Section actions
   CREATED_SECTION = "created_section",

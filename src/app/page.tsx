@@ -23,7 +23,7 @@ const LandingPage = () => {
 
           {/* CTA Section */}
           <section className="relative pb-20">
-            <div className="wrapper bg-gradient-to-r from-primary-600 to-primary2 py-20 sm:py-32 rounded-xl">
+            <div className="wrapper bg-gradient-to-r from-primary-600 to-primary2 py-20 sm:py-32 rounded-lg">
               <div className="lg:flex lg:items-center lg:justify-between w-11/12 mx-auto max-w-5xl">
                 <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
                   <span className="block">
@@ -34,7 +34,7 @@ const LandingPage = () => {
                   </span>
                 </h2>
                 <div className="mt-8 flex flex-wrap sm:flex-nowrap gap-3 lg:mt-0 lg:flex-shrink-0 whitespace-nowrap">
-                  <div className="inline-flex rounded-full shadow">
+                  <div className="inline-flex rounded-lg shadow">
                     <Link href="/auth/signup">
                       <Button
                         size="lg"

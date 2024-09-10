@@ -35,6 +35,12 @@ import {
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
+import { useRole } from "@/context/RoleContext";
+import {
+  canCreateSection,
+  canEditSection,
+  canEditTask,
+} from "@/types/hasPermission";
 
 interface ListViewProps {
   groupedTasks: Record<string, TaskType[]>;
@@ -89,6 +95,7 @@ const ListView: React.FC<ListViewProps> = ({
   );
 
   const { profile } = useAuthProvider();
+  const { role } = useRole();
   const [sectionAddLoading, setSectionAddLoading] = useState(false);
 
   const columns = useMemo(() => {
@@ -128,7 +135,11 @@ const ListView: React.FC<ListViewProps> = ({
 
   const onDragEnd = useCallback(
     async (result: DropResult) => {
-      if (!profile?.id) return;
+      if (!profile?.id || !project?.id) return;
+
+      const userRole = role(project.id);
+      const canUpdateSection = userRole ? canEditSection(userRole) : false;
+      if (!canUpdateSection) return;
 
       const { source, destination, type } = result;
 
@@ -253,6 +264,11 @@ const ListView: React.FC<ListViewProps> = ({
 
         // Update tasks in the database with correct orders within their sections
         try {
+          const userRole = role(project.id);
+
+          const canUpdateTask = userRole ? canEditTask(userRole) : false;
+          if (!canUpdateTask) return;
+
           const promises = tasksToUpdate.map((task) =>
             supabaseBrowser
               .from("tasks")
@@ -280,7 +296,7 @@ const ListView: React.FC<ListViewProps> = ({
     section_id: string | number,
     is_collapsed: boolean
   ) => {
-    if (!profile?.id) return;
+    if (!profile?.id || !project?.id) return;
 
     setSections(
       sections.map((section) =>
@@ -300,21 +316,6 @@ const ListView: React.FC<ListViewProps> = ({
     if (sectionsError) {
       console.error(sectionsError);
     }
-
-    createActivityLog({
-      actor_id: profile?.id,
-      action: ActivityAction.UPDATED_SECTION,
-      entity_id: section_id,
-      entity_type: EntityType.SECTION,
-      metadata: {
-        old_data: {
-          is_collapsed: !is_collapsed,
-        },
-        new_data: {
-          is_collapsed,
-        },
-      },
-    });
   };
 
   const handleAddSection = async (
@@ -375,6 +376,11 @@ const ListView: React.FC<ListViewProps> = ({
     setShowAddSection(null);
 
     try {
+      if (!project?.id) return;
+      const userRole = role(project.id);
+      const canCreate = userRole ? canCreateSection(userRole) : false;
+      if (!canCreate) return;
+
       const { data, error } = await supabaseBrowser
         .from("sections")
         .insert([
@@ -554,6 +560,35 @@ const ListView: React.FC<ListViewProps> = ({
                 </thead>
 
                 <tbody>
+                  <tr>
+                    <td colSpan={5} className="p-0">
+                      <UngroupedTasks
+                        tasks={unGroupedTasks}
+                        showUngroupedAddTask={showUngroupedAddTask}
+                        setShowUngroupedAddTask={setShowUngroupedAddTask}
+                        project={project}
+                        setTasks={setTasks}
+                        showTaskItemModal={showTaskItemModal}
+                        setShowTaskItemModal={setShowTaskItemModal}
+                      />
+
+                      <AddNewSectionListView
+                        section={{
+                          id: "ungrouped",
+                          title: "Ungrouped",
+                          tasks: [],
+                        }}
+                        index={0}
+                        newSectionName={newSectionName}
+                        setNewSectionName={setNewSectionName}
+                        handleAddSection={handleAddSection}
+                        setShowAddSection={setShowAddSection}
+                        showAddSection={showAddSection}
+                        sectionAddLoading={sectionAddLoading}
+                      />
+                    </td>
+                  </tr>
+
                   {columns
                     .filter((c) => c.id !== "ungrouped")
                     .map((column, columnIndex) => (

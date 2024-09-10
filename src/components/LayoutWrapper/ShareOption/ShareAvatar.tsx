@@ -27,11 +27,11 @@ const ShareAvatar = ({ member }: { member: MemberData }) => {
           <Image
             src={member.profile.avatar_url || "/default_avatar.png"}
             alt="Avatar"
-            width={20}
-            height={20}
-            className="rounded-full object-cover max-w-5 max-h-5"
+            width={24}
+            height={24}
+            className="rounded-md object-cover max-w-6 max-h-6"
           />
-          <div className="absolute inset-0 bg-transparent group-hover:bg-white/30 transition rounded-full"></div>
+          <div className="absolute inset-0 bg-transparent group-hover:bg-white/30 transition rounded-lg"></div>
         </div>
       )}
       items={[

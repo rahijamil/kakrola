@@ -113,7 +113,7 @@ const ThemeSettingsPage = () => {
             key={theme.value}
             tabIndex={0}
             onClick={() => setTheme(theme.value)}
-            className={`overflow-hidden rounded-2xl border border-text-200 outline-none ${
+            className={`overflow-hidden rounded-lg border border-text-200 outline-none ${
               currentTheme == theme.value && "ring-primary-500 ring-2"
             } ring-offset-2 flex h-full cursor-pointer hover:translate-y-2 hover:scale-110 transition-all duration-300`}
             style={{
@@ -128,19 +128,19 @@ const ThemeSettingsPage = () => {
             >
               <ul className="space-y-1">
                 <li
-                  className="rounded-2xl p-1"
+                  className="rounded-lg p-1"
                   style={{ backgroundColor: theme.primaryColor }}
                 ></li>
                 <div
-                  className="rounded-2xl p-1 w-full"
+                  className="rounded-lg p-1 w-full"
                   style={{ backgroundColor: theme.sidebarAccentColor1 }}
                 ></div>
                 <div
-                  className="rounded-2xl p-1 w-full"
+                  className="rounded-lg p-1 w-full"
                   style={{ backgroundColor: theme.sidebarAccentColor2 }}
                 ></div>
                 <div
-                  className="rounded-2xl p-1 w-full"
+                  className="rounded-lg p-1 w-full"
                   style={{ backgroundColor: theme.sidebarAccentColor2 }}
                 ></div>
               </ul>
@@ -158,11 +158,11 @@ const ThemeSettingsPage = () => {
 
               <div className="space-y-2">
                 <div
-                  className="rounded-2xl p-1 w-full"
+                  className="rounded-lg p-1 w-full"
                   style={{ backgroundColor: theme.mainAccentColor }}
                 ></div>
                 <div
-                  className="rounded-2xl p-1 w-full"
+                  className="rounded-lg p-1 w-full"
                   style={{ backgroundColor: theme.mainAccentColor }}
                 ></div>
               </div>
