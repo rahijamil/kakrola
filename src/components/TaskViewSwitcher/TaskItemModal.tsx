@@ -463,7 +463,7 @@ const TaskItemModal = ({
                 />
 
                 <div
-                  className="flex items-center justify-between w-full border border-text-200 rounded-lg py-2 px-4 bg-white hover:bg-text-100 cursor-pointer transition text-xs"
+                  className="flex items-center justify-between w-full border border-text-200 rounded-lg py-2 px-4 bg-background hover:bg-text-100 cursor-pointer transition text-xs"
                   onClick={() => setShowCommentForm(true)}
                 >
                   <p className="">Write a comment</p>

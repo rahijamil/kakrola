@@ -59,11 +59,10 @@ export enum TaskPriority {
   Priority = "Priority",
 }
 
-enum TaskStatus {
-  ToDo = "To Do",
-  InProgress = "In Progress",
-  OnHold = "On Hold",
-  Completed = "Completed",
+export enum TaskStatus {
+  OnTrack = "On Track",
+  AtRisk = "At Risk",
+  OffTrack = "Off Track",
 }
 
 // Task types
@@ -78,7 +77,7 @@ export interface TaskType {
   description: string;
   priority: TaskPriority;
   is_inbox: boolean;
-  // status: TaskStatus;
+  status: TaskStatus | null;
   dates: {
     start_date: string | null; // ISO date (e.g., "2024-09-05")
     start_time: string | null; // Time (e.g., "15:30")

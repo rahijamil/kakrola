@@ -200,6 +200,7 @@ const Step2UseCase = () => {
               is_completed: false,
               completed_at: null,
               order: templateTask.order,
+              status: null
             };
 
             const { error: taskError } = await supabaseBrowser

@@ -2,6 +2,7 @@ import { ViewTypes } from "@/types/viewTypes";
 import {
   CalendarDays,
   ChevronDown,
+  File,
   LayoutDashboard,
   Plus,
   SquareKanban,
@@ -46,13 +47,19 @@ const allViews: {
         /> */}
       </div>
     ),
-    visible: false,
+    visible: true,
   },
   {
     id: 4,
     name: "Dashboard",
     icon: <LayoutDashboard size={16} strokeWidth={1.5} />,
-    visible: false,
+    visible: true,
+  },
+  {
+    id: 5,
+    name: "Page",
+    icon: <File size={16} strokeWidth={1.5} />,
+    visible: true,
   },
 ];
 
@@ -71,15 +78,16 @@ const LayoutView = ({
   project?: ProjectType;
   forPreview?: boolean;
 }) => {
-  const [views, setViews] = useState(
-    allViews.map((v) => ({
-      ...v,
-      visible:
-        v.name === "List" || v.name === "Board" || forPreview
-          ? true
-          : project?.settings.selected_views.includes(v.name), // Ensure List/Board is always visible
-    }))
-  );
+  // const [views, setViews] = useState(
+  //   allViews.map((v) => ({
+  //     ...v,
+  //     visible:
+  //       v.name === "List" || v.name === "Board" || forPreview
+  //         ? true
+  //         : project?.settings.selected_views.includes(v.name), // Ensure List/Board is always visible
+  //   }))
+  // );
+  const [views, setViews] = useState(allViews);
 
   const triggerRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -134,7 +142,7 @@ const LayoutView = ({
           )}
       </ul>
 
-      {!forPreview && (
+      {/* {!forPreview && (
         <Dropdown
           isOpen={isOpen}
           setIsOpen={setIsOpen}
@@ -170,7 +178,7 @@ const LayoutView = ({
           }))}
           autoClose={false}
         />
-      )}
+      )} */}
     </div>
   );
 };

@@ -95,12 +95,14 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
       return (
         <CalendarView
           tasks={tasks}
+          setTasks={setTasks}
           showNoDateTasks={showNoDateTasks}
           setShowNoDateTasks={setShowNoDateTasks}
+          project={project}
         />
       );
     case "Dashboard":
-      return <DashboardView tasks={tasks} sections={sections} />;
+      return <DashboardView tasks={tasks} sections={sections} project={project} />;
     default:
       return <div>Invalid view selected</div>;
   }

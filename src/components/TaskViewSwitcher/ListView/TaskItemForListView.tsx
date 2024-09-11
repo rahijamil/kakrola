@@ -22,6 +22,7 @@ import {
 } from "@/types/activitylog";
 import { useRole } from "@/context/RoleContext";
 import { canDeleteTask, canEditTask } from "@/types/hasPermission";
+import useCheckClick from "@/hooks/useCheckClick";
 
 const TaskItemForListView = ({
   task,
@@ -66,6 +67,7 @@ const TaskItemForListView = ({
 
   const { profile } = useAuthProvider();
   const { role } = useRole();
+  const { handleCheckClickDebounced } = useCheckClick({ task, tasks, setTasks });
 
   const handleTaskDelete = async () => {
     if (!profile?.id) return;
@@ -123,93 +125,6 @@ const TaskItemForListView = ({
       });
     }
   };
-
-  const handleCheckClickDebounced = debounce(async () => {
-    if (!profile?.id) return;
-
-    try {
-      if (!task.is_inbox && task.project_id) {
-        const userRole = role(task.project_id);
-
-        const canUpdateTask = userRole ? canEditTask(userRole) : false;
-        if (!canUpdateTask) return;
-
-        // Update local tasks
-        setTasks(
-          tasks.map((t) =>
-            t.id === task.id ? { ...t, is_completed: !t.is_completed } : t
-          )
-        );
-
-        const { error } = await supabaseBrowser
-          .from("tasks")
-          .update({
-            is_completed: !task.is_completed,
-          })
-          .eq("id", task.id);
-
-        if (error) {
-          throw error;
-        }
-
-        if (task.is_completed) {
-          createActivityLog({
-            actor_id: profile.id,
-            action: ActivityAction.REOPENED_TASK,
-            entity_id: task.id,
-            entity_type: EntityType.TASK,
-            metadata: {},
-          });
-        } else {
-          createActivityLog({
-            actor_id: profile.id,
-            action: ActivityAction.COMPLETED_TASK,
-            entity_id: task.id,
-            entity_type: EntityType.TASK,
-            metadata: {},
-          });
-        }
-      } else {
-        // Update local tasks
-        setTasks(
-          tasks.map((t) =>
-            t.id === task.id ? { ...t, is_completed: !t.is_completed } : t
-          )
-        );
-
-        const { error } = await supabaseBrowser
-          .from("tasks")
-          .update({
-            is_completed: !task.is_completed,
-          })
-          .eq("id", task.id);
-
-        if (error) {
-          throw error;
-        }
-
-        if (task.is_completed) {
-          createActivityLog({
-            actor_id: profile.id,
-            action: ActivityAction.REOPENED_TASK,
-            entity_id: task.id,
-            entity_type: EntityType.TASK,
-            metadata: {},
-          });
-        } else {
-          createActivityLog({
-            actor_id: profile.id,
-            action: ActivityAction.COMPLETED_TASK,
-            entity_id: task.id,
-            entity_type: EntityType.TASK,
-            metadata: {},
-          });
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, 300);
 
   const [editTaskId, setEditTaskId] = useState<TaskType["id"] | null>(null);
 

@@ -11,7 +11,7 @@ const NoDueDate = ({
 }: {
   showNoDateTasks?: boolean;
   tasks: TaskType[];
-  setTasks: (tasks: TaskType[]) => void
+  setTasks: (tasks: TaskType[]) => void;
   project: ProjectType;
 }) => {
   return (
@@ -22,41 +22,44 @@ const NoDueDate = ({
     >
       <div className="p-4 flex items-center gap-2">
         <h3 className="font-bold">No date</h3>
-        <p>{tasks?.filter((t) => !t.dates.start_date || !t.dates.end_date).length}</p>
+        <p>
+          {
+            tasks?.filter((t) => !t.dates.start_date || !t.dates.end_date)
+              .length
+          }
+        </p>
       </div>
 
       <Droppable droppableId="no_date_tasks" type="calendarview_task">
         {(provided) => (
-          <div
+          <ul
             ref={provided.innerRef}
             {...provided.droppableProps}
             className="flex-1"
           >
-            <ul className="h-full">
-              {project &&
-                setTasks &&
-                tasks
-                  ?.filter((t) => !t.dates.start_date || !t.dates.end_date)
-                  .map((task: TaskType, index) => (
-                    <li
+            {project &&
+              setTasks &&
+              tasks
+                ?.filter((t) => !t.dates.start_date && !t.dates.end_date)
+                .map((task: TaskType, index) => (
+                  <li
+                    key={task.id}
+                    className={`border-b border-text-200 p-1 flex items-center gap-3 cursor-pointer`}
+                  >
+                    <TaskItem
                       key={task.id}
-                      className={`border-b border-text-200 p-1 pl-0 flex items-center gap-3 cursor-pointer`}
-                    >
-                      <TaskItem
-                        key={task.id}
-                        task={task}
-                        index={index}
-                        tasks={tasks}
-                        setTasks={setTasks}
-                        subTasks={[]}
-                        project={project}
-                      />
-                    </li>
-                  ))}
+                      task={task}
+                      index={index}
+                      tasks={tasks}
+                      setTasks={setTasks}
+                      subTasks={[]}
+                      project={project}
+                    />
+                  </li>
+                ))}
 
-              {provided.placeholder}
-            </ul>
-          </div>
+            {provided.placeholder}
+          </ul>
         )}
       </Droppable>
     </div>

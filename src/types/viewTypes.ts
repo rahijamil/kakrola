@@ -1,3 +1,3 @@
 export interface ViewTypes {
-  view: "List" | "Board" | "Calendar" | "Dashboard";
+  view: "List" | "Board" | "Calendar" | "Dashboard" | "Page";
 }

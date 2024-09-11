@@ -10,10 +10,10 @@ const ErrorPage = ({ error, reset }: { error: Error; reset: () => void }) => {
         <div className="space-y-4">
           <div>
             <h1 className="text-3xl font-bold text-red-500 mb-4">Oops!</h1>
-            <p className="text-lg text-gray-700 mb-4">
+            <p className="text-lg text-text-700 mb-4">
               Sorry, something went wrong.
             </p>
-            <p className="text-md text-gray-500">
+            <p className="text-md text-text-500">
               {error?.message || "An unexpected error has occurred."}
             </p>
           </div>

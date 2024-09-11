@@ -1,4 +1,9 @@
-import { ProjectType, SectionType, TaskPriority, TaskType } from "@/types/project";
+import {
+  ProjectType,
+  SectionType,
+  TaskPriority,
+  TaskType,
+} from "@/types/project";
 import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 
@@ -32,4 +37,5 @@ export const getInitialTaskData = ({
   order: 0,
   completed_at: null,
   updated_at: new Date().toISOString(),
+  status: null,
 });

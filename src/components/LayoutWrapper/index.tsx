@@ -152,7 +152,7 @@ const LayoutWrapper = ({
                   ...t,
                   dates: {
                     ...t.dates,
-                    due_date: result.destination?.droppableId as string,
+                    end_date: result.destination?.droppableId as string,
                   },
                   order: index,
                 }
@@ -170,10 +170,10 @@ const LayoutWrapper = ({
           className={`${view == "Calendar" && "flex overflow-x-hidden"} h-full`}
         >
           <div
-            className={`flex flex-col h-full w-full flex-1 transition-all duration-300`}
+            className={`flex flex-col h-full w-full flex-1 transition-all duration-300 px-6`}
           >
             {view && setView && (
-              <div className="flex items-center justify-between p-4 py-3 sticky top-0 mb-1 z-10">
+              <div className="flex items-center justify-between py-3 sticky top-0 mb-1 z-10">
                 {!["Today", "Inbox"].includes(headline) && (
                   <div className="flex items-center gap-4">
                     <div className="flex items-center w-64 whitespace-nowrap">
@@ -296,7 +296,7 @@ const LayoutWrapper = ({
               </div>
             )}
 
-            <div className={`flex-1 wrapper`}>
+            <div className={`flex-1`}>
               <div className="flex flex-col h-full">
                 <div className={`${project && "pt-4"} ${!setView && "pt-8"}`}>
                   {project ? (
