@@ -1,4 +1,10 @@
-import React, { Dispatch, Fragment, SetStateAction, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  Fragment,
+  SetStateAction,
+  useRef,
+  useState,
+} from "react";
 import { Input } from "../ui/input";
 import Image from "next/image";
 import { Check, ChevronDown, Plus, User, UserPlus, X } from "lucide-react";
@@ -91,10 +97,7 @@ const AssigneeSelector = ({
                 : "hover:bg-text-100 cursor-pointer"
             }`}
           >
-            <button
-              ref={triggerRef}
-              className={`flex items-center justify-between`}
-            >
+            <button ref={triggerRef} className={`flex items-center gap-2`}>
               {task.assignees.length === 0 ? (
                 <span>No assignee</span>
               ) : (
@@ -102,30 +105,31 @@ const AssigneeSelector = ({
                   <div key={assignee.id} className="flex items-center gap-2">
                     <Image
                       src={
-                        getAssigneeProfileById(assignee.profile_id)?.avatar_url ||
-                        "/default_avatar.png"
+                        getAssigneeProfileById(assignee.profile_id)
+                          ?.avatar_url || "/default_avatar.png"
                       }
                       width={18}
                       height={18}
                       alt={
-                        getAssigneeProfileById(assignee.profile_id)?.full_name ||
+                        getAssigneeProfileById(assignee.profile_id)
+                          ?.full_name ||
                         getAssigneeProfileById(assignee.profile_id)?.username ||
                         "avatar"
                       }
                       className="rounded-md object-cover max-w-[18px] max-h-[18px]"
                     />
                     {
-                      getAssigneeProfileById(assignee.profile_id)?.full_name.split(
-                        " "
-                      )[0]
+                      getAssigneeProfileById(
+                        assignee.profile_id
+                      )?.full_name.split(" ")[0]
                     }
-                    {getAssigneeProfileById(assignee.profile_id)?.full_name.split(
-                      " "
-                    )[1] // Check if the second name exists
+                    {getAssigneeProfileById(
+                      assignee.profile_id
+                    )?.full_name.split(" ")[1] // Check if the second name exists
                       ? " " +
-                        getAssigneeProfileById(assignee.profile_id)?.full_name.split(
-                          " "
-                        )[1][0] +
+                        getAssigneeProfileById(
+                          assignee.profile_id
+                        )?.full_name.split(" ")[1][0] +
                         "." // Display the initial of the second name
                       : ""}
                   </div>
@@ -191,7 +195,7 @@ const AssigneeSelector = ({
             data-form-element={dataFromElement}
             ref={triggerRef}
             data-state={"assignee"}
-            className={`flex items-center justify-between gap-1 cursor-pointer text-xs px-2 h-10 group relative ${
+            className={`flex items-center gap-1 cursor-pointer p-1 px-2 text-[11px] rounded-lg border border-text-200 text-text-500 ${
               isOpen ? "bg-text-50" : "hover:bg-text-100"
             }`}
             onClick={onClick}
@@ -202,42 +206,54 @@ const AssigneeSelector = ({
                   <div className="flex items-center gap-1">
                     <Image
                       src={
-                        getAssigneeProfileById(assignee.profile_id)?.avatar_url ||
-                        "/default_avatar.png"
+                        getAssigneeProfileById(assignee.profile_id)
+                          ?.avatar_url || "/default_avatar.png"
                       }
                       width={20}
                       height={20}
                       alt={
-                        getAssigneeProfileById(assignee.profile_id)?.full_name ||
+                        getAssigneeProfileById(assignee.profile_id)
+                          ?.full_name ||
                         getAssigneeProfileById(assignee.profile_id)?.username ||
                         "avatar"
                       }
                       className="rounded-md object-cover max-w-5 max-h-5"
                     />
                     {
-                      getAssigneeProfileById(assignee.profile_id)?.full_name.split(
-                        " "
-                      )[0]
+                      getAssigneeProfileById(
+                        assignee.profile_id
+                      )?.full_name.split(" ")[0]
                     }
-                    {getAssigneeProfileById(assignee.profile_id)?.full_name.split(
-                      " "
-                    )[1] // Check if the second name exists
+                    {getAssigneeProfileById(
+                      assignee.profile_id
+                    )?.full_name.split(" ")[1] // Check if the second name exists
                       ? " " +
-                        getAssigneeProfileById(assignee.profile_id)?.full_name.split(
-                          " "
-                        )[1][0] +
+                        getAssigneeProfileById(
+                          assignee.profile_id
+                        )?.full_name.split(" ")[1][0] +
                         "." // Display the initial of the second name
                       : ""}
                   </div>
+
+                  <button
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      setTask({
+                        ...task,
+                        assignees: [],
+                      });
+                    }}
+                    className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-lg"
+                  >
+                    <X strokeWidth={1.5} className="w-3 h-3 text-text-500" />
+                  </button>
                 </Fragment>
               ))
             ) : (
-              <div className="flex items-center gap-1">
-                <div className="rounded-lg w-5 h-5 flex items-center justify-center bg-surface text-text-500">
-                  <UserPlus size={16} />
-                </div>
-                <p className="text-xs">Assign</p>
-              </div>
+              <>
+                <UserPlus strokeWidth={1.5} className="w-4 h-4" />
+                {!isSmall && <p className="text-xs">Assign</p>}
+              </>
             )}
           </div>
         )

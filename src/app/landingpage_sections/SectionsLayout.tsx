@@ -21,7 +21,7 @@ const sections: {
     id: "section1",
     label: "Organize Tasks Effortlessly",
     content:
-      "Organize and prioritize your tasks with ease. Break down complex projects into manageable steps, set due dates, and stay on top of your to-do list. Whether you're working solo or with a team, task management has never been this intuitive.",
+      "Organize and prioritize your tasks with ease. Break down complex projects into manageable steps, set dates, and stay on top of your to-do list. Whether you're working solo or with a team, task management has never been this intuitive.",
     imgSrc: "/images/feature1.png",
     icon: CheckCircle,
   },

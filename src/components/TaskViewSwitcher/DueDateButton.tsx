@@ -37,7 +37,7 @@ const DueDateButton = ({
         </div>
       ) : (
         <div className="flex items-center justify-between w-full">
-          <p className="font-semibold text-xs">Due date</p>
+          <p className="font-semibold text-xs">Dates</p>
           <span className="text-text-400">+</span>
         </div>
       )}

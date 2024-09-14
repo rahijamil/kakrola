@@ -42,12 +42,12 @@ const TaskItemMoreDropdown = ({
       Label={({ onClick }) => (
         <button
           ref={triggerRef}
-          className={`p-1 transition rounded-lg hidden group-hover:inline-block absolute right-3 top-1/2 -translate-y-1/2 ${
-            isOpen ? "bg-text-50" : "hover:bg-text-100"
+          className={`p-1 transition rounded-lg hidden group-hover:inline-block absolute right-1 top-1 ${
+            isOpen ? "bg-text-100" : "bg-text-100 hover:bg-text-200"
           }`}
           onClick={onClick}
         >
-          <Ellipsis strokeWidth={1.5} className="w-5 h-5" />
+          <Ellipsis strokeWidth={1.5} className="w-4 h-4" />
         </button>
       )}
       items={[
@@ -87,7 +87,7 @@ const TaskItemMoreDropdown = ({
             setShowDeleteConfirm(task.id.toString());
             onClose();
           },
-          textColor: "text-red-600",
+          textColor: "text-text-700 hover:text-red-500",
         },
       ]}
       content={
@@ -97,7 +97,7 @@ const TaskItemMoreDropdown = ({
               {/* <div className="h-[1px] bg-text-200 my-1"></div>
           <div>
             <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center">
-              <Calendar strokeWidth={1.5} className="w-4 h-4 mr-4" /> Due date
+              <Calendar strokeWidth={1.5} className="w-4 h-4 mr-4" /> Dates
             </button>
             <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center">
               <Flag strokeWidth={1.5} className="w-4 h-4 mr-4" /> Priority

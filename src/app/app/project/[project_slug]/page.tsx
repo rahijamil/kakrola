@@ -121,10 +121,11 @@ const ProjectDetails = ({
     [currentProject?.id, setProjects]
   );
 
+
   if (isPending) {
     return (
-      <div className="flex items-center justify-center w-full h-screen">
-        <Spinner />
+      <div className="flex items-center justify-center w-full h-screen text-primary-500">
+        <Spinner color="current" />
       </div>
     );
   }

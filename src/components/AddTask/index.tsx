@@ -7,10 +7,11 @@ interface AddTaskProps {
   isSmall?: boolean;
   section_id?: SectionType["id"] | null;
   project: ProjectType | null;
-  setTasks: (tasks: TaskType[]) => void
+  setTasks: (tasks: TaskType[]) => void;
   tasks: TaskType[];
   addTaskAboveBellow?: { position: "above" | "below"; task: TaskType } | null;
   taskForEdit?: TaskType;
+  setShowModal?: Dispatch<SetStateAction<string | null>>;
 }
 
 const AddTask: React.FC<AddTaskProps> = ({
@@ -22,6 +23,7 @@ const AddTask: React.FC<AddTaskProps> = ({
   tasks,
   addTaskAboveBellow,
   taskForEdit,
+  setShowModal,
 }) => {
   return (
     <div
@@ -38,6 +40,7 @@ const AddTask: React.FC<AddTaskProps> = ({
         tasks={tasks}
         addTaskAboveBellow={addTaskAboveBellow}
         taskForEdit={taskForEdit}
+        setShowModal={setShowModal}
       />
     </div>
   );

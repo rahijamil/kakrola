@@ -29,8 +29,6 @@ const BoardViewColumn = ({
   columnIndex,
   setShowArchiveConfirm,
   setShowDeleteConfirm,
-  showSectionMoreOptions,
-  setShowSectionMoreOptions,
   project,
   setTasks,
   sections,
@@ -42,6 +40,8 @@ const BoardViewColumn = ({
   columns,
   setSections,
   tasks,
+  setIndex,
+  setColumnId,
 }: {
   column: {
     id: string;
@@ -64,9 +64,9 @@ const BoardViewColumn = ({
       title: string;
     } | null>
   >;
+  setIndex?: Dispatch<SetStateAction<number>>;
+  setColumnId?: Dispatch<SetStateAction<any>>;
   tasks: TaskType[];
-  showSectionMoreOptions: string | null;
-  setShowSectionMoreOptions: Dispatch<SetStateAction<string | null>>;
   project: ProjectType | null;
   setTasks: (tasks: TaskType[]) => void;
   sections: SectionType[];
@@ -95,7 +95,15 @@ const BoardViewColumn = ({
     string | null
   >(null);
   const { profile } = useAuthProvider();
-  const {role} = useRole();
+  const { role } = useRole();
+
+  useEffect(() => {
+    if (setIndex && setColumnId) {
+      setIndex(columnIndex);
+      setColumnId(column.id);
+    }
+  }, [columnIndex, setIndex]);
+
   const handleUpdateColumnTitle = async () => {
     if (!profile?.id) return;
 
@@ -159,7 +167,13 @@ const BoardViewColumn = ({
 
   // Tailwind doesn't generate all color classes by default, so we need to explicitly define them
   const bgColorClass =
-    theme == "dark" ? `bg-${sectionColor}-900` : `bg-${sectionColor}-25`;
+    theme == "dark"
+      ? `${
+          sectionColor == "gray"
+            ? `bg-${sectionColor}-900`
+            : `bg-${sectionColor}-500/20`
+        }`
+      : `bg-${sectionColor}-25`;
   const hoverBgColorClass =
     theme == "dark"
       ? `hover:bg-${sectionColor}-800`
@@ -208,7 +222,7 @@ const BoardViewColumn = ({
                 ref={boardDraggaleProvided.innerRef}
                 {...boardDraggaleProvided.draggableProps}
                 {...boardDraggaleProvided.dragHandleProps}
-                className={`${bgColorClass} rounded-lg w-72 md:w-[300px] h-fit max-h-[calc(100vh-150px)] overflow-y-auto cursor-default ${
+                className={`rounded-lg w-72 min-w-72 md:w-[300px] md:min-w-[300px] h-fit max-h-[calc(100vh-180px)] overflow-y-auto cursor-default ${
                   column.is_archived && "opacity-70"
                 }`}
               >
@@ -284,7 +298,7 @@ const BoardViewColumn = ({
                       key={column.id}
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="space-y-2 min-h-1 p-2 pt-1"
+                      className={`space-y-2 min-h-1 p-2 pt-1 ${bgColorClass}`}
                     >
                       {column.tasks
                         .filter((t) => !t.parent_task_id)
@@ -310,6 +324,7 @@ const BoardViewColumn = ({
                                 subTasks={column.tasks.filter(
                                   (t) => t.parent_task_id == task.id
                                 )}
+                                sections={sections}
                                 index={taskIndex}
                                 project={project}
                                 setShowDeleteConfirm={setShowTaskDeleteConfirm}
@@ -357,15 +372,17 @@ const BoardViewColumn = ({
         )}
       </Draggable>
 
-      <AddNewSectionBoardView
-        setShowUngroupedAddSection={setShowUngroupedAddSection}
-        columnId={column.id}
-        columns={columns}
-        index={columnIndex}
-        project={project}
-        setSections={setSections}
-        sections={sections}
-      />
+      {columns && columns?.length - 1 != columnIndex && (
+        <AddNewSectionBoardView
+          setShowUngroupedAddSection={setShowUngroupedAddSection}
+          columnId={column.id}
+          columns={columns}
+          index={columnIndex}
+          project={project}
+          setSections={setSections}
+          sections={sections}
+        />
+      )}
     </>
   );
 };

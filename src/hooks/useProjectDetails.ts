@@ -11,12 +11,14 @@ const useProjectDetails = (projectId: number | null) => {
       if (projectId === null) {
         return { sections: [], tasks: [] };
       }
+      
       return fetchSectionsAndTasksByProjectId(projectId);
     },
     enabled: !!projectId, // Only run the query if projectId is not null
     staleTime: 300000, // 5 minutes
     refetchOnWindowFocus: false, // Optional: adjust as needed
   });
+
 
   const setSections = (sections: SectionType[]) => {
     queryClient.setQueryData(["projectDetails", projectId], (oldData: any) => ({
@@ -34,6 +36,7 @@ const useProjectDetails = (projectId: number | null) => {
       })
     );
   };
+
 
   return {
     sections: data?.sections,

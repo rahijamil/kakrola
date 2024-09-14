@@ -33,7 +33,7 @@ const ResponsiveTable = ({
           <tr className="border-y border-text-200 text-xs font-medium">
             <th className="p-2 text-left w-[40%]">Task name</th>
             <th className="p-2 text-left w-[15%]">Assignee</th>
-            <th className="p-2 text-left w-[15%]">Due date</th>
+            <th className="p-2 text-left w-[15%]">Dates</th>
             <th className="p-2 text-left w-[15%]">Priority</th>
             <th className="p-2 text-left w-[15%]">Labels</th>
           </tr>

@@ -36,11 +36,11 @@ const useCheckClick = ({
         if (!canUpdateTask) return;
 
         // Update local tasks
-        setTasks(
-          tasks.map((t) =>
-            t.id === task.id ? { ...t, is_completed: !t.is_completed } : t
-          )
-        );
+        // setTasks(
+        //   tasks.map((t) =>
+        //     t.id === task.id ? { ...t, is_completed: !t.is_completed } : t
+        //   )
+        // );
 
         const { error } = await supabaseBrowser
           .from("tasks")

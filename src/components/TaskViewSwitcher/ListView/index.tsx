@@ -529,7 +529,7 @@ const ListView: React.FC<ListViewProps> = ({
         <Droppable droppableId="list" type="column" direction="vertical">
           {(listProvided) => (
             <div
-              className="overflow-x-auto w-full h-full"
+              className="overflow-x-auto w-full h-full px-6"
               ref={listProvided.innerRef}
               {...listProvided.droppableProps}
             >

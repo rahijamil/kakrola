@@ -10,7 +10,7 @@ import {
 } from "react";
 
 interface DropdownProps {
-  Label: (props: { onClick: () => void }) => ReactNode;
+  Label: (props: { onClick: (ev: any) => void }) => ReactNode;
   items?: {
     id: number;
     label: string;
@@ -137,7 +137,12 @@ const Dropdown: React.FC<DropdownProps> = ({
   return (
     <>
       <div className={className}>
-        <Label onClick={() => setIsOpen(true)} />
+        <Label
+          onClick={(ev) => {
+            ev.stopPropagation();
+            setIsOpen(true);
+          }}
+        />
 
         {isOpen && (
           <motion.div
@@ -181,6 +186,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             }`}
             id="fixed_dropdown"
             data-form-element={dataFromElement}
+            onClick={(ev) => ev.stopPropagation()}
           >
             {beforeItemsContent}
             {items.map((item) => (
@@ -207,7 +213,9 @@ const Dropdown: React.FC<DropdownProps> = ({
                         {item.icon}
 
                         <div className="">
-                          <p className={`${item.summary ? "font-medium" : ""}`}>{item.label}</p>
+                          <p className={`${item.summary ? "font-medium" : ""}`}>
+                            {item.label}
+                          </p>
                           {item.summary && (
                             <p className="text-xs text-text-500">
                               {item.summary}
@@ -261,7 +269,10 @@ const Dropdown: React.FC<DropdownProps> = ({
         <div
           data-form-element="true"
           className="fixed top-0 left-0 bottom-0 right-0 z-10"
-          onClick={() => setIsOpen(false)}
+          onClick={(ev) => {
+            ev.stopPropagation();
+            setIsOpen(false);
+          }}
         ></div>
       )}
     </>

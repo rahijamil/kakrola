@@ -6,7 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import { TaskType } from "@/types/project";
-import { ArrowRight, Calendar, ChevronDown, X } from "lucide-react";
+import { ArrowRight, Calendar, CalendarRange, ChevronDown, X } from "lucide-react";
 import {
   format,
   addDays,
@@ -41,7 +41,7 @@ const reminderOptions = [
     label: "None",
   },
   {
-    value: "0", // At due date
+    value: "0", // At end date
     label: "At time of end date",
   },
   {
@@ -134,7 +134,7 @@ const DateSelector = ({
           start_date: format(new Date(), "dd LLL yyyy"),
           end_date: format(endDate, "dd LLL yyyy"),
         },
-      }))
+      }));
 
       setDates((prev) => ({
         ...prev,
@@ -296,9 +296,6 @@ const DateSelector = ({
     }
   }, [dates.end_date, months, initialRender]);
 
-  const startDateInfo = getDateInfo(task.dates.start_date);
-  const endDateInfo = getDateInfo(task.dates.end_date);
-
   const triggerRef = useRef(null);
   const startInputRef = useRef<HTMLInputElement>(null);
   const endInputRef = useRef<HTMLInputElement>(null);
@@ -339,7 +336,7 @@ const DateSelector = ({
           >
             <button
               ref={triggerRef}
-              className={`flex items-center justify-between `}
+              className={`flex items-center justify-between`}
             >
               {task.dates.start_date || task.dates.end_date ? (
                 <>
@@ -443,39 +440,33 @@ const DateSelector = ({
               </>
             ) : (
               <div className="flex items-center gap-1">
-                <Calendar strokeWidth={1.5} className="w-4 h-4 text-text-500" />
-                {/* {!isSmall && <span className="text-text-700">Due date</span>} */}
+                <CalendarRange strokeWidth={1.5} className="w-4 h-4 text-text-500" />
+                {/* {!isSmall && <span className="text-text-700">Dates</span>} */}
               </div>
             )}
           </div>
         ) : (
           <div
             ref={triggerRef}
-            className={`flex items-center gap-1 cursor-pointer p-1 px-2 text-xs rounded-lg border border-text-200 ${
+            className={`flex items-center gap-1 cursor-pointer p-1 px-1.5 text-[11px] rounded-lg border border-text-200 text-text-600 ${
               isOpen ? "bg-text-50" : "hover:bg-text-100"
             }`}
             onClick={onClick}
           >
-            {task.dates.end_date ? (
+            {task.dates.start_date || task.dates.end_date ? (
               <>
                 <div className="flex items-center gap-1">
-                  <div className="flex items-center gap-1">
-                    {startDateInfo?.icon}
-                    <span className={startDateInfo?.color}>
-                      {startDateInfo?.label}
-                    </span>
-                  </div>
-                  {task.dates.start_date && task.dates.end_date && (
-                    <div>
-                      <ArrowRight strokeWidth={1.5} className="w-4 h-4" />
-                    </div>
+                  {task.dates.start_date && (
+                    <span>{format(task.dates.start_date, "dd LLL")}</span>
                   )}
-                  <div className="flex items-center gap-1">
-                    {endDateInfo?.icon}
-                    <span className={endDateInfo?.color}>
-                      {endDateInfo?.label}
-                    </span>
-                  </div>
+
+                  {task.dates.start_date && task.dates.end_date && (
+                    <span>-</span>
+                  )}
+
+                  {task.dates.end_date && (
+                    <span>{format(task.dates.end_date, "dd LLL")}</span>
+                  )}
                 </div>
 
                 <button
@@ -493,8 +484,8 @@ const DateSelector = ({
               </>
             ) : (
               <>
-                <Calendar strokeWidth={1.5} className="w-4 h-4 text-text-500" />
-                {!isSmall && <span className="text-text-700">Due date</span>}
+                <CalendarRange strokeWidth={1.5} className="w-4 h-4 text-text-500" />
+                {!isSmall && <span className="text-text-700">Dates</span>}
               </>
             )}
           </div>

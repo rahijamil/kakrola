@@ -14,6 +14,7 @@ import {
   isFirstDayOfMonth,
   subWeeks,
   addWeeks,
+  differenceInCalendarDays,
 } from "date-fns";
 import {
   ChevronLeft,
@@ -68,13 +69,13 @@ const CalendarView = ({
   // };
 
   const handleWheel = debounce((event: any) => {
-    if (event.deltaY < 0 || event.deltaX < 0) {
-      // Scrolling up
-      navigatePrev();
-    } else if (event.deltaY > 0 || event.deltaX > 0) {
-      // Scrolling down
-      navigateNext();
-    }
+    // if (event.deltaY < 0 || event.deltaX < 0) {
+    //   // Scrolling up
+    //   navigatePrev();
+    // } else if (event.deltaY > 0 || event.deltaX > 0) {
+    //   // Scrolling down
+    //   navigateNext();
+    // }
   }, 50);
 
   const getDateRange = () => {
@@ -141,8 +142,45 @@ const CalendarView = ({
     opacity: { duration: 0.2 },
   };
 
+  const dayColumnRef = useRef<HTMLDivElement>(null);
+
+  const [dayColumnWidth, setDayColumnWidth] = useState<number>(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (dayColumnRef.current) {
+        // Get the width of the day column
+        const columnWidth = dayColumnRef.current.offsetWidth;
+        // Use this value to set columnWidth dynamically
+
+        console.log("columnWidth", columnWidth);
+        setDayColumnWidth(columnWidth);
+      }
+    };
+
+    // Measure on mount and resize
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const calculateTaskWidth = (task: TaskType) => {
+    if (dayColumnWidth === 0) {
+      return 0; // Avoid calculating width if column width is not available
+    }
+
+    const startDate = new Date(task.dates.start_date!);
+    const endDate = new Date(task.dates.end_date!);
+    const taskDurationInDays = differenceInCalendarDays(endDate, startDate) + 1;
+
+    return taskDurationInDays * dayColumnWidth - 16;
+  };
+
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col px-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
           <div className="font-medium rounded-lg border border-text-200 text-xs flex items-center gap-1 text-text-600 overflow-hidden">
@@ -284,6 +322,7 @@ const CalendarView = ({
             {days.map((day, _index) => (
               <div
                 key={day}
+                ref={_index === 0 ? dayColumnRef : null}
                 className={`text-right text-text-500 border-text-300 w-full p-2 flex flex-col gap-1 items-end font-medium ${
                   _index === days.length - 1 ? "border-r-0" : "border-r"
                 }`}
@@ -364,49 +403,49 @@ const CalendarView = ({
                           {tasks
                             .filter(
                               (task) =>
-                                (task.dates.start_date &&
-                                  isSameDay(
-                                    new Date(task.dates.start_date),
-                                    day
-                                  )) ||
-                                (task.dates.end_date &&
-                                  isSameDay(new Date(task.dates.end_date), day))
+                                task.dates.start_date &&
+                                isSameDay(new Date(task.dates.start_date), day)
                             )
-                            .sort((a, b) => a.order - b.order)
-                            .map((task, taskIndex) => (
-                              <Draggable
-                                key={task.id}
-                                draggableId={task.id?.toString()}
-                                index={taskIndex}
-                              >
-                                {(draggableProvided) => (
-                                  <motion.div
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                  >
-                                    <li
-                                      ref={draggableProvided.innerRef}
-                                      {...draggableProvided.draggableProps}
-                                      {...draggableProvided.dragHandleProps}
-                                      className="bg-text-50 hover:bg-text-100 transition p-1 flex items-center gap-1 border border-text-200 rounded-lg"
+                            .map((task, taskIndex) => {
+                              const taskWidth = calculateTaskWidth(task);
+                              return (
+                                <Draggable
+                                  key={task.id}
+                                  draggableId={task.id?.toString()}
+                                  index={taskIndex}
+                                >
+                                  {(draggableProvided) => (
+                                    <motion.li
+                                      whileHover={{ scale: 1.02 }}
+                                      whileTap={{ scale: 0.98 }}
+                                      style={{
+                                        width: `${taskWidth}px`,
+                                      }}
                                       onClick={(ev) => {
                                         ev.stopPropagation();
                                         setShowTaskDetails(task);
                                       }}
+                                      className="cursor-pointer relative bg-background hover:bg-text-100 transition p-1 rounded-lg border border-text-200"
                                     >
-                                      <AnimatedTaskCheckbox
-                                        priority={task.priority}
-                                        playSound={false}
-                                        handleCheckSubmit={() => {}}
-                                        is_completed={task.is_completed}
-                                      />
-                                      {task.title}
-                                    </li>
-                                  </motion.div>
-                                )}
-                              </Draggable>
-                            ))}
-
+                                      <div
+                                        ref={draggableProvided.innerRef}
+                                        {...draggableProvided.draggableProps}
+                                        {...draggableProvided.dragHandleProps}
+                                        className="flex items-center gap-1"
+                                      >
+                                        <AnimatedTaskCheckbox
+                                          priority={task.priority}
+                                          playSound={false}
+                                          handleCheckSubmit={() => {}}
+                                          is_completed={task.is_completed}
+                                        />
+                                        {task.title}
+                                      </div>
+                                    </motion.li>
+                                  )}
+                                </Draggable>
+                              );
+                            })}
                           {provided.placeholder}
                         </ul>
                       </div>

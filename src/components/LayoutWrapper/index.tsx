@@ -170,10 +170,10 @@ const LayoutWrapper = ({
           className={`${view == "Calendar" && "flex overflow-x-hidden"} h-full`}
         >
           <div
-            className={`flex flex-col h-full w-full flex-1 transition-all duration-300 px-6`}
+            className={`flex flex-col h-full w-full flex-1 transition-all duration-300`}
           >
             {view && setView && (
-              <div className="flex items-center justify-between py-3 sticky top-0 mb-1 z-10">
+              <div className="flex items-center justify-between py-3 sticky top-0 mb-1 z-10 px-6">
                 {!["Today", "Inbox"].includes(headline) && (
                   <div className="flex items-center gap-4">
                     <div className="flex items-center w-64 whitespace-nowrap">
@@ -298,7 +298,7 @@ const LayoutWrapper = ({
 
             <div className={`flex-1`}>
               <div className="flex flex-col h-full">
-                <div className={`${project && "pt-4"} ${!setView && "pt-8"}`}>
+                <div className={`${project && "pt-4"} ${!setView && "pt-8"} px-6`}>
                   {project ? (
                     <>
                       <div className="flex items-center gap-2">

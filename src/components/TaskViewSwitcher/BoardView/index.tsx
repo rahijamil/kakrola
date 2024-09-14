@@ -17,6 +17,7 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
+import useTheme from "@/hooks/useTheme";
 
 const BoardView: React.FC<{
   tasks: TaskType[];
@@ -47,10 +48,6 @@ const BoardView: React.FC<{
   project,
   setTasks,
 }) => {
-  const [showSectionMoreOptions, setShowSectionMoreOptions] = useState<
-    string | null
-  >(null);
-
   const { profile } = useAuthProvider();
 
   const columns = useMemo(() => {
@@ -393,56 +390,73 @@ const BoardView: React.FC<{
     is_archived?: boolean;
   } | null>(null);
 
+  const [columnId, setColumnId] = useState<any>(null);
+  const [index, setIndex] = useState(0);
+
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="board" type="column" direction="horizontal">
-          {(boardProvided) => (
-            <div
-              ref={boardProvided.innerRef}
-              {...boardProvided.droppableProps}
-              className="flex overflow-x-auto space-x-1 h-full"
-            >
-              {columns.map((column, columnIndex) => (
-                <BoardViewColumn
-                  key={column.id}
-                  tasks={tasks}
-                  column={column}
-                  columnIndex={columnIndex}
-                  project={project}
-                  setShowArchiveConfirm={setShowArchiveConfirm}
-                  setShowDeleteConfirm={setShowDeleteConfirm}
-                  setShowUngroupedAddSection={setShowUngroupedAddSection}
-                  setSections={setSections}
-                  sections={sections}
-                  setTasks={setTasks}
-                  setShowAddTask={setShowAddTask}
-                  setShowSectionMoreOptions={setShowSectionMoreOptions}
-                  setShowUngroupedAddTask={setShowUngroupedAddTask}
-                  showAddTask={showAddTask}
-                  showSectionMoreOptions={showSectionMoreOptions}
-                  showUngroupedAddTask={showUngroupedAddTask}
-                  columns={columns}
-                />
-              ))}
-
-              <div>
-                {columns.length == 0 && (
-                  <AddNewSectionBoardView
-                    setShowUngroupedAddSection={setShowUngroupedAddSection}
-                    showUngroupedAddSection={showUngroupedAddSection}
+        <div className="flex overflow-x-auto px-6 gap-1 h-full">
+          <Droppable droppableId="board" type="column" direction="horizontal">
+            {(boardProvided) => (
+              <div
+                ref={boardProvided.innerRef}
+                {...boardProvided.droppableProps}
+                className="flex gap-1 h-full"
+              >
+                {columns.map((column, columnIndex) => (
+                  <BoardViewColumn
+                    key={column.id}
+                    tasks={tasks}
+                    setIndex={setIndex}
+                    setColumnId={setColumnId}
+                    column={column}
+                    columnIndex={columnIndex}
                     project={project}
+                    setShowArchiveConfirm={setShowArchiveConfirm}
+                    setShowDeleteConfirm={setShowDeleteConfirm}
+                    setShowUngroupedAddSection={setShowUngroupedAddSection}
                     setSections={setSections}
                     sections={sections}
-                    index={columns.length}
+                    setTasks={setTasks}
+                    setShowAddTask={setShowAddTask}
+                    setShowUngroupedAddTask={setShowUngroupedAddTask}
+                    showAddTask={showAddTask}
+                    showUngroupedAddTask={showUngroupedAddTask}
+                    columns={columns}
                   />
-                )}
-              </div>
+                ))}
 
-              {boardProvided.placeholder}
-            </div>
+                <div>
+                  {columns.length == 0 && (
+                    <AddNewSectionBoardView
+                      setShowUngroupedAddSection={setShowUngroupedAddSection}
+                      showUngroupedAddSection={showUngroupedAddSection}
+                      project={project}
+                      setSections={setSections}
+                      sections={sections}
+                      index={columns.length}
+                    />
+                  )}
+                </div>
+
+                {boardProvided.placeholder}
+              </div>
+            )}
+          </Droppable>
+
+          {columns.length - 1 == index && (
+            <AddNewSectionBoardView
+              setShowUngroupedAddSection={setShowUngroupedAddSection}
+              columnId={columnId}
+              columns={columns}
+              index={index}
+              project={project}
+              setSections={setSections}
+              sections={sections}
+            />
           )}
-        </Droppable>
+        </div>
       </DragDropContext>
 
       {showDeleteConfirm && (

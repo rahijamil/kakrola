@@ -116,10 +116,7 @@ const SidebarProjectMoreOptions = ({
       Label={({ onClick }) => (
         <div
           ref={triggerRef}
-          onClick={(ev) => {
-            ev.stopPropagation();
-            onClick();
-          }}
+          onClick={onClick}
           className={`flex items-center justify-center absolute inset-0 z-10 cursor-pointer ${
             pathname === `/app/project/${project.slug}`
               ? "bg-primary-200"
@@ -246,7 +243,7 @@ const SidebarProjectMoreOptions = ({
               {
                 id: 11,
                 label: "Delete",
-                textColor: "text-red-600",
+                textColor: "text-text-700 hover:text-red-500",
                 icon: <Trash2 strokeWidth={1.5} className="w-4 h-4" />,
                 onClick: () => {
                   setShowDeleteConfirm(true);
@@ -257,7 +254,7 @@ const SidebarProjectMoreOptions = ({
               {
                 id: 11,
                 label: "Leave",
-                textColor: "text-red-600",
+                textColor: "text-text-700 hover:text-red-500",
                 icon: <LogOut strokeWidth={1.5} className="w-4 h-4" />,
                 onClick: () => {
                   setShowLeaveConfirm(true);

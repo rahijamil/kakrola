@@ -109,20 +109,43 @@ const ProjectsSelector = ({
           >
             <button
               type="button"
-              className={`w-full flex items-center text-xs transition-colors text-text-700 gap-2 ${
+              className={`w-full flex items-center text-xs transition-colors text-text-700 gap-1 ${
                 isSmall && "max-w-[100px]"
               }`}
             >
               {task.is_inbox ? (
-                <Inbox strokeWidth={1.5} className="w-4 h-4" />
+                <Inbox strokeWidth={1.5} className="w-4 h-4 min-w-4 min-h-4" />
               ) : (
-                <CheckCircle strokeWidth={1.5} className="w-4 h-4" />
+                <CheckCircle
+                  strokeWidth={1.5}
+                  className="w-4 h-4 min-w-4 min-h-4"
+                />
               )}
-              <span className="font-bold text-xs truncate">
-                {task.project_id
-                  ? projects.find((p) => p.id === task.project_id)?.name
-                  : "Inbox"}
-              </span>
+
+              <div
+                className={`${
+                  task.is_inbox
+                    ? "flex"
+                    : task.section_id
+                    ? "grid grid-cols-[55%_45%]"
+                    : "flex"
+                } items-center gap-1`}
+              >
+                <span className="font-bold text-xs truncate">
+                  {task.project_id
+                    ? projects.find((p) => p.id === task.project_id)?.name
+                    : "Inbox"}
+                </span>
+
+                {task.project_id && task.section_id && (
+                  <div className="flex items-center gap-1">
+                    <span>/</span>
+                    <span className="font-bold text-xs truncate flex-1">
+                      {sections.find((s) => s.id === task.section_id)?.name}
+                    </span>
+                  </div>
+                )}
+              </div>
             </button>
             <ChevronDown strokeWidth={1.5} className="w-4 h-4" />
           </div>

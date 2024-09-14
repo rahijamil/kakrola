@@ -26,21 +26,21 @@ const FilterOptions = React.memo(
       setShowCompletedTasks((prev) => !prev);
     }, []);
 
-    useEffect(() => {
-      if (setTasks) {
-        const updatedTasks = showCompletedTasks
-          ? tasks
-          : tasks.filter((t) => !t.is_completed);
+    // useEffect(() => {
+    //   if (setTasks && !showCompletedTasks) {
+    //     const updatedTasks = showCompletedTasks
+    //       ? tasks
+    //       : tasks.filter((t) => !t.is_completed);
 
-        // Update only if tasks have changed
-        if (
-          tasks.length !== updatedTasks.length ||
-          tasks.some((t, index) => t.id !== updatedTasks[index].id)
-        ) {
-          setTasks(updatedTasks);
-        }
-      }
-    }, [showCompletedTasks, setTasks, tasks]);
+    //     // Update only if tasks have changed
+    //     if (
+    //       tasks.length !== updatedTasks.length ||
+    //       tasks.some((t, index) => t.id !== updatedTasks[index].id)
+    //     ) {
+    //       setTasks(updatedTasks);
+    //     }
+    //   }
+    // }, [showCompletedTasks, setTasks, tasks]);
 
     const [isOpen, setIsOpen] = useState(false);
 

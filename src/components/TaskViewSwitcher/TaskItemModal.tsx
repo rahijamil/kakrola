@@ -69,7 +69,7 @@ const TaskItemModal = ({
     });
   };
 
-  const {role} = useRole()
+  const { role } = useRole();
 
   useEffect(() => {
     const updateTask = async () => {
@@ -79,10 +79,9 @@ const TaskItemModal = ({
         if (!taskData.is_inbox && taskData.project_id) {
           const userRole = role(taskData.project_id);
           const canEdit = userRole ? canEditTask(userRole) : false;
-    
+
           if (!canEdit) return;
         }
-
 
         setTasks(tasks.map((t) => (t.id === task.id ? taskData : t)));
 
@@ -222,6 +221,12 @@ const TaskItemModal = ({
 
     try {
       if (taskData.title.trim() && taskData.title !== task.title) {
+        setTasks(
+          tasks.map((t) =>
+            t.id === task.id ? { ...task, title: taskData.title } : t
+          )
+        );
+
         const { data, error } = await supabaseBrowser
           .from("tasks")
           .update({
@@ -249,7 +254,7 @@ const TaskItemModal = ({
 
   return (
     <div
-      className="fixed inset-0 z-10 cursor-default"
+      className="fixed inset-0 z-20 cursor-default"
       id="fixed_dropdown"
       onClick={onClose}
     >
@@ -427,7 +432,11 @@ const TaskItemModal = ({
             </div> */}
             </div>
 
-            {/* <TaskDescription taskData={taskData} /> */}
+            {/* <TaskDescription
+              taskData={taskData}
+              setTasks={setTasks}
+              tasks={tasks}
+            /> */}
 
             <SubTasks
               task={task}

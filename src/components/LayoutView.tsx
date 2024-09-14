@@ -4,6 +4,7 @@ import {
   ChevronDown,
   File,
   LayoutDashboard,
+  MapPin,
   Plus,
   SquareKanban,
 } from "lucide-react";
@@ -57,6 +58,12 @@ const allViews: {
   },
   {
     id: 5,
+    name: "Map",
+    icon: <MapPin strokeWidth={1.5} size={16} />,
+    visible: true,
+  },
+  {
+    id: 6,
     name: "Page",
     icon: <File size={16} strokeWidth={1.5} />,
     visible: true,

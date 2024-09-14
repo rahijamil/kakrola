@@ -13,6 +13,7 @@ import {
   Ellipsis,
   MapPin,
   MapPinIcon,
+  PanelRight,
   SendHorizonal,
   Tag,
   TagIcon,
@@ -52,6 +53,7 @@ const AddTaskForm = ({
   endDate,
   tasks,
   setTasks,
+  setShowModal,
 }: {
   onClose: () => void;
   isSmall?: boolean;
@@ -64,6 +66,7 @@ const AddTaskForm = ({
   endDate?: Date | null;
   tasks?: TaskType[];
   setTasks?: (tasks: TaskType[]) => void;
+  setShowModal?: Dispatch<SetStateAction<string | null>>;
 }) => {
   const { projects, activeProject } = useTaskProjectDataProvider();
   const { profile } = useAuthProvider();
@@ -76,9 +79,6 @@ const AddTaskForm = ({
         profile,
       })
   );
-
-  const [showReminder, setShowReminder] = useState<boolean>(false);
-  const [showMore, setShowMore] = useState<boolean>(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -273,11 +273,19 @@ const AddTaskForm = ({
             handleSubmit={handleSubmit}
             titleEditableRef={titleEditableRef}
           />
-          <DescriptionInput taskData={taskData} setTaskData={setTaskData} />
+
+          {!taskForEdit && (
+            <DescriptionInput taskData={taskData} setTaskData={setTaskData} />
+          )}
         </div>
 
         <div className="flex items-center flex-wrap gap-2 whitespace-nowrap">
-          <DateSelector task={taskData} setTask={setTaskData} endDate={endDate} />
+          <DateSelector
+            task={taskData}
+            setTask={setTaskData}
+            endDate={endDate}
+            isSmall={isSmall}
+          />
 
           <AssigneeSelector
             task={taskData}
@@ -292,93 +300,18 @@ const AddTaskForm = ({
             isSmall={isSmall}
           />
 
-          <div className="relative">
-            <div
-              className="flex items-center gap-1 hover:bg-text-100 cursor-pointer p-1 px-2 rounded-lg border border-text-200"
-              onClick={() => setShowReminder(!showReminder)}
+          {taskForEdit && setShowModal && (
+            <button
+              onClick={() => {
+                setShowModal && setShowModal(taskData.id.toString());
+                onClose();
+              }}
+              className={`px-2 py-1 transition rounded-lg hover:bg-text-100 items-center gap-1 text-text-500 flex`}
             >
-              <Bell strokeWidth={1.5} className="w-4 h-4 text-text-500" />
-              {!isSmall && (
-                <span className="text-xs text-text-700">Reminders</span>
-              )}
-            </div>
-            {showReminder && (
-              <>
-                <div className="absolute bg-surface border top-full -left-1/2 rounded-lg overflow-hidden z-20 p-2">
-                  <input
-                    type="datetime-local"
-                    className="p-2 border border-text-300 rounded"
-                    onChange={(e) =>
-                      console.log("Set reminder:", e.target.value)
-                    }
-                  />
-                </div>
-
-                <div
-                  className="fixed top-0 left-0 bottom-0 right-0 z-10"
-                  onClick={() => setShowReminder(false)}
-                ></div>
-              </>
-            )}
-          </div>
-
-          <div className="relative">
-            <div
-              className="flex items-center gap-2 hover:bg-text-100 cursor-pointer p-1 rounded-lg border border-text-200"
-              onClick={() => setShowMore(!showMore)}
-            >
-              <Ellipsis strokeWidth={1.5} className="w-5 h-5 text-text-500" />
-            </div>
-
-            {showMore && (
-              <>
-                <div className="shadow-xl border border-text-200 rounded-lg w-[250px] absolute bg-surface right-0 top-full mt-1 z-20 text-xs">
-                  <ul className="p-2">
-                    <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <Tag strokeWidth={1.5} className="w-4 h-4" />
-                        <span>Labels</span>
-                      </div>
-
-                      <AtSignIcon className="w-4 h-4" />
-                    </li>
-                    <li className="flex items-center gap-2 px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-lg">
-                      <MapPin strokeWidth={1.5} className="w-4 h-4" />
-                      <p className="space-x-1">
-                        <span>Location</span>
-                        <span className="uppercase text-[10px] tracking-widest font-bold text-primary-800 bg-primary-100 p-[2px] px-1 rounded-lg">
-                          Upgrade
-                        </span>
-                      </p>
-                    </li>
-                  </ul>
-                  <hr />
-                  <ul className="p-2">
-                    <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <TagIcon className="w-4 h-4" />
-                        <span>Labels</span>
-                      </div>
-
-                      <AtSignIcon className="w-4 h-4" />
-                    </li>
-                    <li className="flex items-center justify-between px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <MapPinIcon className="w-4 h-4" />
-                        <span>Location</span>
-                      </div>
-
-                      <AtSignIcon className="w-4 h-4" />
-                    </li>
-                  </ul>
-                </div>
-                <div
-                  className="fixed top-0 left-0 bottom-0 right-0 z-10"
-                  onClick={() => setShowMore(false)}
-                ></div>
-              </>
-            )}
-          </div>
+              <PanelRight strokeWidth={1.5} className="w-4 h-4" />
+              <span className="text-[11px] uppercase font-medium">Open</span>
+            </button>
+          )}
         </div>
       </div>
 

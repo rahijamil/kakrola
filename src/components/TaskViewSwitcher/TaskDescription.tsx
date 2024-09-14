@@ -16,6 +16,7 @@ import {
 } from "@/types/activitylog";
 import { useRole } from "@/context/RoleContext";
 import { canEditTask } from "@/types/hasPermission";
+import { Spinner } from "@nextui-org/react";
 
 const icons = Quill.import("ui/icons");
 // Link icons
@@ -79,9 +80,18 @@ const formats = [
   "code-block",
 ];
 
-const TaskDescription = ({ taskData }: { taskData: TaskType }) => {
+const TaskDescription = ({
+  taskData,
+  setTasks,
+  tasks,
+}: {
+  taskData: TaskType;
+  setTasks: (tasks: TaskType[]) => void;
+  tasks: TaskType[];
+}) => {
   const [editorState, setEditorState] = useState(taskData.description);
   const [isEdit, setIsEdit] = useState(false);
+  const [loading, setLoading] = useState(false);
   const quillRef = useRef<any>(null);
 
   const { profile } = useAuthProvider();
@@ -107,11 +117,22 @@ const TaskDescription = ({ taskData }: { taskData: TaskType }) => {
       const userRole = role(taskData.project_id);
       const canEdit = userRole ? canEditTask(userRole) : false;
 
-      if (!canEdit) return;
+      if (!canEdit)
+        throw new Error("You don't have permission to edit this task");
     }
 
+    setLoading(true);
+
     try {
-      if (taskData.description.trim() && taskData.description !== editorState) {
+      if (taskData.description !== editorState) {
+        setTasks(
+          tasks.map((task) =>
+            task.id === taskData.id
+              ? { ...task, description: editorState }
+              : task
+          )
+        );
+
         const { data, error } = await supabaseBrowser
           .from("tasks")
           .update({
@@ -120,7 +141,7 @@ const TaskDescription = ({ taskData }: { taskData: TaskType }) => {
           .eq("id", taskData.id);
 
         if (error) {
-          console.log(error);
+          throw error;
         }
 
         createActivityLog({
@@ -140,6 +161,9 @@ const TaskDescription = ({ taskData }: { taskData: TaskType }) => {
       }
     } catch (error) {
       console.error(`Error updating task description: ${error}`);
+    } finally {
+      setLoading(false);
+      setIsEdit(false);
     }
   };
 
@@ -204,8 +228,19 @@ const TaskDescription = ({ taskData }: { taskData: TaskType }) => {
               Cancel
             </Button>
 
-            <Button type="button" size="sm" onClick={handleSaveTaskDescription}>
-              Save
+            <Button
+              type="button"
+              size="sm"
+              onClick={handleSaveTaskDescription}
+              disabled={taskData.description === editorState || loading}
+            >
+              {loading ? (
+                <>
+                  <Spinner color="white" size="sm" /> Saving...
+                </>
+              ) : (
+                "Save"
+              )}
             </Button>
           </div>
         </motion.div>

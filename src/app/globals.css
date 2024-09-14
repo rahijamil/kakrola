@@ -71,7 +71,7 @@
       var(--color-primary-400),
       var(--color-primary-500)
     );
-  }
+  }  
 
   /* Quill Editor */
   .custom-quill-editor {
@@ -98,6 +98,10 @@
   .custom-quill-editor .ql-tooltip {
     top: 1rem !important;
     left: 1rem !important;
+  }
+
+  .ql-editor.ql-blank::before {
+    @apply text-text-400;
   }
 
   .custom-quill-editor .ql-editor {

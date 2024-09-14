@@ -6,7 +6,12 @@ import Spinner from "../ui/Spinner";
 import { v4 as uuidv4 } from "uuid";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { ActivityAction, createActivityLog, EntityType } from "@/types/activitylog";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
+import useTheme from "@/hooks/useTheme";
 
 const AddNewSectionBoardView = ({
   setShowUngroupedAddSection,
@@ -87,6 +92,7 @@ const AddNewSectionBoardView = ({
 
     setSections(updatedSections);
     setLoading(false);
+    setShowAddSection(null);
 
     try {
       const { data, error } = await supabaseBrowser
@@ -137,12 +143,18 @@ const AddNewSectionBoardView = ({
     }
   };
 
+  const { theme } = useTheme();
+
   return (
     <div>
       {(columnId ? showAddSection !== columnId : !showUngroupedAddSection) && (
         <>
           {(columns ? columns.length - 1 == index : true) ? (
-            <div className="bg-text-50 p-3 py-2 rounded-lg w-72 md:w-[300px] h-fit ml-3">
+            <div
+              className={`${
+                theme == "dark" ? `bg-gray-900` : `bg-text-50`
+              } p-3 py-2 rounded-lg w-72 md:w-[300px] h-fit ml-3`}
+            >
               <button
                 className="text-text-500 hover:text-primary-600 flex items-center gap-2 w-full group py-1 whitespace-nowrap"
                 onClick={() =>
@@ -183,7 +195,7 @@ const AddNewSectionBoardView = ({
               </button>
             </div>
           ) : (
-            <div className="relative w-3 h-full group cursor-pointer">
+            <div className="relative w-3 h-[98%] group cursor-pointer z-10">
               <div
                 className="absolute -left-[1px] flex-col items-center gap-2 hidden group-hover:flex cursor-pointer transition whitespace-nowrap h-full w-3"
                 onClick={() =>
@@ -193,7 +205,7 @@ const AddNewSectionBoardView = ({
                 }
               >
                 <div className="flex-1 bg-primary-400 w-[1px]"></div>
-                <div className="font-medium text-primary-600 text-sm">
+                <div className="font-medium text-primary-600 text-sm bg-background">
                   Add section
                 </div>
                 <div className="flex-1 bg-primary-500 w-[1px]"></div>

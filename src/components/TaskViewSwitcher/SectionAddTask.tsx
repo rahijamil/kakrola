@@ -55,7 +55,7 @@ const SectionAddTask = ({
       )}
       {isAddTaskFormVisible &&
         (activeProject?.settings.view == "Board" ? (
-          <div className="mt-4">
+          <div className="pt-1">
             <AddTask
               onClose={() =>
                 section
@@ -71,7 +71,7 @@ const SectionAddTask = ({
           </div>
         ) : (
           <div
-            className={`flex items-center gap-3 cursor-pointer w-full h-10 ring-1 ring-primary-300 mt-[1px]`}
+            className={`flex items-center gap-3 cursor-pointer w-full h-10 ring-1 ring-primary-300 pt-[1px]`}
           >
             <AddTaskFormForProject
               onClose={() =>

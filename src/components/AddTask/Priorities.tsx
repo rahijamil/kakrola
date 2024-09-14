@@ -151,7 +151,7 @@ const Priorities = ({
           ) : (
             <div
               ref={triggerRef}
-              className={`flex items-center gap-1 cursor-pointer p-1 px-2 rounded-lg border border-text-200 ${
+              className={`flex items-center gap-1 cursor-pointer p-1 px-2 rounded-lg border border-text-200 text-[11px] ${
                 isOpen ? "bg-text-50" : "hover:bg-text-100"
               }`}
               onClick={onClick}
@@ -161,7 +161,7 @@ const Priorities = ({
               {isSmall ? (
                 <>
                   {taskData.priority !== "Priority" && (
-                    <span className="text-xs text-text-700">
+                    <span className="text-text-700">
                       {
                         priorities.find((p) => p.value === taskData.priority)
                           ?.value
@@ -170,7 +170,7 @@ const Priorities = ({
                   )}
                 </>
               ) : (
-                <span className="text-xs text-text-700">
+                <span className="text-text-700">
                   {priorities.find((p) => p.value === taskData.priority)?.value}
                 </span>
               )}

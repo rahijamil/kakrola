@@ -96,9 +96,13 @@ const SectionMoreOptions = ({
 
   // Tailwind doesn't generate all color classes by default, so we need to explicitly define them
   const bgColorClass =
-    theme == "dark" ? `bg-${sectionColor}-600 text-${sectionColor}-100` : `bg-${sectionColor}-100 text-${sectionColor}-600`;
+    theme == "dark"
+      ? `bg-${sectionColor}-800 text-${sectionColor}-100`
+      : `bg-${sectionColor}-100 text-${sectionColor}-600`;
   const hoverBgColorClass =
-    theme == "dark" ? `hover:bg-${sectionColor}-400` : `hover:bg-${sectionColor}-100 hover:bg-text-200`;
+    theme == "dark"
+      ? `hover:bg-${sectionColor}-400`
+      : `hover:bg-${sectionColor}-100 hover:bg-text-200`;
 
   return (
     <Dropdown
@@ -157,9 +161,8 @@ const SectionMoreOptions = ({
             setShowDeleteConfirm(column);
             onClose();
           },
-          textColor: "text-red-600",
+          textColor: "text-text-700 hover:text-red-500",
           icon: <Trash2 strokeWidth={1.5} size={16} />,
-          className: "text-red-600",
         },
       ]}
       // contentWidthClass="w-80"

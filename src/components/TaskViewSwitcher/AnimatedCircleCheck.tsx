@@ -2,20 +2,30 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { TaskType } from "@/types/project";
 
+const sizeMap = {
+  xs: 16, // Small size - 16px
+  sm: 18, // Small size - 18px
+  md: 20, // Medium size (default) - 20px
+  lg: 24, // Large size - 24px
+};
+
 const AnimatedTaskCheckbox = ({
   priority,
   is_completed,
   handleCheckSubmit,
   playSound = true,
   disabled,
+  size = "sm", // Default to 'md' size
 }: {
   priority: TaskType["priority"];
   is_completed: boolean;
   handleCheckSubmit: () => void;
   playSound?: boolean;
   disabled?: boolean;
+  size?: "xs" | "sm" | "md" | "lg"; // Size prop with default 'md'
 }) => {
   const [isChecked, setIsChecked] = useState(is_completed);
+  const checkboxSize = sizeMap[size]; // Dynamically set the size based on the prop
 
   useEffect(() => {
     setIsChecked(is_completed);
@@ -66,9 +76,10 @@ const AnimatedTaskCheckbox = ({
 
   return (
     <motion.div
-      className={`relative w-5 h-5 min-w-5 min-h-5 cursor-pointer flex items-center justify-center rounded-full ${
+      className={`relative cursor-pointer flex items-center justify-center rounded-md ${
         isChecked && color.class1
       } ${disabled && "pointer-events-none"}`}
+      style={{ width: checkboxSize, height: checkboxSize }}
       onClick={handleClick}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
@@ -77,16 +88,19 @@ const AnimatedTaskCheckbox = ({
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full"
+        style={{ width: checkboxSize, height: checkboxSize }}
       >
-        <motion.path
-          d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z"
+        <motion.rect
+          x="1"
+          y="1"
+          width={checkboxSize}
+          height={checkboxSize}
+          rx={checkboxSize / 4}
+          ry={checkboxSize / 4}
           stroke={color.hex}
           strokeWidth="1.5"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
         />
+
         <motion.path
           d="M7.5 12.5L10.5 15.5L16.5 9.5"
           stroke={isChecked ? "#fff" : color.hex}

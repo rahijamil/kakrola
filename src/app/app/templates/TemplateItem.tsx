@@ -71,10 +71,7 @@ const TemplateItem = ({ project }: { project: TemplateProjectType }) => {
               className={`p-1.5 transition rounded-lg ${
                 isOpen ? "bg-text-100" : "hover:bg-text-100"
               }`}
-              onClick={(ev) => {
-                ev.stopPropagation();
-                onClick();
-              }}
+              onClick={onClick}
             >
               <Ellipsis strokeWidth={1.5} className="w-5 h-5" />
             </button>
@@ -86,7 +83,7 @@ const TemplateItem = ({ project }: { project: TemplateProjectType }) => {
               id: 1,
               label: "Delete",
               icon: <Trash2 size={20} />,
-              textColor: "text-red-500",
+              textColor: "text-text-700 hover:text-red-500",
               onClick: () => console.log("Delete"),
             },
           ]}
