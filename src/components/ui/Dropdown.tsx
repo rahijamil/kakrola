@@ -189,9 +189,9 @@ const Dropdown: React.FC<DropdownProps> = ({
             onClick={(ev) => ev.stopPropagation()}
           >
             {beforeItemsContent}
-            {items.map((item) => (
+            {items.map((item, _index) => (
               <>
-                <div key={item.id} onClick={(ev) => ev.stopPropagation()}>
+                <div key={_index} onClick={(ev) => ev.stopPropagation()}>
                   <button
                     onClick={() => {
                       if (item.onClick && !item.content) {

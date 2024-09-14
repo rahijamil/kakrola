@@ -102,7 +102,7 @@ const BoardViewColumn = ({
       setIndex(columnIndex);
       setColumnId(column.id);
     }
-  }, [columnIndex, setIndex]);
+  }, [columnIndex, setIndex, sections]);
 
   const handleUpdateColumnTitle = async () => {
     if (!profile?.id) return;
@@ -222,7 +222,7 @@ const BoardViewColumn = ({
                 ref={boardDraggaleProvided.innerRef}
                 {...boardDraggaleProvided.draggableProps}
                 {...boardDraggaleProvided.dragHandleProps}
-                className={`rounded-lg w-72 min-w-72 md:w-[300px] md:min-w-[300px] h-fit max-h-[calc(100vh-180px)] overflow-y-auto cursor-default ${
+                className={`rounded-lg w-72 min-w-72 md:w-[300px] md:min-w-[300px] h-fit max-h-[calc(100vh-150px)] overflow-y-auto cursor-default ${
                   column.is_archived && "opacity-70"
                 }`}
               >

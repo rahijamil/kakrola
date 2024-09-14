@@ -6,7 +6,13 @@ import React, {
   useEffect,
 } from "react";
 import { TaskType } from "@/types/project";
-import { ArrowRight, Calendar, CalendarRange, ChevronDown, X } from "lucide-react";
+import {
+  ArrowRight,
+  Calendar,
+  CalendarRange,
+  ChevronDown,
+  X,
+} from "lucide-react";
 import {
   format,
   addDays,
@@ -96,7 +102,9 @@ const DateSelector = ({
   endDate?: Date | null;
 }) => {
   const [showTimeInput, setShowTimeInput] = useState(false);
-  const [showEndDate, setShowEndDate] = useState(false);
+  const [showEndDate, setShowEndDate] = useState(
+    task.dates.end_date ? true : false
+  );
   const [focusedInput, setFocusedInput] = useState<"start" | "end">("start");
 
   const [dates, setDates] = useState<TaskType["dates"]>({
@@ -343,18 +351,16 @@ const DateSelector = ({
                   <div className="flex items-center gap-1">
                     {task.dates.start_date && (
                       <span>
-                        {format(task.dates.start_date, "dd LLL yyyy")}
+                        {format(task.dates.start_date, "dd LLL")}
                       </span>
                     )}
 
                     {task.dates.start_date && task.dates.end_date && (
-                      <div>
-                        <ArrowRight strokeWidth={1.5} className="w-4 h-4" />
-                      </div>
+                      <div>-</div>
                     )}
 
                     {task.dates.end_date && (
-                      <span>{format(task.dates.end_date, "dd LLL yyyy")}</span>
+                      <span>{format(task.dates.end_date, "dd LLL")}</span>
                     )}
                   </div>
 
@@ -405,17 +411,13 @@ const DateSelector = ({
               <>
                 <div className="flex items-center gap-1">
                   {task.dates.start_date && (
-                    <span>{format(task.dates.start_date, "dd LLL yyyy")}</span>
+                    <span>{format(task.dates.start_date, "dd LLL")}</span>
                   )}
 
-                  {task.dates.start_date && task.dates.end_date && (
-                    <div>
-                      <ArrowRight strokeWidth={1.5} className="w-4 h-4" />
-                    </div>
-                  )}
+                  {task.dates.start_date && task.dates.end_date && <div>-</div>}
 
                   {task.dates.end_date && (
-                    <span>{format(task.dates.end_date, "dd LLL yyyy")}</span>
+                    <span>{format(task.dates.end_date, "dd LLL")}</span>
                   )}
                 </div>
 
@@ -440,7 +442,10 @@ const DateSelector = ({
               </>
             ) : (
               <div className="flex items-center gap-1">
-                <CalendarRange strokeWidth={1.5} className="w-4 h-4 text-text-500" />
+                <CalendarRange
+                  strokeWidth={1.5}
+                  className="w-4 h-4 text-text-500"
+                />
                 {/* {!isSmall && <span className="text-text-700">Dates</span>} */}
               </div>
             )}
@@ -474,7 +479,13 @@ const DateSelector = ({
                     ev.stopPropagation();
                     setTask({
                       ...task,
-                      dates: { ...task.dates, end_date: null },
+                      dates: {
+                        start_date: null,
+                        start_time: null,
+                        end_date: null,
+                        end_time: null,
+                        reminder: null,
+                      },
                     });
                   }}
                   className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-lg"
@@ -484,7 +495,10 @@ const DateSelector = ({
               </>
             ) : (
               <>
-                <CalendarRange strokeWidth={1.5} className="w-4 h-4 text-text-500" />
+                <CalendarRange
+                  strokeWidth={1.5}
+                  className="w-4 h-4 text-text-500"
+                />
                 {!isSmall && <span className="text-text-700">Dates</span>}
               </>
             )}

@@ -27,6 +27,7 @@ import {
   AtSign,
   CalendarRange,
   CircleChevronUp,
+  MapPin,
   Tag,
   UserPlus,
 } from "lucide-react";
@@ -529,65 +530,69 @@ const ListView: React.FC<ListViewProps> = ({
         <Droppable droppableId="list" type="column" direction="vertical">
           {(listProvided) => (
             <div
-              className="overflow-x-auto w-full h-full px-6"
+              className="overflow-auto w-full h-[calc(100vh-130px)] px-6"
               ref={listProvided.innerRef}
               {...listProvided.droppableProps}
             >
               <table className="w-full min-w-[1000px] border-collapse">
-                <thead>
-                  <tr className="border-y border-text-200 text-xs divide-x divide-text-200 whitespace-nowrap flex">
-                    <th className="p-2 text-left w-[40%] font-medium flex items-center gap-2 pl-8">
-                      <AlignLeft strokeWidth={2} className="w-4 h-4" />
-                      <span>Task name</span>
-                    </th>
-                    <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
-                      <UserPlus strokeWidth={2} className="w-4 h-4" />
-                      <span>Assignee</span>
-                    </th>
-                    <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
-                      <CalendarRange strokeWidth={2} className="w-4 h-4" />
-                      <span>Dates</span>
-                    </th>
-                    <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
-                      <CircleChevronUp strokeWidth={2} className="w-4 h-4" />
-                      <span>Priority</span>
-                    </th>
-                    <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
-                      <Tag strokeWidth={2} className="w-4 h-4" />
-                      <span>Labels</span>
-                    </th>
-                  </tr>
-                </thead>
+                <tr className="border-y border-text-200 text-xs divide-x divide-text-200 whitespace-nowrap flex sticky top-0 z-10 bg-background">
+                  <th className="p-2 text-left w-[40%] font-medium flex items-center gap-2 pl-8">
+                    <AlignLeft strokeWidth={2} className="w-4 h-4" />
+                    <span>Task name</span>
+                  </th>
+                  <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+                    <UserPlus strokeWidth={2} className="w-4 h-4" />
+                    <span>Assignee</span>
+                  </th>
+                  <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+                    <CalendarRange strokeWidth={2} className="w-4 h-4" />
+                    <span>Dates</span>
+                  </th>
+                  <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+                    <CircleChevronUp strokeWidth={2} className="w-4 h-4" />
+                    <span>Priority</span>
+                  </th>
+                  <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+                    <Tag strokeWidth={2} className="w-4 h-4" />
+                    <span>Labels</span>
+                  </th>
+                  <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+                    <MapPin strokeWidth={2} className="w-4 h-4" />
+                    <span>Location</span>
+                  </th>
+                </tr>
 
                 <tbody>
-                  <tr>
-                    <td colSpan={5} className="p-0">
-                      <UngroupedTasks
-                        tasks={unGroupedTasks}
-                        showUngroupedAddTask={showUngroupedAddTask}
-                        setShowUngroupedAddTask={setShowUngroupedAddTask}
-                        project={project}
-                        setTasks={setTasks}
-                        showTaskItemModal={showTaskItemModal}
-                        setShowTaskItemModal={setShowTaskItemModal}
-                      />
+                  {columns.filter((c) => c.id !== "ungrouped").length == 0 && (
+                    <tr>
+                      <td colSpan={5} className="p-0">
+                        <UngroupedTasks
+                          tasks={unGroupedTasks}
+                          showUngroupedAddTask={showUngroupedAddTask}
+                          setShowUngroupedAddTask={setShowUngroupedAddTask}
+                          project={project}
+                          setTasks={setTasks}
+                          showTaskItemModal={showTaskItemModal}
+                          setShowTaskItemModal={setShowTaskItemModal}
+                        />
 
-                      <AddNewSectionListView
-                        section={{
-                          id: "ungrouped",
-                          title: "Ungrouped",
-                          tasks: [],
-                        }}
-                        index={0}
-                        newSectionName={newSectionName}
-                        setNewSectionName={setNewSectionName}
-                        handleAddSection={handleAddSection}
-                        setShowAddSection={setShowAddSection}
-                        showAddSection={showAddSection}
-                        sectionAddLoading={sectionAddLoading}
-                      />
-                    </td>
-                  </tr>
+                        <AddNewSectionListView
+                          section={{
+                            id: "ungrouped",
+                            title: "Ungrouped",
+                            tasks: [],
+                          }}
+                          index={0}
+                          newSectionName={newSectionName}
+                          setNewSectionName={setNewSectionName}
+                          handleAddSection={handleAddSection}
+                          setShowAddSection={setShowAddSection}
+                          showAddSection={showAddSection}
+                          sectionAddLoading={sectionAddLoading}
+                        />
+                      </td>
+                    </tr>
+                  )}
 
                   {columns
                     .filter((c) => c.id !== "ungrouped")

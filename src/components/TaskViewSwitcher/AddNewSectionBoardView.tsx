@@ -1,7 +1,7 @@
 import { useAuthProvider } from "@/context/AuthContext";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import React, { Dispatch, FormEvent, SetStateAction, useState } from "react";
+import React, { FormEvent, useState } from "react";
 import Spinner from "../ui/Spinner";
 import { v4 as uuidv4 } from "uuid";
 import { Button } from "../ui/button";
@@ -69,10 +69,12 @@ const AddNewSectionBoardView = ({
       newOrder = 1;
     }
 
-    console.log("Calculated newOrder:", newOrder);
+    // console.log("Calculated newOrder:", newOrder);
+
+    const tempId = uuidv4();
 
     const newSection: SectionType = {
-      id: uuidv4(), // temporary placeholder ID
+      id: tempId, // temporary placeholder ID
       name: newSectionName.trim(),
       project_id: project?.id || null,
       profile_id: profile.id,
@@ -115,10 +117,8 @@ const AddNewSectionBoardView = ({
 
       // Update section with actual ID from database
       setSections(
-        sections
-          .map((s) =>
-            s.id === newSection.id ? { ...newSection, id: data.id } : s
-          )
+        updatedSections
+          .map((s) => (s.id === tempId ? { ...newSection, id: data.id } : s))
           .sort((a, b) => a.order - b.order)
       );
 

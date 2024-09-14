@@ -59,6 +59,11 @@
     animation: checkAnimation 0.3s ease-out;
   }
 
+  .react-loading-skeleton {
+    --base-color: var(--skeleton-base-color) !important;
+    --highlight-color: var(--skeleton-highlight-color) !important;
+  }
+
   .vertical-text {
     writing-mode: vertical-lr;
     text-orientation: mixed;
@@ -71,7 +76,7 @@
       var(--color-primary-400),
       var(--color-primary-500)
     );
-  }  
+  }
 
   /* Quill Editor */
   .custom-quill-editor {

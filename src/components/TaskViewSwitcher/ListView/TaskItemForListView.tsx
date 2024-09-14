@@ -1,6 +1,6 @@
 import { ProjectType, TaskType } from "@/types/project";
 import TaskItemModal from "../TaskItemModal";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import TaskItemMoreDropdown from "../TaskItemMoreDropdown";
 import { Draggable } from "@hello-pangea/dnd";
 import ConfirmAlert from "../../AlertBox/ConfirmAlert";
@@ -23,6 +23,7 @@ import {
 import { useRole } from "@/context/RoleContext";
 import { canDeleteTask, canEditTask } from "@/types/hasPermission";
 import useCheckClick from "@/hooks/useCheckClick";
+import LocationSelector from "@/components/AddTask/LocationSelector";
 
 const TaskItemForListView = ({
   task,
@@ -67,7 +68,11 @@ const TaskItemForListView = ({
 
   const { profile } = useAuthProvider();
   const { role } = useRole();
-  const { handleCheckClickDebounced } = useCheckClick({ task, tasks, setTasks });
+  const { handleCheckClickDebounced } = useCheckClick({
+    task,
+    tasks,
+    setTasks,
+  });
 
   const handleTaskDelete = async () => {
     if (!profile?.id) return;
@@ -133,6 +138,129 @@ const TaskItemForListView = ({
   const handleUpdateTaskTitle = () => {
     setEditTaskTitle(false);
   };
+
+  const logActivity = (oldData?: any, newData?: any) => {
+    if (!profile?.id) return;
+
+    createActivityLog({
+      actor_id: profile.id,
+      action: ActivityAction.UPDATED_TASK,
+      entity_id: taskData.id,
+      entity_type: EntityType.TASK,
+      metadata: { old_data: oldData, new_data: newData },
+    });
+  };
+
+  useEffect(() => {
+    const updateTask = async () => {
+      try {
+        if (!profile?.id) return;
+
+        if (!taskData.is_inbox && taskData.project_id) {
+          const userRole = role(taskData.project_id);
+          const canEdit = userRole ? canEditTask(userRole) : false;
+
+          if (!canEdit) return;
+        }
+
+        setTasks(tasks.map((t) => (t.id === taskData.id ? taskData : t)));
+
+        if (
+          taskData.assignees.flatMap((a) => a.id).join(",") !==
+          task.assignees.flatMap((a) => a.id).join(",")
+        ) {
+          const { data, error } = await supabaseBrowser
+            .from("tasks")
+            .update({
+              assignees: taskData.assignees,
+            })
+            .eq("id", task.id);
+
+          if (error) {
+            throw error;
+          }
+
+          logActivity(
+            {
+              assignees: taskData.assignees,
+            },
+            {
+              assignees: taskData.assignees,
+            }
+          );
+        }
+
+        if (
+          taskData.dates.start_date !== task.dates.start_date ||
+          taskData.dates.end_date !== task.dates.end_date ||
+          taskData.dates.start_time !== task.dates.start_time ||
+          taskData.dates.end_time !== task.dates.end_time ||
+          taskData.dates.reminder !== task.dates.reminder
+        ) {
+          const { data, error } = await supabaseBrowser
+            .from("tasks")
+            .update({
+              dates: taskData.dates,
+            })
+            .eq("id", task.id);
+
+          if (error) {
+            throw error;
+          }
+
+          createActivityLog({
+            actor_id: profile.id,
+            action: ActivityAction.UPDATED_TASK,
+            entity_id: taskData.id,
+            entity_type: EntityType.TASK,
+            metadata: {
+              old_data: {
+                dates: taskData.dates,
+              },
+              new_data: {
+                dates: taskData.dates,
+              },
+            },
+          });
+
+          logActivity(
+            {
+              dates: taskData.dates,
+            },
+            {
+              dates: taskData.dates,
+            }
+          );
+        }
+
+        if (taskData.priority !== task.priority) {
+          const { data, error } = await supabaseBrowser
+            .from("tasks")
+            .update({
+              priority: taskData.priority,
+            })
+            .eq("id", task.id);
+
+          if (error) {
+            throw error;
+          }
+
+          logActivity(
+            {
+              priority: taskData.priority,
+            },
+            {
+              priority: taskData.priority,
+            }
+          );
+        }
+      } catch (error) {
+        console.error(`Error updating task: ${error}`);
+      }
+    };
+
+    updateTask();
+  }, [taskData.assignees, taskData.dates, taskData.priority, task.id]);
 
   return (
     <div className="w-full">
@@ -284,6 +412,14 @@ const TaskItemForListView = ({
                 </td>
                 <td className="w-[15%]">
                   <LabelSelector
+                    task={taskData}
+                    setTask={setTaskData}
+                    forListView
+                  />
+                </td>
+
+                <td className="w-[15%]">
+                  <LocationSelector
                     task={taskData}
                     setTask={setTaskData}
                     forListView

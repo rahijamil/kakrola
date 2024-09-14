@@ -42,6 +42,7 @@ import { Button } from "../ui/button";
 import LayoutView from "../LayoutView";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import Image from "next/image";
 
 const projectViewsToSelect: {
   id: number;
@@ -880,7 +881,7 @@ const AddEditProject = ({
                 </table>
               ) : projectData.settings.view == "Board" ? (
                 <div className="space-x-4 flex">
-                  <div className="bg-text-100 p-2 rounded-lg w-72 space-y-2">
+                  <div className="bg-text-100 p-2 rounded-lg w-72 space-y-2 h-fit">
                     <div className="flex justify-between items-center gap-8">
                       <div className="flex items-center gap-2">
                         <h3 className="font-bold pl-[6px]">To do</h3>
@@ -935,7 +936,7 @@ const AddEditProject = ({
                     <div className="flex justify-between items-center gap-8">
                       <div className="flex items-center gap-2">
                         <h3 className="font-bold pl-[6px]">In progress</h3>
-                        <p className="text-sm text-text-600">1</p>
+                        <p className="text-sm text-text-600">2</p>
                       </div>
 
                       <div className="flex items-center gap-2">
@@ -952,6 +953,44 @@ const AddEditProject = ({
                     </div>
 
                     <div className="space-y-2">
+                      <div className="p-2 space-y-2 bg-background rounded-lg overflow-hidden">
+                        <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-text-100">
+                          <Image
+                            src="/today.png"
+                            alt=""
+                            fill
+                            className="object-contain rounded-lg"
+                          />
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
+                            <Check strokeWidth={1.5} size={16} />
+                          </div>
+
+                          <div className="w-full">
+                            <Skeleton enableAnimation={false} width={"60%"} />
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Skeleton
+                              enableAnimation={false}
+                              width={170}
+                              // height={10}
+                            />
+                          </div>
+
+                          <Skeleton
+                            enableAnimation={false}
+                            width={24}
+                            height={24}
+                            borderRadius={9999}
+                          />
+                        </div>
+                      </div>
+
                       <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
                         <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
                           <Check strokeWidth={1.5} size={16} />
@@ -978,6 +1017,10 @@ const AddEditProject = ({
 
                     <p className="text-sm text-text-600 vertical-text">4</p>
                   </div>
+                </div>
+              ) : projectData.settings.view == "Calendar" ? (
+                <div>
+                  
                 </div>
               ) : (
                 <></>

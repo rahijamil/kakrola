@@ -138,7 +138,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({
 
   return (
     <div className="px-6">
-      <div className="max-h-[calc(100vh_-_210px)] overflow-y-auto rounded-lg bg-background">
+      <div className="max-h-[calc(100vh_-_160px)] overflow-y-auto rounded-lg bg-text-50">
         <div className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <OverviewCard

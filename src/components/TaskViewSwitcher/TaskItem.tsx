@@ -88,7 +88,6 @@ const TaskItem = ({
       const doc = parser.parseFromString(task.description, "text/html");
       const firstImage = doc.querySelector("img");
       setFirstImage(firstImage?.src || null);
-      console.log(task.description);
     }
   }, [task]);
 
@@ -230,9 +229,9 @@ const TaskItem = ({
               )}
 
               <div
-                className={`p-2 w-full relative bg-background flex items-center gap-2 flex-wrap`}
+                className={`p-2 w-full relative bg-background space-y-2`}
               >
-                <div className="flex items-center gap-2 min-w-[75%]">
+                <div className="flex items-center gap-2 w-full">
                   <div>
                     <AnimatedCircleCheck
                       handleCheckSubmit={handleCheckClickDebounced}

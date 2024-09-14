@@ -1,4 +1,8 @@
 :root {
+  --skeleton-base-color: var(--color-text-100);
+  --skeleton-highlight-color: var(--color-text-50);
+
+
   /* Kakrola Light Theme - adjusted */
   /* --color-primary-25: #f5f5f5; */
 

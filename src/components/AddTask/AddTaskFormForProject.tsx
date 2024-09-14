@@ -61,6 +61,8 @@ const AddTaskFormForProject = ({
   const titleEditableRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
+  const { role } = useRole();
+
   useEffect(() => {
     const handleClickOutside = (ev: MouseEvent) => {
       const target = ev.target as HTMLElement;
@@ -113,8 +115,6 @@ const AddTaskFormForProject = ({
       titleEditableRef.current.focus();
     }
   };
-
-  const { role } = useRole();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -192,7 +192,8 @@ const AddTaskFormForProject = ({
             ...tasks.slice(insertIndex),
           ];
         } else {
-          newTask.order = Math.max(...tasks.map((task) => task.order), 0) + 1;
+          newTask.order =
+            Math.max(...tasks.map((task) => taskData.order), 0) + 1;
           updatedTasks = [...tasks, newTask];
         }
 
@@ -202,7 +203,7 @@ const AddTaskFormForProject = ({
         // Reset form and close
         resetTaskData();
 
-        if(!taskData.project_id) return
+        if (!taskData.project_id) return;
         const userRole = role(taskData.project_id);
         const canUpdateSection = userRole ? canCreateTask(userRole) : false;
         if (!canUpdateSection) return;
@@ -266,7 +267,7 @@ const AddTaskFormForProject = ({
             setTaskData={setTaskData}
             handleSubmit={handleSubmit}
             titleEditableRef={titleEditableRef}
-            className=" bg-transparent  px-1"
+            className="bg-transparent px-1"
           />
         </div>
 

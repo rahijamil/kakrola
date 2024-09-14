@@ -173,7 +173,7 @@ const LayoutWrapper = ({
             className={`flex flex-col h-full w-full flex-1 transition-all duration-300`}
           >
             {view && setView && (
-              <div className="flex items-center justify-between py-3 sticky top-0 mb-1 z-10 px-6">
+              <div className="flex items-center justify-between py-3 px-6 pb-0">
                 {!["Today", "Inbox"].includes(headline) && (
                   <div className="flex items-center gap-4">
                     <div className="flex items-center w-64 whitespace-nowrap">
@@ -185,7 +185,7 @@ const LayoutWrapper = ({
                           "My Projects"}
                       </Link>
                       <span className="text-text-400">/</span>
-                      {project ? (
+                      {/* {project ? (
                         modalState.editTitle ? (
                           <input
                             type="text"
@@ -216,7 +216,7 @@ const LayoutWrapper = ({
                         >
                           {headline}
                         </h1>
-                      )}
+                      )} */}
                     </div>
 
                     {/* <div>
@@ -298,7 +298,7 @@ const LayoutWrapper = ({
 
             <div className={`flex-1`}>
               <div className="flex flex-col h-full">
-                <div className={`${project && "pt-4"} ${!setView && "pt-8"} px-6`}>
+                <div className="px-6">
                   {project ? (
                     <>
                       <div className="flex items-center gap-2">
