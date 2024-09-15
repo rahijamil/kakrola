@@ -55,7 +55,7 @@ const RoleItem = ({
           summary:
             "Full access to change settings, modify, or delete the project.",
           divide: true,
-          rightContent: (
+          rightContent: value == RoleType.ADMIN && (
             <AnimatedTaskCheckbox
               priority={TaskPriority.P3}
               playSound={false}
@@ -71,7 +71,7 @@ const RoleItem = ({
             onChange(RoleType.MEMBER);
           },
           summary: "Can add, edit and delete anything in the project.",
-          rightContent: (
+          rightContent: value == RoleType.MEMBER && (
             <AnimatedTaskCheckbox
               priority={TaskPriority.P3}
               playSound={false}
@@ -88,7 +88,7 @@ const RoleItem = ({
             onChange(RoleType.COMMENTER);
           },
           summary: "Can comment, but can't edit anything in the project.",
-          rightContent: (
+          rightContent: value == RoleType.COMMENTER && (
             <AnimatedTaskCheckbox
               priority={TaskPriority.P3}
               playSound={false}
@@ -105,7 +105,7 @@ const RoleItem = ({
             onChange(RoleType.VIEWER);
           },
           summary: "Can view, but can't add comments or edit the project.",
-          rightContent: (
+          rightContent: value == RoleType.VIEWER && (
             <AnimatedTaskCheckbox
               priority={TaskPriority.P3}
               playSound={false}

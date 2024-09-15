@@ -87,7 +87,7 @@ const TaskItemMoreDropdown = ({
             setShowDeleteConfirm(task.id.toString());
             onClose();
           },
-          textColor: "text-text-700 hover:text-red-500",
+          textColor: "text-red-500",
         },
       ]}
       content={

@@ -34,8 +34,8 @@ const InboxPage = () => {
     if (!profile) return;
 
     fetchInboxSectionsAndTasks(profile?.id).then((data) => {
-      setInboxSections(data.sections);
-      setInboxTasks(data.tasks);
+      setInboxSections(data.sections || []);
+      setInboxTasks(data.tasks || []);
     });
   }, [profile?.id]);
 

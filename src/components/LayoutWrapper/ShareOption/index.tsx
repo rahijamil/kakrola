@@ -11,6 +11,7 @@ import InviteEmailInput from "./InviteEmailInput";
 import { InviteStatus, InviteType, ProjectMemberType } from "@/types/team";
 import PendingItem from "./PendingItem";
 import ShareAvatar from "./ShareAvatar";
+import useScreen from "@/hooks/useScreen";
 
 interface MemberData extends ProjectMemberType {
   profile: ProfileType;
@@ -91,6 +92,8 @@ const ShareOption = ({
     }
   }, [projectId]);
 
+  const { screenWidth } = useScreen();
+
   return (
     <Dropdown
       isOpen={showShareOption}
@@ -98,11 +101,13 @@ const ShareOption = ({
       triggerRef={triggerRef}
       Label={({ onClick }) => (
         <div className="flex items-center gap-1">
-          <div className="flex items-center">
-            {membersData.map((member) => (
-              <ShareAvatar key={member.id} member={member} />
-            ))}
-          </div>
+          {screenWidth > 768 && (
+            <div className="flex items-center">
+              {membersData.map((member) => (
+                <ShareAvatar key={member.id} member={member} />
+              ))}
+            </div>
+          )}
           <button
             ref={triggerRef}
             className={`${
@@ -116,7 +121,7 @@ const ShareOption = ({
         </div>
       )}
       content={
-        <div className="p-4 space-y-4">
+        <div className={`${screenWidth > 768 ? "p-4 space-y-4" : "space-y-2"}`}>
           <InviteEmailInput
             projectId={projectId}
             teamId={teamId}

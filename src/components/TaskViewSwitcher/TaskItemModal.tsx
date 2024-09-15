@@ -27,6 +27,7 @@ import {
 } from "@/types/activitylog";
 import { useRole } from "@/context/RoleContext";
 import { canEditTask } from "@/types/hasPermission";
+import useScreen from "@/hooks/useScreen";
 
 const TaskItemModal = ({
   task,
@@ -252,6 +253,8 @@ const TaskItemModal = ({
     }
   };
 
+  const { screenWidth } = useScreen();
+
   return (
     <div
       className="fixed inset-0 z-20 cursor-default"
@@ -271,7 +274,7 @@ const TaskItemModal = ({
           x: [0, 5, 0], // Subtle bounce in the respective direction
           opacity: 1,
           transformOrigin: "right",
-          width: "90%",
+          width: screenWidth > 768 ? "90%" : "100%",
         }}
         exit={{
           scaleX: 0.8,
@@ -289,10 +292,16 @@ const TaskItemModal = ({
             damping: 15,
           },
         }}
-        className="bg-background rounded-l-2xl w-11/12 max-w-[52rem] overflow-y-auto flex flex-col fixed top-0 right-0 bottom-0 border-l border-text-200 shadow-md"
+        className={`bg-background rounded-l-2xl max-w-[52rem] overflow-y-auto flex flex-col fixed top-0 right-0 bottom-0 border-l border-text-200 shadow-md ${
+          screenWidth > 768 ? "w-11/12" : "w-full"
+        }`}
         onClick={(ev) => ev.stopPropagation()}
       >
-        <div className="p-2 px-4 flex items-center justify-between border-b border-text-200">
+        <div
+          className={`p-2 flex items-center justify-between border-b border-text-200 ${
+            screenWidth > 768 ? "px-4" : "px-3"
+          }`}
+        >
           <div>
             <button
               className="flex items-center gap-2 hover:bg-text-100 rounded-lg p-2 transition text-xs"
@@ -321,7 +330,11 @@ const TaskItemModal = ({
           </div>
         </div>
 
-        <div className="flex-1 p-8 space-y-8 flex flex-col">
+        <div
+          className={`flex-1 flex flex-col ${
+            screenWidth > 768 ? "p-8 space-y-8" : "p-3 px-6 space-y-8"
+          }`}
+        >
           <div>
             <input
               type="text"
@@ -341,7 +354,7 @@ const TaskItemModal = ({
           </div>
 
           <div className="space-y-3 flex-1">
-            <div className="grid grid-cols-[20%_80%] items-center text-xs gap-y-3">
+            <div className="grid grid-cols-[20%_80%] items-center text-xs gap-3">
               <div className="flex items-center gap-2">
                 <CheckCircle strokeWidth={2} size={16} />
                 <p className="font-semibold text-xs">Project</p>

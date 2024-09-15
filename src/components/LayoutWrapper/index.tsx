@@ -1,6 +1,6 @@
 "use client";
 import React, { Dispatch, SetStateAction, useState } from "react";
-import { CheckCircle, SlidersHorizontal } from "lucide-react";
+import { CheckCircle, ChevronLeft, SlidersHorizontal } from "lucide-react";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { ProjectType, TaskType } from "@/types/project";
@@ -28,6 +28,8 @@ import {
 import { useAuthProvider } from "@/context/AuthContext";
 import { useRole } from "@/context/RoleContext";
 import { canEditProject } from "@/types/hasPermission";
+import useScreen from "@/hooks/useScreen";
+import { useRouter } from "next/navigation";
 
 const LayoutWrapper = ({
   children,
@@ -163,6 +165,9 @@ const LayoutWrapper = ({
     }
   };
 
+  const { screenWidth } = useScreen();
+  const router = useRouter();
+
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -173,19 +178,24 @@ const LayoutWrapper = ({
             className={`flex flex-col h-full w-full flex-1 transition-all duration-300`}
           >
             {view && setView && (
-              <div className="flex items-center justify-between py-3 px-6 pb-0">
-                {!["Today", "Inbox"].includes(headline) && (
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center w-64 whitespace-nowrap">
-                      <Link
-                        href={`/app/projects`}
-                        className="hover:bg-text-100 p-1 py-0.5 rounded-lg transition-colors"
-                      >
-                        {teams.find((t) => t.id === project?.team_id)?.name ??
-                          "My Projects"}
-                      </Link>
-                      <span className="text-text-400">/</span>
-                      {/* {project ? (
+              <div
+                className={`flex items-center justify-between ${
+                  screenWidth > 768 ? "py-3 px-6 pb-0" : "p-3"
+                }`}
+              >
+                {screenWidth > 768 ? (
+                  !["Today", "Inbox"].includes(headline) && (
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center w-64 whitespace-nowrap">
+                        <Link
+                          href={`/app/projects`}
+                          className="hover:bg-text-100 p-1 py-0.5 rounded-lg transition-colors"
+                        >
+                          {teams.find((t) => t.id === project?.team_id)?.name ??
+                            "My Projects"}
+                        </Link>
+                        <span className="text-text-400">/</span>
+                        {/* {project ? (
                         modalState.editTitle ? (
                           <input
                             type="text"
@@ -217,9 +227,9 @@ const LayoutWrapper = ({
                           {headline}
                         </h1>
                       )} */}
-                    </div>
+                      </div>
 
-                    {/* <div>
+                      {/* <div>
                       {project && (
                         <LayoutView
                           view={view}
@@ -228,6 +238,51 @@ const LayoutWrapper = ({
                         />
                       )}
                     </div> */}
+                    </div>
+                  )
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <button onClick={() => router.back()} className="w-6 h-6">
+                      <ChevronLeft strokeWidth={1.5} size={24} />
+                    </button>
+                    {project ? (
+                      <div className="flex items-center gap-1">
+                        <CheckCircle
+                          size={24}
+                          className={`text-${activeProject?.settings.color}`}
+                        />
+                        {modalState.editTitle ? (
+                          <input
+                            type="text"
+                            className="font-semibold border border-text-300 rounded-lg p-1 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 bg-transparent"
+                            value={projectTitle}
+                            onBlur={handleEditTitle}
+                            autoFocus
+                            onChange={(ev) => setProjectTitle(ev.target.value)}
+                            onKeyDown={(ev) =>
+                              ev.key === "Enter" && handleEditTitle()
+                            }
+                          />
+                        ) : (
+                          <h1
+                            className="font-semibold border border-transparent hover:border-text-200 rounded-lg w-full p-1 py-0.5 cursor-text inline-block overflow-hidden text-ellipsis"
+                            onClick={() => toggleModal("editTitle", true)}
+                          >
+                            {project.name}
+                          </h1>
+                        )}
+                      </div>
+                    ) : (
+                      <h1
+                        className={`font-semibold inline-block overflow-hidden text-ellipsis p-1 py-0.5 ${
+                          (headline == "Filters & Labels" ||
+                            headline == "Upcoming") &&
+                          "mt-6"
+                        }`}
+                      >
+                        {headline}
+                      </h1>
+                    )}
                   </div>
                 )}
 
@@ -242,15 +297,17 @@ const LayoutWrapper = ({
                           />
                         </li>
                       )}
-                    <li>
-                      <FilterOptions
-                        hideCalendarView={hideCalendarView}
-                        view={view}
-                        setView={setView}
-                        setTasks={setTasks}
-                        tasks={tasks}
-                      />
-                    </li>
+                    {screenWidth > 768 && (
+                      <li>
+                        <FilterOptions
+                          hideCalendarView={hideCalendarView}
+                          view={view}
+                          setView={setView}
+                          setTasks={setTasks}
+                          tasks={tasks}
+                        />
+                      </li>
+                    )}
                     {headline !== "Today" && (
                       <li>
                         {project && (
@@ -298,25 +355,27 @@ const LayoutWrapper = ({
 
             <div className={`flex-1`}>
               <div className="flex flex-col h-full">
-                <div className="px-6">
+                <div className={`${screenWidth > 768 ? "px-6" : "px-4"}`}>
                   {project ? (
                     <>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle
-                          size={28}
-                          className={`text-${activeProject?.settings.color}`}
-                        />
-                        <input
-                          type="text"
-                          className="text-[26px] font-bold border-none rounded-lg focus-visible:outline-none p-1.5 bg-transparent w-full"
-                          value={projectTitle}
-                          onBlur={handleEditTitle}
-                          onChange={(ev) => setProjectTitle(ev.target.value)}
-                          onKeyDown={(ev) =>
-                            ev.key === "Enter" && handleEditTitle()
-                          }
-                        />
-                      </div>
+                      {screenWidth > 768 && (
+                        <div className="flex items-center gap-2">
+                          <CheckCircle
+                            size={28}
+                            className={`text-${activeProject?.settings.color}`}
+                          />
+                          <input
+                            type="text"
+                            className="text-[26px] font-bold border-none rounded-lg focus-visible:outline-none p-1.5 bg-transparent w-full"
+                            value={projectTitle}
+                            onBlur={handleEditTitle}
+                            onChange={(ev) => setProjectTitle(ev.target.value)}
+                            onKeyDown={(ev) =>
+                              ev.key === "Enter" && handleEditTitle()
+                            }
+                          />
+                        </div>
+                      )}
 
                       {view && setView && (
                         <LayoutView
@@ -333,7 +392,9 @@ const LayoutWrapper = ({
                   )}
                 </div>
 
-                <div className={`flex-1`}>{children}</div>
+                <div className={`${screenWidth > 768 ? "flex-1" : "flex-[.94]"}`}>
+                  {children}
+                </div>
               </div>
             </div>
           </div>

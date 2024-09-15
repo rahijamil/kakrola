@@ -31,6 +31,7 @@ import AddTaskModal from "@/components/AddTask/AddTaskModal";
 import { debounce } from "lodash";
 import TaskItemModal from "../TaskItemModal";
 import useCheckClick from "@/hooks/useCheckClick";
+import useScreen from "@/hooks/useScreen";
 
 const CalendarView = ({
   tasks,
@@ -179,9 +180,13 @@ const CalendarView = ({
     return taskDurationInDays * dayColumnWidth - 16;
   };
 
+  const { screenWidth } = useScreen();
+
   return (
-    <div className="h-full flex flex-col px-6">
-      <div className="flex items-center justify-between mb-4">
+    <div
+      className={`h-full flex flex-col ${screenWidth > 768 ? "px-6" : "px-4"}`}
+    >
+      <div className="flex items-center justify-between gap-4 mb-4 whitespace-nowrap overflow-x-auto">
         <div className="flex items-center gap-4">
           <div className="font-medium rounded-lg border border-text-200 text-xs flex items-center gap-1 text-text-600 overflow-hidden">
             <motion.button
@@ -315,146 +320,146 @@ const CalendarView = ({
           animate="center"
           exit="exit"
           transition={transition}
-          className="flex flex-col flex-1 rounded-lg overflow-hidden mb-4"
+          className="mb-4 grid grid-cols-7 border-l border-t border-text-200 rounded-lg overflow-hidden"
           onWheel={handleWheel}
         >
-          <div className="grid grid-cols-7 place-items-center bg-text-100 border border-text-200 rounded-t-lg">
-            {days.map((day, _index) => (
-              <div
-                key={day}
-                ref={_index === 0 ? dayColumnRef : null}
-                className={`text-right text-text-500 border-text-300 w-full p-2 flex flex-col gap-1 items-end font-medium ${
-                  _index === days.length - 1 ? "border-r-0" : "border-r"
-                }`}
-              >
-                {day}
-                {viewMode === "Weeks" &&
-                  daysToShow
-                    .filter((date, _) => _ === _index)
-                    .map((date) => (
-                      <motion.span
-                        key={date.toISOString()}
-                        className={`text-lg ${
-                          isToday(date) &&
-                          "bg-primary-500 text-surface rounded-lg w-6 h-6 inline-flex items-center justify-center"
-                        }`}
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: _index * 0.05 }}
-                      >
-                        {format(date, "d")}
-                      </motion.span>
-                    ))}
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-7 border-l border-text-200 flex-1 rounded-b-lg">
-            {daysToShow.map((day, index) => {
-              const isCurrentMonth = isSameMonth(day, currentDate);
-              return (
-                <Droppable
-                  key={index}
-                  droppableId={format(day, "dd LLL yyyy")}
-                  type="calendarview_task"
-                >
-                  {(provided, snapshot) => (
-                    <motion.div
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                      className={`${
-                        viewMode === "Weeks" ? "min-h-full" : "min-h-32"
+          {days.map((day, _index) => (
+            <div
+              key={day}
+              ref={_index === 0 ? dayColumnRef : null}
+              className={`text-right text-text-500 border-r border-b border-text-300 w-full p-2 flex flex-col gap-1 items-end font-medium bg-text-100 ${
+                viewMode == "Weeks" ? "h-16" : "h-9"
+              }`}
+            >
+              {day}
+              {viewMode === "Weeks" &&
+                daysToShow
+                  .filter((date, _) => _ === _index)
+                  .map((date) => (
+                    <motion.span
+                      key={date.toISOString()}
+                      className={`text-lg ${
+                        isToday(date) &&
+                        "bg-primary-500 text-surface rounded-lg w-6 h-6 inline-flex items-center justify-center"
                       }`}
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.02 }}
+                      transition={{ delay: _index * 0.05 }}
                     >
-                      <div
-                        onClick={() =>
-                          !snapshot.isDraggingOver && setSelectedDay(day)
-                        }
-                        className={`h-full w-full p-2 border-r border-b border-text-200 cursor-crosshair transition space-y-1 ${
-                          selectedDay?.getDate() === day.getDate() &&
-                          selectedDay.getMonth() === day.getMonth() &&
-                          "bg-text-100"
-                        }`}
-                      >
-                        {viewMode === "Months" && (
-                          <div
-                            className={`flex items-center justify-end gap-2 text-base ${
-                              !isCurrentMonth && "text-text-400"
+                      {format(date, "d")}
+                    </motion.span>
+                  ))}
+            </div>
+          ))}
+
+          {daysToShow.map((day, index) => {
+            const isCurrentMonth = isSameMonth(day, currentDate);
+            return (
+              <Droppable
+                key={index}
+                droppableId={format(day, "dd LLL yyyy")}
+                type="calendarview_task"
+              >
+                {(provided, snapshot) => (
+                  <motion.div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className={`${
+                      viewMode === "Weeks"
+                        ? screenWidth > 768
+                          ? "min-h-[calc(100vh-270px)]"
+                          : "min-h-[calc(100vh-280px)]"
+                        : "min-h-[152px]"
+                    }`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.02 }}
+                  >
+                    <div
+                      onClick={() =>
+                        !snapshot.isDraggingOver && setSelectedDay(day)
+                      }
+                      className={`h-full w-full p-2 border-r border-b border-text-200 cursor-crosshair transition space-y-1 ${
+                        selectedDay?.getDate() === day.getDate() &&
+                        selectedDay.getMonth() === day.getMonth() &&
+                        "bg-text-100"
+                      }`}
+                    >
+                      {viewMode === "Months" && (
+                        <div
+                          className={`flex items-center justify-end gap-2 text-base ${
+                            !isCurrentMonth && "text-text-400"
+                          }`}
+                        >
+                          {isFirstDayOfMonth(day) && (
+                            <span>{format(day, "LLL")}</span>
+                          )}
+                          <span
+                            className={`${
+                              isToday(day) &&
+                              "bg-primary-500 text-surface rounded-lg w-6 h-6 inline-flex items-center justify-center"
                             }`}
                           >
-                            {isFirstDayOfMonth(day) && (
-                              <span>{format(day, "LLL")}</span>
-                            )}
-                            <span
-                              className={`${
-                                isToday(day) &&
-                                "bg-primary-500 text-surface rounded-lg w-6 h-6 inline-flex items-center justify-center"
-                              }`}
-                            >
-                              {format(day, "d")}
-                            </span>
-                          </div>
-                        )}
+                            {format(day, "d")}
+                          </span>
+                        </div>
+                      )}
 
-                        <ul className="text-left space-y-[2px]">
-                          {tasks
-                            .filter(
-                              (task) =>
-                                task.dates.start_date &&
-                                isSameDay(new Date(task.dates.start_date), day)
-                            )
-                            .map((task, taskIndex) => {
-                              const taskWidth = calculateTaskWidth(task);
-                              return (
-                                <Draggable
-                                  key={task.id}
-                                  draggableId={task.id?.toString()}
-                                  index={taskIndex}
-                                >
-                                  {(draggableProvided) => (
-                                    <motion.li
-                                      whileHover={{ scale: 1.02 }}
-                                      whileTap={{ scale: 0.98 }}
-                                      style={{
-                                        width: `${taskWidth}px`,
-                                      }}
-                                      onClick={(ev) => {
-                                        ev.stopPropagation();
-                                        setShowTaskDetails(task);
-                                      }}
-                                      className="cursor-pointer relative bg-background hover:bg-text-100 transition p-1 rounded-lg border border-text-200"
+                      <ul className="text-left space-y-[2px]">
+                        {tasks
+                          .filter(
+                            (task) =>
+                              task.dates.start_date &&
+                              isSameDay(new Date(task.dates.start_date), day)
+                          )
+                          .map((task, taskIndex) => {
+                            const taskWidth = calculateTaskWidth(task);
+                            return (
+                              <Draggable
+                                key={task.id}
+                                draggableId={task.id?.toString()}
+                                index={taskIndex}
+                              >
+                                {(draggableProvided) => (
+                                  <motion.li
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    style={{
+                                      width: `${taskWidth}px`,
+                                    }}
+                                    onClick={(ev) => {
+                                      ev.stopPropagation();
+                                      setShowTaskDetails(task);
+                                    }}
+                                    className="cursor-pointer relative bg-background hover:bg-text-100 transition p-1 rounded-lg border border-text-200"
+                                  >
+                                    <div
+                                      ref={draggableProvided.innerRef}
+                                      {...draggableProvided.draggableProps}
+                                      {...draggableProvided.dragHandleProps}
+                                      className="flex items-center gap-1"
                                     >
-                                      <div
-                                        ref={draggableProvided.innerRef}
-                                        {...draggableProvided.draggableProps}
-                                        {...draggableProvided.dragHandleProps}
-                                        className="flex items-center gap-1"
-                                      >
-                                        <AnimatedTaskCheckbox
-                                          priority={task.priority}
-                                          playSound={false}
-                                          handleCheckSubmit={() => {}}
-                                          is_completed={task.is_completed}
-                                        />
-                                        {task.title}
-                                      </div>
-                                    </motion.li>
-                                  )}
-                                </Draggable>
-                              );
-                            })}
-                          {provided.placeholder}
-                        </ul>
-                      </div>
-                    </motion.div>
-                  )}
-                </Droppable>
-              );
-            })}
-          </div>
+                                      <AnimatedTaskCheckbox
+                                        priority={task.priority}
+                                        playSound={false}
+                                        handleCheckSubmit={() => {}}
+                                        is_completed={task.is_completed}
+                                      />
+                                      {task.title}
+                                    </div>
+                                  </motion.li>
+                                )}
+                              </Draggable>
+                            );
+                          })}
+                        {provided.placeholder}
+                      </ul>
+                    </div>
+                  </motion.div>
+                )}
+              </Droppable>
+            );
+          })}
         </motion.div>
       </AnimatePresence>
 

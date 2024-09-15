@@ -161,7 +161,7 @@ const SectionMoreOptions = ({
             setShowDeleteConfirm(column);
             onClose();
           },
-          textColor: "text-text-700 hover:text-red-500",
+          textColor: "text-red-500",
           icon: <Trash2 strokeWidth={1.5} size={16} />,
         },
       ]}

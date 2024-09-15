@@ -183,6 +183,7 @@ const AddEditProject = ({
   );
 
   const { role } = useRole();
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const handleAddProject = async (ev: FormEvent) => {
     ev.preventDefault();
@@ -1019,8 +1020,49 @@ const AddEditProject = ({
                   </div>
                 </div>
               ) : projectData.settings.view == "Calendar" ? (
-                <div>
-                  
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Skeleton enableAnimation={false} width={100} />
+                      <Skeleton enableAnimation={false} width={100} />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Skeleton enableAnimation={false} width={100} />
+                      <Skeleton enableAnimation={false} width={100} />
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border-l border-text-200 overflow-hidden">
+                    <div className="grid grid-cols-7 place-items-center bg-text-100 border border-text-200 rounded-t-lg">
+                      {days.map((day, _index) => (
+                        <div
+                          key={day}
+                          className={`text-right text-text-500 border-text-300 w-full p-2 flex flex-col gap-1 items-end font-medium ${
+                            _index === days.length - 1
+                              ? "border-r-0"
+                              : "border-r"
+                          }`}
+                        >
+                          {day}
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="grid grid-cols-7 flex-1 rounded-b-lg">
+                      {[...Array(35)].map((i, index) => {
+                        return (
+                          <div
+                            key={index}
+                            className={`h-full w-full p-2 border-r border-b border-text-200 transition space-y-1 aspect-square max-h-[93px]`}
+                          >
+                            <div className="flex items-center justify-end">
+                              <div className="w-2 h-2 rounded-lg bg-text-200"></div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <></>

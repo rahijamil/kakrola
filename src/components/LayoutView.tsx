@@ -14,6 +14,7 @@ import Dropdown from "./ui/Dropdown";
 import AnimatedTaskCheckbox from "./TaskViewSwitcher/AnimatedCircleCheck";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { ProjectType, TaskPriority } from "@/types/project";
+import useScreen from "@/hooks/useScreen";
 
 const allViews: {
   id: number;
@@ -117,13 +118,15 @@ const LayoutView = ({
     }
   };
 
+  const { screenWidth } = useScreen();
+
   return (
     <div
       className={`flex items-center gap-1 ${
         view !== "List" && "border-b border-text-200 mb-4"
       }`}
     >
-      <ul className="flex items-center gap-1">
+      <ul className={`flex items-center gap-1 ${screenWidth <= 768 && "overflow-x-auto"}`}>
         {views
           .filter((v) => v.visible)
           .map(

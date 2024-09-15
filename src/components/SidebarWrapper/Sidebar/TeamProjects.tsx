@@ -19,6 +19,7 @@ import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import ProjectPlusDropdown from "./ProjectPlusDropdown";
+import useScreen from "@/hooks/useScreen";
 
 const TeamProjects = ({
   team,
@@ -88,6 +89,8 @@ const TeamProjects = ({
     }
   };
 
+  const { screenWidth } = useScreen();
+
   return (
     <>
       <div className="mt-4 px-2">
@@ -136,7 +139,11 @@ const TeamProjects = ({
               </div>
             </Link>
 
-            <div className="opacity-0 group-hover:opacity-100 transition duration-150 flex items-center">
+            <div
+              className={`${
+                screenWidth > 768 && "opacity-0 group-hover:opacity-100"
+              } transition flex items-center`}
+            >
               <ProjectPlusDropdown teamId={team.id} setTeamId={setTeamId} />
 
               <button

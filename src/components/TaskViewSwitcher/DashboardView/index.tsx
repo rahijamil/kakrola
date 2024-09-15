@@ -33,6 +33,7 @@ import {
   Calendar,
 } from "lucide-react";
 import useAssignee from "@/hooks/useAssignee";
+import useScreen from "@/hooks/useScreen";
 
 interface DashboardViewProps {
   project: ProjectType | null;
@@ -136,22 +137,28 @@ const DashboardView: React.FC<DashboardViewProps> = ({
     };
   }, [tasks, sections]);
 
+  const { screenWidth } = useScreen();
+
   return (
-    <div className="px-6">
-      <div className="max-h-[calc(100vh_-_160px)] overflow-y-auto rounded-lg bg-text-50">
-        <div className="p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className={`px-4 md:px-6`}>
+      <div className="max-h-[calc(100vh_-_180px)] md:max-h-[calc(100vh_-_160px)] overflow-y-auto rounded-lg bg-text-50">
+        <div className={`p-4 md:p-8`}>
+          <div
+            className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-4 md:mb-8`}
+          >
             <OverviewCard
               title="Total Tasks"
               value={tasks.length}
               icon={<ListTodo size={24} />}
               color="text-primary-600"
+              screenWidth={screenWidth}
             />
             <OverviewCard
               title="Completed Tasks"
               value={tasks.filter((task) => task.is_completed).length}
               icon={<CheckCircle size={24} />}
               color="text-green-600"
+              screenWidth={screenWidth}
             />
             <OverviewCard
               title="Overdue Tasks"
@@ -164,6 +171,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({
               }
               icon={<Clock size={24} />}
               color="text-red-600"
+              screenWidth={screenWidth}
             />
             <OverviewCard
               title="High Priority Tasks"
@@ -172,11 +180,16 @@ const DashboardView: React.FC<DashboardViewProps> = ({
               }
               icon={<AlertTriangle size={24} />}
               color="text-yellow-600"
+              screenWidth={screenWidth}
             />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <ChartCard title="Tasks per Status" icon={<Tag size={20} />}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-8">
+            <ChartCard
+              title="Tasks per Status"
+              icon={<Tag size={20} />}
+              screenWidth={screenWidth}
+            >
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={analytics.tasksPerStatus}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
@@ -202,6 +215,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({
             <ChartCard
               title="Tasks by Priority"
               icon={<ArrowUpRight size={20} />}
+              screenWidth={screenWidth}
             >
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
@@ -242,10 +256,11 @@ const DashboardView: React.FC<DashboardViewProps> = ({
             </ChartCard>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-8">
             <ChartCard
               title="Task Completion Trend"
               icon={<TrendingUp size={20} />}
+              screenWidth={screenWidth}
             >
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={analytics.taskCompletionTrend}>
@@ -272,7 +287,11 @@ const DashboardView: React.FC<DashboardViewProps> = ({
               </ResponsiveContainer>
             </ChartCard>
 
-            <ChartCard title="Top Contributors" icon={<Users size={20} />}>
+            <ChartCard
+              title="Top Contributors"
+              icon={<Users size={20} />}
+              screenWidth={screenWidth}
+            >
               <div className="space-y-4">
                 {analytics.topContributors.map(([name, count], index) => (
                   <div key={name} className="flex items-center justify-between">
@@ -289,7 +308,11 @@ const DashboardView: React.FC<DashboardViewProps> = ({
             </ChartCard>
           </div>
 
-          <ChartCard title="Upcoming Deadlines" icon={<Calendar size={20} />}>
+          <ChartCard
+            title="Upcoming Deadlines"
+            icon={<Calendar size={20} />}
+            screenWidth={screenWidth}
+          >
             <div className="space-y-4">
               {analytics.upcomingDeadlines.map((task) => (
                 <div
@@ -329,8 +352,13 @@ const ChartCard: React.FC<{
   title: string;
   children: React.ReactNode;
   icon: React.ReactNode;
-}> = ({ title, children, icon }) => (
-  <div className="bg-surface p-6 rounded-lg shadow-sm border border-text-200 transition-shadow duration-300 ease-in-out hover:shadow-md">
+  screenWidth: number;
+}> = ({ title, children, icon, screenWidth }) => (
+  <div
+    className={`bg-surface rounded-lg shadow-sm border border-text-200 transition-shadow duration-300 ease-in-out hover:shadow-md ${
+      screenWidth > 768 ? "p-6" : "p-4"
+    }`}
+  >
     <div className="flex items-center justify-between mb-4">
       <h2 className="text-base font-semibold text-text-800">{title}</h2>
       <div className="text-text-500">{icon}</div>
@@ -344,9 +372,12 @@ const OverviewCard: React.FC<{
   value: number;
   color: string;
   icon: React.ReactNode;
-}> = ({ title, value, color, icon }) => (
+  screenWidth: number;
+}> = ({ title, value, color, icon, screenWidth }) => (
   <div
-    className={`bg-surface p-6 rounded-lg shadow-sm border border-text-200 transition-shadow duration-300 ease-in-out hover:shadow-md ${color}`}
+    className={`bg-surface rounded-lg shadow-sm border border-text-200 transition-shadow duration-300 ease-in-out hover:shadow-md ${color} ${
+      screenWidth > 768 ? "p-6" : "p-4"
+    }`}
   >
     <div className="flex items-center justify-between mb-2">
       <h3 className="font-medium text-text-500">{title}</h3>

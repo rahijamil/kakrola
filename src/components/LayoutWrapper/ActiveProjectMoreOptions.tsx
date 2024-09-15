@@ -166,7 +166,7 @@ const ActiveProjectMoreOptions = ({
         {
           id: 10,
           label: "Delete",
-          textColor: "text-text-700 hover:text-red-500",
+          textColor: "text-red-500",
           icon: <Trash2 strokeWidth={1.5} className="w-4 h-4" />,
           onClick: () => {
             setShowDeleteConfirm(true);

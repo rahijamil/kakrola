@@ -21,6 +21,7 @@ const ProjectPlusDropdown = ({
   return (
     <>
       <Dropdown
+        mobileBottomSheet={false}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         triggerRef={triggerRef}

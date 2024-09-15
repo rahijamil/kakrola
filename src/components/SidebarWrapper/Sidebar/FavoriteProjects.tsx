@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import useScreen from "@/hooks/useScreen";
 
 const FavoriteProjects = ({
   setShowFavoritesProjects,
@@ -42,6 +43,8 @@ const FavoriteProjects = ({
     (project) => favoritesMap.get(project.id) === true
   );
 
+  const { screenWidth } = useScreen();
+
   return (
     <div className="mt-4 px-2">
       {projectsLoading ? (
@@ -52,7 +55,7 @@ const FavoriteProjects = ({
             <div className="w-full flex items-center justify-between p-1 text-text-600 rounded-lg transition-colors">
               <span className="font-medium">Favorites</span>
 
-              <div className="opacity-0 group-hover:opacity-100 transition flex items-center">
+              <div className={`${screenWidth > 768 && "opacity-0 group-hover:opacity-100"} transition flex items-center`}>
                 <button
                   className="p-1 hover:bg-primary-50 rounded-lg transition"
                   onClick={() =>

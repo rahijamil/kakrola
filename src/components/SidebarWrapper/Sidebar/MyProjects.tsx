@@ -18,6 +18,7 @@ import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import ProjectPlusDropdown from "./ProjectPlusDropdown";
+import useScreen from "@/hooks/useScreen";
 
 const MyProjects = ({ sidebarWidth, setShowAddProjectModal }: { sidebarWidth: number, setShowAddProjectModal: Dispatch<SetStateAction<boolean>> }) => {
   const { profile } = useAuthProvider();
@@ -80,6 +81,8 @@ const MyProjects = ({ sidebarWidth, setShowAddProjectModal }: { sidebarWidth: nu
     }
   };
 
+  const {screenWidth} = useScreen()
+
   return (
     <>
       <div className="mt-4 px-2">
@@ -132,7 +135,7 @@ const MyProjects = ({ sidebarWidth, setShowAddProjectModal }: { sidebarWidth: nu
               </div>
             </Link>
 
-            <div className="opacity-0 group-hover:opacity-100 transition duration-150 flex items-center">
+            <div className={`${screenWidth > 768 && "opacity-0 group-hover:opacity-100"} transition flex items-center`}>
               <ProjectPlusDropdown forPersonal setShowAddProjectModal={setShowAddProjectModal}/>
 
               <button

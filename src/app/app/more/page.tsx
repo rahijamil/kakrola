@@ -6,28 +6,25 @@ import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import {
   Inbox,
   Calendar,
-  ChevronDown,
-  PanelLeft,
   LucideProps,
   Search,
-  CalendarDays,
-  LayoutPanelTop,
   Bell,
   SwatchBook,
   MessagesSquare,
   Plus,
 } from "lucide-react";
 import AddTaskModal from "@/components/AddTask/AddTaskModal";
-import MyProjects from "./MyProjects";
-import FavoriteProjects from "./FavoriteProjects";
-import TeamProjects from "./TeamProjects";
-import ProfileMoreOptions from "./ProfileMoreOptions";
 import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
 import axios from "axios";
 import AddTeam from "@/components/AddTeam";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import AddEditProject from "@/components/AddEditProject";
+import ProfileMoreOptions from "@/components/SidebarWrapper/Sidebar/ProfileMoreOptions";
+import FavoriteProjects from "@/components/SidebarWrapper/Sidebar/FavoriteProjects";
+import MyProjects from "@/components/SidebarWrapper/Sidebar/MyProjects";
+import TeamProjects from "@/components/SidebarWrapper/Sidebar/TeamProjects";
+import useScreen from "@/hooks/useScreen";
 
 const menuItems: {
   id: number;
@@ -49,11 +46,11 @@ const menuItems: {
   { id: 3, icon: MessagesSquare, text: "DMs", path: "/app/dm" },
 ];
 
-const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
-  const pathname = usePathname();
+const MobileMorePage = () => {
+  const { screenWidth } = useScreen();
+  const sidebarWidth = screenWidth;
 
-  const { teams, projectsLoading } =
-    useTaskProjectDataProvider();
+  const { teams, projectsLoading } = useTaskProjectDataProvider();
 
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);
@@ -97,7 +94,7 @@ const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
 
   return (
     <>
-      <aside className="h-full flex flex-col group w-full">
+      <aside className="h-[calc(100vh-57px)] flex flex-col w-full bg-primary-10">
         <div className="pb-4 p-2 flex items-center justify-between relative">
           <ProfileMoreOptions
             setShowAddTeam={setShowAddTeam}
@@ -141,48 +138,6 @@ const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
         </div>
 
         <nav className="flex-grow overflow-y-auto">
-          <ul className="px-2">
-            {menuItems.map((item) =>
-              projectsLoading ? (
-                <Skeleton
-                  key={item.id}
-                  height={16}
-                  width={150}
-                  borderRadius={9999}
-                  style={{ marginBottom: ".5rem" }}
-                />
-              ) : (
-                <li key={item.id}>
-                  {item.path ? (
-                    <Link
-                      href={item.path}
-                      className={`flex items-center p-2 rounded-lg transition-colors duration-150 text-text-900 ${
-                        item.path === pathname
-                          ? "bg-primary-100"
-                          : "hover:bg-primary-50"
-                      }`}
-                    >
-                      <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3" />
-                      {item.text}
-                    </Link>
-                  ) : (
-                    <button
-                      className={`flex items-center p-2 rounded-lg transition-colors duration-150 w-full ${
-                        item.path === pathname
-                          ? "bg-primary-500 text-surface"
-                          : "hover:bg-primary-50 text-text-700"
-                      }`}
-                      onClick={item.onClick}
-                    >
-                      <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3" />
-                      {item.text}
-                    </button>
-                  )}
-                </li>
-              )
-            )}
-          </ul>
-
           <FavoriteProjects
             setShowFavoritesProjects={setShowFavoritesProjects}
             showFavoritesProjects={showFavoritesProjects}
@@ -203,7 +158,7 @@ const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
           ))}
         </nav>
 
-        <div className="p-2">
+        {/* <div className="p-2">
           <Link
             href={"/app/templates"}
             className={`flex items-center p-2 rounded-lg transition-colors duration-150 text-text-900 ${
@@ -215,7 +170,7 @@ const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
             <SwatchBook strokeWidth={1.5} className="w-5 h-5 mr-3" />
             Templates
           </Link>
-        </div>
+        </div> */}
       </aside>
 
       {showAddTaskModal && (
@@ -264,4 +219,4 @@ const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
   );
 };
 
-export default Sidebar;
+export default MobileMorePage;

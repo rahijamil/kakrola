@@ -83,7 +83,7 @@ const TemplateItem = ({ project }: { project: TemplateProjectType }) => {
               id: 1,
               label: "Delete",
               icon: <Trash2 size={20} />,
-              textColor: "text-text-700 hover:text-red-500",
+              textColor: "text-red-500",
               onClick: () => console.log("Delete"),
             },
           ]}
