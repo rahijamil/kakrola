@@ -33,26 +33,28 @@ const MemberItem = ({ member }: { member: MemberData }) => {
   };
 
   return (
-    <div className="flex justify-between gap-4 items-center p-2 hover:bg-text-50 cursor-default rounded-lg transition">
-      <div className="flex items-center gap-2">
-        <Image
-          src={member.profile.avatar_url || "/default_avatar.png"}
-          alt="Avatar"
-          width={24}
-          height={24}
-          className="rounded-md object-cover max-w-6 max-h-6"
-        />
-
-        <div className="flex flex-col whitespace-nowrap">
-          <span>{member.profile.full_name || "Unknown User"}</span>
-          <span className="text-xs text-text-500">{member.profile.email}</span>
-        </div>
-      </div>
-
-      <RoleItem
-        value={memberData.role}
-        onChange={(newRole) => handleUpdateRole(newRole)}
+    <div className="flex items-center gap-2 w-full p-2 hover:bg-text-50 cursor-default rounded-lg transition">
+      <Image
+        src={member.profile.avatar_url || "/default_avatar.png"}
+        alt="Avatar"
+        width={24}
+        height={24}
+        className="rounded-md object-cover max-w-6 max-h-6"
       />
+
+      <div className="flex flex-col w-full">
+        <div className="flex items-center gap-2 md:gap-4 justify-between w-full">
+          <span>{member.profile.full_name || "Unknown User"}</span>
+
+          <div className="whitespace-normal">
+            <RoleItem
+              value={memberData.role}
+              onChange={(newRole) => handleUpdateRole(newRole)}
+            />
+          </div>
+        </div>
+        <span className="text-xs text-text-500">{member.profile.email}</span>
+      </div>
     </div>
   );
 };

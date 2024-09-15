@@ -121,7 +121,7 @@ const ShareOption = ({
         </div>
       )}
       content={
-        <div className={`${screenWidth > 768 ? "p-4 space-y-4" : "space-y-2"}`}>
+        <div className={`${screenWidth > 768 ? "p-4 space-y-4" : "space-y-2 p-2"}`}>
           <InviteEmailInput
             projectId={projectId}
             teamId={teamId}
@@ -161,6 +161,8 @@ const ShareOption = ({
         </div>
       }
       contentWidthClass="w-[450px]"
+      fullMode
+      title="Share"
     />
   );
 };

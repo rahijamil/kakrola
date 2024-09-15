@@ -15,6 +15,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useQuery } from "@tanstack/react-query";
 import ProjectLeaveConfirm from "./ProjectLeaveConfirm";
+import useScreen from "@/hooks/useScreen";
 
 const ProjectItem = ({
   project,
@@ -75,6 +76,8 @@ const ProjectItem = ({
   const [aboveBellow, setAboveBellow] = useState<"above" | "below" | null>(
     null
   );
+
+  const { screenWidth } = useScreen();
 
   return (
     <li>

@@ -186,7 +186,7 @@ const CalendarView = ({
     <div
       className={`h-full flex flex-col ${screenWidth > 768 ? "px-6" : "px-4"}`}
     >
-      <div className="flex items-center justify-between gap-4 mb-4 whitespace-nowrap overflow-x-auto">
+      <div className="flex items-center justify-between gap-4 my-4 whitespace-nowrap overflow-x-auto">
         <div className="flex items-center gap-4">
           <div className="font-medium rounded-lg border border-text-200 text-xs flex items-center gap-1 text-text-600 overflow-hidden">
             <motion.button
@@ -320,7 +320,7 @@ const CalendarView = ({
           animate="center"
           exit="exit"
           transition={transition}
-          className="mb-4 grid grid-cols-7 border-l border-t border-text-200 rounded-lg overflow-hidden"
+          className="grid grid-cols-7 border-l border-t border-text-200 rounded-lg overflow-hidden"
           onWheel={handleWheel}
         >
           {days.map((day, _index) => (

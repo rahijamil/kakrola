@@ -522,6 +522,7 @@ const DateSelector = ({
                     autoFocus={focusedInput === "start"}
                     ref={startInputRef}
                     className="flex-1 w-full"
+                    readOnly
                   />
                 </div>
 
@@ -560,6 +561,7 @@ const DateSelector = ({
                       onFocus={() => setFocusedInput("end")}
                       autoFocus={focusedInput === "end" || showEndDate}
                       ref={endInputRef}
+                      readOnly
                     />
                   </div>
 

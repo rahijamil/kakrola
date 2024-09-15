@@ -29,14 +29,13 @@ const menuItems: {
 
 const MobileSidebar = () => {
   const pathname = usePathname();
-
   const { projectsLoading } = useTaskProjectDataProvider();
 
   return (
     <>
       <aside className="group bg-primary-10 fixed bottom-0 left-0 right-0 z-20 border-t border-primary-50">
         <nav>
-          <ul className="grid grid-cols-4 p-1">
+          <ul className="grid grid-cols-4 pb-2 px-4 pt-1">
             {menuItems.map((item) =>
               projectsLoading ? (
                 <Skeleton
@@ -50,13 +49,15 @@ const MobileSidebar = () => {
                 <li key={item.id}>
                   <Link
                     href={item.path}
-                    className={`flex flex-col items-center p-1 rounded-lg transition-colors duration-150 text-text-900 space-y-1 ${
-                      item.path === pathname
-                        ? "bg-primary-100"
-                        : "hover:bg-primary-50"
-                    }`}
+                    className={`flex flex-col items-center text-text-900 space-y-1`}
                   >
-                    <item.icon strokeWidth={1.5} className="w-5 h-5" />
+                    <div
+                      className={`rounded-lg transition ${
+                        item.path === pathname && "bg-primary-100"
+                      } p-1`}
+                    >
+                      <item.icon strokeWidth={1.5} className={`w-5 h-5`} />
+                    </div>
                     <span className="text-xs">{item.text}</span>
                   </Link>
                 </li>

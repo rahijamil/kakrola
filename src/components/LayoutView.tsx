@@ -123,7 +123,7 @@ const LayoutView = ({
   return (
     <div
       className={`flex items-center gap-1 ${
-        view !== "List" && "border-b border-text-200 mb-4"
+        view !== "List" && "border-b border-text-200"
       }`}
     >
       <ul className={`flex items-center gap-1 ${screenWidth <= 768 && "overflow-x-auto"}`}>

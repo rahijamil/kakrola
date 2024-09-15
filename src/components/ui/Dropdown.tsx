@@ -35,10 +35,13 @@ interface DropdownProps {
   direction?: "top-right" | "bottom-left";
   beforeItemsContent?: ReactNode;
   mobileBottomSheet?: boolean;
+  title?: string;
+  fullMode?: boolean;
 }
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import useScreen from "@/hooks/useScreen";
+import { useRouter } from "next/navigation";
 
 const Dropdown: React.FC<DropdownProps> = ({
   Label,
@@ -54,6 +57,8 @@ const Dropdown: React.FC<DropdownProps> = ({
   autoClose = true,
   beforeItemsContent,
   mobileBottomSheet = true,
+  title = "More",
+  fullMode,
 }) => {
   const [position, setPosition] = useState<{
     top: string;
@@ -70,6 +75,11 @@ const Dropdown: React.FC<DropdownProps> = ({
   });
 
   const menuRef = useRef<HTMLDivElement>(null);
+  const { screenWidth } = useScreen();
+
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStartY, setDragStartY] = useState(0);
+  const [dragOffsetY, setDragOffsetY] = useState(0);
 
   useEffect(() => {
     const updatePosition = () => {
@@ -130,6 +140,35 @@ const Dropdown: React.FC<DropdownProps> = ({
     };
   }, [isOpen, triggerRef]);
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add("overflow-y-hidden");
+    } else {
+      document.body.classList.remove("overflow-y-hidden");
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handlePopState = (ev: PopStateEvent) => {
+      ev.preventDefault();
+      // Close the dropdown when the back button is pressed
+      setIsOpen(false);
+    };
+
+    if (isOpen && screenWidth <= 768) {
+      // Add a new history entry only when opening the dropdown
+      window.history.pushState(null, "", window.location.href);
+
+      // Listen for the popstate event to handle the back button
+      window.addEventListener("popstate", handlePopState);
+    }
+
+    return () => {
+      // Clean up the event listener when the dropdown is closed
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [isOpen, screenWidth]);
+
   const [showContent, setShowContent] = useState(false);
   const toggleContent = () => {
     setShowContent(!showContent);
@@ -137,7 +176,37 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   const isTopRight = direction === "top-right";
 
-  const { screenWidth } = useScreen();
+  const handleTouchStart = (e: any) => {
+    setIsDragging(true);
+    setDragStartY(e.touches[0].clientY);
+  };
+
+  const handleTouchMove = (e: any) => {
+    if (isDragging && menuRef.current) {
+      e.preventDefault();
+
+      const scrollTop = menuRef.current.scrollTop;
+      const touchY = e.touches[0].clientY;
+      const offsetY = touchY - dragStartY;
+
+      // Prevent upward scrolling beyond the dropdown's top
+      if (offsetY > 0 && scrollTop === 0) {
+        setDragOffsetY(offsetY);
+      } else {
+        setDragOffsetY(0);
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (isDragging) {
+      if (dragOffsetY > 100) {
+        setIsOpen(false);
+      }
+      setIsDragging(false);
+      setDragOffsetY(0);
+    }
+  };
 
   return (
     <>
@@ -149,247 +218,281 @@ const Dropdown: React.FC<DropdownProps> = ({
           }}
         />
 
-        {isOpen && (
-          <>
-            {screenWidth > 768 || !mobileBottomSheet ? (
-              <motion.div
-                initial={{
-                  scaleY: 0.8,
-                  y: isTopRight ? -10 : 10, // Upwards for top-right, downwards for bottom-left
-                  opacity: 0,
-                  transformOrigin: isTopRight ? "top right" : "bottom left", // Change origin
-                }}
-                animate={{
-                  scaleY: 1,
-                  y: isTopRight ? [0, -5, 0] : [0, 5, 0], // Subtle bounce in the respective direction
-                  opacity: 1,
-                  transformOrigin: isTopRight ? "top right" : "bottom left",
-                }}
-                exit={{
-                  scaleY: 0.8,
-                  y: isTopRight ? -10 : 10,
-                  opacity: 0,
-                  transformOrigin: isTopRight ? "top right" : "bottom left",
-                }}
-                transition={{
-                  duration: 0.2,
-                  ease: [0.25, 0.1, 0.25, 1],
-                  y: {
-                    type: "spring",
-                    stiffness: 300,
-                    damping: 15,
-                  },
-                }}
-                ref={menuRef}
-                style={{
-                  top: position.top,
-                  bottom: position.bottom,
-                  left: position.left,
-                  right: position.right,
-                  transform: position.transform,
-                }}
-                className={`z-50 bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg fixed overflow-hidden px-1 ${
-                  contentWidthClass ? contentWidthClass : "w-72 py-1"
-                }`}
-                id="fixed_dropdown"
-                data-form-element={dataFromElement}
-                onClick={(ev) => ev.stopPropagation()}
-              >
-                {beforeItemsContent}
-                {items.map((item, _index) => (
-                  <>
-                    <div key={_index} onClick={(ev) => ev.stopPropagation()}>
-                      <button
-                        onClick={() => {
-                          if (item.onClick && !item.content) {
-                            item.onClick();
-                            if (autoClose) {
-                              setIsOpen(false);
+        <AnimatePresence>
+          {isOpen && (
+            <>
+              {screenWidth > 768 || !mobileBottomSheet ? (
+                <motion.div
+                  initial={{
+                    scaleY: 0.8,
+                    y: isTopRight ? -10 : 10, // Upwards for top-right, downwards for bottom-left
+                    opacity: 0,
+                    transformOrigin: isTopRight ? "top right" : "bottom left", // Change origin
+                  }}
+                  animate={{
+                    scaleY: 1,
+                    y: isTopRight ? [0, -5, 0] : [0, 5, 0], // Subtle bounce in the respective direction
+                    opacity: 1,
+                    transformOrigin: isTopRight ? "top right" : "bottom left",
+                  }}
+                  exit={{
+                    scaleY: 0.8,
+                    y: isTopRight ? -10 : 10,
+                    opacity: 0,
+                    transformOrigin: isTopRight ? "top right" : "bottom left",
+                  }}
+                  transition={{
+                    duration: 0.2,
+                    ease: [0.25, 0.1, 0.25, 1],
+                    y: {
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 15,
+                    },
+                  }}
+                  ref={menuRef}
+                  style={{
+                    top: position.top,
+                    bottom: position.bottom,
+                    left: position.left,
+                    right: position.right,
+                    transform: position.transform,
+                  }}
+                  className={`z-50 bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg fixed overflow-hidden px-1 ${
+                    contentWidthClass ? contentWidthClass : "w-72 py-1"
+                  }`}
+                  id="fixed_dropdown"
+                  data-form-element={dataFromElement}
+                  onClick={(ev) => ev.stopPropagation()}
+                >
+                  {beforeItemsContent}
+                  {items.map((item, _index) => (
+                    <>
+                      <div key={_index} onClick={(ev) => ev.stopPropagation()}>
+                        <button
+                          onClick={() => {
+                            if (item.onClick && !item.content) {
+                              item.onClick();
+                              if (autoClose) {
+                                setIsOpen(false);
+                              }
+                            } else if (item.content) {
+                              toggleContent();
                             }
-                          } else if (item.content) {
-                            toggleContent();
-                          }
-                        }}
-                        className={`w-full text-left px-4 py-1.5 hover:bg-text-100 transition flex items-center justify-between gap-4 rounded-lg disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent ${
-                          item.className
-                        } ${item.textColor ? item.textColor : "text-text-700"}`}
-                        disabled={item.disabled}
-                      >
-                        <div className="space-y-1">
-                          <div className="flex items-start gap-4">
-                            {item.icon}
+                          }}
+                          className={`w-full text-left px-4 py-1.5 hover:bg-text-100 transition flex items-center justify-between gap-4 rounded-lg disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent ${
+                            item.className
+                          } ${
+                            item.textColor ? item.textColor : "text-text-700"
+                          }`}
+                          disabled={item.disabled}
+                        >
+                          <div className="space-y-1">
+                            <div className="flex items-start gap-4">
+                              {item.icon}
 
-                            <div className="">
-                              <p
-                                className={`${
-                                  item.summary ? "font-medium" : ""
-                                }`}
-                              >
-                                {item.label}
-                              </p>
-                              {item.summary && (
-                                <p className="text-xs text-text-500">
-                                  {item.summary}
+                              <div className="">
+                                <p
+                                  className={`${
+                                    item.summary ? "font-medium" : ""
+                                  }`}
+                                >
+                                  {item.label}
                                 </p>
-                              )}
+                                {item.summary && (
+                                  <p className="text-xs text-text-500">
+                                    {item.summary}
+                                  </p>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        {item.content && (
-                          <div
-                            className={`transition-transform ${
-                              showContent ? "rotate-180" : "rotate-0"
-                            }`}
-                            onClick={toggleContent}
-                          >
-                            <ChevronDown
-                              strokeWidth={1.5}
-                              className="w-4 h-4"
-                            />
-                          </div>
-                        )}
-
-                        {item.rightContent}
-                      </button>
-
-                      {item.content && showContent && (
-                        <motion.div
-                          style={{ overflow: "hidden" }}
-                          initial={{ height: 0, opacity: 1 }}
-                          animate={{
-                            height: "auto",
-                            opacity: 1,
-                            transition: { type: "tween" },
-                          }}
-                          exit={{ height: 0, opacity: 1 }}
-                          className="px-4 pt-1"
-                        >
-                          {item.content}
-                        </motion.div>
-                      )}
-                    </div>
-                    {item.divide && (
-                      <div className="w-full h-px bg-text-200 my-1"></div>
-                    )}
-                  </>
-                ))}
-                <div onClick={(ev) => ev.stopPropagation()}>{content}</div>
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ y: "100%", opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: "100%", opacity: 0 }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-                ref={menuRef}
-                className="z-50 bg-surface shadow-lg fixed bottom-2 left-2 right-2 rounded-lg overflow-hidden p-2"
-                id="fixed_dropdown"
-                data-form-element={dataFromElement}
-                onClick={(ev) => ev.stopPropagation()}
-              >
-                {beforeItemsContent}
-                {items.map((item, _index) => (
-                  <>
-                    <div key={_index} onClick={(ev) => ev.stopPropagation()}>
-                      <button
-                        onClick={() => {
-                          if (item.onClick && !item.content) {
-                            item.onClick();
-                            if (autoClose) {
-                              setIsOpen(false);
-                            }
-                          } else if (item.content) {
-                            toggleContent();
-                          }
-                        }}
-                        className={`w-full text-left px-4 py-1.5 hover:bg-text-100 transition flex items-center justify-between gap-4 rounded-lg disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent ${
-                          item.className
-                        } ${item.textColor ? item.textColor : "text-text-700"}`}
-                        disabled={item.disabled}
-                      >
-                        <div className="space-y-1">
-                          <div className="flex items-start gap-4">
-                            {item.icon}
-
-                            <div className="">
-                              <p
-                                className={`${
-                                  item.summary ? "font-medium" : ""
-                                }`}
-                              >
-                                {item.label}
-                              </p>
-                              {item.summary && (
-                                <p className="text-xs text-text-500">
-                                  {item.summary}
-                                </p>
-                              )}
+                          {item.content && (
+                            <div
+                              className={`transition-transform ${
+                                showContent ? "rotate-180" : "rotate-0"
+                              }`}
+                              onClick={toggleContent}
+                            >
+                              <ChevronDown
+                                strokeWidth={1.5}
+                                className="w-4 h-4"
+                              />
                             </div>
-                          </div>
-                        </div>
+                          )}
 
-                        {item.content && (
-                          <div
-                            className={`transition-transform ${
-                              showContent ? "rotate-180" : "rotate-0"
-                            }`}
-                            onClick={toggleContent}
+                          {item.rightContent}
+                        </button>
+
+                        {item.content && showContent && (
+                          <motion.div
+                            style={{ overflow: "hidden" }}
+                            initial={{ height: 0, opacity: 1 }}
+                            animate={{
+                              height: "auto",
+                              opacity: 1,
+                              transition: { type: "tween" },
+                            }}
+                            exit={{ height: 0, opacity: 1 }}
+                            className="px-4 pt-1"
                           >
-                            <ChevronDown
-                              strokeWidth={1.5}
-                              className="w-4 h-4"
-                            />
-                          </div>
+                            {item.content}
+                          </motion.div>
                         )}
-
-                        {item.rightContent}
-                      </button>
-
-                      {item.content && showContent && (
-                        <motion.div
-                          style={{ overflow: "hidden" }}
-                          initial={{ height: 0, opacity: 1 }}
-                          animate={{
-                            height: "auto",
-                            opacity: 1,
-                            transition: { type: "tween" },
-                          }}
-                          exit={{ height: 0, opacity: 1 }}
-                          className="px-4 pt-1"
-                        >
-                          {item.content}
-                        </motion.div>
+                      </div>
+                      {item.divide && (
+                        <div className="w-full h-px bg-text-200 my-1"></div>
                       )}
+                    </>
+                  ))}
+                  <div onClick={(ev) => ev.stopPropagation()}>{content}</div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{
+                    y: dragOffsetY,
+                    opacity: 1,
+                    transition: { type: "tween", stiffness: 200, damping: 20 },
+                  }}
+                  exit={{ y: "100%", transition: { duration: 0.2 } }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
+                  ref={menuRef}
+                  id="fixed_dropdown"
+                  data-form-element={dataFromElement}
+                  onClick={(ev) => ev.stopPropagation()}
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                  className={`fixed z-50 bg-surface shadow-lg rounded-t-2xl overflow-y-auto p-4 touch-none ${fullMode ? "inset-0" : "inset-x-0 bottom-0 h-auto max-h-[75vh]"}`}
+                >
+                  <div className="px-4 py-2 text-right border-b border-text-200 grid grid-cols-[55%_1fr] items-center">
+                    <h3 className="text-text-700 font-semibold">{title}</h3>
+
+                    <div>
+                      <button
+                        className="text-primary-500 font-medium"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        Done
+                      </button>
                     </div>
-                    {item.divide && (
-                      <div className="w-full h-px bg-text-200 my-1"></div>
-                    )}
-                  </>
-                ))}
-                <div onClick={(ev) => ev.stopPropagation()}>{content}</div>
-              </motion.div>
-            )}
-          </>
-        )}
+                  </div>
+                  {beforeItemsContent}
+                  <div className="pt-1">
+                    {items.map((item, _index) => (
+                      <>
+                        <div
+                          key={_index}
+                          onClick={(ev) => ev.stopPropagation()}
+                        >
+                          <button
+                            onClick={() => {
+                              if (item.onClick && !item.content) {
+                                item.onClick();
+                                if (autoClose) {
+                                  setIsOpen(false);
+                                }
+                              } else if (item.content) {
+                                toggleContent();
+                              }
+                            }}
+                            className={`w-full text-left px-4 py-2.5 md:py-1.5 hover:bg-text-100 transition flex items-center justify-between gap-4 rounded-lg disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent ${
+                              item.className
+                            } ${
+                              item.textColor ? item.textColor : "text-text-700"
+                            }`}
+                            disabled={item.disabled}
+                          >
+                            <div className="space-y-1">
+                              <div className="flex items-start gap-4">
+                                {item.icon}
+
+                                <div className="">
+                                  <p
+                                    className={`${
+                                      item.summary ? "font-medium" : ""
+                                    }`}
+                                  >
+                                    {item.label}
+                                  </p>
+                                  {item.summary && (
+                                    <p className="text-xs text-text-500">
+                                      {item.summary}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+
+                            {item.content && (
+                              <div
+                                className={`transition-transform ${
+                                  showContent ? "rotate-180" : "rotate-0"
+                                }`}
+                                onClick={toggleContent}
+                              >
+                                <ChevronDown
+                                  strokeWidth={1.5}
+                                  className="w-4 h-4"
+                                />
+                              </div>
+                            )}
+
+                            {item.rightContent}
+                          </button>
+
+                          {item.content && showContent && (
+                            <motion.div
+                              style={{ overflow: "hidden" }}
+                              initial={{ height: 0, opacity: 1 }}
+                              animate={{
+                                height: "auto",
+                                opacity: 1,
+                                transition: { type: "tween" },
+                              }}
+                              exit={{ height: 0, opacity: 1 }}
+                              className="px-4 pt-1"
+                            >
+                              {item.content}
+                            </motion.div>
+                          )}
+                        </div>
+                        {item.divide && (
+                          <div className="w-full h-px bg-text-200 my-1"></div>
+                        )}
+                      </>
+                    ))}
+                  </div>
+                  <div onClick={(ev) => ev.stopPropagation()}>{content}</div>
+                </motion.div>
+              )}
+            </>
+          )}
+        </AnimatePresence>
       </div>
 
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-          data-form-element="true"
-          className={`fixed top-0 left-0 bottom-0 right-0 z-20 ${
-            screenWidth <= 768 && mobileBottomSheet && "bg-black bg-opacity-40"
-          }`}
-          onClick={(ev) => {
-            ev.stopPropagation();
-            setIsOpen(false);
-          }}
-        ></motion.div>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            data-form-element="true"
+            className={`fixed top-0 left-0 bottom-0 right-0 z-20 ${
+              screenWidth <= 768 &&
+              mobileBottomSheet &&
+              "bg-black bg-opacity-60"
+            }`}
+            onClick={(ev) => {
+              ev.stopPropagation();
+              setIsOpen(false);
+            }}
+          ></motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
