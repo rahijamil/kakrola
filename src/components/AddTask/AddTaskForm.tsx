@@ -40,6 +40,7 @@ import {
 import { useRole } from "@/context/RoleContext";
 import { canEditTask } from "@/types/hasPermission";
 import { format } from "date-fns";
+import useScreen from "@/hooks/useScreen";
 
 const AddTaskForm = ({
   onClose,
@@ -261,6 +262,8 @@ const AddTaskForm = ({
     }
   };
 
+  const { screenWidth } = useScreen();
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="space-y-2 p-2">
@@ -329,17 +332,23 @@ const AddTaskForm = ({
           />
 
           <div className="flex justify-end gap-2 select-none">
-            <button
-              type="button"
-              onClick={() => {
-                resetTaskData();
-                onClose();
-              }}
-              className="px-3 py-[6px] text-[13px] text-text-600 transition bg-text-200 hover:bg-text-100 rounded-lg"
-              disabled={loading}
-            >
-              {isSmall ? <X strokeWidth={1.5} className="w-5 h-5" /> : "Cancel"}
-            </button>
+            {screenWidth > 768 && (
+              <button
+                type="button"
+                onClick={() => {
+                  resetTaskData();
+                  onClose();
+                }}
+                className="px-3 py-[6px] text-[13px] text-text-600 transition bg-text-200 hover:bg-text-100 rounded-lg"
+                disabled={loading}
+              >
+                {isSmall ? (
+                  <X strokeWidth={1.5} className="w-5 h-5" />
+                ) : (
+                  "Cancel"
+                )}
+              </button>
+            )}
             <button
               type="submit"
               className="px-3 py-[6px] text-[13px] text-white bg-primary-500 rounded-lg hover:bg-primary-700 disabled:bg-primary-600 disabled:cursor-not-allowed transition disabled:opacity-50"
@@ -347,7 +356,7 @@ const AddTaskForm = ({
             >
               {loading ? (
                 <>
-                  {isSmall ? (
+                  {isSmall || screenWidth <= 768 ? (
                     <Spinner color="white" />
                   ) : (
                     <div className="flex items-center gap-2">
@@ -358,7 +367,7 @@ const AddTaskForm = ({
                 </>
               ) : (
                 <>
-                  {isSmall ? (
+                  {isSmall || screenWidth <= 768 ? (
                     <SendHorizonal strokeWidth={1.5} className="w-5 h-5" />
                   ) : (
                     "Add task"

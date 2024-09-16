@@ -5,13 +5,15 @@ const KakrolaLogo = ({
   size = "sm",
   isTitle,
 }: {
-  size: "sm" | "md" | "lg";
+  size: "sm" | "md" | "lg" | "xl" | "2xl";
   isTitle?: boolean;
 }) => {
   const sizeClasses = {
     sm: "w-8 h-8",
     md: "w-10 h-10",
     lg: "w-16 h-16",
+    xl: "w-20 h-20",
+    "2xl": "w-24 h-24",
   };
 
   return (
@@ -19,14 +21,14 @@ const KakrolaLogo = ({
       <div className={`relative ${sizeClasses[size]}`}>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
           {/* <!-- White Background --> */}
-          <rect width="200" height="200" fill="#ffffff" />
+          <rect width="200" height="200" rx="16" ry="16" fill="#ffffff" />
 
           {/* <!-- Hashtag Symbol with Gradient and Shadow --> */}
           <defs>
             <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop
                 offset="0%"
-                style={{ stopColor: "005c83", stopOpacity: 1 }}
+                style={{ stopColor: "#005c83", stopOpacity: 1 }}
               />
               <stop
                 offset="100%"

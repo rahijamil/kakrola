@@ -222,7 +222,7 @@ const BoardViewColumn = ({
                 ref={boardDraggaleProvided.innerRef}
                 {...boardDraggaleProvided.draggableProps}
                 {...boardDraggaleProvided.dragHandleProps}
-                className={`rounded-lg w-72 min-w-72 md:w-[300px] md:min-w-[300px] h-fit max-h-[calc(100vh-190px)] md:max-h-[calc(100vh-150px)] overflow-y-auto cursor-default ${
+                className={`rounded-lg w-[calc(100vw-50px)] min-w-[calc(100vw-50px)] md:w-[300px] md:min-w-[300px] h-fit max-h-[calc(100vh-150px)] md:max-h-[calc(100vh-150px)] overflow-y-auto cursor-default ${
                   column.is_archived && "opacity-70"
                 }`}
               >

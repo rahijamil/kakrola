@@ -152,8 +152,8 @@ const ProjectsSelector = ({
         )
       }
       content={
-        <div className="text-[13px]">
-          <div className="p-2 border-b border-text-200">
+        <div className="text-[13px] pb-4">
+          <div className="p-2 border-b border-text-200 px-4">
             <Input
               howBig="xs"
               fullWidth
@@ -164,7 +164,7 @@ const ProjectsSelector = ({
             />
           </div>
 
-          <div className="max-h-[300px] overflow-y-auto py-1">
+          <div className="max-h-[300px] overflow-y-auto py-1 px-4">
             {/* Show Inbox if it matches the search query */}
             {isInbox && inboxMatches && (
               <div

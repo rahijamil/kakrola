@@ -9,6 +9,7 @@ import {
   Link,
   Logs,
   PencilLine,
+  SlidersHorizontal,
   SwatchBook,
   Trash2,
 } from "lucide-react";
@@ -18,6 +19,7 @@ import Dropdown from "../ui/Dropdown";
 import useFavorite from "@/hooks/useFavorite";
 import { useRouter } from "next/navigation";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import useScreen from "@/hooks/useScreen";
 
 const ActiveProjectMoreOptions = ({
   project,
@@ -52,7 +54,7 @@ const ActiveProjectMoreOptions = ({
 
   const { handleFavorite } = useFavorite({ project });
 
-  const { projectMembers } = useTaskProjectDataProvider();
+  const { projectMembers, setIsShowViewModal } = useTaskProjectDataProvider();
 
   // Find the current user project settings for the given project
   const currentProjectMember = projectMembers.find(
@@ -65,8 +67,12 @@ const ActiveProjectMoreOptions = ({
     : false;
 
   const handleCopyProjectLink = () => {
-    navigator.clipboard.writeText(`https://kakrola.com/project/${project.slug}`);
+    navigator.clipboard.writeText(
+      `https://kakrola.com/project/${project.slug}`
+    );
   };
+
+  const { screenWidth } = useScreen();
 
   return (
     <Dropdown
@@ -94,6 +100,18 @@ const ActiveProjectMoreOptions = ({
             setProjectEdit(true);
           },
         },
+        ...(screenWidth <= 768
+          ? [
+              {
+                id: 2,
+                label: "View",
+                icon: <SlidersHorizontal strokeWidth={1.5} className="w-4 h-4" />,
+                onClick: () => {
+                  setIsShowViewModal(true);
+                },
+              },
+            ]
+          : []),
         {
           id: 4,
           label: isFavorite ? "Remove from favorites" : "Add to favorites",

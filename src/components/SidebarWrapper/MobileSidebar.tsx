@@ -1,7 +1,7 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import {
   Inbox,
@@ -9,9 +9,11 @@ import {
   LucideProps,
   MessagesSquare,
   Menu,
+  Plus,
+  Search,
 } from "lucide-react";
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import AddTaskModal from "../AddTask/AddTaskModal";
 
 const menuItems: {
   id: number;
@@ -22,50 +24,62 @@ const menuItems: {
   path: string;
 }[] = [
   { id: 1, icon: Calendar, text: "My Tasks", path: "/app" },
-  { id: 2, icon: Inbox, text: "Inbox", path: "/app/inbox" },
-  { id: 3, icon: MessagesSquare, text: "DMs", path: "/app/dm" },
+  { id: 2, icon: MessagesSquare, text: "DMs", path: "/app/dm" },
+  { id: 3, icon: Search, text: "Search", path: "/app/search" },
   { id: 4, icon: Menu, text: "More", path: "/app/more" },
 ];
 
 const MobileSidebar = () => {
   const pathname = usePathname();
-  const { projectsLoading } = useTaskProjectDataProvider();
+  const router = useRouter();
+
+  const [showAddTaskModal, setShowAddTaskModal] = useState(false);
 
   return (
     <>
-      <aside className="group bg-primary-10 fixed bottom-0 left-0 right-0 z-20 border-t border-primary-50">
+      <aside className="group bg-primary-10 fixed bottom-0 left-0 right-0 z-20 border-t border-primary-50 select-none">
         <nav>
-          <ul className="grid grid-cols-4 pb-2 px-4 pt-1">
-            {menuItems.map((item) =>
-              projectsLoading ? (
-                <Skeleton
-                  key={item.id}
-                  height={16}
-                  width={150}
-                  borderRadius={9999}
-                  style={{ marginBottom: ".5rem" }}
-                />
-              ) : (
-                <li key={item.id}>
-                  <Link
-                    href={item.path}
-                    className={`flex flex-col items-center text-text-900 space-y-1`}
+          <ul className="grid grid-cols-4 p-4 px-2 pt-1 place-items-center">
+            {menuItems.map((item) => (
+              <li key={item.id}>
+                <button
+                  onClick={() => router.push(item.path)}
+                  className={`flex flex-col items-center text-text-900 space-y-0.5 transition`}
+                  onTouchStart={(ev) => {
+                    ev.currentTarget.classList.add("scale-95");
+                  }}
+                  onTouchEnd={(ev) => {
+                    ev.currentTarget.classList.remove("scale-95");
+                  }}
+                >
+                  <div
+                    className={`rounded-lg transition ${
+                      item.path === pathname && "bg-primary-100"
+                    } p-1 px-5`}
                   >
-                    <div
-                      className={`rounded-lg transition ${
-                        item.path === pathname && "bg-primary-100"
-                      } p-1`}
-                    >
-                      <item.icon strokeWidth={1.5} className={`w-5 h-5`} />
-                    </div>
-                    <span className="text-xs">{item.text}</span>
-                  </Link>
-                </li>
-              )
-            )}
+                    <item.icon strokeWidth={1.5} className={`w-5 h-5`} />
+                  </div>
+                  <span className="text-xs font-medium">{item.text}</span>
+                </button>
+              </li>
+            ))}
           </ul>
         </nav>
       </aside>
+
+      {/* Floating action button */}
+      <div className="fixed bottom-20 right-6 flex items-center justify-center z-50">
+        <button
+          className="flex items-center justify-center w-12 h-12 rounded-lg bg-primary-500 text-surface shadow-lg shadow-text-100"
+          onClick={() => setShowAddTaskModal(true)}
+        >
+          <Plus strokeWidth={1.5} className="w-6 h-6" />
+        </button>
+      </div>
+
+      {showAddTaskModal && (
+        <AddTaskModal onClose={() => setShowAddTaskModal(false)} />
+      )}
     </>
   );
 };

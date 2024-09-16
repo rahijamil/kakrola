@@ -24,6 +24,7 @@ import Dropdown from "@/components/ui/Dropdown";
 import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import useScreen from "@/hooks/useScreen";
 
 type IconType = React.ForwardRefExoticComponent<
   React.SVGProps<SVGSVGElement> & { title?: string; titleId?: string }
@@ -212,8 +213,9 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
   };
 
   const triggerRef = useRef(null);
+  const { screenWidth } = useScreen();
 
-  return (
+  return screenWidth > 768 ? (
     <Dropdown
       setIsOpen={setIsOpen}
       triggerRef={triggerRef}
@@ -305,6 +307,20 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
         </div>
       }
     />
+  ) : projectsLoading ? (
+    <Skeleton height={28} borderRadius={9999} width={100} />
+  ) : (
+    <button className="flex items-center gap-2">
+      <Image
+        src={profile?.avatar_url || "/default-avatar.png"}
+        alt={profile?.full_name || profile?.username || ""}
+        width={20}
+        height={20}
+        className="rounded-md object-cover max-w-5 max-h-5"
+      />
+
+      <p className="font-bold">{profile?.full_name}</p>
+    </button>
   );
 };
 

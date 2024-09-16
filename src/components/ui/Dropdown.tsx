@@ -325,21 +325,23 @@ const Dropdown: React.FC<DropdownProps> = ({
                           {item.rightContent}
                         </button>
 
-                        {item.content && showContent && (
-                          <motion.div
-                            style={{ overflow: "hidden" }}
-                            initial={{ height: 0, opacity: 1 }}
-                            animate={{
-                              height: "auto",
-                              opacity: 1,
-                              transition: { type: "tween" },
-                            }}
-                            exit={{ height: 0, opacity: 1 }}
-                            className="px-4 pt-1"
-                          >
-                            {item.content}
-                          </motion.div>
-                        )}
+                        <AnimatePresence>
+                          {item.content && showContent && (
+                            <motion.div
+                              style={{ overflow: "hidden" }}
+                              initial={{ height: 0, opacity: 1 }}
+                              animate={{
+                                height: "auto",
+                                opacity: 1,
+                                transition: { type: "tween" },
+                              }}
+                              exit={{ height: 0, opacity: 1 }}
+                              className="px-4 pt-1"
+                            >
+                              {item.content}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
                       {item.divide && (
                         <div className="w-full h-px bg-text-200 my-1"></div>
@@ -362,110 +364,140 @@ const Dropdown: React.FC<DropdownProps> = ({
                   id="fixed_dropdown"
                   data-form-element={dataFromElement}
                   onClick={(ev) => ev.stopPropagation()}
-                  onTouchStart={handleTouchStart}
-                  onTouchMove={handleTouchMove}
-                  onTouchEnd={handleTouchEnd}
-                  className={`fixed z-50 bg-surface shadow-lg rounded-t-2xl overflow-y-auto p-4 touch-none ${fullMode ? "inset-0" : "inset-x-0 bottom-0 h-auto max-h-[75vh]"}`}
+                  className={`fixed z-50 bg-surface shadow-lg rounded-t-2xl touch-none ${
+                    fullMode ? "inset-0" : "inset-x-0 bottom-0"
+                  }`}
                 >
-                  <div className="px-4 py-2 text-right border-b border-text-200 grid grid-cols-[55%_1fr] items-center">
-                    <h3 className="text-text-700 font-semibold">{title}</h3>
-
+                  <div
+                    className="space-y-2"
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                  >
+                    <div className="flex items-center justify-center pt-2">
+                      <div className="w-10 h-1 bg-text-200 rounded-full"></div>
+                    </div>
                     <div>
-                      <button
-                        className="text-primary-500 font-medium"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        Done
-                      </button>
+                      <div className="px-4 pb-2 grid grid-cols-[55%_1fr] items-center">
+                        <h3 className="text-text-700 font-bold">{title}</h3>
+
+                        {fullMode && (
+                          <div className="text-right">
+                            <button
+                              className="text-primary-500 font-semibold"
+                              onClick={() => setIsOpen(false)}
+                            >
+                              Done
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                      <div className="w-[calc(100%-2rem)] mx-auto h-px bg-text-200 my-1"></div>
                     </div>
                   </div>
-                  {beforeItemsContent}
-                  <div className="pt-1">
-                    {items.map((item, _index) => (
-                      <>
-                        <div
-                          key={_index}
-                          onClick={(ev) => ev.stopPropagation()}
-                        >
-                          <button
-                            onClick={() => {
-                              if (item.onClick && !item.content) {
-                                item.onClick();
-                                if (autoClose) {
-                                  setIsOpen(false);
-                                }
-                              } else if (item.content) {
-                                toggleContent();
-                              }
-                            }}
-                            className={`w-full text-left px-4 py-2.5 md:py-1.5 hover:bg-text-100 transition flex items-center justify-between gap-4 rounded-lg disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent ${
-                              item.className
-                            } ${
-                              item.textColor ? item.textColor : "text-text-700"
-                            }`}
-                            disabled={item.disabled}
+                  {beforeItemsContent && (
+                    <div className="px-4">{beforeItemsContent}</div>
+                  )}
+                  {items.length > 0 && (
+                    <div className="pb-4 h-automax-h-[50vh]overflow-y-auto">
+                      {items.map((item, _index) => (
+                        <>
+                          <div
+                            key={_index}
+                            onClick={(ev) => ev.stopPropagation()}
                           >
-                            <div className="space-y-1">
-                              <div className="flex items-start gap-4">
-                                {item.icon}
+                            <button
+                              onTouchStart={(ev) => {
+                                ev.currentTarget.classList.add("bg-text-100");
+                              }}
+                              onTouchEnd={(ev) =>
+                                ev.currentTarget.classList.remove("bg-text-100")
+                              }
+                              onClick={() => {
+                                if (item.onClick && !item.content) {
+                                  item.onClick();
+                                  if (autoClose) {
+                                    setIsOpen(false);
+                                  }
+                                } else if (item.content) {
+                                  toggleContent();
+                                }
+                              }}
+                              className={`relative overflow-hidden w-full text-left px-4 py-2.5 transition flex items-center justify-between gap-4 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent ${
+                                item.className
+                              } ${
+                                item.textColor
+                                  ? item.textColor
+                                  : "text-text-700"
+                              }`}
+                              disabled={item.disabled}
+                            >
+                              <div className="space-y-1">
+                                <div className="flex items-start gap-4">
+                                  {item.icon}
 
-                                <div className="">
-                                  <p
-                                    className={`${
-                                      item.summary ? "font-medium" : ""
-                                    }`}
-                                  >
-                                    {item.label}
-                                  </p>
-                                  {item.summary && (
-                                    <p className="text-xs text-text-500">
-                                      {item.summary}
+                                  <div className="">
+                                    <p
+                                      className={`${
+                                        item.summary ? "font-medium" : ""
+                                      }`}
+                                    >
+                                      {item.label}
                                     </p>
-                                  )}
+                                    {item.summary && (
+                                      <p className="text-xs text-text-500">
+                                        {item.summary}
+                                      </p>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
 
-                            {item.content && (
-                              <div
-                                className={`transition-transform ${
-                                  showContent ? "rotate-180" : "rotate-0"
-                                }`}
-                                onClick={toggleContent}
-                              >
-                                <ChevronDown
-                                  strokeWidth={1.5}
-                                  className="w-4 h-4"
-                                />
-                              </div>
-                            )}
+                              {item.content && (
+                                <div
+                                  className={`transition-transform ${
+                                    showContent ? "rotate-180" : "rotate-0"
+                                  }`}
+                                  onClick={toggleContent}
+                                >
+                                  <ChevronDown
+                                    strokeWidth={1.5}
+                                    className="w-4 h-4"
+                                  />
+                                </div>
+                              )}
 
-                            {item.rightContent}
-                          </button>
+                              {item.rightContent}
+                            </button>
 
-                          {item.content && showContent && (
-                            <motion.div
-                              style={{ overflow: "hidden" }}
-                              initial={{ height: 0, opacity: 1 }}
-                              animate={{
-                                height: "auto",
-                                opacity: 1,
-                                transition: { type: "tween" },
-                              }}
-                              exit={{ height: 0, opacity: 1 }}
-                              className="px-4 pt-1"
-                            >
-                              {item.content}
-                            </motion.div>
+                            <AnimatePresence>
+                              {item.content && showContent && (
+                                <motion.div
+                                  style={{ overflow: "hidden" }}
+                                  initial={{ height: 0, opacity: 1 }}
+                                  animate={{
+                                    height: "auto",
+                                    opacity: 1,
+                                    transition: { type: "tween" },
+                                  }}
+                                  exit={{ height: 0, opacity: 1 }}
+                                  className="px-4 pt-1"
+                                >
+                                  {item.content}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                          {item.divide && (
+                            <div className="w-[calc(100%-2rem)] mx-auto h-px bg-text-200 my-1"></div>
                           )}
-                        </div>
-                        {item.divide && (
-                          <div className="w-full h-px bg-text-200 my-1"></div>
-                        )}
-                      </>
-                    ))}
-                  </div>
-                  <div onClick={(ev) => ev.stopPropagation()}>{content}</div>
+                        </>
+                      ))}
+                    </div>
+                  )}
+                  {content && (
+                    <div onClick={(ev) => ev.stopPropagation()}>{content}</div>
+                  )}
                 </motion.div>
               )}
             </>

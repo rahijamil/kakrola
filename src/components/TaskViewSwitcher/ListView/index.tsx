@@ -42,6 +42,7 @@ import {
   canEditSection,
   canEditTask,
 } from "@/types/hasPermission";
+import useScreen from "@/hooks/useScreen";
 
 interface ListViewProps {
   groupedTasks: Record<string, TaskType[]>;
@@ -524,19 +525,21 @@ const ListView: React.FC<ListViewProps> = ({
     }
   };
 
+  const { screenWidth } = useScreen();
+
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="list" type="column" direction="vertical">
           {(listProvided) => (
             <div
-              className="overflow-auto w-full h-[calc(100vh-130px)] px-6"
+              className="overflow-auto w-full h-[calc(100vh-110px)] md:px-6 md:mt-4"
               ref={listProvided.innerRef}
               {...listProvided.droppableProps}
             >
               <table className="w-full min-w-[1000px] border-collapse">
                 <tr className="border-y border-text-200 text-xs divide-x divide-text-200 whitespace-nowrap flex sticky top-0 z-10 bg-background">
-                  <th className="p-2 text-left w-[40%] font-medium flex items-center gap-2 pl-8">
+                  <th className="p-2 text-left w-[30%] md:w-[40%] font-medium flex items-center gap-2 pl-4 md:pl-8">
                     <AlignLeft strokeWidth={2} className="w-4 h-4" />
                     <span>Task name</span>
                   </th>
@@ -576,20 +579,22 @@ const ListView: React.FC<ListViewProps> = ({
                           setShowTaskItemModal={setShowTaskItemModal}
                         />
 
-                        <AddNewSectionListView
-                          section={{
-                            id: "ungrouped",
-                            title: "Ungrouped",
-                            tasks: [],
-                          }}
-                          index={0}
-                          newSectionName={newSectionName}
-                          setNewSectionName={setNewSectionName}
-                          handleAddSection={handleAddSection}
-                          setShowAddSection={setShowAddSection}
-                          showAddSection={showAddSection}
-                          sectionAddLoading={sectionAddLoading}
-                        />
+                        {screenWidth > 768 && (
+                          <AddNewSectionListView
+                            section={{
+                              id: "ungrouped",
+                              title: "Ungrouped",
+                              tasks: [],
+                            }}
+                            index={0}
+                            newSectionName={newSectionName}
+                            setNewSectionName={setNewSectionName}
+                            handleAddSection={handleAddSection}
+                            setShowAddSection={setShowAddSection}
+                            showAddSection={showAddSection}
+                            sectionAddLoading={sectionAddLoading}
+                          />
+                        )}
                       </td>
                     </tr>
                   )}
@@ -609,7 +614,7 @@ const ListView: React.FC<ListViewProps> = ({
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                           >
-                            <td colSpan={5} className="p-0">
+                            <td colSpan={5} className="p-0 pb-4 md:pb-0">
                               <ListViewSection
                                 section={
                                   sections.find(
@@ -634,17 +639,18 @@ const ListView: React.FC<ListViewProps> = ({
                                 showTaskItemModal={showTaskItemModal}
                                 setShowTaskItemModal={setShowTaskItemModal}
                               />
-
-                              <AddNewSectionListView
-                                section={column}
-                                index={columnIndex}
-                                newSectionName={newSectionName}
-                                setNewSectionName={setNewSectionName}
-                                handleAddSection={handleAddSection}
-                                setShowAddSection={setShowAddSection}
-                                showAddSection={showAddSection}
-                                sectionAddLoading={sectionAddLoading}
-                              />
+                              {screenWidth > 768 && (
+                                <AddNewSectionListView
+                                  section={column}
+                                  index={columnIndex}
+                                  newSectionName={newSectionName}
+                                  setNewSectionName={setNewSectionName}
+                                  handleAddSection={handleAddSection}
+                                  setShowAddSection={setShowAddSection}
+                                  showAddSection={showAddSection}
+                                  sectionAddLoading={sectionAddLoading}
+                                />
+                              )}
                             </td>
                           </tr>
                         )}

@@ -93,11 +93,19 @@ const TeamProjects = ({
 
   return (
     <>
-      <div className="mt-4 px-2">
+      <div>
         {projectsLoading ? (
           <Skeleton width={20} borderRadius={9999} />
         ) : (
-          <div className="relative text-text-600 hover:bg-primary-50 rounded-lg transition flex items-center justify-between pr-1">
+          <div
+            onTouchStart={(ev) =>
+              ev.currentTarget.classList.add("bg-primary-50")
+            }
+            onTouchEnd={(ev) =>
+              ev.currentTarget.classList.remove("bg-primary-50")
+            }
+            className="relative text-text-600 md:hover:bg-primary-50 rounded-lg transition flex items-center justify-between pr-1"
+          >
             <Link
               href={`/app/${team.id}`}
               className={`w-full flex items-center justify-between pl-2 py-[7px] gap-1`}

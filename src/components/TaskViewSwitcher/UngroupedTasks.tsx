@@ -4,6 +4,7 @@ import TaskItem from "./TaskItem";
 import SectionAddTask from "./SectionAddTask";
 import { ProjectType, TaskType } from "@/types/project";
 import TaskItemForListView from "./ListView/TaskItemForListView";
+import useScreen from "@/hooks/useScreen";
 
 interface UngroupedTasksProps {
   tasks: TaskType[];
@@ -27,6 +28,8 @@ const UngroupedTasks: React.FC<UngroupedTasksProps> = ({
   const [showTaskDeleteConfirm, setShowTaskDeleteConfirm] = useState<
     string | null
   >(null);
+
+  const { screenWidth } = useScreen();
 
   return (
     <>
@@ -83,13 +86,15 @@ const UngroupedTasks: React.FC<UngroupedTasksProps> = ({
         )}
       </Droppable>
 
-      <SectionAddTask
-        showUngroupedAddTask={showUngroupedAddTask}
-        setShowUngroupedAddTask={setShowUngroupedAddTask}
-        project={project}
-        setTasks={setTasks}
-        tasks={tasks}
-      />
+      {screenWidth > 768 && (
+        <SectionAddTask
+          showUngroupedAddTask={showUngroupedAddTask}
+          setShowUngroupedAddTask={setShowUngroupedAddTask}
+          project={project}
+          setTasks={setTasks}
+          tasks={tasks}
+        />
+      )}
     </>
   );
 };

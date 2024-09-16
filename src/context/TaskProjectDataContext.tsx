@@ -20,6 +20,8 @@ const TaskProjectDataContext = createContext<{
   setActiveProject: React.Dispatch<React.SetStateAction<ProjectType | null>>;
   projectMembers: ProjectMemberType[];
   setProjectMembers: (members: ProjectMemberType[]) => void;
+  isShowViewModal: boolean;
+  setIsShowViewModal: React.Dispatch<React.SetStateAction<boolean>>
 }>({
   projects: [],
   setProjects: () => {},
@@ -32,6 +34,8 @@ const TaskProjectDataContext = createContext<{
   setActiveProject: () => {},
   projectMembers: [],
   setProjectMembers: () => {},
+  isShowViewModal: false,
+  setIsShowViewModal: () => {},
 });
 
 const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
@@ -61,6 +65,7 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
   // const { teams, setTeams, teamMemberships } = useTeams();
 
   const [activeProject, setActiveProject] = useState<ProjectType | null>(null);
+  const [isShowViewModal, setIsShowViewModal] = useState(false);
 
   return (
     <TaskProjectDataContext.Provider
@@ -76,6 +81,8 @@ const TaskProjectDataProvider = ({ children }: { children: ReactNode }) => {
         setActiveProject,
         projectMembers,
         setProjectMembers,
+        isShowViewModal,
+        setIsShowViewModal
       }}
     >
       {children}

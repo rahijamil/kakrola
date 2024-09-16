@@ -1,8 +1,8 @@
 "use client";
 import { useAuthProvider } from "@/context/AuthContext";
 import React from "react";
-import Image from "next/image";
 import useTheme from "@/hooks/useTheme";
+import KakrolaLogo from "../kakrolaLogo";
 
 const AppLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   const { loading } = useAuthProvider();
@@ -14,19 +14,8 @@ const AppLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
     return <>{children}</>;
   } else {
     return (
-      <div className="flex flex-col items-center justify-center w-full h-screen">
-        <div className="flex-1 flex items-center justify-center">
-          <Image
-            src="/kakrola.svg"
-            alt="Kakrola Logo"
-            width={100}
-            height={100}
-          />
-        </div>
-
-        <div className="pb-10">
-          <h1 className="text-xl font-semibold text-primary-600">Kakrola</h1>
-        </div>
+      <div className="flex items-center justify-center w-full h-screen bg-background">
+        <KakrolaLogo size="2xl" />
       </div>
     );
   }

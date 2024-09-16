@@ -88,17 +88,21 @@ const ProjectItem = ({
         </div>
       ) : (
         <div
+          onTouchStart={(ev) => ev.currentTarget.classList.add("bg-primary-50")}
+          onTouchEnd={(ev) =>
+            ev.currentTarget.classList.remove("bg-primary-50")
+          }
           className={`sidebar_project_item flex-1 flex items-center justify-between transition-colors rounded-lg text-text-900 pl-2 ${
             isDragging
               ? "bg-surface shadow-[0_0_8px_1px_rgba(0,0,0,0.2)]"
               : pathname === `/app/project/${project.slug}`
               ? "bg-primary-100"
-              : "hover:bg-primary-50"
+              : "md:hover:bg-primary-50"
           }`}
         >
           <Link
             href={`/app/project/${project.slug}`}
-            className={`p-[1px] w-full`}
+            className={`py-1 md:py-0 p-px w-full`}
             draggable={false}
           >
             <div className="flex items-center">
@@ -125,20 +129,22 @@ const ProjectItem = ({
                 </p>
               )}
 
-              <SidebarProjectMoreOptions
-                project={project}
-                stateActions={{
-                  setShowDeleteConfirm,
-                  setShowLeaveConfirm,
-                  setShowArchiveConfirm,
-                  setShowCommentOrActivity,
-                  setExportAsCSV,
-                  setImportFromCSV,
-                  setProjectEdit,
-                  setAboveBellow,
-                }}
-                setIsDragDisabled={setIsDragDisabled}
-              />
+              {screenWidth > 768 && (
+                <SidebarProjectMoreOptions
+                  project={project}
+                  stateActions={{
+                    setShowDeleteConfirm,
+                    setShowLeaveConfirm,
+                    setShowArchiveConfirm,
+                    setShowCommentOrActivity,
+                    setExportAsCSV,
+                    setImportFromCSV,
+                    setProjectEdit,
+                    setAboveBellow,
+                  }}
+                  setIsDragDisabled={setIsDragDisabled}
+                />
+              )}
             </div>
           </div>
         </div>

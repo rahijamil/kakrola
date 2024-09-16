@@ -15,8 +15,14 @@ import { Droppable } from "@hello-pangea/dnd";
 import TaskItem from "./TaskItem";
 import SectionAddTask from "./SectionAddTask";
 import TaskItemForListView from "./ListView/TaskItemForListView";
-import { ActivityAction, createActivityLog, EntityType } from "@/types/activitylog";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
+import useFoundFixedDropdown from "@/hooks/useFoundFixedDropdown";
+import useScreen from "@/hooks/useScreen";
 
 const ListViewSection = ({
   section,
@@ -75,10 +81,10 @@ const ListViewSection = ({
     string | null
   >(null);
 
-  const {profile} = useAuthProvider();
+  const { profile } = useAuthProvider();
 
   const handleUpdateColumnTitle = async () => {
-    if(!profile?.id) return;
+    if (!profile?.id) return;
     if (columnTitle.trim().length && columnTitle.trim() !== section.name) {
       setSections(
         sections.map((s) => {
@@ -122,10 +128,24 @@ const ListViewSection = ({
     });
   };
 
+  const { foundFixedDropdown } = useFoundFixedDropdown();
+  const { screenWidth } = useScreen();
+
   return (
     <>
       <tr className="border-b border-text-200 block pt-2">
-        <td colSpan={5} className="flex items-center gap-1">
+        <td
+          onTouchStart={(ev) => ev.currentTarget.classList.add("bg-text-100")}
+          onTouchEnd={(ev) => ev.currentTarget.classList.remove("bg-text-100")}
+          colSpan={5}
+          className={`flex items-center gap-1 w-[100vw] md:w-full px-2 md:px-0 transition ${
+            !foundFixedDropdown && "sticky"
+          } md:static left-0`}
+          onClick={() =>
+            screenWidth <= 768 &&
+            toggleSection(section.id, !section.is_collapsed)
+          }
+        >
           <button
             className={`p-1 hover:bg-text-100 transition rounded-lg ${
               !section.is_collapsed && "rotate-90"
@@ -135,7 +155,7 @@ const ListViewSection = ({
             <ChevronRightIcon className="w-4 h-4 text-text-700" />
           </button>
 
-          <div className="flex items-center gap-4 h-7 group">
+          <div className="flex items-center gap-4 h-7 group justify-between md:justify-start w-full">
             <div className="flex items-center gap-2">
               {!editColumnTitle ? (
                 <h3
@@ -169,7 +189,7 @@ const ListViewSection = ({
 
             <div
               className={`${
-                !editColumnTitle && "opacity-0 group-hover:opacity-100"
+                !editColumnTitle && "md:opacity-0 md:group-hover:opacity-100"
               }`}
             >
               <SectionMoreOptions
@@ -229,14 +249,16 @@ const ListViewSection = ({
 
               {provided.placeholder}
 
-              <SectionAddTask
-                section={section}
-                showAddTask={showAddTask}
-                setShowAddTask={setShowAddTask}
-                project={project}
-                setTasks={setTasks}
-                tasks={tasks}
-              />
+              {screenWidth > 768 && (
+                <SectionAddTask
+                  section={section}
+                  showAddTask={showAddTask}
+                  setShowAddTask={setShowAddTask}
+                  project={project}
+                  setTasks={setTasks}
+                  tasks={tasks}
+                />
+              )}
             </div>
           )}
         </Droppable>

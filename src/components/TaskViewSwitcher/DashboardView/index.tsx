@@ -143,7 +143,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({
 
   return (
     <div
-      className={`max-h-[calc(100vh_-_205px)] md:max-h-[calc(100vh_-_160px)] overflow-y-auto rounded-lg px-4 md:px-6 py-4`}
+      className={`max-h-[calc(100vh_-_165px)] md:max-h-[calc(100vh_-_160px)] overflow-y-auto rounded-lg px-4 md:px-6 py-4`}
     >
       <div
         className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-4 md:mb-8`}

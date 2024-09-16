@@ -13,6 +13,8 @@ import OnboardWrapper from "@/app/app/onboard/OnboardWrapper";
 import Hcaptcha from "./Hcaptcha";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import axios from "axios";
+import KakrolaLogo from "@/app/kakrolaLogo";
+import useScreen from "@/hooks/useScreen";
 
 interface AuthFormProps {
   type: "signup" | "login" | "forgotPassword" | "updatePassword";
@@ -212,10 +214,20 @@ const AuthForm: React.FC<AuthFormProps> = ({
     }
   };
 
+  const { screenWidth } = useScreen();
+
   return (
     <OnboardWrapper
       leftSide={
-        <>
+        <div className="px-4 md:px-0 space-y-6 md:space-y-8">
+          {screenWidth <= 768 && (
+            <div className="pb-8">
+              <Link href="/" className="flex items-center justify-center">
+                <KakrolaLogo size="sm" isTitle />
+              </Link>
+            </div>
+          )}
+
           <div className="max-w-xs">
             <h2 className="text-3xl font-bold text-text-900">
               {type === "signup" && "Join Kakrola Today!"}
@@ -338,7 +350,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
           {additionalInfo}
           {additionalFooter}
-        </>
+        </div>
       }
       rightSide={
         type == "login" ? (

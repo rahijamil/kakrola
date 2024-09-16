@@ -392,7 +392,9 @@ const LayoutWrapper = ({
                   )}
                 </div>
 
-                <div className={`${screenWidth > 768 ? "flex-1" : "flex-[.94]"}`}>
+                <div
+                  className={`flex-1`}
+                >
                   {children}
                 </div>
               </div>

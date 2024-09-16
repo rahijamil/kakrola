@@ -55,7 +55,7 @@ const OnboardWrapper = ({
             )}
 
             <div
-              className={`flex h-[calc(100vh-10rem)] overflow-y-auto onboard_scrollbar ${
+              className={`flex md:h-[calc(100vh-10rem)] overflow-y-auto onboard_scrollbar ${
                 currentStep != 5 && typeof currentStep == "number"
                   ? "items-center"
                   : "mt-5"

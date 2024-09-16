@@ -302,7 +302,7 @@ const TaskItemForListView = ({
             >
               <>
                 <td
-                  className={`w-[40%] pl-8 flex items-center justify-between gap-4 group ring-1 ring-transparent h-10 ${
+                  className={`w-[30%] md:w-[40%] pl-4 md:pl-8 flex items-center justify-between gap-4 group ring-1 ring-transparent h-10 ${
                     editTaskTitle ? "bg-primary-10" : "hover:ring-primary-300"
                   }`}
                   onClick={() => setShowAddTask && setShowAddTask(null)}
@@ -319,41 +319,43 @@ const TaskItemForListView = ({
                         setShowModal && setShowModal(task.id.toString());
                       }}
                     >
-                      {!editTaskTitle ? (
-                        <h2
-                          onClick={(ev) => {
-                            ev.stopPropagation();
-                            setEditTaskTitle(true);
-                          }}
-                          className={`${
-                            task.is_completed
-                              ? "line-through text-text-500"
-                              : ""
-                          } line-clamp-1 cursor-pointer h-10 flex items-center w-full`}
-                        >
-                          {task.title}
-                        </h2>
-                      ) : (
-                        <input
-                          value={taskData.title}
-                          onChange={(ev) =>
-                            setTaskData({
-                              ...taskData,
-                              title: ev.target.value,
-                            })
-                          }
-                          className="outline-none w-full bg-surface rounded-lg px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 h-7"
-                          onKeyDown={(ev) => {
-                            if (ev.key === "Enter") {
-                              handleUpdateTaskTitle();
+                      <div className="w-full">
+                        {!editTaskTitle ? (
+                          <h2
+                            onClick={(ev) => {
+                              ev.stopPropagation();
+                              setEditTaskTitle(true);
+                            }}
+                            className={`${
+                              task.is_completed
+                                ? "line-through text-text-500"
+                                : ""
+                            } line-clamp-1 cursor-pointer h-10 flex items-center w-full`}
+                          >
+                            {task.title}
+                          </h2>
+                        ) : (
+                          <input
+                            value={taskData.title}
+                            onChange={(ev) =>
+                              setTaskData({
+                                ...taskData,
+                                title: ev.target.value,
+                              })
                             }
-                          }}
-                          onBlur={handleUpdateTaskTitle}
-                          autoFocus
-                          onFocus={(ev) => ev.target.select()}
-                          onClick={(ev) => ev.stopPropagation()}
-                        />
-                      )}
+                            className="outline-none w-full bg-surface rounded-lg px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 h-7"
+                            onKeyDown={(ev) => {
+                              if (ev.key === "Enter") {
+                                handleUpdateTaskTitle();
+                              }
+                            }}
+                            onBlur={handleUpdateTaskTitle}
+                            autoFocus
+                            onFocus={(ev) => ev.target.select()}
+                            onClick={(ev) => ev.stopPropagation()}
+                          />
+                        )}
+                      </div>
 
                       {subTasks.length > 0 && (
                         <button

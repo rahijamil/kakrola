@@ -20,7 +20,13 @@ import "react-loading-skeleton/dist/skeleton.css";
 import ProjectPlusDropdown from "./ProjectPlusDropdown";
 import useScreen from "@/hooks/useScreen";
 
-const MyProjects = ({ sidebarWidth, setShowAddProjectModal }: { sidebarWidth: number, setShowAddProjectModal: Dispatch<SetStateAction<boolean>> }) => {
+const MyProjects = ({
+  sidebarWidth,
+  setShowAddProjectModal,
+}: {
+  sidebarWidth: number;
+  setShowAddProjectModal: Dispatch<SetStateAction<boolean>>;
+}) => {
   const { profile } = useAuthProvider();
   const {
     projects: allProjects,
@@ -81,16 +87,22 @@ const MyProjects = ({ sidebarWidth, setShowAddProjectModal }: { sidebarWidth: nu
     }
   };
 
-  const {screenWidth} = useScreen()
+  const { screenWidth } = useScreen();
 
   return (
     <>
-      <div className="mt-4 px-2">
+      <div>
         {projectsLoading ? (
           <Skeleton height={16} width={150} borderRadius={9999} />
         ) : (
           <div
-            className={`relative text-text-600 rounded-lg transition duration-150 hover:bg-primary-50 flex items-center justify-between pr-1 ${
+            onTouchStart={(ev) =>
+              ev.currentTarget.classList.add("bg-primary-50")
+            }
+            onTouchEnd={(ev) =>
+              ev.currentTarget.classList.remove("bg-primary-50")
+            }
+            className={`relative text-text-600 rounded-lg transition md:hover:bg-primary-50 flex items-center justify-between pr-1 ${
               pathname.startsWith("/app/projects") && "bg-primary-100"
             }`}
           >
@@ -135,8 +147,15 @@ const MyProjects = ({ sidebarWidth, setShowAddProjectModal }: { sidebarWidth: nu
               </div>
             </Link>
 
-            <div className={`${screenWidth > 768 && "opacity-0 group-hover:opacity-100"} transition flex items-center`}>
-              <ProjectPlusDropdown forPersonal setShowAddProjectModal={setShowAddProjectModal}/>
+            <div
+              className={`${
+                screenWidth > 768 && "opacity-0 group-hover:opacity-100"
+              } transition flex items-center`}
+            >
+              <ProjectPlusDropdown
+                forPersonal
+                setShowAddProjectModal={setShowAddProjectModal}
+              />
 
               <button
                 className="p-1 hover:bg-primary-100 rounded-lg transition duration-150"
@@ -216,8 +235,6 @@ const MyProjects = ({ sidebarWidth, setShowAddProjectModal }: { sidebarWidth: nu
             ))}
         </div>
       </div>
-
-
     </>
   );
 };

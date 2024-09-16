@@ -15,6 +15,7 @@ import AnimatedTaskCheckbox from "./TaskViewSwitcher/AnimatedCircleCheck";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { ProjectType, TaskPriority } from "@/types/project";
 import useScreen from "@/hooks/useScreen";
+import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
 
 const allViews: {
   id: number;
@@ -118,15 +119,18 @@ const LayoutView = ({
     }
   };
 
+  const { isShowViewModal, setIsShowViewModal } = useTaskProjectDataProvider();
+  const viewModalTrigger = useRef(null);
+
   const { screenWidth } = useScreen();
 
-  return (
+  return screenWidth > 768 ? (
     <div
       className={`flex items-center gap-1 ${
         view !== "List" && "border-b border-text-200"
       }`}
     >
-      <ul className={`flex items-center gap-1 ${screenWidth <= 768 && "overflow-x-auto"}`}>
+      <ul className={`flex items-center gap-1`}>
         {views
           .filter((v) => v.visible)
           .map(
@@ -153,43 +157,65 @@ const LayoutView = ({
       </ul>
 
       {/* {!forPreview && (
-        <Dropdown
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          triggerRef={triggerRef}
-          Label={({ onClick }) => (
-            <div
-              ref={triggerRef}
-              className={`rounded-lg cursor-pointer transition p-1.5 text-text-500 mb-1.5 ${
-                "" ? "bg-text-100" : "hover:bg-text-100"
-              }`}
-              onClick={onClick}
-            >
-              <Plus size={16} />
-            </div>
-          )}
-          items={views.map((v) => ({
-            id: v.id,
-            label: v.name,
-            icon: v.icon,
-            disabled: v.name === "List", // List view is disabled
-            onClick: () => handleSelectedViews(v),
-            rightContent: (
-              <AnimatedTaskCheckbox
-                priority={
-                  v.name === "List" ? TaskPriority.Priority : TaskPriority.P3
-                }
-                playSound={false}
-                handleCheckSubmit={() => handleSelectedViews(v)}
-                is_completed={v.visible!}
-                disabled={v.name === "List"}
-              />
-            ),
-          }))}
-          autoClose={false}
-        />
-      )} */}
+      <Dropdown
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        triggerRef={triggerRef}
+        Label={({ onClick }) => (
+          <div
+            ref={triggerRef}
+            className={`rounded-lg cursor-pointer transition p-1.5 text-text-500 mb-1.5 ${
+              "" ? "bg-text-100" : "hover:bg-text-100"
+            }`}
+            onClick={onClick}
+          >
+            <Plus size={16} />
+          </div>
+        )}
+        items={views.map((v) => ({
+          id: v.id,
+          label: v.name,
+          icon: v.icon,
+          disabled: v.name === "List", // List view is disabled
+          onClick: () => handleSelectedViews(v),
+          rightContent: (
+            <AnimatedTaskCheckbox
+              priority={
+                v.name === "List" ? TaskPriority.Priority : TaskPriority.P3
+              }
+              playSound={false}
+              handleCheckSubmit={() => handleSelectedViews(v)}
+              is_completed={v.visible!}
+              disabled={v.name === "List"}
+            />
+          ),
+        }))}
+        autoClose={false}
+      />
+    )} */}
     </div>
+  ) : (
+    <Dropdown
+      isOpen={isShowViewModal}
+      setIsOpen={setIsShowViewModal}
+      triggerRef={viewModalTrigger}
+      Label={() => null}
+      items={views.map((v) => ({
+        id: v.id,
+        label: v.name,
+        icon: v.icon,
+        onClick: () => setView(v.name),
+        rightContent: v.name == view && (
+          <AnimatedTaskCheckbox
+            priority={TaskPriority.P3}
+            playSound={false}
+            handleCheckSubmit={() => setView(v.name)}
+            is_completed={v.name == view}
+          />
+        ),
+      }))}
+      title="View"
+    />
   );
 };
 

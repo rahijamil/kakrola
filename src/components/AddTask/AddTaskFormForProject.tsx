@@ -254,7 +254,7 @@ const AddTaskFormForProject = ({
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="w-full">
       <div className="border-b border-text-200 bg-transparent flex items-center font-medium h-10 overflow-hidden text-xs divide-x divide-text-200 pl-7 whitespace-nowrap">
-        <div className={`w-[40%] flex items-center gap-2 py-2 pr-4`}>
+        <div className={`w-[30%] md:w-[40%] flex items-center gap-2 py-2 pr-4`}>
           <AnimatedCircleCheck
             handleCheckSubmit={() => {}}
             priority={taskData.priority}

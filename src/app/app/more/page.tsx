@@ -12,6 +12,7 @@ import {
   SwatchBook,
   MessagesSquare,
   Plus,
+  Settings,
 } from "lucide-react";
 import AddTaskModal from "@/components/AddTask/AddTaskModal";
 import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
@@ -26,7 +27,7 @@ import MyProjects from "@/components/SidebarWrapper/Sidebar/MyProjects";
 import TeamProjects from "@/components/SidebarWrapper/Sidebar/TeamProjects";
 import useScreen from "@/hooks/useScreen";
 
-const menuItems: {
+const moreMenuItems: {
   id: number;
   icon: React.ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
@@ -34,17 +35,7 @@ const menuItems: {
   text: string;
   path?: string;
   onClick?: () => void;
-}[] = [
-  { id: 1, icon: Calendar, text: "My Tasks", path: "/app" },
-  { id: 2, icon: Inbox, text: "Inbox", path: "/app/inbox" },
-  // {
-  //   id: 5,
-  //   icon: LayoutPanelTop,
-  //   text: "Filters & Labels",
-  //   path: "/app/filters-labels",
-  // },
-  { id: 3, icon: MessagesSquare, text: "DMs", path: "/app/dm" },
-];
+}[] = [{ id: 1, icon: Inbox, text: "Inbox", path: "/app/inbox" }];
 
 const MobileMorePage = () => {
   const { screenWidth } = useScreen();
@@ -92,10 +83,12 @@ const MobileMorePage = () => {
     };
   }, []);
 
+  const pathname = usePathname();
+
   return (
     <>
       <aside className="h-[calc(100vh-57px)] flex flex-col w-full bg-primary-10">
-        <div className="pb-4 p-2 flex items-center justify-between relative">
+        <div className="mb-4 p-2 px-4 flex items-center justify-between relative border-b border-primary-50">
           <ProfileMoreOptions
             setShowAddTeam={setShowAddTeam}
             setShowLogoutConfirm={setShowLogoutConfirm}
@@ -116,28 +109,73 @@ const MobileMorePage = () => {
               <button
                 className={`text-text-700 hover:bg-primary-50 rounded-lg transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
               >
-                <Search strokeWidth={1.5} width={20} />
+                <Bell strokeWidth={1.5} width={20} />
               </button>
 
               <button
                 className={`text-text-700 hover:bg-primary-50 rounded-lg transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
               >
-                <Bell strokeWidth={1.5} width={20} />
-              </button>
-
-              <button
-                onClick={() => setShowAddTaskModal(true)}
-                className="flex items-center gap-1 text-primary-600 font-semibold hover:bg-primary-50 rounded-lg transition-colors duration-150 z-10 w-8 h-8 justify-center"
-              >
-                <div className="w-5 h-5 bg-primary-500 rounded-full">
-                  <Plus className="w-5 h-5 text-surface" strokeWidth={1.5} />
-                </div>
+                <Settings strokeWidth={1.5} width={20} />
               </button>
             </div>
           )}
         </div>
 
-        <nav className="flex-grow overflow-y-auto">
+        <nav className="flex-grow overflow-y-auto space-y-4 px-4 md:px-2">
+          <ul>
+            {moreMenuItems.map((item) =>
+              projectsLoading ? (
+                <Skeleton
+                  key={item.id}
+                  height={16}
+                  width={150}
+                  borderRadius={9999}
+                  style={{ marginBottom: ".5rem" }}
+                />
+              ) : (
+                <li key={item.id}>
+                  {item.path ? (
+                    <Link
+                      onTouchStart={(ev) =>
+                        ev.currentTarget.classList.add("bg-primary-50")
+                      }
+                      onTouchEnd={(ev) =>
+                        ev.currentTarget.classList.remove("bg-primary-50")
+                      }
+                      href={item.path}
+                      className={`flex items-center p-2 rounded-lg transition-colors duration-150 text-text-900 ${
+                        item.path === pathname
+                          ? "bg-primary-100"
+                          : "md:hover:bg-primary-50"
+                      }`}
+                    >
+                      <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3" />
+                      {item.text}
+                    </Link>
+                  ) : (
+                    <button
+                      onTouchStart={(ev) =>
+                        ev.currentTarget.classList.add("bg-primary-50")
+                      }
+                      onTouchEnd={(ev) =>
+                        ev.currentTarget.classList.remove("bg-primary-50")
+                      }
+                      className={`flex items-center p-2 rounded-lg transition-colors duration-150 w-full ${
+                        item.path === pathname
+                          ? "bg-primary-500 text-surface"
+                          : "md:hover:bg-primary-50 text-text-700"
+                      }`}
+                      onClick={item.onClick}
+                    >
+                      <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3" />
+                      {item.text}
+                    </button>
+                  )}
+                </li>
+              )
+            )}
+          </ul>
+
           <FavoriteProjects
             setShowFavoritesProjects={setShowFavoritesProjects}
             showFavoritesProjects={showFavoritesProjects}
