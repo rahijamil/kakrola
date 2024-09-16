@@ -7,7 +7,7 @@ import { Rocket } from "lucide-react";
 const HeroSection = () => {
   return (
     <section className="pt-24 relative z-10 bg-white">
-      <div className="wrapper mt-16 sm:mt-24 space-y-8 lg:space-y-0">
+      <div className="wrapper mt-10 sm:mt-24 space-y-8 lg:space-y-0">
         <div className="text-center relative z-10">
           <h1 className="font-bold text-gray-900 text-4xl sm:text-5xl md:text-6xl lg:text-7xl flex items-center justify-center gap-4 sm:gap-8">
             Simplify Your Workflow

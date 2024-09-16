@@ -7,8 +7,11 @@ import LandingPageFooter from "./LandingPageFooter";
 import { Button } from "@/components/ui/button";
 import SectionsLayout from "./landingpage_sections/SectionsLayout";
 import HeroSection from "./landingpage_sections/HeroSection";
+import useScreen from "@/hooks/useScreen";
+import BottomNav from "./BottomNav";
 
 const LandingPage = () => {
+  const { screenWidth } = useScreen();
   return (
     <div className="min-h-screen">
       <LandingPageHeader />
@@ -53,7 +56,7 @@ const LandingPage = () => {
         </div>
       </main>
 
-      <LandingPageFooter />
+      {screenWidth > 768 ? <LandingPageFooter /> : <BottomNav />}
     </div>
   );
 };

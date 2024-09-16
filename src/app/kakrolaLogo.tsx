@@ -5,10 +5,11 @@ const KakrolaLogo = ({
   size = "sm",
   isTitle,
 }: {
-  size: "sm" | "md" | "lg" | "xl" | "2xl";
+  size: "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
   isTitle?: boolean;
 }) => {
   const sizeClasses = {
+    xs: "w-5 h-5",
     sm: "w-8 h-8",
     md: "w-10 h-10",
     lg: "w-16 h-16",

@@ -1,15 +1,20 @@
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MenuIcon, Rocket, XIcon } from "lucide-react";
+import { MenuIcon, MoreVertical, Rocket, XIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthProvider } from "@/context/AuthContext";
 import KakrolaLogo from "./kakrolaLogo";
+import useScreen from "@/hooks/useScreen";
+import Dropdown from "@/components/ui/Dropdown";
+import { useRouter } from "next/navigation";
 
 const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const { screenWidth } = useScreen();
   const { profile } = useAuthProvider();
+  const triggerRef = useRef(null);
+  const router = useRouter();
 
   const menuItems = [
     { id: 1, label: "Product", path: "#" },
@@ -29,12 +34,16 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
   return (
     <header>
       <nav
-        className={`fixed left-1/2 -translate-x-1/2 whitespace-nowrap z-30 bg-[#fff]/70 backdrop-blur-md shadow-md top-2 transition-all duration-300 rounded-lg w-11/12 lg:max-w-5xl border border-primary-200`}
+        className={`${
+          screenWidth > 768
+            ? "fixed left-1/2 -translate-x-1/2 whitespace-nowrap bg-[#fff]/70 backdrop-blur-md shadow-md top-2 transition-all duration-300 rounded-lg w-11/12 lg:max-w-5xl border border-primary-200"
+            : "fixed top-0 left-0 right-0 bg-background"
+        } z-30`}
       >
-        <div className="max-w-7xl mx-auto px-3">
-          <div className="flex justify-between items-center h-16">
+        <div className="w-full max-w-7xl mx-auto px-3">
+          <div className="flex justify-between items-center h-12 md:h-16">
             <Link href="/" className="flex-shrink-0 flex items-center">
-              <KakrolaLogo size="md" isTitle />
+              <KakrolaLogo size={screenWidth > 768 ? "md" : "sm"} isTitle />
             </Link>
 
             {!forAuth && (
@@ -90,89 +99,38 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
               </div>
             )}
 
-            <div className="lg:hidden">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-text-700 transition p-2"
-              >
-                {isMenuOpen ? (
-                  <XIcon className="h-6 w-6" />
-                ) : (
-                  <MenuIcon className="h-6 w-6" />
+            {screenWidth <= 1024 && (
+              <Dropdown
+                triggerRef={triggerRef}
+                isOpen={isMenuOpen}
+                setIsOpen={setIsMenuOpen}
+                Label={({ onClick }) => (
+                  <button
+                    ref={triggerRef}
+                    onClick={onClick}
+                    onTouchStart={(ev) =>
+                      ev.currentTarget.classList.add("bg-text-100")
+                    }
+                    onTouchEnd={(ev) =>
+                      ev.currentTarget.classList.remove("bg-text-100")
+                    }
+                    className="text-text-700 transition p-1 rounded-lg"
+                  >
+                    <MoreVertical className="h-5 w-5" />
+                  </button>
                 )}
-              </button>
-            </div>
+                items={[
+                  ...menuItems.map((menu) => ({
+                    id: menu.id,
+                    label: menu.label,
+                    onClick: () => router.push(menu.path),
+                  })),
+                ]}
+              />
+            )}
           </div>
         </div>
-
-        {/* Mobile menu */}
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0.8 }}
-            animate={{ opacity: 1 }}
-            transition={{
-              duration: 0.3,
-            }}
-            className="lg:hidden bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] p-4 border-t border-text-200"
-          >
-            <div className="space-y-4">
-              <div className="space-y-1">
-                {menuItems.map((item) => (
-                  <Link
-                    key={item.id}
-                    href={item.path}
-                    className="block px-3 py-2 rounded-lg text-base font-medium text-text-700 hover:text-primary-600 hover:bg-primary-50 transition"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-              <div className="border-t border-text-200 flex items-center gap-4 pt-4">
-                {profile?.id ? (
-                  <>
-                    <Link href="/app" className="block flex-1">
-                      <Button variant="gray" className="w-full justify-center">
-                        Open Kakrola
-                      </Button>
-                    </Link>
-                    <Link href="/pricing" className="block flex-1">
-                      <Button className="w-full justify-center">
-                        Upgrade to Pro
-                      </Button>
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <Link href="/auth/login" className="block flex-1">
-                      <Button variant="ghost" className="w-full justify-center">
-                        Log in
-                      </Button>
-                    </Link>
-                    <Link href="/auth/signup" className="block flex-1">
-                      <Button className="w-full justify-center">
-                        Start free trial
-                      </Button>
-                    </Link>
-                  </>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        )}
       </nav>
-
-      {isMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0.8 }}
-          animate={{ opacity: 1 }}
-          transition={{
-            duration: 0.3,
-          }}
-          onClick={() => setIsMenuOpen(false)}
-          className="fixed top-64 left-0 bottom-0 right-0 bg-black/70 backdrop-blur-md z-20"
-        ></motion.div>
-      )}
     </header>
   );
 };
