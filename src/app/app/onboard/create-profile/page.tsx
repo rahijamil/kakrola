@@ -13,7 +13,11 @@ import { useAuthProvider } from "@/context/AuthContext";
 import Spinner from "@/components/ui/Spinner";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { avatarUploader } from "@/utils/avatarUploader";
-import { ActivityAction, createActivityLog, EntityType } from "@/types/activitylog";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
 
 const Step1CreateProfile = () => {
   const { profile } = useAuthProvider();
@@ -41,14 +45,12 @@ const Step1CreateProfile = () => {
 
   const handleSubmit = async () => {
     try {
-     
-
       if (!name.trim() && !fileUrl && !profile?.id) {
         setLoading(false);
         return;
       }
 
-      if(!profile?.id) return;
+      if (!profile?.id) return;
 
       setLoading(true);
 
@@ -77,7 +79,7 @@ const Step1CreateProfile = () => {
               full_name: name.trim(),
             },
           },
-        })
+        });
       }
 
       if (useWithTeam) {
@@ -94,10 +96,14 @@ const Step1CreateProfile = () => {
     <OnboardWrapper
       leftSide={
         <>
-          {" "}
-          <h1 className="text-3xl font-bold text-text-900">
-            Create your profile
-          </h1>
+          <div className="space-y-3 text-center">
+            <h1 className="text-xl md:text-3xl font-bold text-text-900">
+              Create your profile
+            </h1>
+            <p className="text-text-500">
+              This is how you&apos;ll appear in Kakrola
+            </p>
+          </div>
           <div className="space-y-4">
             <div>
               <label
@@ -131,9 +137,9 @@ const Step1CreateProfile = () => {
             <button
               type="button"
               onClick={() => setUseWithTeam(!useWithTeam)}
-              className="flex items-center justify-between w-full cursor-pointer rounded-lg border border-text-300 hover:border-text-400 focus:border-text-300 bg-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-50 px-4 h-12"
+              className="flex items-center justify-between w-full cursor-pointer rounded-lg border border-text-300 hover:border-text-400 focus:border-text-300 bg-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-50 px-3 md:px-4 min-h-10 gap-1"
             >
-              <span className="text-sm font-medium text-text-700">
+              <span className="font-medium text-text-700">
                 I want to use Kakrola with my team
               </span>
               <div className="pointer-events-none h-5">

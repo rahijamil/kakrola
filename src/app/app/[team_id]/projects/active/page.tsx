@@ -1,7 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { useAuthProvider } from "@/context/AuthContext";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import {
   ChevronDown,
   Ellipsis,
@@ -16,7 +16,7 @@ import React from "react";
 
 const AppProjectsActivePage = () => {
   const { profile } = useAuthProvider();
-  const { projects } = useTaskProjectDataProvider();
+  const { projects } = useSidebarDataProvider();
 
   const activeProjects = projects.filter(
     (p) => p.team_id == null && !p.is_archived

@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from "react";
 import ConfirmAlert from "../../AlertBox/ConfirmAlert";
 import { ProjectType } from "@/types/project";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import {
   ActivityAction,
@@ -19,7 +19,7 @@ const ProjectDeleteConfirm = ({
   project: ProjectType;
   setShowDeleteConfirm: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { projects, setProjects } = useTaskProjectDataProvider();
+  const { projects, setProjects } = useSidebarDataProvider();
   const { profile } = useAuthProvider();
 
   const {role} = useRole()

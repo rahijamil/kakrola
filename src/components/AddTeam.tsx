@@ -276,7 +276,7 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
           </div>
         </form>
 
-        <div className="px-6 pb-6 text-xs text-text-500">
+        <div className="px-6 pb-6 text-xs text-text-500 whitespace-normal">
           By creating a team, you agree to our{" "}
           <Link href="#" className="text-blue-600 hover:underline">
             Terms of Service

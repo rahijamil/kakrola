@@ -18,7 +18,7 @@ import { ProjectType } from "@/types/project";
 import Dropdown from "../ui/Dropdown";
 import useFavorite from "@/hooks/useFavorite";
 import { useRouter } from "next/navigation";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import useScreen from "@/hooks/useScreen";
 
 const ActiveProjectMoreOptions = ({
@@ -54,7 +54,7 @@ const ActiveProjectMoreOptions = ({
 
   const { handleFavorite } = useFavorite({ project });
 
-  const { projectMembers, setIsShowViewModal } = useTaskProjectDataProvider();
+  const { projectMembers, setIsShowViewModal } = useSidebarDataProvider();
 
   // Find the current user project settings for the given project
   const currentProjectMember = projectMembers.find(

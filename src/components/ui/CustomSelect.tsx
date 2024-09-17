@@ -180,16 +180,24 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       content={
         <ul
           data-form-element={true}
-          className="max-h-60 overflow-auto"
+          className="max-h-60 overflow-auto pb-4 md:py-1"
           role="listbox"
         >
           {options.map((option, index) => (
             <li
+              onTouchStart={(ev) =>
+                ev.currentTarget.classList.add("bg-text-100")
+              }
+              onTouchEnd={(ev) =>
+                ev.currentTarget.classList.remove("bg-text-100")
+              }
               key={option.value}
-              className={`px-4 cursor-pointer flex items-center justify-between rounded-lg ${
-                height ? height : "py-2"
+              className={`px-4 cursor-pointer flex items-center justify-between md:rounded-lg ${
+                height ? height : "py-2.5 md:py-2"
               } ${
-                index === highlightedIndex ? "bg-text-100" : "hover:bg-text-100"
+                index === highlightedIndex
+                  ? "bg-text-100"
+                  : "md:hover:bg-text-100"
               }`}
               onClick={() => {
                 onChange({
@@ -220,7 +228,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           ))}
         </ul>
       }
-      contentWidthClass={contentClassName}
+      contentWidthClass={
+        contentClassName ? contentClassName : "w-full max-w-sm"
+      }
     />
   );
 };

@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Poppins, Nunito } from "next/font/google";
 import "./globals.css";
-import TaskProjectDataProvider from "@/context/TaskProjectDataContext";
+import SidebarDataProvider from "@/context/SidebarDataContext";
 import AuthProvider from "@/context/AuthContext";
 import OnboardProvider from "@/context/OnboardContext";
 import GlobalOptionProvider from "@/context/GlobalOptionContext";
@@ -13,6 +13,7 @@ const poppins = Poppins({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   fallback: ["Helvetica", "Arial", "sans-serif"],
+  display: "swap"
 });
 
 const nunito = Nunito({ subsets: ["latin"], fallback: ["Helvetica", "Arial"] });
@@ -44,13 +45,13 @@ export default function RootLayout({
       <body className={poppins.className}>
         <ClientProviderWrapper>
           <AuthProvider>
-            <TaskProjectDataProvider>
+            <SidebarDataProvider>
               <OnboardProvider>
                 <GlobalOptionProvider>
                   <RoleProvider>{children}</RoleProvider>
                 </GlobalOptionProvider>
               </OnboardProvider>
-            </TaskProjectDataProvider>
+            </SidebarDataProvider>
           </AuthProvider>
         </ClientProviderWrapper>
       </body>

@@ -35,7 +35,7 @@ const Step2CustomizeKakrola = () => {
     <OnboardWrapper
       leftSide={
         <>
-          <h1 className="text-3xl font-bold text-text-900">
+          <h1 className="text-xl md:text-3xl font-bold text-text-900">
             Customize your <br /> Kakrola
           </h1>
 

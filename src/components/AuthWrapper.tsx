@@ -1,68 +1,91 @@
 import KakrolaLogo from "@/app/kakrolaLogo";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { motion } from "framer-motion";
-import useScreen, { Breakpoint } from "@/hooks/useScreen";
 import Link from "next/link";
+import ViewSkeleton from "./ViewSkeleton";
+import { projectViewsToSelect } from "@/data/project_views";
+import { ViewTypes } from "@/types/viewTypes";
+import { TaskPriority } from "@/types/project";
+import AnimatedCircleCheck from "@/components/TaskViewSwitcher/AnimatedCircleCheck";
+import useScreen from "@/hooks/useScreen";
 
 const AuthWrapper = ({
-  leftSide,
-  rightSide,
-  useWithTeam,
-  currentStep,
+  content,
+  type,
 }: {
-  leftSide: ReactNode;
-  rightSide: ReactNode;
-  useWithTeam?: boolean;
-  currentStep?: number;
+  content: ReactNode;
+  type: "signup" | "login" | "forgotPassword" | "updatePassword";
 }) => {
-  const { breakpoint, screenWidth } = useScreen();
-
-  const isShowRightSide = (["lg", "xl"] as Breakpoint["breakpoint"][]).includes(
-    breakpoint
-  );
+  const [activeView, setActiveView] = useState<ViewTypes["view"]>("List");
+  const { screenWidth } = useScreen();
 
   return (
-    <div className="min-h-screen overflow-hidden bg-background w-full">
-      <div
-        className={`${rightSide && "grid"} h-screen ${
-          isShowRightSide ? "grid-cols-2" : "grid-cols-1"
-        }`}
-      >
+    <div className="bg-background fixed inset-0 z-20 flex flex-col">
+      <div className="flex items-center p-3 md:px-6">
+        {/* <button
+          onClick={() => router.back()}
+          className="p-1 rounded-lg transition"
+          onTouchStart={(ev) => ev.currentTarget.classList.add("bg-text-100")}
+          onTouchEnd={(ev) => ev.currentTarget.classList.remove("bg-text-100")}
+        >
+          <ChevronLeft strokeWidth={1.5} size={24} />
+        </button> */}
+
+        <Link href="/">
+          <KakrolaLogo size="md" isTitle />
+        </Link>
+
+        <div className="w-7 h-7"></div>
+      </div>
+
+      <div className={`w-full md:w-11/12 mx-auto flex flex-1 gap-16`}>
         {/* Left Side */}
-        <div className="bg-surface">
-          {isShowRightSide && (
-            <Link href="/" className="flex items-center h-20 pl-32">
-              <KakrolaLogo size="md" isTitle />
-            </Link>
-          )}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className={`w-full space-y-8 mt-6 md:mt-20 md:flex justify-center`}
+        >
+          {content}
+        </motion.div>
 
-          <div className={`w-full md:w-11/12 max-w-sm lg:max-w-md mx-auto h-full`}>
-            <div
-              className={`flex md:h-[calc(100vh-10rem)] overflow-y-auto onboard_scrollbar md:mt-5`}
-            >
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className={`space-y-8 w-full ${
-                  isShowRightSide ? "p-6 md:p-10" : ""
-                }`}
-              >
-                {leftSide}
-              </motion.div>
-            </div>
-          </div>
-        </div>
+        {screenWidth > 768 && type == "signup" && (
+          <>
+            {/* Right Side */}
+            <div className="w-full space-y-8">
+              <ViewSkeleton activeView={activeView} />
 
-        {/* Right Side */}
-        {isShowRightSide && (
-          <div className="flex-grow bg-primary-50f bg-gradient-to-b from-primary-50 via-background to-primary-50">
-            <div className="flex items-center justify-center h-[80%]">
-              <div className="flex items-center justify-center w-full h-full">
-                {rightSide}
-              </div>
+              <ul className="flex gap-4 items-center justify-center">
+                {projectViewsToSelect.map((v) => (
+                  <li
+                    key={v.id}
+                    tabIndex={0}
+                    className={`flex items-center justify-center cursor-pointer rounded-lg px-4 border w-20 h-20 relative ${
+                      activeView === v.name
+                        ? "border-primary-500 bg-primary-25"
+                        : "border-text-200 hover:bg-text-50"
+                    } focus:outline-none`}
+                    onClick={() => setActiveView(v.name)}
+                  >
+                    <div className="flex flex-col items-center gap-1">
+                      {v.icon}
+                      <span className="text-text-700">{v.name}</span>
+                    </div>
+
+                    <div className="absolute top-1.5 right-1.5">
+                      <AnimatedCircleCheck
+                        handleCheckSubmit={() => setActiveView(v.name)}
+                        priority={TaskPriority.P3}
+                        is_completed={activeView === v.name}
+                        playSound={false}
+                        disabled
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
+          </>
         )}
       </div>
     </div>

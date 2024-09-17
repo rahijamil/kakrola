@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import {
   Inbox,
   Calendar,
@@ -41,7 +41,7 @@ const MobileMorePage = () => {
   const { screenWidth } = useScreen();
   const sidebarWidth = screenWidth;
 
-  const { teams, projectsLoading } = useTaskProjectDataProvider();
+  const { teams, projectsLoading } = useSidebarDataProvider();
 
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);

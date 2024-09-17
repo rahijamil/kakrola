@@ -1,4 +1,4 @@
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { ChevronRight, Heart } from "lucide-react";
 import React from "react";
 import ProjectItem from "./ProjectItem";
@@ -16,7 +16,7 @@ const FavoriteProjects = ({
   showFavoritesProjects: boolean;
 }) => {
   const { projects, projectsLoading, projectMembers } =
-    useTaskProjectDataProvider();
+    useSidebarDataProvider();
   const pathname = usePathname();
 
   // Create a set of favorite project IDs

@@ -3,7 +3,7 @@ import AddTask from "../AddTask";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import AddTaskFormForProject from "../AddTask/AddTaskFormForProject";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 
 const SectionAddTask = ({
   showAddTask,
@@ -34,7 +34,7 @@ const SectionAddTask = ({
     ? showAddTask === section.id
     : showUngroupedAddTask;
 
-  const { activeProject } = useTaskProjectDataProvider();
+  const { activeProject } = useSidebarDataProvider();
 
   return (
     <>

@@ -29,7 +29,7 @@ import CopyProjectLinkOption from "./CopyProjectLinkOption";
 import Dropdown from "@/components/ui/Dropdown";
 import { usePathname } from "next/navigation";
 import useFavorite from "@/hooks/useFavorite";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import {
   canArchiveProject,
   canCreateProject,
@@ -75,7 +75,7 @@ const SidebarProjectMoreOptions = ({
 
   const { handleFavorite } = useFavorite({ project });
 
-  const { projectMembers } = useTaskProjectDataProvider();
+  const { projectMembers } = useSidebarDataProvider();
 
   const { role } = useRole();
 

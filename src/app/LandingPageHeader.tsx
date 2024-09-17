@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
     { id: 1, label: "Product", path: "#" },
     { id: 2, label: "Teams", path: "#" },
     { id: 3, label: "Resources", path: "#" },
-    { id: 4, label: "Pricing", path: "#" },
+    { id: 4, label: "Pricing", path: "/pricing" },
   ];
 
   useEffect(() => {
@@ -33,14 +34,8 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
 
   return (
     <header>
-      <nav
-        className={`${
-          screenWidth > 768
-            ? "fixed left-1/2 -translate-x-1/2 whitespace-nowrap bg-[#fff]/70 backdrop-blur-md shadow-md top-2 transition-all duration-300 rounded-lg w-11/12 lg:max-w-5xl border border-primary-200"
-            : "fixed top-0 left-0 right-0 bg-background"
-        } z-30`}
-      >
-        <div className="w-full max-w-7xl mx-auto px-3">
+      <nav className={`fixed top-0 left-0 right-0 bg-background z-30`}>
+        <div className="wrapper">
           <div className="flex justify-between items-center h-12 md:h-16">
             <Link href="/" className="flex-shrink-0 flex items-center">
               <KakrolaLogo size={screenWidth > 768 ? "md" : "sm"} isTitle />
@@ -84,7 +79,7 @@ const LandingPageHeader = ({ forAuth }: { forAuth?: boolean }) => {
 
                     <Link href="/auth/signup" className="group">
                       <Button
-                        className="uppercase shadow-lg hover:shadow-xl transition-all"
+                        className="uppercase shadow-lg hover:shadow-xl transition-all hero_button"
                         rightContent={
                           <div className="bg-background text-primary-500 rounded-lg w-8 h-8 flex items-center justify-center">
                             <Rocket className="w-5 h-5" strokeWidth={1.5} />

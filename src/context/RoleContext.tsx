@@ -16,12 +16,12 @@ const RoleContext = createContext<{
 });
 
 import React from "react";
-import { useTaskProjectDataProvider } from "./TaskProjectDataContext";
+import { useSidebarDataProvider } from "./SidebarDataContext";
 import { useAuthProvider } from "./AuthContext";
 import { ProjectType } from "@/types/project";
 
 const RoleProvider = ({ children }: { children: ReactNode }) => {
-  const { projectMembers, teamMemberships } = useTaskProjectDataProvider();
+  const { projectMembers, teamMemberships } = useSidebarDataProvider();
   const { profile } = useAuthProvider();
 
   const role = useCallback(

@@ -2,7 +2,7 @@ import { TaskType } from "@/types/project";
 import React, { Dispatch, Fragment, SetStateAction, useState } from "react";
 import SectionAddTask from "./SectionAddTask";
 import TaskItem from "./TaskItem";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { Droppable } from "@hello-pangea/dnd";
 
 const ListViewForToday = ({
@@ -21,7 +21,7 @@ const ListViewForToday = ({
     null
   );
 
-  const { projects } = useTaskProjectDataProvider();
+  const { projects } = useSidebarDataProvider();
 
   return (
     <Droppable key={"today_tasks"} type="task" droppableId={"today_tasks"}>

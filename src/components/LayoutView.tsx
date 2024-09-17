@@ -15,7 +15,7 @@ import AnimatedTaskCheckbox from "./TaskViewSwitcher/AnimatedCircleCheck";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { ProjectType, TaskPriority } from "@/types/project";
 import useScreen from "@/hooks/useScreen";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 
 const allViews: {
   id: number;
@@ -119,7 +119,7 @@ const LayoutView = ({
     }
   };
 
-  const { isShowViewModal, setIsShowViewModal } = useTaskProjectDataProvider();
+  const { isShowViewModal, setIsShowViewModal } = useSidebarDataProvider();
   const viewModalTrigger = useRef(null);
 
   const { screenWidth } = useScreen();

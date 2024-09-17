@@ -7,7 +7,7 @@ import CommentOrActivityModal from "../../LayoutWrapper/CommentOrActivityModal";
 import ExportCSVModal from "./SidebarProjectMoreOptions/ExportCSVModal";
 import ImportCSVModal from "./SidebarProjectMoreOptions/ImportCSVModal";
 import AddEditProject from "../../AddEditProject";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { CheckCircle, Ellipsis, Hash, Users } from "lucide-react";
 import ProjectDeleteConfirm from "./ProjectDeleteConfirm";
 import ProjectArchiveConfirm from "./ProjectArchiveConfirm";
@@ -28,7 +28,7 @@ const ProjectItem = ({
   isDragging?: boolean;
   setIsDragDisabled?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { projectsLoading } = useTaskProjectDataProvider();
+  const { projectsLoading } = useSidebarDataProvider();
   const [tasks, setTasks] = useState<TaskType[]>([]);
 
   const { data: thisProjectAllMembers } = useQuery({

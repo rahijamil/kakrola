@@ -21,7 +21,7 @@ import { useAuthProvider } from "@/context/AuthContext";
 import Image from "next/image";
 import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
 import Dropdown from "@/components/ui/Dropdown";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import useScreen from "@/hooks/useScreen";
@@ -129,7 +129,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
 
   const router = useRouter();
   const { profile } = useAuthProvider();
-  const { projectsLoading } = useTaskProjectDataProvider();
+  const { projectsLoading } = useSidebarDataProvider();
 
   const menuItems: MenuGroup[] = [
     {

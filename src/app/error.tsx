@@ -7,7 +7,7 @@ const ErrorPage = ({ error, reset }: { error: Error; reset: () => void }) => {
   return (
     <OnboardWrapper
       leftSide={
-        <div className="space-y-4">
+        <div className="space-y-4 min-h-screen">
           <div>
             <h1 className="text-3xl font-bold text-red-500 mb-4">Oops!</h1>
             <p className="text-lg text-text-700 mb-4">

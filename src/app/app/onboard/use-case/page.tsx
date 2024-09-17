@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import OnboardWrapper from "../OnboardWrapper";
 import { Button } from "@/components/ui/button";
 import useCaseImage from "./use_case.png";
-import { BriefcaseBusiness, Hash, LucideIcon, User } from "lucide-react";
+import { BriefcaseBusiness, Hash, LucideIcon, Rocket, User } from "lucide-react";
 import AnimatedCircleCheck from "@/components/TaskViewSwitcher/AnimatedCircleCheck";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -12,7 +12,7 @@ import { useAuthProvider } from "@/context/AuthContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { TemplateProjectType } from "@/types/template";
 import { ProjectType, SectionType, TaskPriority, TaskType } from "@/types/project";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import Spinner from "@/components/ui/Spinner";
 import { ProjectMemberType } from "@/types/team";
 import { RoleType } from "@/types/role";
@@ -50,7 +50,7 @@ const Step2UseCase = () => {
   const router = useRouter();
   const { templateProjects, templateSsections, templateTasks } = useTemplates();
   const { profile } = useAuthProvider();
-  const { projectMembers } = useTaskProjectDataProvider();
+  const { projectMembers } = useSidebarDataProvider();
   const [loading, setLoading] = useState(false);
 
   const handleUseCaseClick = (useCase: UseCase) => {
@@ -286,7 +286,7 @@ const Step2UseCase = () => {
               disabled={!selectedUseCases.length || loading}
               rightContent={
                 <div className="bg-background text-primary-500 rounded-lg w-8 h-8 flex items-center justify-center">
-                  <Hash className="w-5 h-5" />
+                  <Rocket className="w-5 h-5" />
                 </div>
               }
             >

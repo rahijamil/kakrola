@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 
 import Priorities from "./Priorities";
@@ -43,7 +43,7 @@ const AddTaskFormForProject = ({
   taskForEdit?: TaskType;
   biggerTitle?: boolean;
 }) => {
-  const { projects, activeProject } = useTaskProjectDataProvider();
+  const { projects, activeProject } = useSidebarDataProvider();
   const { profile } = useAuthProvider();
 
   const [taskData, setTaskData] = useState<TaskType>(

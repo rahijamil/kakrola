@@ -24,13 +24,13 @@ import {
   X,
 } from "lucide-react";
 import AddTeam from "./AddTeam";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import Image from "next/image";
 
 const SettingsModal = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { teams } = useTaskProjectDataProvider();
+  const { teams } = useSidebarDataProvider();
 
   const [showAddTeam, setShowAddTeam] = useState(false);
 

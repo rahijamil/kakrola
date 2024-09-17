@@ -17,7 +17,7 @@ export default function AppLayout({
 }>) {
   return (
     <AppLayoutWrapper>
-      <main className="fixed top-0 left-0 bottom-0 right-0">
+      <main className="fixed top-0 left-0 bottom-0 right-0 bg-background">
         <div className="flex h-full">
           <SidebarWrapper />
           <div className="overflow-x-auto flex-1 transition-all duration-300">

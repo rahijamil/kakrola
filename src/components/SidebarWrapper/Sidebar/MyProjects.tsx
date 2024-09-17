@@ -1,4 +1,4 @@
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { ChevronRight, Plus } from "lucide-react";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import {
@@ -32,7 +32,7 @@ const MyProjects = ({
     projects: allProjects,
     setProjects,
     projectsLoading,
-  } = useTaskProjectDataProvider();
+  } = useSidebarDataProvider();
   const pathname = usePathname();
   const [showProjects, setShowProjects] = useState(true);
   const projects = allProjects.filter(

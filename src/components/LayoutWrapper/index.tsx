@@ -1,7 +1,7 @@
 "use client";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { CheckCircle, ChevronLeft, SlidersHorizontal } from "lucide-react";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { ProjectType, TaskType } from "@/types/project";
 import { ViewTypes } from "@/types/viewTypes";
@@ -68,7 +68,7 @@ const LayoutWrapper = ({
   );
 
   const { setProjects, projects, teams, activeProject } =
-    useTaskProjectDataProvider();
+    useSidebarDataProvider();
   const { setShowShareOption, showShareOption } = useGlobalOption();
   const { profile } = useAuthProvider();
   const { role } = useRole();

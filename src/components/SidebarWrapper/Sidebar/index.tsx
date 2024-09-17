@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import {
   Inbox,
   Calendar,
@@ -53,7 +53,7 @@ const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
   const pathname = usePathname();
 
   const { teams, projectsLoading } =
-    useTaskProjectDataProvider();
+    useSidebarDataProvider();
 
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);
@@ -140,8 +140,8 @@ const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
           )}
         </div>
 
-        <nav className="flex-grow overflow-y-auto">
-          <ul className="px-2">
+        <nav className="flex-grow overflow-y-auto space-y-4 px-2">
+          <ul>
             {menuItems.map((item) =>
               projectsLoading ? (
                 <Skeleton

@@ -1,15 +1,15 @@
-
+"use client";
 import React from "react";
-import Image from "next/image";
 import KakrolaLogo from "./kakrolaLogo";
+import useScreen from "@/hooks/useScreen";
+import BottomNav from "./BottomNav";
 
 const LandingPageFooter = () => {
-  return (
-    <footer className="bg-surface" aria-labelledby="footer-heading">
-      <h2 id="footer-heading" className="sr-only">
-        Footer
-      </h2>
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
+  const { screenWidth } = useScreen();
+
+  return screenWidth > 768 ? (
+    <footer className="bg-surface">
+      <div className="wrapper py-12 lg:py-16">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
             <KakrolaLogo size="lg" isTitle />
@@ -142,6 +142,8 @@ const LandingPageFooter = () => {
         </div>
       </div>
     </footer>
+  ) : (
+    <BottomNav />
   );
 };
 

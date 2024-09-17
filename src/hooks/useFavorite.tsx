@@ -1,12 +1,12 @@
 import { useAuthProvider } from "@/context/AuthContext";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { ActivityAction, createActivityLog, EntityType } from "@/types/activitylog";
 import { ProjectType } from "@/types/project";
 import { ProjectMemberType } from "@/types/team";
 import { supabaseBrowser } from "@/utils/supabase/client";
 
 const useFavorite = ({ project }: { project: ProjectType }) => {
-  const { projectMembers, setProjectMembers } = useTaskProjectDataProvider();
+  const { projectMembers, setProjectMembers } = useSidebarDataProvider();
   const { profile } = useAuthProvider();
 
   const handleFavorite = async () => {

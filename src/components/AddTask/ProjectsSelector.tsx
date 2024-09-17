@@ -1,5 +1,5 @@
 import { useAuthProvider } from "@/context/AuthContext";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { TaskType } from "@/types/project";
 import { Check, ChevronDown, CheckCircle, Inbox } from "lucide-react";
 import Image from "next/image";
@@ -26,7 +26,7 @@ const ProjectsSelector = ({
     projects,
     sectionsForProjectSelector: sections,
     teams,
-  } = useTaskProjectDataProvider();
+  } = useSidebarDataProvider();
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Filter projects based on the search query

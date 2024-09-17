@@ -18,6 +18,10 @@ const ProjectPlusDropdown = ({
 
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleCreatePage = async () => {
+    
+  };
+
   return (
     <>
       <Dropdown
@@ -56,9 +60,7 @@ const ProjectPlusDropdown = ({
             id: 2,
             label: "New Page",
             icon: <File strokeWidth={1.5} size={20} />,
-            onClick: () => {
-              // onChange(RoleType.ADMIN);
-            },
+            onClick: handleCreatePage,
             summary: "Create and share docs.",
           },
           ...(forPersonal

@@ -4,7 +4,7 @@ import LayoutWrapper from "@/components/LayoutWrapper";
 import TaskViewSwitcher from "@/components/TaskViewSwitcher";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/Spinner";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { ProjectType } from "@/types/project";
 import { ViewTypes } from "@/types/viewTypes";
 import useProjectDetails from "@/hooks/useProjectDetails";
@@ -30,7 +30,7 @@ const ProjectDetails = ({
     projectsLoading,
     setActiveProject,
     projectMembers,
-  } = useTaskProjectDataProvider();
+  } = useSidebarDataProvider();
 
   const [currentProject, setCurrentProject] = useState<ProjectType | null>(
     null
@@ -120,7 +120,6 @@ const ProjectDetails = ({
     },
     [currentProject?.id, setProjects]
   );
-
 
   if (isPending) {
     return (

@@ -218,188 +218,133 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
   return (
     <AuthWrapper
-      leftSide={
-        <div className="">
-          {screenWidth <= 768 && (
-            <div className="flex items-center p-2">
-              <button
-                onClick={() => router.back()}
-                className="p-1 rounded-lg transition"
-                onTouchStart={(ev) =>
-                  ev.currentTarget.classList.add("bg-text-100")
-                }
-                onTouchEnd={(ev) =>
-                  ev.currentTarget.classList.remove("bg-text-100")
-                }
-              >
-                <ChevronLeft strokeWidth={1.5} size={24} />
-              </button>
+      content={
+        <div className="w-full space-y-6 md:space-y-8 max-w-sm md:mt-12 px-6 md:px-4">
+          <div className="max-w-xs">
+            <h2 className="text-2xl md:text-3xl font-bold text-text-900">
+              {type === "signup" && "Join Kakrola Today!"}
+              {type === "login" && "Welcome Back!"}
+              {type === "forgotPassword" && "Forgot Your Password?"}
+              {type === "updatePassword" && "Update Your Password"}
+            </h2>
+            <p className="mt-2 text-sm text-text-600">
+              {type === "signup" &&
+                "Create your Kakrola account and start collaborating with your team."}
+              {type === "login" &&
+                "Log in to your Kakrola account to continue your productivity journey."}
+              {type === "forgotPassword" &&
+                message !==
+                  "Password reset link has been sent to your email." &&
+                "No worries! Just enter your email address, and we’ll send you a link to reset your password."}
+              {type == "updatePassword" &&
+                "Please enter your new password below."}
+            </p>
+          </div>
 
-              <Link
-                href="/"
-                className="flex-1 flex items-center justify-center"
-              >
-                <KakrolaLogo size="sm" isTitle />
-              </Link>
+          {socialButtons && <>{socialButtons}</>}
 
-              <div className="w-7 h-7"></div>
-            </div>
+          {error && <div className="text-red-600 text-center">{error}</div>}
+          {message && (
+            <div className="text-green-600 text-center">{message}</div>
           )}
 
-          <div className="space-y-6 md:space-y-8 px-8 mt-6">
-            <div className="max-w-xs">
-              <h2 className="text-2xl md:text-3xl font-bold text-text-900">
-                {type === "signup" && "Join Kakrola Today!"}
-                {type === "login" && "Welcome Back!"}
-                {type === "forgotPassword" && "Forgot Your Password?"}
-                {type === "updatePassword" && "Update Your Password"}
-              </h2>
-              <p className="mt-2 text-sm text-text-600">
-                {type === "signup" &&
-                  "Create your Kakrola account and start collaborating with your team."}
-                {type === "login" &&
-                  "Log in to your Kakrola account to continue your productivity journey."}
-                {type === "forgotPassword" &&
-                  message !==
-                    "Password reset link has been sent to your email." &&
-                  "No worries! Just enter your email address, and we’ll send you a link to reset your password."}
-                {type == "updatePassword" &&
-                  "Please enter your new password below."}
-              </p>
+          <form className="space-y-6 mt-6" onSubmit={handleSubmit}>
+            <div className="space-y-4">
+              {type !== "updatePassword" &&
+                message !==
+                  "Password reset link has been sent to your email." && (
+                  <div>
+                    <label htmlFor="email-address" className="sr-only">
+                      Email address
+                    </label>
+
+                    <Input
+                      id="email-address"
+                      name="email"
+                      type="email"
+                      label="Email"
+                      autoComplete="email"
+                      required
+                      Icon={AtSign}
+                      className="pl-10 w-full"
+                      placeholder="Email address"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      autoFocus
+                    />
+                  </div>
+                )}
+
+              {type !== "forgotPassword" && (
+                <>
+                  <div className="space-y-1">
+                    <PasswordInput
+                      autoFocus={type == "updatePassword"}
+                      password={password}
+                      setPassword={setPassword}
+                      label="Password"
+                      labelRight={
+                        <>
+                          {type == "login" && (
+                            <div className="text-xs text-right">
+                              <Link
+                                href="/auth/forgot-password"
+                                className="font-medium text-primary-600 hover:text-primary-600 transition"
+                              >
+                                Forgot your password?
+                              </Link>
+                            </div>
+                          )}
+                        </>
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    {type == "updatePassword" && (
+                      <PasswordInput
+                        password={confirmPassword}
+                        setPassword={setConfirmPassword}
+                        label="Confirm Password"
+                        required
+                      />
+                    )}
+                  </div>
+                </>
+              )}
             </div>
 
-            {socialButtons && <>{socialButtons}</>}
+            <div className="flex items-center justify-center">
+              <Hcaptcha ref={captcha} onVerify={handleVerify} />
+            </div>
 
-            {error && <div className="text-red-600 text-center">{error}</div>}
-            {message && (
-              <div className="text-green-600 text-center">{message}</div>
-            )}
-
-            <form className="space-y-6 mt-6" onSubmit={handleSubmit}>
-              <div className="space-y-4">
-                {type !== "updatePassword" &&
-                  message !==
-                    "Password reset link has been sent to your email." && (
-                    <div>
-                      <label htmlFor="email-address" className="sr-only">
-                        Email address
-                      </label>
-
-                      <Input
-                        id="email-address"
-                        name="email"
-                        type="email"
-                        label="Email"
-                        autoComplete="email"
-                        required
-                        Icon={AtSign}
-                        className="pl-10 w-full"
-                        placeholder="Email address"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        autoFocus
-                      />
-                    </div>
-                  )}
-
-                {type !== "forgotPassword" && (
-                  <>
-                    <div className="space-y-1">
-                      <PasswordInput
-                        autoFocus={type == "updatePassword"}
-                        password={password}
-                        setPassword={setPassword}
-                        label="Password"
-                        labelRight={
-                          <>
-                            {type == "login" && (
-                              <div className="text-xs text-right">
-                                <Link
-                                  href="/auth/forgot-password"
-                                  className="font-medium text-primary-600 hover:text-primary-600 transition"
-                                >
-                                  Forgot your password?
-                                </Link>
-                              </div>
-                            )}
-                          </>
-                        }
-                      />
-                    </div>
-
-                    <div>
-                      {type == "updatePassword" && (
-                        <PasswordInput
-                          password={confirmPassword}
-                          setPassword={setConfirmPassword}
-                          label="Confirm Password"
-                          required
-                        />
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
-
+            {message !== "Password reset link has been sent to your email." && (
               <div className="flex items-center justify-center">
-                <Hcaptcha ref={captcha} onVerify={handleVerify} />
+                <Button
+                  type="submit"
+                  className="w-full bg-primary-500 hover:bg-primary-700 disabled:hover:bg-primary-500 text-surface disabled:cursor-not-allowed"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <Spinner color="white" />
+                  ) : (
+                    <>
+                      {type === "signup" && "Sign up"}
+                      {type === "login" && "Log in"}
+                      {type === "forgotPassword" && "Send reset link"}
+                      {type === "updatePassword" && "Update password"}
+                    </>
+                  )}
+                </Button>
               </div>
+            )}
+          </form>
 
-              {message !==
-                "Password reset link has been sent to your email." && (
-                <div className="flex items-center justify-center">
-                  <Button
-                    type="submit"
-                    className="w-full bg-primary-500 hover:bg-primary-700 disabled:hover:bg-primary-500 text-surface disabled:cursor-not-allowed"
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <Spinner color="white" />
-                    ) : (
-                      <>
-                        {type === "signup" && "Sign up"}
-                        {type === "login" && "Log in"}
-                        {type === "forgotPassword" && "Send reset link"}
-                        {type === "updatePassword" && "Update password"}
-                      </>
-                    )}
-                  </Button>
-                </div>
-              )}
-            </form>
-
-            {additionalInfo}
-            {additionalFooter}
-          </div>
+          {additionalInfo}
+          {additionalFooter}
         </div>
       }
-      rightSide={
-        type == "login" ? (
-          <Image
-            src={loginImage}
-            width={300}
-            height={300}
-            alt="Use Case"
-            className="object-cover"
-          />
-        ) : type == "signup" ? (
-          <Image
-            src={loginImage}
-            width={300}
-            height={300}
-            alt="Use Case"
-            className="object-cover"
-          />
-        ) : (
-          <Image
-            src={loginImage}
-            width={300}
-            height={300}
-            alt="Use Case"
-            className="object-cover"
-          />
-        )
-      }
+      type={type}
     />
   );
 };

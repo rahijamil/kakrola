@@ -1,4 +1,4 @@
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { ChevronRight, Plus } from "lucide-react";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
@@ -30,7 +30,7 @@ const TeamProjects = ({
   sidebarWidth: number;
   setTeamId: Dispatch<SetStateAction<number | null>>;
 }) => {
-  const { projects, projectsLoading } = useTaskProjectDataProvider();
+  const { projects, projectsLoading } = useSidebarDataProvider();
   const pathname = usePathname();
   const [showProjects, setShowProjects] = useState(true);
   const [teamProjects, setTeamProjects] = useState<ProjectType[]>([]);

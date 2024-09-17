@@ -10,7 +10,7 @@ import Image from "next/image";
 import Spinner from "@/components/ui/Spinner";
 import axios from "axios";
 import { useAuthProvider } from "@/context/AuthContext";
-import { useTaskProjectDataProvider } from "@/context/TaskProjectDataContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import InviteLink from "./InviteLink";
 
 const Step5InviteMembers = () => {

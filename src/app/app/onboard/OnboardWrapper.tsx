@@ -31,18 +31,18 @@ const OnboardWrapper = ({
         {/* Left Side */}
         <div className="bg-surface">
           {isShowRightSide && (
-            <Link href="/" className="flex items-center h-20 pl-32">
-              <KakrolaLogo size="md" isTitle />
+            <Link href="/" className="flex items-center h-20 ml-32 w-fit">
+              <KakrolaLogo size="lg" />
             </Link>
           )}
 
-          <div className={`w-11/12 max-w-sm lg:max-w-md mx-auto h-full`}>
+          <div className={`w-11/12 max-w-sm mx-auto md:h-[calc(100vh-12rem)] flex-col flex items-center justify-center gap-10`}>
             {!isShowRightSide && currentStep && (
-              <div className="flex items-center justify-between whitespace-nowrap h-20">
+              <div className="flex items-center justify-between whitespace-nowrap h-20 w-full">
                 <Link href="/" className="flex items-center">
                   <KakrolaLogo
                     size="md"
-                    isTitle={currentStep ? screenWidth >= 768 : true}
+                    // isTitle={currentStep ? screenWidth >= 768 : true}
                   />
                 </Link>
 
@@ -54,24 +54,16 @@ const OnboardWrapper = ({
               </div>
             )}
 
-            <div
-              className={`flex md:h-[calc(100vh-10rem)] overflow-y-auto onboard_scrollbar ${
-                currentStep != 5 && typeof currentStep == "number"
-                  ? "items-center"
-                  : "mt-5"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className={`space-y-8 w-full px-1 md:px-0 ${
+                isShowRightSide ? "p-6 sm:p-10" : ""
               }`}
             >
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className={`space-y-8 w-full ${
-                  isShowRightSide ? "p-6 sm:p-10" : ""
-                }`}
-              >
-                {leftSide}
-              </motion.div>
-            </div>
+              {leftSide}
+            </motion.div>
           </div>
         </div>
 
