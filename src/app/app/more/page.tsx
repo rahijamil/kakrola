@@ -23,7 +23,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import AddEditProject from "@/components/AddEditProject";
 import ProfileMoreOptions from "@/components/SidebarWrapper/Sidebar/ProfileMoreOptions";
 import FavoriteProjects from "@/components/SidebarWrapper/Sidebar/FavoriteProjects";
-import MyProjects from "@/components/SidebarWrapper/Sidebar/MyProjects";
+import Personal from "@/components/SidebarWrapper/Sidebar/Personal";
 import TeamProjects from "@/components/SidebarWrapper/Sidebar/TeamProjects";
 import useScreen from "@/hooks/useScreen";
 
@@ -41,7 +41,7 @@ const MobileMorePage = () => {
   const { screenWidth } = useScreen();
   const sidebarWidth = screenWidth;
 
-  const { teams, projectsLoading } = useSidebarDataProvider();
+  const { teams, sidebarLoading } = useSidebarDataProvider();
 
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);
@@ -94,7 +94,7 @@ const MobileMorePage = () => {
             setShowLogoutConfirm={setShowLogoutConfirm}
           />
 
-          {projectsLoading ? (
+          {sidebarLoading ? (
             <div className="flex items-center w-full justify-end gap-2">
               <Skeleton width={28} height={28} borderRadius={9999} />
               <Skeleton width={28} height={28} borderRadius={9999} />
@@ -124,7 +124,7 @@ const MobileMorePage = () => {
         <nav className="flex-grow overflow-y-auto space-y-4 px-4 md:px-2">
           <ul>
             {moreMenuItems.map((item) =>
-              projectsLoading ? (
+              sidebarLoading ? (
                 <Skeleton
                   key={item.id}
                   height={16}
@@ -181,7 +181,7 @@ const MobileMorePage = () => {
             showFavoritesProjects={showFavoritesProjects}
           />
 
-          <MyProjects
+          <Personal
             sidebarWidth={sidebarWidth}
             setShowAddProjectModal={setShowAddProjectModal}
           />

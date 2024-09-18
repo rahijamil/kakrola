@@ -8,7 +8,7 @@ import ExportCSVModal from "./SidebarProjectMoreOptions/ExportCSVModal";
 import ImportCSVModal from "./SidebarProjectMoreOptions/ImportCSVModal";
 import AddEditProject from "../../AddEditProject";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
-import { CheckCircle, Ellipsis, Hash, Users } from "lucide-react";
+import { CheckCircle, Ellipsis, File, Hash, Users } from "lucide-react";
 import ProjectDeleteConfirm from "./ProjectDeleteConfirm";
 import ProjectArchiveConfirm from "./ProjectArchiveConfirm";
 import Skeleton from "react-loading-skeleton";
@@ -16,14 +16,15 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { useQuery } from "@tanstack/react-query";
 import ProjectLeaveConfirm from "./ProjectLeaveConfirm";
 import useScreen from "@/hooks/useScreen";
+import { PageType } from "@/types/pageTypes";
 
-const ProjectItem = ({
-  project,
+const PageItem = ({
+  page,
   pathname,
   isDragging,
   setIsDragDisabled,
 }: {
-  project: ProjectType;
+  page: PageType;
   pathname: string;
   isDragging?: boolean;
   setIsDragDisabled?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -32,19 +33,19 @@ const ProjectItem = ({
   const [tasks, setTasks] = useState<TaskType[]>([]);
 
   const { data: thisProjectAllMembers } = useQuery({
-    queryKey: ["project_members", project.id],
+    queryKey: ["project_members", page.id],
     queryFn: async () => {
       const { data, error } = await supabaseBrowser
         .from("project_members")
         .select("id")
-        .eq("project_id", project.id);
+        .eq("project_id", page.id);
       if (error) console.error("Failed to fetch project members", error);
       if (!error) {
         return data;
       }
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
-    enabled: !!project.id,
+    enabled: !!page.id,
   });
 
   // useEffect(() => {
@@ -52,7 +53,7 @@ const ProjectItem = ({
   //     const { data: tasksData, error: tasksError } = await supabaseBrowser
   //       .from("tasks")
   //       .select("id")
-  //       .eq("project_id", project.id);
+  //       .eq("project_id", page.id);
 
   //     if (tasksError) console.error("Failed to fetch tasks", tasksError);
 
@@ -62,7 +63,7 @@ const ProjectItem = ({
   //   };
 
   //   fetchTasks();
-  // }, [project.id]);
+  // }, [page.id]);
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
   const [showLeaveConfirm, setShowLeaveConfirm] = useState<boolean>(false);
@@ -95,24 +96,24 @@ const ProjectItem = ({
           className={`sidebar_project_item flex-1 flex items-center justify-between transition-colors rounded-lg text-text-900 pl-2 ${
             isDragging
               ? "bg-surface shadow-[0_0_8px_1px_rgba(0,0,0,0.2)]"
-              : pathname === `/app/project/${project.slug}`
+              : pathname === `/app/page/${page.slug}`
               ? "bg-primary-100"
               : "md:hover:bg-primary-50"
           }`}
         >
           <Link
-            href={`/app/project/${project.slug}`}
+            href={`/app/page/${page.slug}`}
             className={`py-1 md:py-0 p-px w-full`}
             draggable={false}
           >
             <div className="flex items-center">
               <div className="p-2">
-                <CheckCircle
-                  className={`w-4 h-4 text-${project.settings.color}`}
+                <File
+                  className={`w-4 h-4 text-${page.settings.color}`}
                   strokeWidth={2}
                 />
               </div>
-              {project.name}
+              {page.title}
 
               {thisProjectAllMembers?.length! > 1 && (
                 <Users strokeWidth={1.5} className="w-4 h-4 ml-2" />
@@ -122,14 +123,14 @@ const ProjectItem = ({
 
           <div className="relative mr-1">
             <div className="w-7 h-7 flex items-center justify-center">
-              {tasks.filter((task) => task.project_id == project.id).length >
+              {tasks.filter((task) => task.project_id == page.id).length >
                 0 && (
                 <p className="text-text-500">
-                  {tasks.filter((task) => task.project_id == project.id).length}
+                  {tasks.filter((task) => task.project_id == page.id).length}
                 </p>
               )}
 
-              {screenWidth > 768 && (
+              {/* {screenWidth > 768 && (
                 <SidebarProjectMoreOptions
                   project={project}
                   stateActions={{
@@ -144,13 +145,13 @@ const ProjectItem = ({
                   }}
                   setIsDragDisabled={setIsDragDisabled}
                 />
-              )}
+              )} */}
             </div>
           </div>
         </div>
       )}
 
-      {showLeaveConfirm && (
+      {/* {showLeaveConfirm && (
         <ProjectLeaveConfirm
           setShowLeaveConfirm={setShowLeaveConfirm}
           project={project}
@@ -197,11 +198,11 @@ const ProjectItem = ({
           onClose={() => setAboveBellow(null)}
           aboveBellow={aboveBellow}
           project={project}
-          workspaceId={project.team_id}
+          workspaceId={page.team_id}
         />
-      )}
+      )} */}
     </li>
   );
 };
 
-export default ProjectItem;
+export default PageItem;

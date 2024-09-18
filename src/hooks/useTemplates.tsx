@@ -11,7 +11,7 @@ const useTemplates: () => {
   templateProjects: TemplateProjectType[];
   templateSsections: TemplateSectionType[];
   templateTasks: TemplateTaskType[];
-  projectsLoading: boolean;
+  sidebarLoading: boolean;
 } = () => {
   const [templateProjects, setTemplateProjects] = useState<
     TemplateProjectType[]
@@ -20,7 +20,7 @@ const useTemplates: () => {
     TemplateSectionType[]
   >([]);
   const [templateTasks, setTemplateTasks] = useState<TemplateTaskType[]>([]);
-  const [projectsLoading, setProjectsLoading] = useState<boolean>(true);
+  const [sidebarLoading, setsidebarLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,7 +57,7 @@ const useTemplates: () => {
             setTemplateTasks(tasks);
           }
 
-          setProjectsLoading(false);
+          setsidebarLoading(false);
         }
       } catch (error) {
         console.error(error);
@@ -70,7 +70,7 @@ const useTemplates: () => {
     templateProjects,
     templateSsections,
     templateTasks,
-    projectsLoading,
+    sidebarLoading,
   };
 };
 

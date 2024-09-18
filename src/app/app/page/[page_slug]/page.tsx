@@ -4,50 +4,85 @@ import PageWrapper from "./PageWrapper";
 import { PageType } from "@/types/pageTypes";
 import { useAuthProvider } from "@/context/AuthContext";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
+import Image from "next/image";
+import Spinner from "@/components/ui/Spinner";
+import { Link } from "@nextui-org/react";
+import { Button } from "@/components/ui/button";
+import usePageDetails from "@/hooks/usePageDetails";
+import PageContent from "./PageContent";
 
 const PageDetails = ({
   params: { page_slug },
 }: {
   params: { page_slug: string };
 }) => {
-  const { profile } = useAuthProvider();
-  const [currentProject, setCurrentProject] = useState<PageType | null>(null);
   const [notFound, setNotFound] = useState<boolean>(false);
 
-  const { pagesLoading, pages, setPages } = useSidebarDataProvider();
+  const { pages, setPages } = useSidebarDataProvider();
+  const { page, setPage, isPending, isError } = usePageDetails(page_slug);
 
   useEffect(() => {
-    if (pagesLoading) return;
-
-    const project = pages.find((p) => p.slug === page_slug);
-
-    if (project) {
-      setCurrentProject(project);
-      setNotFound(false);
-    } else {
+    if (!isPending && !page?.id) {
       setNotFound(true);
-      setCurrentProject(null);
     }
-
-    return () => {
-      setCurrentProject(null);
-      setNotFound(false);
-    };
-  }, [page_slug, pages, pagesLoading]);
+  }, [isPending, page]);
 
   useEffect(() => {
-    if (currentProject?.id) {
-      document.title = `${currentProject.title} - Kakrola`;
+    if (page?.id) {
+      document.title = `${page.title} - Kakrola`;
     } else {
       document.title = "Kakrola";
     }
-  }, [currentProject]);
+  }, [page]);
 
-  return (
-    <PageWrapper>
-      <h1>{page_slug}</h1>
-    </PageWrapper>
-  );
+  if (isPending) {
+    return (
+      <div className="flex items-center justify-center w-full h-screen text-primary-500">
+        <Spinner color="primary" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center w-full h-screen">
+        <p>Error loading page details</p>
+      </div>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <div className="flex items-center justify-center flex-col gap-1 h-[70vh] select-none w-full">
+        <Image
+          src="/not_found.png"
+          width={220}
+          height={200}
+          alt="Project not found"
+          className="rounded-md object-cover"
+          draggable={false}
+        />
+        <div className="text-center space-y-2 w-72">
+          <h3 className="font-bold text-base">Page not found</h3>
+          <p className="text-sm text-text-600 pb-4">
+            The page doesn&apos;t seem to exist or you don&apos;t have
+            permission to access it.
+          </p>
+          <Link href="/app">
+            <Button>Go back to home</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (page?.id) {
+    return (
+      <PageWrapper page={page}>
+        <PageContent page={page} />
+      </PageWrapper>
+    );
+  }
 };
 
 export default PageDetails;

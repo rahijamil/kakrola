@@ -30,7 +30,7 @@ const TeamProjects = ({
   sidebarWidth: number;
   setTeamId: Dispatch<SetStateAction<number | null>>;
 }) => {
-  const { projects, projectsLoading } = useSidebarDataProvider();
+  const { projects, sidebarLoading } = useSidebarDataProvider();
   const pathname = usePathname();
   const [showProjects, setShowProjects] = useState(true);
   const [teamProjects, setTeamProjects] = useState<ProjectType[]>([]);
@@ -94,7 +94,7 @@ const TeamProjects = ({
   return (
     <>
       <div>
-        {projectsLoading ? (
+        {sidebarLoading ? (
           <Skeleton width={20} borderRadius={9999} />
         ) : (
           <div
@@ -221,7 +221,7 @@ const TeamProjects = ({
         )}
 
         <div className="space-y-2">
-          {projectsLoading &&
+          {sidebarLoading &&
             [1, 2, 3, 4, 5].map((_i, index) => (
               <div key={_i} className="flex items-center gap-2">
                 <Skeleton height={28} width={28} borderRadius={9999} />

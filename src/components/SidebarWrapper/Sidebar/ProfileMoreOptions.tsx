@@ -129,7 +129,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
 
   const router = useRouter();
   const { profile } = useAuthProvider();
-  const { projectsLoading } = useSidebarDataProvider();
+  const { sidebarLoading } = useSidebarDataProvider();
 
   const menuItems: MenuGroup[] = [
     {
@@ -220,7 +220,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
       setIsOpen={setIsOpen}
       triggerRef={triggerRef}
       Label={({ onClick }) =>
-        projectsLoading ? (
+        sidebarLoading ? (
           <Skeleton height={28} borderRadius={9999} width={100} />
         ) : (
           <button
@@ -307,7 +307,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
         </div>
       }
     />
-  ) : projectsLoading ? (
+  ) : sidebarLoading ? (
     <Skeleton height={28} borderRadius={9999} width={100} />
   ) : (
     <button className="flex items-center gap-2">

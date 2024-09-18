@@ -61,8 +61,8 @@ const KakrolaLogo = ({
                 dx="4"
                 dy="4"
                 stdDeviation="4"
-                flood-color="#000000"
-                flood-opacity="0.2"
+                floodColor="#000000"
+                floodOpacity="0.2"
               />
             </filter>
           </defs>

@@ -1,7 +1,13 @@
-import AddEditProject from "@/components/AddEditProject";
 import Dropdown from "@/components/ui/Dropdown";
+import { useAuthProvider } from "@/context/AuthContext";
+import useSidebarData from "@/hooks/useSidebarData";
+import { PageType } from "@/types/pageTypes";
+import { generateSlug } from "@/utils/generateSlug";
+import { supabaseBrowser } from "@/utils/supabase/client";
 import { CheckCircle, File, Hash, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
+import { v4 as uuid4 } from "uuid";
 
 const ProjectPlusDropdown = ({
   forPersonal,
@@ -17,9 +23,64 @@ const ProjectPlusDropdown = ({
   const triggerRef = useRef(null);
 
   const [isOpen, setIsOpen] = useState(false);
+  const { profile } = useAuthProvider();
+  const { setPages, pages } = useSidebarData();
+  const router = useRouter();
 
   const handleCreatePage = async () => {
-    
+    try {
+      if (!profile?.id) return;
+
+      const tempId = uuid4();
+      const title = `Untitled Page ${pages.length + 1}`;
+      const slug = generateSlug(title);
+      const newPage: Omit<PageType, "id"> = {
+        title,
+        slug,
+        content: null,
+        is_archived: false,
+        settings: {
+          color: "gray-500",
+        },
+        profile_id: profile.id,
+        team_id: teamId || null,
+      };
+
+      // Optimistically add the new page to the state
+      const allPages = [...pages, { ...newPage, id: tempId }];
+      setPages(allPages);
+
+      // Redirect to the newly created page
+      router.push(`/app/page/${slug}`);
+
+      const { data, error } = await supabaseBrowser
+        .from("pages")
+        .insert(newPage)
+        .select("id")
+        .single();
+
+      if (error) {
+        console.error(`Error creating page: ${error}`);
+        // Optional: Show user feedback, revert optimistic UI update
+        setPages(pages); // Revert to the previous state if error occurs
+        return;
+      }
+
+      // Update the page with the real ID from the database
+      if (data?.id) {
+        const updatedPages = allPages.map((page) => {
+          if (page.id === tempId) {
+            return { ...page, id: data.id };
+          }
+          return page;
+        });
+        setPages(updatedPages);
+      }
+    } catch (error) {
+      console.error(`Error creating page: ${error}`);
+      // Optional: Show user feedback, revert optimistic UI update
+      setPages(pages); // Revert to the previous state if error occurs
+    }
   };
 
   return (

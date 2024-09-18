@@ -15,7 +15,7 @@ const FavoriteProjects = ({
   setShowFavoritesProjects: any;
   showFavoritesProjects: boolean;
 }) => {
-  const { projects, projectsLoading, projectMembers } =
+  const { projects, sidebarLoading, projectMembers } =
     useSidebarDataProvider();
   const pathname = usePathname();
 
@@ -47,7 +47,7 @@ const FavoriteProjects = ({
 
   return (
     <div>
-      {projectsLoading ? (
+      {sidebarLoading ? (
         <Skeleton height={16} width={150} borderRadius={9999} />
       ) : (
         <>
@@ -106,7 +106,7 @@ const FavoriteProjects = ({
       )}
 
       <div className="space-y-2">
-        {projectsLoading &&
+        {sidebarLoading &&
           [1, 2, 3, 4, 5].map((_i, index) => (
             <div key={_i} className="flex items-center gap-2">
               <Skeleton height={28} width={28} borderRadius={9999} />

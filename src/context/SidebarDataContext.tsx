@@ -2,9 +2,8 @@
 import { ProjectType, SectionType } from "@/types/project";
 import React, { createContext, ReactNode, useContext, useState } from "react";
 import { TeamType, TeamMemberType, ProjectMemberType } from "@/types/team";
-import useTaskProjectData from "@/hooks/useTaskProjectData";
 import { PageType } from "@/types/pageTypes";
-import usePagesData from "@/hooks/usePagesData";
+import useSidebarData from "@/hooks/useSidebarData";
 
 const SidebarDataContext = createContext<{
   projects: ProjectType[];
@@ -12,14 +11,13 @@ const SidebarDataContext = createContext<{
 
   pages: PageType[];
   setPages: (projects: PageType[]) => void;
-  pagesLoading: boolean;
 
   sectionsForProjectSelector: {
     id: SectionType["id"];
     name: SectionType["name"];
     project_id: SectionType["project_id"];
   }[];
-  projectsLoading: boolean;
+  sidebarLoading: boolean;
   teams: TeamType[];
   setTeams: (teams: TeamType[]) => void;
   teamMemberships: TeamMemberType[];
@@ -29,14 +27,14 @@ const SidebarDataContext = createContext<{
   setProjectMembers: (members: ProjectMemberType[]) => void;
   isShowViewModal: boolean;
   setIsShowViewModal: React.Dispatch<React.SetStateAction<boolean>>;
+  isError: boolean
 }>({
   projects: [],
   setProjects: () => {},
   sectionsForProjectSelector: [],
-  projectsLoading: true,
+  sidebarLoading: true,
   pages: [],
   setPages: () => {},
-  pagesLoading: true,
   teams: [],
   setTeams: () => {},
   teamMemberships: [],
@@ -46,6 +44,7 @@ const SidebarDataContext = createContext<{
   setProjectMembers: () => {},
   isShowViewModal: false,
   setIsShowViewModal: () => {},
+  isError: false
 });
 
 const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
@@ -61,9 +60,9 @@ const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
     isLoading,
     isError,
     error,
-  } = useTaskProjectData();
-
-  const { pages, setPages, isLoading: pagesLoading } = usePagesData();
+    pages,
+    setPages
+  } = useSidebarData();
 
   const [activeProject, setActiveProject] = useState<ProjectType | null>(null);
   const [isShowViewModal, setIsShowViewModal] = useState(false);
@@ -74,10 +73,9 @@ const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
         projects,
         setProjects,
         sectionsForProjectSelector: sections,
-        projectsLoading: isLoading,
+        sidebarLoading: isLoading,
         pages,
         setPages,
-        pagesLoading,
         teams,
         setTeams,
         teamMemberships: [],
@@ -87,6 +85,7 @@ const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
         setProjectMembers,
         isShowViewModal,
         setIsShowViewModal,
+        isError,
       }}
     >
       {children}

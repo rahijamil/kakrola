@@ -1,22 +1,7 @@
 "use client";
 import React, { FormEvent, useCallback, useMemo, useState } from "react";
 import { ProjectType, TaskPriority } from "@/types/project";
-import {
-  AlignLeft,
-  CalendarDays,
-  CalendarRange,
-  Check,
-  CheckCircle,
-  CircleChevronUp,
-  FoldHorizontal,
-  MoreHorizontal,
-  SquareGanttChart,
-  SquareKanban,
-  Tag,
-  UnfoldHorizontal,
-  UserPlus,
-  X,
-} from "lucide-react";
+import { SquareGanttChart, X } from "lucide-react";
 import { ToggleSwitch } from "../ui/ToggleSwitch";
 import { Input } from "../ui/input";
 import { useAuthProvider } from "@/context/AuthContext";
@@ -27,7 +12,6 @@ import WorkspaceSelector from "./WorkspaceSelector";
 import ColorSelector from "./ColorSelector";
 import { generateSlug } from "@/utils/generateSlug";
 import AnimatedCircleCheck from "@/components/TaskViewSwitcher/AnimatedCircleCheck";
-import { ViewTypes } from "@/types/viewTypes";
 import { ProjectMemberType } from "@/types/team";
 import { RoleType } from "@/types/role";
 import {
@@ -38,10 +22,7 @@ import {
 import { useRole } from "@/context/RoleContext";
 import { canEditProject } from "@/types/hasPermission";
 import { Button } from "../ui/button";
-import LayoutView from "../LayoutView";
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import Image from "next/image";
 import ViewSkeleton from "../ViewSkeleton";
 import { projectViewsToSelect } from "@/data/project_views";
 
@@ -112,7 +93,7 @@ const AddEditProject = ({
     const initialWorkspaces = [
       {
         team_id: null,
-        name: "My Projects",
+        name: "Personal",
         avatar_url: profile?.avatar_url || "",
       },
     ];

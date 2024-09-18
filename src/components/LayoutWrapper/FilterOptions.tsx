@@ -8,14 +8,10 @@ import Dropdown from "../ui/Dropdown";
 
 const FilterOptions = React.memo(
   ({
-    view,
-    setView,
     hideCalendarView,
     tasks = [],
     setTasks,
   }: {
-    view?: ViewTypes["view"];
-    setView: (value: ViewTypes["view"]) => void;
     hideCalendarView?: boolean;
     setTasks?: (tasks: TaskType[]) => void
     tasks?: TaskType[];

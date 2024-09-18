@@ -18,7 +18,7 @@ import {
   Plus,
 } from "lucide-react";
 import AddTaskModal from "@/components/AddTask/AddTaskModal";
-import MyProjects from "./MyProjects";
+import Personal from "./Personal";
 import FavoriteProjects from "./FavoriteProjects";
 import TeamProjects from "./TeamProjects";
 import ProfileMoreOptions from "./ProfileMoreOptions";
@@ -40,20 +40,14 @@ const menuItems: {
 }[] = [
   { id: 1, icon: Calendar, text: "My Tasks", path: "/app" },
   { id: 2, icon: Inbox, text: "Inbox", path: "/app/inbox" },
-  // {
-  //   id: 5,
-  //   icon: LayoutPanelTop,
-  //   text: "Filters & Labels",
-  //   path: "/app/filters-labels",
-  // },
-  { id: 3, icon: MessagesSquare, text: "DMs", path: "/app/dm" },
+  { id: 3, icon: Search, text: "Search", path: "#" },
+  { id: 4, icon: MessagesSquare, text: "DMs", path: "/app/dm" },
 ];
 
 const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
   const pathname = usePathname();
 
-  const { teams, projectsLoading } =
-    useSidebarDataProvider();
+  const { teams, sidebarLoading } = useSidebarDataProvider();
 
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);
@@ -104,7 +98,7 @@ const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
             setShowLogoutConfirm={setShowLogoutConfirm}
           />
 
-          {projectsLoading ? (
+          {sidebarLoading ? (
             <div className="flex items-center w-full justify-end gap-2">
               <Skeleton width={28} height={28} borderRadius={9999} />
               <Skeleton width={28} height={28} borderRadius={9999} />
@@ -116,12 +110,6 @@ const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
                 sidebarWidth > 220 ? "gap-2" : "gap-1"
               }`}
             >
-              <button
-                className={`text-text-700 hover:bg-primary-50 rounded-lg transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
-              >
-                <Search strokeWidth={1.5} width={20} />
-              </button>
-
               <button
                 className={`text-text-700 hover:bg-primary-50 rounded-lg transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
               >
@@ -143,7 +131,7 @@ const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
         <nav className="flex-grow overflow-y-auto space-y-4 px-2">
           <ul>
             {menuItems.map((item) =>
-              projectsLoading ? (
+              sidebarLoading ? (
                 <Skeleton
                   key={item.id}
                   height={16}
@@ -162,7 +150,7 @@ const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
                           : "hover:bg-primary-50"
                       }`}
                     >
-                      <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3" />
+                      <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3 text-primary-500" />
                       {item.text}
                     </Link>
                   ) : (
@@ -188,7 +176,7 @@ const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
             showFavoritesProjects={showFavoritesProjects}
           />
 
-          <MyProjects
+          <Personal
             sidebarWidth={sidebarWidth}
             setShowAddProjectModal={setShowAddProjectModal}
           />

@@ -48,7 +48,7 @@ const AppProjectsActivePage = () => {
             <h1
               className={`font-semibold transition whitespace-nowrap text-[26px]`}
             >
-              My Projects
+              Personal
             </h1>
           </div>
 

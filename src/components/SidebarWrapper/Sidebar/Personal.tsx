@@ -12,15 +12,15 @@ import { usePathname } from "next/navigation";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import Image from "next/image";
 import { useAuthProvider } from "@/context/AuthContext";
-import AddEditProject from "../../AddEditProject";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import ProjectPlusDropdown from "./ProjectPlusDropdown";
 import useScreen from "@/hooks/useScreen";
+import PageItem from "./PageItem";
 
-const MyProjects = ({
+const Personal = ({
   sidebarWidth,
   setShowAddProjectModal,
 }: {
@@ -31,7 +31,8 @@ const MyProjects = ({
   const {
     projects: allProjects,
     setProjects,
-    projectsLoading,
+    sidebarLoading,
+    pages,
   } = useSidebarDataProvider();
   const pathname = usePathname();
   const [showProjects, setShowProjects] = useState(true);
@@ -92,7 +93,7 @@ const MyProjects = ({
   return (
     <>
       <div>
-        {projectsLoading ? (
+        {sidebarLoading ? (
           <Skeleton height={16} width={150} borderRadius={9999} />
         ) : (
           <div
@@ -136,7 +137,7 @@ const MyProjects = ({
                   <span
                     className={`font-medium transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis`}
                   >
-                    My Projects
+                    Personal
                   </span>
                 </div>
                 {projects.length > 3 && (
@@ -216,6 +217,35 @@ const MyProjects = ({
                           }}
                         </Draggable>
                       ))}
+
+                      {pages.map((page, index) => (
+                        <Draggable
+                          key={page.id}
+                          draggableId={page.id.toString()}
+                          index={index}
+                          isDragDisabled={isDragDisabled}
+                        >
+                          {(provided, snapshot) => {
+                            return (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className={`${
+                                  snapshot.isDragging && "bg-surface"
+                                }`}
+                              >
+                                <PageItem
+                                  page={page}
+                                  pathname={pathname}
+                                  isDragging={snapshot.isDragging}
+                                  setIsDragDisabled={setIsDragDisabled}
+                                />
+                              </div>
+                            );
+                          }}
+                        </Draggable>
+                      ))}
                       {provided.placeholder}
                     </ul>
                   );
@@ -226,7 +256,7 @@ const MyProjects = ({
         )}
 
         <div className="space-y-2">
-          {projectsLoading &&
+          {sidebarLoading &&
             [1, 2, 3, 4, 5].map((_i, index) => (
               <div key={_i} className="flex items-center gap-2">
                 <Skeleton height={28} width={28} borderRadius={9999} />
@@ -239,4 +269,4 @@ const MyProjects = ({
   );
 };
 
-export default MyProjects;
+export default Personal;

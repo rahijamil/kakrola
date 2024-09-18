@@ -186,7 +186,7 @@ const ProjectsSelector = ({
               </div>
             )}
 
-            {/* Show My Projects header only if there's no search query */}
+            {/* Show Personal header only if there's no search query */}
             {!searchQuery && (
               <div className="font-bold px-3 py-1.5 rounded-lg flex items-center gap-2">
                 <Image
@@ -196,7 +196,7 @@ const ProjectsSelector = ({
                   height={20}
                   className="rounded-md object-cover max-w-[20px] max-h-[20px]"
                 />
-                <span>My Projects</span>
+                <span>Personal</span>
               </div>
             )}
             <ul>

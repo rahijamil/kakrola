@@ -10,7 +10,10 @@ export const generateSlug = (name: string, isTemplate: boolean = false) => {
     .replace(/--+/g, "-"); // Replace multiple hyphens with a single one
 
   // Append unique suffix to avoid conflicts
-  const uniqueSuffix = isTemplate ? "template-" + Date.now() : Date.now();
+  const randomString = Math.random().toString(36).substring(2, 6); // Generates a short random string
+  const uniqueSuffix = isTemplate
+    ? `template-${Date.now()}-${randomString}`
+    : `${Date.now()}-${randomString}`;
   slug = `${slug}-${uniqueSuffix}`;
 
   return slug;

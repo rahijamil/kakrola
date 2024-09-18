@@ -27,7 +27,7 @@ const ProjectDetails = ({
   const {
     projects,
     setProjects,
-    projectsLoading,
+    sidebarLoading,
     setActiveProject,
     projectMembers,
   } = useSidebarDataProvider();
@@ -45,7 +45,7 @@ const ProjectDetails = ({
   const { profile } = useAuthProvider();
 
   useEffect(() => {
-    if (projectsLoading) return;
+    if (sidebarLoading) return;
 
     const project = projects.find((p) => p.slug === project_slug);
 
@@ -64,7 +64,7 @@ const ProjectDetails = ({
       setCurrentProject(null);
       setNotFound(false);
     };
-  }, [project_slug, projects, projectsLoading]);
+  }, [project_slug, projects, sidebarLoading]);
 
   useEffect(() => {
     if (currentProject?.id) {

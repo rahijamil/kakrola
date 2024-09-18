@@ -1,10 +1,11 @@
-import {nextui} from '@nextui-org/theme';
+import { nextui } from "@nextui-org/theme";
 import type { Config } from "tailwindcss";
+import typography from "@tailwindcss/typography";
 
 const config: Config = {
   content: [
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@nextui-org/theme/dist/components/(date-picker|button|ripple|spinner|calendar|date-input|popover).js"
+    "./node_modules/@nextui-org/theme/dist/components/(date-picker|button|ripple|spinner|calendar|date-input|popover).js",
   ],
   theme: {
     extend: {
@@ -25,7 +26,7 @@ const config: Config = {
         },
         primary2: "var(--color-primary2)",
         secondary: "var(--color-secondary)",
-        accent: "var(--color-accent)",
+        // accent: "var(--color-accent)",
         background: "var(--color-background)",
         surface: "var(--color-surface)",
         text: {
@@ -128,6 +129,46 @@ const config: Config = {
           800: "#292929",
           900: "#111111",
         },
+
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        foreground: "hsl(var(--foreground))",
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },
@@ -224,11 +265,10 @@ const config: Config = {
     "bg-gray-900/20",
     "text-gray-500",
 
-
     "text-indigo-500",
-    "text-pink-500"
+    "text-pink-500",
   ],
-  plugins: [nextui()],
+  plugins: [nextui(), typography],
 };
 
 export default config;
