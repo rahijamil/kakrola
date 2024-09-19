@@ -1,21 +1,31 @@
 import { useAuthProvider } from "@/context/AuthContext";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
-import { ActivityAction, createActivityLog, EntityType } from "@/types/activitylog";
-import { ProjectType } from "@/types/project";
-import { ProjectMemberType } from "@/types/team";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
+import { PersonalMemberType } from "@/types/team";
 import { supabaseBrowser } from "@/utils/supabase/client";
 
-const useFavorite = ({ project }: { project: ProjectType }) => {
-  const { projectMembers, setProjectMembers } = useSidebarDataProvider();
+const useFavorite = ({
+  column_value,
+  column_name,
+}: {
+  column_value: number;
+  column_name: "page_id" | "project_id";
+}) => {
+  const { personalMembers, setProjectMembers } = useSidebarDataProvider();
   const { profile } = useAuthProvider();
 
   const handleFavorite = async () => {
-    if(!profile?.id) return;
+    if (!profile?.id) return;
 
     // Find the current user project settings for the given project
-    const currentProjectMemberSettings = projectMembers.find(
-      (member) =>
-        member.profile_id === profile?.id && member.project_id === project.id
+    const currentProjectMemberSettings = personalMembers.find((member) =>
+      member.profile_id === profile?.id && column_name == "project_id"
+        ? member.project_id === column_value
+        : member.page_id === column_value
     );
 
     if (!currentProjectMemberSettings) {
@@ -25,29 +35,35 @@ const useFavorite = ({ project }: { project: ProjectType }) => {
       return;
     }
 
-    const updateProjectMemberSettings: ProjectMemberType = {
+    const updateProjectMemberSettings: PersonalMemberType = {
       ...currentProjectMemberSettings,
-      project_settings: {
-        ...currentProjectMemberSettings.project_settings,
-        is_favorite: !currentProjectMemberSettings.project_settings.is_favorite,
+      settings: {
+        ...currentProjectMemberSettings.settings,
+        is_favorite: !currentProjectMemberSettings.settings.is_favorite,
       },
     };
 
     // Update local state
     setProjectMembers(
-      projectMembers.map((member) =>
-        member.project_id === project.id ? updateProjectMemberSettings : member
+      personalMembers.map((member) =>
+        (
+          column_name == "project_id"
+            ? member.project_id === column_value
+            : member.page_id === column_value
+        )
+          ? updateProjectMemberSettings
+          : member
       )
     );
 
     // Update the database
     const { error } = await supabaseBrowser
-      .from("project_members")
+      .from("personal_members")
       .update({
-        project_settings: updateProjectMemberSettings.project_settings,
+        settings: updateProjectMemberSettings.settings,
       })
       .eq("profile_id", profile?.id)
-      .eq("project_id", project.id);
+      .eq(column_name, column_value);
 
     if (error) {
       console.error("Error updating user project settings:", error);
@@ -56,16 +72,15 @@ const useFavorite = ({ project }: { project: ProjectType }) => {
     createActivityLog({
       actor_id: profile.id,
       action: ActivityAction.UPDATED_PROJECT,
-      entity_id: project.id,
+      entity_id: column_value,
       entity_type: EntityType.PROJECT,
       metadata: {
-        old_data: project,
+        old_data: currentProjectMemberSettings,
         new_data: {
-          ...project,
           ...updateProjectMemberSettings,
         },
-      }
-    })
+      },
+    });
   };
 
   return {

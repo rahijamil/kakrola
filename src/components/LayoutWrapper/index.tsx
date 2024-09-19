@@ -359,7 +359,7 @@ const LayoutWrapper = ({
                           />
                           <input
                             type="text"
-                            className="text-[26px] font-bold border-none rounded-lg focus-visible:outline-none p-1.5 bg-transparent w-full"
+                            className="text-3xl font-bold border-none rounded-lg focus-visible:outline-none p-1.5 bg-transparent w-full"
                             value={projectTitle}
                             onBlur={handleEditTitle}
                             onChange={(ev) => setProjectTitle(ev.target.value)}
@@ -379,7 +379,7 @@ const LayoutWrapper = ({
                       )}
                     </>
                   ) : (
-                    <h1 className={`text-[26px] font-bold p-1 py-[14px]`}>
+                    <h1 className={`text-3xl font-bold p-1 py-[14px]`}>
                       {headline}
                     </h1>
                   )}

@@ -52,18 +52,18 @@ const ActiveProjectMoreOptions = ({
 
   const router = useRouter();
 
-  const { handleFavorite } = useFavorite({ project });
+  const { handleFavorite } = useFavorite({ column_value: project.id, column_name: "project_id" });
 
-  const { projectMembers, setIsShowViewModal } = useSidebarDataProvider();
+  const { personalMembers, setIsShowViewModal } = useSidebarDataProvider();
 
   // Find the current user project settings for the given project
-  const currentProjectMember = projectMembers.find(
+  const currentProjectMember = personalMembers.find(
     (member) => member.project_id === project.id
   );
 
   // Determine the current favorite status
   const isFavorite = currentProjectMember
-    ? currentProjectMember.project_settings.is_favorite
+    ? currentProjectMember.settings.is_favorite
     : false;
 
   const handleCopyProjectLink = () => {

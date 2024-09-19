@@ -112,14 +112,15 @@ export interface TeamMemberType {
   joined_at?: string;
 }
 
-// Project member type
-export interface ProjectMemberType {
+// Personal member type
+export interface PersonalMemberType {
   id: number;
-  project_id: number;
+  project_id: number | null;
+  page_id: number | null;
   profile_id: string;
   role: RoleType;
   created_at?: string;
-  project_settings: {
+  settings: {
     is_favorite: boolean;
     order: number;
   };

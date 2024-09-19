@@ -29,7 +29,7 @@ const ProjectDetails = ({
     setProjects,
     sidebarLoading,
     setActiveProject,
-    projectMembers,
+    personalMembers,
   } = useSidebarDataProvider();
 
   const [currentProject, setCurrentProject] = useState<ProjectType | null>(
@@ -78,7 +78,7 @@ const ProjectDetails = ({
     async (view: ViewTypes["view"]) => {
       if (!profile?.id || !currentProject?.id) return;
 
-      const role = projectMembers.find(
+      const role = personalMembers.find(
         (member) => member.profile_id == profile.id
       )?.role;
 

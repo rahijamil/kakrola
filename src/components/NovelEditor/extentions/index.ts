@@ -7,35 +7,58 @@ import {
   HorizontalRule,
   StarterKit,
   Placeholder,
+  Color,
+  CodeBlockLowlight,
 } from "novel/extensions";
 
-import Table from "@tiptap/extension-table";
-import TableCell from "@tiptap/extension-table-cell";
-import TableHeader from "@tiptap/extension-table-header";
-import TableRow from "@tiptap/extension-table-row";
+import { Table, TableCell, TableHeader, TableRow } from "./Table";
+
+import { ReactNodeViewRenderer } from "@tiptap/react";
+
+import css from "highlight.js/lib/languages/css";
+import js from "highlight.js/lib/languages/javascript";
+import ts from "highlight.js/lib/languages/typescript";
+import html from "highlight.js/lib/languages/xml";
+import { all, createLowlight } from "lowlight";
 
 import { cx } from "class-variance-authority";
 import { UploadImagesPlugin } from "novel/plugins";
 
-import GlobalDragHandle from "tiptap-extension-global-drag-handle";
 import AutoJoiner from "tiptap-extension-auto-joiner";
+import CodeBlock from "./CodeBlock";
+
+// create a lowlight instance
+const lowlight = createLowlight(all);
+
+// you can also register individual languages
+lowlight.register("html", html);
+lowlight.register("css", css);
+lowlight.register("js", js);
+lowlight.register("ts", ts);
 
 // TODO I am using cx here to get tailwind autocomplete working, idk if someone else can write a regex to just capture the class key in objects
 
 // You can overwrite the placeholder with your own configuration
 const placeholder = Placeholder.configure({
-  placeholder: ({ node }) => {
-    // console.log(node);
-    if (node.type.name == "heading" && node.attrs.level == 1) {
-      return "Heading 1";
-    } else if (node.type.name == "heading" && node.attrs.level == 2) {
-      return "Heading 2";
-    } else if (node.type.name == "heading" && node.attrs.level == 3) {
-      return "Heading 3";
-    }
+  includeChildren: true,
+  // placeholder: ({ node }) => {
+  //   // console.log(node);
+  //   if (node.type.name == "heading" && node.attrs.level == 1) {
+  //     return "Heading 1";
+  //   } else if (node.type.name == "heading" && node.attrs.level == 2) {
+  //     return "Heading 2";
+  //   } else if (node.type.name == "heading" && node.attrs.level == 3) {
+  //     return "Heading 3";
+  //   } else if (node.type.name == "heading" && node.attrs.level == 4) {
+  //     return "Heading 4";
+  //   } else if (node.type.name == "heading" && node.attrs.level == 5) {
+  //     return "Heading 5";
+  //   } else if (node.type.name == "heading" && node.attrs.level == 6) {
+  //     return "Heading 6";
+  //   }
 
-    return "Write something, or press '/' for commands…";
-  },
+  //   return "Write something, or press '/' for commands…";
+  // },
 });
 const tiptapLink = TiptapLink.configure({
   HTMLAttributes: {
@@ -78,16 +101,6 @@ const tiptapImage = TiptapImage.extend({
   },
 });
 
-const globalDragHandle = GlobalDragHandle.configure({
-  dragHandleWidth: 20, // default
-
-  // The scrollTreshold specifies how close the user must drag an element to the edge of the lower/upper screen for automatic
-  // scrolling to take place. For example, scrollTreshold = 100 means that scrolling starts automatically when the user drags an
-  // element to a position that is max. 99px away from the edge of the screen
-  // You can set this to 0 to prevent auto scrolling caused by this extension
-  scrollTreshold: 100, // default
-});
-
 const autoJoiner = AutoJoiner.configure({
   elementsToJoin: ["bulletList", "orderedList"], // default
 });
@@ -95,12 +108,12 @@ const autoJoiner = AutoJoiner.configure({
 const starterKit = StarterKit.configure({
   bulletList: {
     HTMLAttributes: {
-      class: cx("list-disc list-inside leading-3 -mt-2"),
+      class: cx("list-disc list-outside leading-3 -mt-2"),
     },
   },
   orderedList: {
     HTMLAttributes: {
-      class: cx("list-decimal list-inside leading-3 -mt-2"),
+      class: cx("list-decimal list-outside leading-3 -mt-2"),
     },
   },
   listItem: {
@@ -115,12 +128,12 @@ const starterKit = StarterKit.configure({
   },
   codeBlock: {
     HTMLAttributes: {
-      class: cx("rounded-sm bg-texxt-200 border p-5 font-mono font-medium"),
+      class: cx("rounded-sm bg-text-200 border p-5 font-mono font-medium"),
     },
   },
   code: {
     HTMLAttributes: {
-      class: cx("rounded-md bg-text-200  px-1.5 py-1 font-mono font-medium"),
+      class: cx("rounded-md bg-text-200 px-1.5 py-1 font-mono font-medium"),
       spellcheck: "false",
     },
   },
@@ -132,9 +145,11 @@ const starterKit = StarterKit.configure({
   gapcursor: false,
 });
 
-const table = Table.configure({
-  resizable: true,
-});
+const codeBlockLowlight = CodeBlockLowlight.extend({
+  addNodeView() {
+    return ReactNodeViewRenderer(CodeBlock);
+  },
+}).configure({ lowlight });
 
 export const defaultExtensions = [
   starterKit,
@@ -145,10 +160,11 @@ export const defaultExtensions = [
   taskList,
   taskItem,
   horizontalRule,
-  globalDragHandle,
   autoJoiner,
-  table,
-  TableRow,
-  TableHeader,
+  Table,
   TableCell,
+  TableHeader,
+  TableRow,
+  Color,
+  codeBlockLowlight,
 ];

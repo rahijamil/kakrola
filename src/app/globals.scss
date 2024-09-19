@@ -2,8 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "./themes.css";
-@import "./noveleditor.css";
+@import "./themes.scss";
 
 @layer base {
   html {
@@ -124,18 +123,15 @@
     @apply mb-2;
   }
 
-  .custom-quill-editor .ql-editor h1,
-  .tiptap h1 {
+  .custom-quill-editor .ql-editor h1 {
     @apply text-2xl font-semibold;
   }
 
-  .custom-quill-editor .ql-editor h2,
-  .tiptap h2 {
+  .custom-quill-editor .ql-editor h2 {
     @apply text-xl font-semibold;
   }
 
-  .custom-quill-editor .ql-editor h3,
-  .tiptap h3 {
+  .custom-quill-editor .ql-editor h3 {
     @apply text-lg font-semibold;
   }
 
@@ -144,9 +140,7 @@
   }
 
   .custom-quill-editor .ql-editor ul,
-  .custom-quill-editor .ql-editor ol,
-  .tiptap ul,
-  .tiptap ol {
+  .custom-quill-editor .ql-editor ol {
     @apply list-inside list-disc;
   }
 

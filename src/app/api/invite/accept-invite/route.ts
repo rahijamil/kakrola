@@ -4,7 +4,7 @@ import { getUser } from "@/utils/auth";
 import {
   InviteStatus,
   InviteType,
-  ProjectMemberType,
+  PersonalMemberType,
   TeamMemberType,
 } from "@/types/team";
 import { ProfileType } from "@/types/user";
@@ -91,7 +91,7 @@ async function handleInviteAcceptance(
     if (invite.project_id) {
       // check if the member is already in the project
       const { data: projectMember, error: projectMemberError } = await supabase
-        .from("project_members")
+        .from("personal_members")
         .select("id")
         .eq("project_id", invite.project_id)
         .eq("profile_id", profile.id)
@@ -105,10 +105,10 @@ async function handleInviteAcceptance(
 
       // Fetch existing all project members to determine the new order
       const { data: existingAllMembers, error: fetchError } = await supabase
-        .from("project_members")
-        .select("project_settings->order")
+        .from("personal_members")
+        .select("settings->order")
         .eq("project_id", invite.project_id)
-        .order("project_settings->order", { ascending: false }); // Order by existing order values
+        .order("settings->order", { ascending: false }); // Order by existing order values
 
       if (fetchError)
         throw new Error(
@@ -123,18 +123,19 @@ async function handleInviteAcceptance(
       const newOrder =
         existingMembers.length > 0 ? Number(existingMembers[0].order) + 1 : 1;
 
-      const projectMemberData: Omit<ProjectMemberType, "id"> = {
+      const projectMemberData: Omit<PersonalMemberType, "id"> = {
         project_id: invite.project_id,
+        page_id: null,
         profile_id: profile.id,
         role: invite.role,
-        project_settings: {
+        settings: {
           is_favorite: false,
           order: newOrder,
         },
       };
 
       const { error: projectInsertError } = await supabase
-        .from("project_members")
+        .from("personal_members")
         .insert(projectMemberData);
 
       if (projectInsertError) {

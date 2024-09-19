@@ -10,7 +10,7 @@ const PendingItem = ({ invite }: { invite: InviteType }) => {
   const handleUpdateRole = async (newRole: RoleType) => {
     try {
       // const { error } = await supabaseBrowser
-      //   .from("project_members")
+      //   .from("personal_members")
       //   .update({ role: newRole })
       //   .eq("id", memberData.id);
       // if (error) {

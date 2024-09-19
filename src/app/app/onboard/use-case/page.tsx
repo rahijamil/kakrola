@@ -14,7 +14,7 @@ import { TemplateProjectType } from "@/types/template";
 import { ProjectType, SectionType, TaskPriority, TaskType } from "@/types/project";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import Spinner from "@/components/ui/Spinner";
-import { ProjectMemberType } from "@/types/team";
+import { PersonalMemberType } from "@/types/team";
 import { RoleType } from "@/types/role";
 
 interface UseCase {
@@ -50,7 +50,7 @@ const Step2UseCase = () => {
   const router = useRouter();
   const { templateProjects, templateSsections, templateTasks } = useTemplates();
   const { profile } = useAuthProvider();
-  const { projectMembers } = useSidebarDataProvider();
+  const { personalMembers } = useSidebarDataProvider();
   const [loading, setLoading] = useState(false);
 
   const handleUseCaseClick = (useCase: UseCase) => {
@@ -119,22 +119,23 @@ const Step2UseCase = () => {
         if (newProject.id) {
           // Determine the new project's order
           const maxOrder = Math.max(
-            ...projectMembers.map((member) => member.project_settings.order),
+            ...personalMembers.map((member) => member.settings.order),
             0
           );
           const newOrder = maxOrder + 1;
 
-          const projectMemberData: Omit<ProjectMemberType, "id"> = {
+          const projectMemberData: Omit<PersonalMemberType, "id"> = {
             profile_id: profile.id,
+            page_id: null,
             project_id: newProject.id,
             role: RoleType.ADMIN,
-            project_settings: {
+            settings: {
               is_favorite: false,
               order: newOrder,
             },
           };
           const { data, error: userSettingsError } = await supabaseBrowser
-            .from("project_members")
+            .from("personal_members")
             .insert([projectMemberData]);
 
           if (userSettingsError) {

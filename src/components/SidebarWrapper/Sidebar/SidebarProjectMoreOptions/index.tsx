@@ -73,9 +73,9 @@ const SidebarProjectMoreOptions = ({
 
   const pathname = usePathname();
 
-  const { handleFavorite } = useFavorite({ project });
+  const { handleFavorite } = useFavorite({ column_value: project.id, column_name: "project_id" });
 
-  const { projectMembers } = useSidebarDataProvider();
+  const { personalMembers } = useSidebarDataProvider();
 
   const { role } = useRole();
 
@@ -87,18 +87,18 @@ const SidebarProjectMoreOptions = ({
   const canArchive = projectRole ? canArchiveProject(projectRole) : false;
 
   // Find the current user project settings for the given project
-  const currentUserProject = projectMembers.find(
+  const currentUserProject = personalMembers.find(
     (member) => member.project_id === project.id
   );
 
   // Determine the current favorite status
   const isFavorite = currentUserProject
-    ? currentUserProject.project_settings.is_favorite
+    ? currentUserProject.settings.is_favorite
     : false;
 
   const handleCopyProjectLink = () => {
     navigator.clipboard.writeText(
-      `https://kakrola.com/project/${project.slug}`
+      `https://kakrola.com/app/project/${project.slug}`
     );
   };
 

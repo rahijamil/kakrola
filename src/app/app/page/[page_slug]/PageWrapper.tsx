@@ -206,13 +206,13 @@ const PageWrapper = ({
         </div> */}
       </div>
 
-      <div className="flex-1 flex flex-col h-full max-w-5xl w-11/12 mx-auto">
+      <div className="flex-1 flex flex-col h-full w-full">
         {screenWidth > 768 && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 px-72">
             <File size={28} className={`text-${page?.settings.color}`} />
             <input
               type="text"
-              className="text-[26px] font-bold border-none rounded-lg focus-visible:outline-none p-1.5 bg-transparent w-full"
+              className="text-3xl font-bold border-none rounded-lg focus-visible:outline-none p-1.5 bg-transparent w-full"
               value={pageTitle}
               onBlur={handleEditTitle}
               onChange={(ev) => setPageTitle(ev.target.value)}

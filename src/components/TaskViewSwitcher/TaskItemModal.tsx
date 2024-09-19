@@ -339,7 +339,7 @@ const TaskItemModal = ({
             <div>
               <input
                 type="text"
-                className={`text-[26px] font-bold border-none focus-visible:outline-none bg-transparent w-full ${
+                className={`text-3xl font-bold border-none focus-visible:outline-none bg-transparent w-full ${
                   taskData.is_completed ? "line-through text-text-500" : ""
                 }`}
                 value={taskData.title}

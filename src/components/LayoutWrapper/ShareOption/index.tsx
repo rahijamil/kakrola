@@ -8,12 +8,12 @@ import { ProfileType } from "@/types/user";
 import { useGlobalOption } from "@/context/GlobalOptionContext";
 import MemberItem from "./MemberItem";
 import InviteEmailInput from "./InviteEmailInput";
-import { InviteStatus, InviteType, ProjectMemberType } from "@/types/team";
+import { InviteStatus, InviteType, PersonalMemberType } from "@/types/team";
 import PendingItem from "./PendingItem";
 import ShareAvatar from "./ShareAvatar";
 import useScreen from "@/hooks/useScreen";
 
-interface MemberData extends ProjectMemberType {
+interface MemberData extends PersonalMemberType {
   profile: ProfileType;
 }
 
@@ -55,7 +55,7 @@ const ShareOption = ({
     const fetchMembersData = async () => {
       try {
         const { data: members, error: membersError } = await supabaseBrowser
-          .from("project_members")
+          .from("personal_members")
           .select()
           .eq("project_id", projectId);
 

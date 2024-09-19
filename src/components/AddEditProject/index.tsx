@@ -12,7 +12,7 @@ import WorkspaceSelector from "./WorkspaceSelector";
 import ColorSelector from "./ColorSelector";
 import { generateSlug } from "@/utils/generateSlug";
 import AnimatedCircleCheck from "@/components/TaskViewSwitcher/AnimatedCircleCheck";
-import { ProjectMemberType } from "@/types/team";
+import { PersonalMemberType } from "@/types/team";
 import { RoleType } from "@/types/role";
 import {
   ActivityAction,
@@ -38,7 +38,7 @@ const AddEditProject = ({
   aboveBellow?: "above" | "below" | null;
 }) => {
   const { profile } = useAuthProvider();
-  const { projects, setProjects, teams, projectMembers } =
+  const { projects, setProjects, teams, personalMembers } =
     useSidebarDataProvider();
 
   const initialProjectData: Omit<ProjectType, "id"> = useMemo(
@@ -63,8 +63,8 @@ const AddEditProject = ({
 
   const findProjectMember = useCallback(
     (projectId?: ProjectType["id"]) =>
-      projectMembers.find((member) => member.project_id === projectId),
-    [projectMembers]
+      personalMembers.find((member) => member.project_id === projectId),
+    [personalMembers]
   );
 
   const initialProjectMembersData = useMemo(
@@ -73,7 +73,7 @@ const AddEditProject = ({
         profile_id: profile?.id || "",
         project_id: project?.id || 0,
         role: RoleType.MEMBER,
-        project_settings: {
+        settings: {
           is_favorite: false,
           order: 0,
         },
@@ -126,11 +126,11 @@ const AddEditProject = ({
   );
 
   const handleProjectMembersDataChange = useCallback(
-    (field: keyof ProjectMemberType, value: any) => {
+    (field: keyof PersonalMemberType, value: any) => {
       setProjectMembersData((prevData) => ({
         ...prevData,
-        project_settings: {
-          ...prevData.project_settings,
+        settings: {
+          ...prevData.settings,
           [field]: value,
         },
       }));
@@ -209,7 +209,7 @@ const AddEditProject = ({
 
       if (projectMembersData) {
         const { error: projectMembersError } = await supabaseBrowser
-          .from("project_members")
+          .from("personal_members")
           .update({
             ...projectMembersData,
           })
@@ -244,7 +244,7 @@ const AddEditProject = ({
           _project_color: projectData.settings.color,
           _view: projectData.settings.view,
           _selected_views: projectData.settings.selected_views,
-          _is_favorite: projectMembersData.project_settings.is_favorite,
+          _is_favorite: projectMembersData.settings.is_favorite,
         }
       );
 
@@ -295,37 +295,37 @@ const AddEditProject = ({
       const currentIndex = projects.findIndex((p) => p.id === project.id);
 
       // Retrieve the current order values from userProjectSettings
-      const currentProjectMember = projectMembers.find(
+      const currentProjectMember = personalMembers.find(
         (m) => m.project_id === project.id
       );
 
       const prevOrder =
         position === "above"
-          ? projectMembers
+          ? personalMembers
               .filter(
                 (m) =>
-                  m.project_settings.order <
-                  (currentProjectMember?.project_settings.order || 0)
+                  m.settings.order <
+                  (currentProjectMember?.settings.order || 0)
               )
               .sort(
-                (a, b) => b.project_settings.order - a.project_settings.order
-              )[0].project_settings.order ||
-            (currentProjectMember?.project_settings.order || 0) - 1
-          : currentProjectMember?.project_settings.order || 0;
+                (a, b) => b.settings.order - a.settings.order
+              )[0].settings.order ||
+            (currentProjectMember?.settings.order || 0) - 1
+          : currentProjectMember?.settings.order || 0;
 
       const nextOrder =
         position === "below"
-          ? projectMembers
+          ? personalMembers
               .filter(
                 (m) =>
-                  m.project_settings.order >
-                  (currentProjectMember?.project_settings.order || 0)
+                  m.settings.order >
+                  (currentProjectMember?.settings.order || 0)
               )
               .sort(
-                (a, b) => a.project_settings.order - b.project_settings.order
-              )[0]?.project_settings.order ||
-            (currentProjectMember?.project_settings.order || 0) + 1
-          : currentProjectMember?.project_settings.order || 0;
+                (a, b) => a.settings.order - b.settings.order
+              )[0]?.settings.order ||
+            (currentProjectMember?.settings.order || 0) + 1
+          : currentProjectMember?.settings.order || 0;
 
       const newOrder = (prevOrder + nextOrder) / 2;
 
@@ -340,7 +340,7 @@ const AddEditProject = ({
           _project_color: projectData.settings.color,
           _view: projectData.settings.view,
           _selected_views: projectData.settings.selected_views,
-          _is_favorite: projectMembersData.project_settings.is_favorite,
+          _is_favorite: projectMembersData.settings.is_favorite,
           _order: newOrder,
         }
       );
@@ -434,21 +434,21 @@ const AddEditProject = ({
                   onClick={() =>
                     setProjectMembersData((prev) => ({
                       ...prev,
-                      project_settings: {
-                        ...projectMembersData?.project_settings,
+                      settings: {
+                        ...projectMembersData?.settings,
                         is_favorite:
-                          !projectMembersData?.project_settings.is_favorite,
+                          !projectMembersData?.settings.is_favorite,
                       },
                     }))
                   }
                 >
                   <ToggleSwitch
-                    checked={projectMembersData.project_settings.is_favorite}
+                    checked={projectMembersData.settings.is_favorite}
                     onCheckedChange={(value) =>
                       setProjectMembersData((prev) => ({
                         ...prev,
-                        project_settings: {
-                          ...projectMembersData.project_settings,
+                        settings: {
+                          ...projectMembersData.settings,
                           is_favorite: value,
                         },
                       }))

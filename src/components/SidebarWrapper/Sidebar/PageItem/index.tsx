@@ -1,22 +1,22 @@
 import { ProjectType, TaskType } from "@/types/project";
 import Link from "next/link";
 import React, { useState } from "react";
-import SidebarProjectMoreOptions from "./SidebarProjectMoreOptions";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import CommentOrActivityModal from "../../LayoutWrapper/CommentOrActivityModal";
-import ExportCSVModal from "./SidebarProjectMoreOptions/ExportCSVModal";
-import ImportCSVModal from "./SidebarProjectMoreOptions/ImportCSVModal";
-import AddEditProject from "../../AddEditProject";
+import CommentOrActivityModal from "../../../LayoutWrapper/CommentOrActivityModal";
+import ExportCSVModal from "../SidebarProjectMoreOptions/ExportCSVModal";
+import ImportCSVModal from "../SidebarProjectMoreOptions/ImportCSVModal";
+import AddEditProject from "../../../AddEditProject";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { CheckCircle, Ellipsis, File, Hash, Users } from "lucide-react";
-import ProjectDeleteConfirm from "./ProjectDeleteConfirm";
-import ProjectArchiveConfirm from "./ProjectArchiveConfirm";
+import ProjectDeleteConfirm from "../ProjectDeleteConfirm";
+import ProjectArchiveConfirm from "../ProjectArchiveConfirm";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useQuery } from "@tanstack/react-query";
-import ProjectLeaveConfirm from "./ProjectLeaveConfirm";
+import ProjectLeaveConfirm from "../ProjectLeaveConfirm";
 import useScreen from "@/hooks/useScreen";
 import { PageType } from "@/types/pageTypes";
+import SidebarPageMoreOptions from "./SidebarPageMoreOptions";
 
 const PageItem = ({
   page,
@@ -33,10 +33,10 @@ const PageItem = ({
   const [tasks, setTasks] = useState<TaskType[]>([]);
 
   const { data: thisProjectAllMembers } = useQuery({
-    queryKey: ["project_members", page.id],
+    queryKey: ["personal_members", page.id],
     queryFn: async () => {
       const { data, error } = await supabaseBrowser
-        .from("project_members")
+        .from("personal_members")
         .select("id")
         .eq("project_id", page.id);
       if (error) console.error("Failed to fetch project members", error);
@@ -130,9 +130,9 @@ const PageItem = ({
                 </p>
               )}
 
-              {/* {screenWidth > 768 && (
-                <SidebarProjectMoreOptions
-                  project={project}
+              {screenWidth > 768 && (
+                <SidebarPageMoreOptions
+                  page={page}
                   stateActions={{
                     setShowDeleteConfirm,
                     setShowLeaveConfirm,
@@ -145,7 +145,7 @@ const PageItem = ({
                   }}
                   setIsDragDisabled={setIsDragDisabled}
                 />
-              )} */}
+              )}
             </div>
           </div>
         </div>

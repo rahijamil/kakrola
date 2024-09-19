@@ -2,11 +2,11 @@ import { useAuthProvider } from "@/context/AuthContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { ProjectType, SectionType } from "@/types/project";
-import { ProjectMemberType, TeamMemberType, TeamType } from "@/types/team";
+import { PersonalMemberType, TeamMemberType, TeamType } from "@/types/team";
 import { PageType } from "@/types/pageTypes";
 
 interface SidebarData {
-  project_members: ProjectMemberType[];
+  personal_members: PersonalMemberType[];
   projects: ProjectType[];
   sections: SectionType[];
   team_members: TeamMemberType[];
@@ -26,7 +26,7 @@ const fetchSidebarData = async (profileId?: string) => {
 
     if (error) {
       console.error("RPC Fetch Error:", error.message);
-      throw new Error(`Error fetching data: ${error.message}`);
+      throw error;
     }
 
     return data || {};
@@ -54,7 +54,7 @@ const useSidebarData = () => {
       queryClient.setQueryData(
         ["sidebar_data", profile?.id],
         (oldData: SidebarData = {
-          project_members: [],
+          personal_members: [],
           projects: [],
           sections: [],
           team_members: [],
@@ -65,12 +65,12 @@ const useSidebarData = () => {
           projects: newProjects,
         })
       ),
-    projectMembers: data?.project_members || [],
-    setProjectMembers: (members: ProjectMemberType[]) =>
+    personalMembers: data?.personal_members || [],
+    setProjectMembers: (members: PersonalMemberType[]) =>
       queryClient.setQueryData(
         ["sidebar_data", profile?.id],
         (oldData: SidebarData = {
-          project_members: [],
+          personal_members: [],
           projects: [],
           sections: [],
           team_members: [],
@@ -78,7 +78,7 @@ const useSidebarData = () => {
           pages: [],
         }) => ({
           ...oldData,
-          project_members: members,
+          personal_members: members,
         })
       ),
     sections: data?.sections || [],
@@ -87,7 +87,7 @@ const useSidebarData = () => {
       queryClient.setQueryData(
         ["sidebar_data", profile?.id],
         (oldData: SidebarData = {
-          project_members: [],
+          personal_members: [],
           projects: [],
           sections: [],
           team_members: [],
@@ -104,7 +104,7 @@ const useSidebarData = () => {
       queryClient.setQueryData(
         ["sidebar_data", profile?.id],
         (oldData: SidebarData = {
-          project_members: [],
+          personal_members: [],
           projects: [],
           sections: [],
           team_members: [],

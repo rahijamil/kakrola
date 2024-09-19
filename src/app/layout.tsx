@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Poppins, Nunito } from "next/font/google";
-import "./globals.css";
+import "./globals.scss";
 import SidebarDataProvider from "@/context/SidebarDataContext";
 import AuthProvider from "@/context/AuthContext";
 import OnboardProvider from "@/context/OnboardContext";

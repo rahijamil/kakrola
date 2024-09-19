@@ -32,10 +32,10 @@ const ProjectItem = ({
   const [tasks, setTasks] = useState<TaskType[]>([]);
 
   const { data: thisProjectAllMembers } = useQuery({
-    queryKey: ["project_members", project.id],
+    queryKey: ["personal_members", project.id],
     queryFn: async () => {
       const { data, error } = await supabaseBrowser
-        .from("project_members")
+        .from("personal_members")
         .select("id")
         .eq("project_id", project.id);
       if (error) console.error("Failed to fetch project members", error);

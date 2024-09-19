@@ -11,13 +11,17 @@ import {
   type JSONContent,
 } from "novel";
 import { ImageResizer, handleCommandNavigation } from "novel/extensions";
-import { useEffect, useState } from "react";
-import { defaultExtensions } from "./extensions";
+import { useEffect, useRef, useState } from "react";
+import { defaultExtensions } from "./extentions";
 import { ColorSelector } from "./selectors/color-selector";
 import { LinkSelector } from "./selectors/link-selector";
 import { NodeSelector } from "./selectors/node-selector";
 import { MathSelector } from "./selectors/math-selector";
 import { Separator } from "./EditorUI/Separator";
+
+import "./styles/index.scss";
+
+import { ContentItemMenu } from "./menus/ContentItemMenu";
 
 import { handleImageDrop, handleImagePaste } from "novel/plugins";
 // import GenerativeMenuSwitch from "./generative/generative-menu-switch";
@@ -29,13 +33,22 @@ import { defaultEditorContent } from "./content";
 
 import hljs from "highlight.js";
 import useTheme from "@/hooks/useTheme";
+import { TableColumnMenu, TableRowMenu } from "./extentions/Table/menus";
+import { LinkMenu } from "./menus/LinkMenu";
 
 const extensions = [...defaultExtensions, slashCommand];
 
-const NovelEditor = () => {
+const NovelEditor = ({
+  content,
+  handleSave,
+}: {
+  content: JSONContent | null;
+  handleSave: (content: JSONContent) => void;
+}) => {
   const { theme } = useTheme();
+  const menuContainerRef = useRef(null);
   const [initialContent, setInitialContent] = useState<null | JSONContent>(
-    null
+    content
   );
   const [saveStatus, setSaveStatus] = useState("Saved");
   const [charsCount, setCharsCount] = useState();
@@ -68,6 +81,8 @@ const NovelEditor = () => {
       "markdown",
       editor.storage.markdown?.getMarkdown()
     );
+
+    handleSave(json);
     setSaveStatus("Saved");
   }, 500);
 
@@ -80,7 +95,7 @@ const NovelEditor = () => {
   if (!initialContent) return null;
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" ref={menuContainerRef}>
       <div className="flex absolute right-5 top-5 z-10 mb-5 gap-2">
         <div className="rounded-lg bg-primary-200 px-2 py-1">{saveStatus}</div>
         <div
@@ -109,7 +124,7 @@ const NovelEditor = () => {
             handleDrop: (view, event, _slice, moved) =>
               handleImageDrop(view, event, moved, uploadFn),
             attributes: {
-              class: `prose prose-sm ${
+              class: `prose prose-sm min-h-[calc(100vh-10vh)] ${
                 theme == "dark" && "prose-invert"
               } prose-headings:font-title font-default focus:outline-none max-w-full`,
             },
@@ -170,6 +185,11 @@ const NovelEditor = () => {
             <Separator orientation="vertical" />
             <ColorSelector open={openColor} onOpenChange={setOpenColor} />
           </GenerativeMenuSwitch> */}
+
+          <ContentItemMenu />
+          <LinkMenu appendTo={menuContainerRef} />
+          <TableRowMenu appendTo={menuContainerRef} />
+          <TableColumnMenu appendTo={menuContainerRef} />
         </EditorContent>
       </EditorRoot>
     </div>

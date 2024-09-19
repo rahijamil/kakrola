@@ -15,14 +15,14 @@ const FavoriteProjects = ({
   setShowFavoritesProjects: any;
   showFavoritesProjects: boolean;
 }) => {
-  const { projects, sidebarLoading, projectMembers } =
+  const { projects, sidebarLoading, personalMembers } =
     useSidebarDataProvider();
   const pathname = usePathname();
 
   // Create a set of favorite project IDs
   const favoriteProjectIds = new Set(
-    projectMembers
-      .filter((member) => member.project_settings.is_favorite)
+    personalMembers
+      .filter((member) => member.settings.is_favorite)
       .map((member) => member.project_id)
   );
 
@@ -32,9 +32,9 @@ const FavoriteProjects = ({
 
   // Create a map of project ID to favorite status from userProjectSettings
   const favoritesMap = new Map(
-    projectMembers.map((member) => [
+    personalMembers.map((member) => [
       member.project_id,
-      member.project_settings.is_favorite,
+      member.settings.is_favorite,
     ])
   );
 

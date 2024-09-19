@@ -18,7 +18,6 @@ const PageDetails = ({
 }) => {
   const [notFound, setNotFound] = useState<boolean>(false);
 
-  const { pages, setPages } = useSidebarDataProvider();
   const { page, setPage, isPending, isError } = usePageDetails(page_slug);
 
   useEffect(() => {
@@ -79,7 +78,7 @@ const PageDetails = ({
   if (page?.id) {
     return (
       <PageWrapper page={page}>
-        <PageContent page={page} />
+        <PageContent page={page} setPage={setPage} />
       </PageWrapper>
     );
   }

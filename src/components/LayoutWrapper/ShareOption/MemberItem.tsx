@@ -1,11 +1,11 @@
-import { ProjectMemberType } from "@/types/team";
+import { PersonalMemberType } from "@/types/team";
 import { ProfileType } from "@/types/user";
 import Image from "next/image";
 import React, { useRef, useState } from "react";
 import RoleItem from "./RoleItem";
 import { RoleType } from "@/types/role";
 
-interface MemberData extends ProjectMemberType {
+interface MemberData extends PersonalMemberType {
   profile: ProfileType;
 }
 
@@ -15,7 +15,7 @@ const MemberItem = ({ member }: { member: MemberData }) => {
   const handleUpdateRole = async (newRole: RoleType) => {
     try {
       // const { error } = await supabaseBrowser
-      //   .from("project_members")
+      //   .from("personal_members")
       //   .update({ role: newRole })
       //   .eq("id", memberData.id);
       // if (error) {

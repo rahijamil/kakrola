@@ -1,8 +1,8 @@
 import { nextui } from "@nextui-org/theme";
 import type { Config } from "tailwindcss";
-import typography from "@tailwindcss/typography";
 
 const config: Config = {
+  darkMode: ["class", "[data-theme='dark']"],
   content: [
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/@nextui-org/theme/dist/components/(date-picker|button|ripple|spinner|calendar|date-input|popover).js",
@@ -151,11 +151,6 @@ const config: Config = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -268,7 +263,11 @@ const config: Config = {
     "text-indigo-500",
     "text-pink-500",
   ],
-  plugins: [nextui(), typography],
+  plugins: [
+    nextui(),
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography"),
+  ],
 };
 
 export default config;

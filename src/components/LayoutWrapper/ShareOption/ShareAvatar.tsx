@@ -1,10 +1,10 @@
 import Dropdown from "@/components/ui/Dropdown";
-import { ProjectMemberType } from "@/types/team";
+import { PersonalMemberType } from "@/types/team";
 import { ProfileType } from "@/types/user";
 import Image from "next/image";
 import React, { useRef, useState } from "react";
 
-interface MemberData extends ProjectMemberType {
+interface MemberData extends PersonalMemberType {
   profile: ProfileType;
 }
 

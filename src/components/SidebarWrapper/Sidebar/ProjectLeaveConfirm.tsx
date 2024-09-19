@@ -28,7 +28,7 @@ const ProjectLeaveConfirm = ({
 
     // Delete project
     const { error: projectError } = await supabaseBrowser
-      .from("project_members")
+      .from("personal_members")
       .delete()
       .eq("project_id", project.id)
       .eq("profile_id", profile.id);

@@ -130,11 +130,11 @@ export const ColorSelector = ({
 
       <PopoverContent
         sideOffset={5}
-        className="my-1 flex max-h-80 w-48 flex-col overflow-hidden overflow-y-auto rounded border p-1 shadow-xl "
+        className="my-1 flex max-h-80 w-48 flex-col overflow-hidden overflow-y-auto rounded border p-1 shadow-xl"
         align="start"
       >
         <div className="flex flex-col">
-          <div className="my-1 px-2 text-sm font-semibold text-muted-foreground">
+          <div className="my-1 px-2 text-sm font-semibold text-text-500">
             Color
           </div>
           {TEXT_COLORS.map(({ name, color }, index) => (
@@ -165,7 +165,7 @@ export const ColorSelector = ({
           ))}
         </div>
         <div>
-          <div className="my-1 px-2 text-sm font-semibold text-muted-foreground">
+          <div className="my-1 px-2 text-sm font-semibold text-text-500">
             Background
           </div>
           {HIGHLIGHT_COLORS.map(({ name, color }, index) => (

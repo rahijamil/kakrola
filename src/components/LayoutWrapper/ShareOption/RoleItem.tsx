@@ -1,13 +1,13 @@
 import AnimatedTaskCheckbox from "@/components/TaskViewSwitcher/AnimatedCircleCheck";
 import Dropdown from "@/components/ui/Dropdown";
-import { ProjectMemberType } from "@/types/team";
+import { PersonalMemberType } from "@/types/team";
 import { ProfileType } from "@/types/user";
 import React, { useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { RoleType } from "@/types/role";
 import { TaskPriority } from "@/types/project";
 
-interface MemberData extends ProjectMemberType {
+interface MemberData extends PersonalMemberType {
   profile: ProfileType;
 }
 
