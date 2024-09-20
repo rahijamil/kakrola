@@ -7,6 +7,7 @@ import {
   Dispatch,
   SetStateAction,
   RefObject,
+  CSSProperties,
 } from "react";
 
 interface DropdownProps {
@@ -37,6 +38,7 @@ interface DropdownProps {
   mobileBottomSheet?: boolean;
   title?: string;
   fullMode?: boolean;
+  style?: CSSProperties;
 }
 
 import { AnimatePresence, motion } from "framer-motion";
@@ -59,6 +61,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   mobileBottomSheet = true,
   title = "More",
   fullMode,
+  style,
 }) => {
   const [position, setPosition] = useState<{
     top: string;
@@ -257,6 +260,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                     left: position.left,
                     right: position.right,
                     transform: position.transform,
+                    ...style,
                   }}
                   className={`z-50 bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg fixed overflow-hidden px-1 ${
                     contentWidthClass ? contentWidthClass : "w-72 py-1"

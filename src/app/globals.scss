@@ -21,6 +21,10 @@
     @apply opacity-100;
   }
 
+  ::placeholder {
+    @apply text-text-400;
+  }
+
   #scrollable,
   .onboard_scrollbar {
     scrollbar-width: 0;
@@ -149,11 +153,11 @@
   }
 
   .custom-quill-editor .ql-editor code {
-    @apply bg-text-100 text-text-700 px-1 py-0.5 rounded;
+    @apply bg-text-100 text-text-700 px-1 py-0.5 rounded-lg;
   }
 
   .custom-quill-editor .ql-editor pre {
-    @apply bg-text-100 text-text-700 p-4 rounded;
+    @apply bg-text-100 text-text-700 p-4 rounded-lg;
   }
 
   .custom-quill-editor .ql-editor pre code {

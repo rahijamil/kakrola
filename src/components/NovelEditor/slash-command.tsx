@@ -1,13 +1,16 @@
 import {
   CheckSquare,
   Code,
+  Columns2,
   Heading1,
   Heading2,
   Heading3,
   ImageIcon,
   List,
+  ListCollapse,
   ListOrdered,
   MessageSquarePlus,
+  Minus,
   Table,
   Text,
   TextQuote,
@@ -92,6 +95,19 @@ export const suggestionItems = createSuggestionItems([
     },
   },
   {
+    title: "Table",
+    description: "Create a table.",
+    searchTerms: ["table", "grid", "rows", "columns", "cells", "database"],
+    icon: <Table size={18} />,
+    command: ({ editor, range }) =>
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .insertTable({ rows: 3, cols: 3, withHeaderRow: false })
+        .run(),
+  },
+  {
     title: "Bullet List",
     description: "Create a simple bullet list.",
     searchTerms: ["unordered", "point"],
@@ -107,6 +123,15 @@ export const suggestionItems = createSuggestionItems([
     icon: <ListOrdered size={18} />,
     command: ({ editor, range }) => {
       editor.chain().focus().deleteRange(range).toggleOrderedList().run();
+    },
+  },
+  {
+    title: "Toggle List",
+    icon: <ListCollapse size={18} />,
+    description: "Toggles can show and hide content",
+    searchTerms: ["toggle"],
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).setDetails().run();
     },
   },
   {
@@ -153,17 +178,28 @@ export const suggestionItems = createSuggestionItems([
     },
   },
   {
-    title: "Table",
-    description: "Create a table.",
-    searchTerms: ["table", "grid", "rows", "columns", "cells", "database"],
-    icon: <Table size={18} />,
-    command: ({ editor, range }) =>
+    title: "Columns",
+    description: "Add two column content",
+    searchTerms: ["cols"],
+    icon: <Columns2 size={18} />,
+    command: ({ editor, range }) => {
       editor
         .chain()
         .focus()
         .deleteRange(range)
-        .insertTable({ rows: 3, cols: 3, withHeaderRow: false })
-        .run(),
+        .setColumns()
+        .focus(editor.state.selection.head - 1)
+        .run();
+    },
+  },
+  {
+    title: "Horizontal Rule",
+    description: "Insert a horizontal divider",
+    searchTerms: ["hr"],
+    icon: <Minus size={18} />,
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).setHorizontalRule().run();
+    },
   },
 ]);
 

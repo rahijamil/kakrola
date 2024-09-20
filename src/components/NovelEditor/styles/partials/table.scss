@@ -4,13 +4,29 @@
   }
 
   table {
-    @apply border-collapse border-black/10 rounded box-border w-full;
-    @apply dark:border-white/20;
+    @apply border-collapse border-text-200 rounded box-border w-full;
+
+    tr:first-child {
+      td:first-child {
+        @apply rounded-tl; // Top-left corner for first row
+      }
+      td:last-child {
+        @apply rounded-tr; // Top-right corner for first row
+      }
+    }
+
+    tr:last-child {
+      td:first-child {
+        @apply rounded-bl; // Bottom-left corner for last row
+      }
+      td:last-child {
+        @apply rounded-br; // Bottom-right corner for last row
+      }
+    }
 
     td,
     th {
-      @apply border border-black/10 min-w-[100px] p-2 relative text-left align-top;
-      @apply dark:border-white/20;
+      @apply border border-text-200 min-w-[100px] p-2 relative text-left align-top;
 
       &:first-of-type:not(a) {
         @apply mt-0;
@@ -33,42 +49,36 @@
       @apply -bottom-[2px] flex pointer-events-none absolute -right-1 top-0 w-2;
 
       &::before {
-        @apply bg-black/20 h-full w-[1px] ml-2;
-        @apply dark:bg-white/20;
-        content: '';
+        @apply bg-text-200 h-full w-[1px] ml-2;
+        content: "";
       }
     }
 
     .selectedCell {
-      @apply bg-black/5 border-black/20 border-double;
-      @apply dark:bg-white/10 dark:border-white/20;
+      @apply bg-primary-100 border-primary-200 border-double;
     }
 
     .grip-column,
     .grip-row {
-      @apply items-center bg-black/5 cursor-pointer flex justify-center absolute z-10;
-      @apply dark:bg-white/10;
+      @apply items-center bg-text-100 cursor-pointer flex justify-center absolute z-10;
     }
 
     .grip-column {
-      @apply w-[calc(100%+1px)] border-l border-black/20 h-3 left-0 -ml-[1px] -top-3;
-      @apply dark:border-white/20;
+      @apply w-[calc(100%+1px)] border-l border-text-200 h-3 left-0 -ml-[1px] -top-3;
 
       &:hover,
       &.selected {
         &::before {
-          content: '';
+          content: "";
           @apply w-2.5;
         }
       }
 
       &:hover {
-        @apply bg-black/10;
-        @apply dark:bg-white/20;
+        @apply bg-text-200;
 
         &::before {
-          @apply border-b-2 border-dotted border-black/60;
-          @apply dark:border-white/60;
+          @apply border-b-2 border-dotted border-text-600;
         }
       }
 
@@ -81,32 +91,29 @@
       }
 
       &.selected {
-        @apply bg-black/30 border-black/30 shadow-sm;
-        @apply dark:bg-white/30 dark:border-white/30;
+        @apply bg-primary-500 border-primary-200 shadow-sm;
 
         &::before {
-          @apply border-b-2 border-dotted;
+          @apply border-b-2 border-dotted border-surface;
         }
       }
     }
 
     .grip-row {
-      @apply h-[calc(100%+1px)] border-t border-black/20 -left-3 w-3 top-0 -mt-[1px];
-      @apply dark:border-white/20;
-
+      @apply h-[calc(100%+1px)] border-t border-text-200 -left-3 w-3 top-0 -mt-[1px];
+   
       &:hover,
       &.selected {
         &::before {
           @apply h-2.5;
-          content: '';
+          content: "";
         }
       }
       &:hover {
-        @apply bg-black/10;
-        @apply dark:bg-white/20;
+        @apply bg-text-200;
 
         &::before {
-          @apply border-l-2 border-dotted border-black/60;
+          @apply border-l-2 border-dotted border-text-600;
           @apply dark:border-white/60;
         }
       }
@@ -120,11 +127,10 @@
       }
 
       &.selected {
-        @apply bg-black/30 border-black/30 shadow-sm;
-        @apply dark:bg-white/30 dark:border-white/30;
+        @apply bg-primary-500 border-primary-200 shadow-sm;
 
         &::before {
-          @apply border-l-2 border-dotted;
+          @apply border-l-2 border-dotted border-surface;
         }
       }
     }

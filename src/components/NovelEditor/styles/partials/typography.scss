@@ -64,25 +64,23 @@
     @apply h-auto w-full max-w-full;
   }
 
-  [data-type='horizontalRule'] {
-    @apply my-8 py-4 transition-all duration-100 ease-in-out cursor-pointer;
+  [data-type="horizontalRule"] {
+    @apply h-7 flex items-center justify-center rounded-md transition;
 
     &.ProseMirror-selectednode {
-      @apply bg-black/5 dark:bg-white/10;
+      // @apply bg-primary-50;
 
       hr {
-        @apply border-t-black/30 dark:border-t-white/30;
+        @apply bg-text-300;
       }
     }
 
-    &:hover:not(&.ProseMirror-selectednode) {
-      @apply bg-black/5;
-      @apply dark:bg-white/10;
-    }
+    // &:hover:not(&.ProseMirror-selectednode) {
+    //   @apply bg-primary-50;
+    // }
 
     hr {
-      @apply border-0 border-t border-black/20 bg-black/80;
-      @apply dark:border-white/20 dark:bg-white/80;
+      @apply bg-text-200 w-full border-none h-px;
     }
   }
 }

@@ -4,12 +4,22 @@ import {
   UpdatedImage,
   TaskList,
   TaskItem,
-  HorizontalRule,
   StarterKit,
   Placeholder,
   Color,
   CodeBlockLowlight,
+  TextStyle,
+  HighlightExtension,
+  Mathematics,
+  MarkdownExtension,
 } from "novel/extensions";
+
+import Emoji from "@tiptap-pro/extension-emoji";
+import Text from "@tiptap/extension-text";
+
+import Details from "@tiptap-pro/extension-details";
+import DetailsContent from "@tiptap-pro/extension-details-content";
+import DetailsSummary from "@tiptap-pro/extension-details-summary";
 
 import { Table, TableCell, TableHeader, TableRow } from "./Table";
 
@@ -26,6 +36,14 @@ import { UploadImagesPlugin } from "novel/plugins";
 
 import AutoJoiner from "tiptap-extension-auto-joiner";
 import CodeBlock from "./CodeBlock";
+import { EmojiUnicodeParser } from "./EmojiUnicodeParser";
+import { Column, Columns } from "./MultiColumn";
+import { Document } from "./Document";
+import { HorizontalRule } from "./HorizontalRule";
+import { TableOfContentsNode } from "./TableOfContentsNode";
+import { ImageBlock } from "./ImageBlock";
+import { ImageUpload } from "./ImageUpload";
+import TableOfContents from "@tiptap-pro/extension-table-of-contents";
 
 // create a lowlight instance
 const lowlight = createLowlight(all);
@@ -63,7 +81,7 @@ const placeholder = Placeholder.configure({
 const tiptapLink = TiptapLink.configure({
   HTMLAttributes: {
     class: cx(
-      "text-text-500 underline underline-offset-[3px] hover:text-primary-500 transition-colors cursor-pointer"
+      "underline underline-offset-[3px] text-primary-500 cursor-pointer"
     ),
   },
 });
@@ -78,12 +96,6 @@ const taskItem = TaskItem.configure({
     class: cx("my-4 flex items-center"),
   },
   nested: true,
-});
-
-const horizontalRule = HorizontalRule.configure({
-  HTMLAttributes: {
-    class: cx("mt-4 mb-6 border-t border-text-300"),
-  },
 });
 
 const tiptapImage = TiptapImage.extend({
@@ -151,7 +163,26 @@ const codeBlockLowlight = CodeBlockLowlight.extend({
   },
 }).configure({ lowlight });
 
+const emoji = Emoji.configure({
+  enableEmoticons: true,
+});
+
+const details = Details.configure({
+  persist: true,
+});
+
 export const defaultExtensions = [
+  autoJoiner,
+  codeBlockLowlight,
+  Color,
+  Columns,
+  Column,
+  details,
+  DetailsContent,
+  DetailsSummary,
+  Document,
+  emoji,
+  EmojiUnicodeParser,
   starterKit,
   placeholder,
   tiptapLink,
@@ -159,12 +190,18 @@ export const defaultExtensions = [
   UpdatedImage,
   taskList,
   taskItem,
-  horizontalRule,
-  autoJoiner,
+  HorizontalRule,
   Table,
   TableCell,
   TableHeader,
   TableRow,
-  Color,
-  codeBlockLowlight,
+  TableOfContents,
+  TableOfContentsNode,
+  TextStyle,
+  ImageUpload,
+  ImageBlock,
+  HighlightExtension,
+  Mathematics,
+  MarkdownExtension,
+  Text,
 ];

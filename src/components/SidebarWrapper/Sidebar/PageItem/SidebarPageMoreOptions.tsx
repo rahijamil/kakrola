@@ -128,7 +128,7 @@ const SidebarPageMoreOptions = ({
       )}
       beforeItemsContent={
         currentUserPage?.role != RoleType.ADMIN ? (
-          <p className="text-xs mb-1 p-2 whitespace-normal bg-text-50 rounded-lg">
+          <p className="text-xs mb-1 p-2 whitespace-normal bg-text-100 rounded-lg">
             Some features are not available to project
             {currentUserPage?.role == RoleType.MEMBER
               ? " members"

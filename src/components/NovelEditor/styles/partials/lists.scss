@@ -27,7 +27,7 @@
     @apply my-8 first:mt-0 last:mb-0;
   }
 
-  ul[data-type='taskList'] {
+  ul[data-type="taskList"] {
     @apply list-none p-0;
 
     p {
@@ -39,14 +39,65 @@
 
       > label {
         @apply grow-0 shrink-0 flex-auto mt-1 mr-2 select-none;
+
+        input[type="checkbox"] {
+          -webkit-appearance: none;
+          appearance: none;
+          background-color: transparent;
+          margin: 0;
+          cursor: pointer;
+          width: 1.2em;
+          height: 1.2em;
+          position: relative;
+          border: 2px solid var(--color-text-500);
+          margin-right: 0.3rem;
+          display: grid;
+          place-content: center;
+
+          &:hover {
+            background-color: var(--color-surface);
+          }
+
+          &:active {
+            background-color: var(--color-surface);
+          }
+
+          &:checked {
+            border-color: var(--color-primary-500);
+            background-color: var(--color-primary-500);
+          }
+
+          &::before {
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em;
+            color: var(--color-surface);
+            transform-origin: center;
+            clip-path: polygon(
+              14% 44%,
+              0 65%,
+              50% 100%,
+              100% 16%,
+              80% 0%,
+              43% 62%
+            );
+          }
+
+          &:checked::before {
+            transform: scale(1);
+          }
+        }
       }
 
       > div {
         @apply flex-auto;
       }
 
-      &[data-checked='true'] {
-        @apply line-through;
+      &[data-checked="true"] {
+        @apply line-through text-text-500;
       }
     }
   }

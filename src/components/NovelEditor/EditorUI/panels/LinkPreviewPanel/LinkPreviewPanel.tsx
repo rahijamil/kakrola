@@ -1,20 +1,33 @@
-import { Icon } from "../../icons"
-import { Surface } from "../../Surface"
-import { Toolbar } from "../../Toolbar"
-import Tooltip from "../../Tooltip"
+import Link from "next/link";
+import { Icon } from "../../icons";
+import { Surface } from "../../Surface";
+import { Toolbar } from "../../Toolbar";
+import Tooltip from "../../Tooltip";
 
 export type LinkPreviewPanelProps = {
-  url: string
-  onEdit: () => void
-  onClear: () => void
-}
+  url: string;
+  onEdit: () => void;
+  onClear: () => void;
+};
 
-export const LinkPreviewPanel = ({ onClear, onEdit, url }: LinkPreviewPanelProps) => {
+export const LinkPreviewPanel = ({
+  onClear,
+  onEdit,
+  url,
+}: LinkPreviewPanelProps) => {
+  if (!url) return null;
+
   return (
     <Surface className="flex items-center gap-2 p-2">
-      <a href={url} target="_blank" rel="noopener noreferrer" className="text-sm underline break-all">
+      <Link
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-sm underline break-all"
+      >
         {url}
-      </a>
+      </Link>
+
       <Toolbar.Divider />
       <Tooltip title="Edit link">
         <Toolbar.Button onClick={onEdit}>
@@ -27,5 +40,5 @@ export const LinkPreviewPanel = ({ onClear, onEdit, url }: LinkPreviewPanelProps
         </Toolbar.Button>
       </Tooltip>
     </Surface>
-  )
-}
+  );
+};

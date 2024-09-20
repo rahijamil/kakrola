@@ -12,7 +12,7 @@ import {
 } from "novel";
 import { ImageResizer, handleCommandNavigation } from "novel/extensions";
 import { useEffect, useRef, useState } from "react";
-import { defaultExtensions } from "./extentions";
+import { defaultExtensions } from "./extensions";
 import { ColorSelector } from "./selectors/color-selector";
 import { LinkSelector } from "./selectors/link-selector";
 import { NodeSelector } from "./selectors/node-selector";
@@ -27,16 +27,18 @@ import { handleImageDrop, handleImagePaste } from "novel/plugins";
 // import GenerativeMenuSwitch from "./generative/generative-menu-switch";
 import { uploadFn } from "./image-upload";
 import { TextButtons } from "./selectors/text-buttons";
-import { slashCommand, suggestionItems } from "./slash-command";
+// import { slashCommand, suggestionItems } from "./slash-command";
 import { debounce } from "lodash";
 import { defaultEditorContent } from "./content";
 
 import hljs from "highlight.js";
 import useTheme from "@/hooks/useTheme";
-import { TableColumnMenu, TableRowMenu } from "./extentions/Table/menus";
+import { TableColumnMenu, TableRowMenu } from "./extensions/Table/menus";
 import { LinkMenu } from "./menus/LinkMenu";
+import { ColumnsMenu } from "./extensions/MultiColumn/menus";
+import { SlashCommand } from "./extensions/SlashCommand";
 
-const extensions = [...defaultExtensions, slashCommand];
+const extensions = [...defaultExtensions, SlashCommand];
 
 const NovelEditor = ({
   content,
@@ -135,7 +137,7 @@ const NovelEditor = ({
           }}
           slotAfter={<ImageResizer />}
         >
-          <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-text-200 bg-surface px-1 py-2 shadow-md transition-all">
+          {/* <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-text-200 bg-surface px-1 py-2 shadow-md transition-all">
             <EditorCommandEmpty className="px-2 text-text-600">
               No results
             </EditorCommandEmpty>
@@ -157,7 +159,7 @@ const NovelEditor = ({
                 </EditorCommandItem>
               ))}
             </EditorCommandList>
-          </EditorCommand>
+          </EditorCommand> */}
 
           <EditorBubble
             tippyOptions={{
@@ -188,6 +190,7 @@ const NovelEditor = ({
 
           <ContentItemMenu />
           <LinkMenu appendTo={menuContainerRef} />
+          <ColumnsMenu appendTo={menuContainerRef} />
           <TableRowMenu appendTo={menuContainerRef} />
           <TableColumnMenu appendTo={menuContainerRef} />
         </EditorContent>

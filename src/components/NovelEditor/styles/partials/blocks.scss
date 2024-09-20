@@ -47,7 +47,7 @@
 
   /* Details */
   [data-type='details'] {
-    @apply flex gap-1 my-6 mx-auto p-2 border border-gray-300 rounded;
+    @apply flex gap-1 my-6 mx-auto p-2 border border-text-200 rounded;
 
     summary {
       @apply font-bold block;
@@ -57,7 +57,7 @@
       @apply bg-transparent border-none cursor-pointer flex items-center justify-center rounded text-xs h-5 w-5;
 
       &:hover {
-        @apply dark:bg-gray-800 bg-gray-300;
+        @apply bg-text-100;
       }
 
       &::before {

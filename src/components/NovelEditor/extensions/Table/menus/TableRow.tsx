@@ -1,18 +1,20 @@
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import { BubbleMenu as BaseBubbleMenu } from "@tiptap/react";
-import React, { useCallback } from "react";
-import * as PopoverMenu from "@/components/NovelEditor/EditorUI/PopoverMenu";
-
-import { Toolbar } from "@/components/NovelEditor/EditorUI/Toolbar";
-import { isRowGripSelected } from "./utils";
+import { useEditor } from "novel";
+import Dropdown from "@/components/ui/Dropdown";
 import { Icon } from "@/components/NovelEditor/EditorUI/icons";
+import * as PopoverMenu from "@/components/NovelEditor/EditorUI/PopoverMenu";
 import {
   MenuProps,
   ShouldShowProps,
 } from "@/components/NovelEditor/menus/types";
-import { useEditor } from "novel";
+import { isRowGripSelected } from "./utils";
+import { Toolbar } from "@/components/NovelEditor/EditorUI/Toolbar";
 
-export const TableRowMenu = React.memo(({ appendTo }: MenuProps) => {
+export const TableRowMenu: React.FC<MenuProps> = ({ appendTo }) => {
   const { editor } = useEditor();
+  const [isOpen, setIsOpen] = useState(true);
+  const triggerRef = useRef<HTMLDivElement>(null);
 
   if (!editor) return null;
 
@@ -21,7 +23,6 @@ export const TableRowMenu = React.memo(({ appendTo }: MenuProps) => {
       if (!state || !from) {
         return false;
       }
-
       return isRowGripSelected({ editor, view, state, from });
     },
     [editor]
@@ -29,15 +30,34 @@ export const TableRowMenu = React.memo(({ appendTo }: MenuProps) => {
 
   const onAddRowBefore = useCallback(() => {
     editor.chain().focus().addRowBefore().run();
+    setIsOpen(false);
   }, [editor]);
 
   const onAddRowAfter = useCallback(() => {
     editor.chain().focus().addRowAfter().run();
+    setIsOpen(false);
   }, [editor]);
 
   const onDeleteRow = useCallback(() => {
     editor.chain().focus().deleteRow().run();
+    setIsOpen(false);
   }, [editor]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        triggerRef.current &&
+        !triggerRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <BaseBubbleMenu
@@ -78,8 +98,6 @@ export const TableRowMenu = React.memo(({ appendTo }: MenuProps) => {
       </Toolbar.Wrapper>
     </BaseBubbleMenu>
   );
-});
-
-TableRowMenu.displayName = "TableRowMenu";
+};
 
 export default TableRowMenu;

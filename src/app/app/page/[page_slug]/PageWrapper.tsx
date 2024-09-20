@@ -1,4 +1,7 @@
 "use client";
+import ActiveProjectMoreOptions from "@/components/LayoutWrapper/ActiveProjectMoreOptions";
+import FilterOptions from "@/components/LayoutWrapper/FilterOptions";
+import ShareOption from "@/components/LayoutWrapper/ShareOption";
 import { useAuthProvider } from "@/context/AuthContext";
 import { useRole } from "@/context/RoleContext";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
@@ -83,7 +86,7 @@ const PageWrapper = ({
     >
       <div
         className={`flex items-center justify-between ${
-          screenWidth > 768 ? "py-3 px-6 pb-0" : "p-3"
+          screenWidth > 768 ? "py-3 px-6" : "p-3"
         }`}
       >
         {screenWidth > 768 ? (
@@ -156,68 +159,67 @@ const PageWrapper = ({
             </div>
           </div>
         )}
-        {/* 
+
         <div className={`flex items-center justify-end flex-1`}>
           <ul className="flex items-center">
-            {typeof setShowShareOption === "function" &&
-              headline !== "Today" && (
-                <li>
-                  <ShareOption
-                    projectId={project?.id}
-                    teamId={project?.team_id}
-                  />
-                </li>
-              )}
+            <li>
+              <ShareOption projectId={null} />
+            </li>
+
             {screenWidth > 768 && (
               <li>
                 <FilterOptions
-                  hideCalendarView={hideCalendarView}
-                  setTasks={setTasks}
-                  tasks={tasks}
+                  hideCalendarView={true}
+                  // setTasks={setTasks}
+                  // tasks={tasks}
                 />
               </li>
             )}
-            {headline !== "Today" && (
-              <li>
-                {project && (
-                  <ActiveProjectMoreOptions
-                    project={project}
-                    stateActions={{
-                      setProjectEdit: (value) =>
-                        toggleModal("projectEdit", value as boolean),
-                      setSaveTemplate: (value) =>
-                        toggleModal("saveTemplate", value as boolean),
-                      setImportFromCSV: (value) =>
-                        toggleModal("showImportFromCSV", value as boolean),
-                      setExportAsCSV: (value) =>
-                        toggleModal("showExportAsCSV", value as boolean),
-                      setShowArchiveConfirm: (value) =>
-                        toggleModal("showArchiveConfirm", value as boolean),
-                      setShowDeleteConfirm: (value) =>
-                        toggleModal("showDeleteConfirm", value as boolean),
-                      setShowCommentOrActivity: (value) =>
-                        toggleModal("showCommentOrActivity", value as null),
-                    }}
-                  />
-                )}
-              </li>
-            )}
+            {/* <li>
+              {project && (
+                <ActiveProjectMoreOptions
+                  project={project}
+                  stateActions={{
+                    setProjectEdit: (value) =>
+                      toggleModal("projectEdit", value as boolean),
+                    setSaveTemplate: (value) =>
+                      toggleModal("saveTemplate", value as boolean),
+                    setImportFromCSV: (value) =>
+                      toggleModal("showImportFromCSV", value as boolean),
+                    setExportAsCSV: (value) =>
+                      toggleModal("showExportAsCSV", value as boolean),
+                    setShowArchiveConfirm: (value) =>
+                      toggleModal("showArchiveConfirm", value as boolean),
+                    setShowDeleteConfirm: (value) =>
+                      toggleModal("showDeleteConfirm", value as boolean),
+                    setShowCommentOrActivity: (value) =>
+                      toggleModal("showCommentOrActivity", value as null),
+                  }}
+                />
+              )}
+            </li> */}
           </ul>
-        </div> */}
+        </div>
       </div>
 
-      <div className="flex-1 flex flex-col h-full w-full">
+      <div className="flex-1 flex flex-col h-full w-full overflow-y-auto">
+        <div className="w-full h-64 min-h-64 bg-text-100"></div>
+
         {screenWidth > 768 && (
-          <div className="flex items-center gap-2 px-72">
-            <File size={28} className={`text-${page?.settings.color}`} />
-            <input
-              type="text"
-              className="text-3xl font-bold border-none rounded-lg focus-visible:outline-none p-1.5 bg-transparent w-full"
-              value={pageTitle}
-              onBlur={handleEditTitle}
-              onChange={(ev) => setPageTitle(ev.target.value)}
-              onKeyDown={(ev) => ev.key === "Enter" && handleEditTitle()}
-            />
+          <div className="relative px-80">
+            <div className="absolute -top-1/2 translate-y-1/2">
+              <File size={60} className={`text-${page?.settings.color}`} />
+            </div>
+            <div className="mt-16">
+              <input
+                type="text"
+                className="text-3xl font-bold border-none rounded-lg focus-visible:outline-none p-1.5 bg-transparent w-full"
+                value={pageTitle}
+                onBlur={handleEditTitle}
+                onChange={(ev) => setPageTitle(ev.target.value)}
+                onKeyDown={(ev) => ev.key === "Enter" && handleEditTitle()}
+              />
+            </div>
           </div>
         )}
 

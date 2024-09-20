@@ -10,6 +10,7 @@ import {
   Code,
   CheckSquare,
   type LucideIcon,
+  ListCollapse,
 } from "lucide-react";
 import { EditorBubbleItem, useEditor } from "novel";
 
@@ -35,7 +36,6 @@ const items: SelectorItem[] = [
       !!!!editor?.isActive("paragraph") &&
       !editor.isActive("bulletList") &&
       !editor.isActive("orderedList"),
-     
   },
   {
     name: "Heading 1",
@@ -75,6 +75,12 @@ const items: SelectorItem[] = [
     icon: ListOrdered,
     command: (editor) => editor?.chain().focus().toggleOrderedList().run(),
     isActive: (editor) => !!editor?.isActive("orderedList"),
+  },
+  {
+    name: "Toggle list",
+    icon: ListCollapse,
+    command: (editor) => editor?.chain().focus().setDetails().run(),
+    isActive: (editor) => !!editor?.isActive("details"),
   },
   {
     name: "Quote",
