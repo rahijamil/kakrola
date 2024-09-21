@@ -255,7 +255,7 @@ const Step2UseCase = () => {
                   className={`flex items-center justify-between cursor-pointer h-12 rounded-lg px-4 border ${
                     selectedUseCases.includes(useCase)
                       ? "border-primary-500"
-                      : "border-text-200"
+                      : "border-text-100"
                   } focus:outline-none hover:bg-text-50`}
                   onClick={() => handleUseCaseClick(useCase)}
                 >

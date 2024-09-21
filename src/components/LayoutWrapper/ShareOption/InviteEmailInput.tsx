@@ -204,7 +204,7 @@ const InviteEmailInput = ({
       )}
       {error && <p className="mt-2 p-2 text-red-500 text-xs">{error}</p>}
       {suggestions.length > 0 && (
-        <div className="mt-2 p-2 shadow-lg border border-text-200 bg-background rounded-lg z-10">
+        <div className="mt-2 p-2 shadow-lg border border-text-100 bg-background rounded-lg z-10">
           <p className="text-xs font-medium mb-1">
             Keep typing an email to invite
           </p>

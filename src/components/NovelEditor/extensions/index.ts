@@ -109,7 +109,7 @@ const tiptapImage = TiptapImage.extend({
 }).configure({
   allowBase64: true,
   HTMLAttributes: {
-    class: cx("rounded-lg border border-text-200"),
+    class: cx("rounded-lg border border-text-100"),
   },
 });
 

@@ -1,3 +1,5 @@
+import AddEditChannel from "@/components/AddEditChannel";
+import AddEditProject from "@/components/AddEditProject";
 import Dropdown from "@/components/ui/Dropdown";
 import { useAuthProvider } from "@/context/AuthContext";
 import useSidebarData from "@/hooks/useSidebarData";
@@ -9,16 +11,22 @@ import { useRouter } from "next/navigation";
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { v4 as uuid4 } from "uuid";
 
-const ProjectPlusDropdown = ({
-  forPersonal,
-  setShowAddProjectModal,
-  setTeamId,
+const SidebarPlusDropdown = ({
   teamId,
+  modalStates: {
+    setShowAddProjectModal,
+    showAddProjectModal,
+    setShowAddChannel,
+    showAddChannel,
+  },
 }: {
-  forPersonal?: boolean;
-  setShowAddProjectModal?: Dispatch<SetStateAction<boolean>>;
-  teamId?: number | null;
-  setTeamId?: Dispatch<SetStateAction<number | null>>;
+  teamId?: number;
+  modalStates: {
+    showAddProjectModal: boolean;
+    setShowAddProjectModal: Dispatch<SetStateAction<boolean>>;
+    showAddChannel?: boolean;
+    setShowAddChannel?: Dispatch<SetStateAction<boolean>>;
+  };
 }) => {
   const triggerRef = useRef(null);
 
@@ -86,7 +94,7 @@ const ProjectPlusDropdown = ({
   return (
     <>
       <Dropdown
-        mobileBottomSheet={false}
+        title="Add"
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         triggerRef={triggerRef}
@@ -109,12 +117,9 @@ const ProjectPlusDropdown = ({
             id: 1,
             label: "New Project",
             icon: <CheckCircle strokeWidth={1.5} size={20} />,
-            onClick: () =>
-              setShowAddProjectModal
-                ? setShowAddProjectModal(true)
-                : setTeamId && teamId
-                ? setTeamId(teamId)
-                : null,
+            onClick: () => {
+              setShowAddProjectModal(true);
+            },
             summary: "Plan tasks and collaborate.",
           },
           {
@@ -124,24 +129,47 @@ const ProjectPlusDropdown = ({
             onClick: handleCreatePage,
             summary: "Create and share docs.",
           },
-          ...(forPersonal
+          ...(!teamId
             ? []
-            : [
+            : setShowAddChannel
+            ? [
                 {
                   id: 3,
                   label: "New Channel",
                   icon: <Hash strokeWidth={1.5} size={20} />,
                   onClick: () => {
-                    // onChange(RoleType.ADMIN);
+                    setShowAddChannel(true);
                   },
-                  //   slack like channel
                   summary: "Set up team channels.",
                 },
-              ]),
+              ]
+            : []),
         ]}
       />
+
+      {showAddProjectModal && !teamId && (
+        <AddEditProject onClose={() => setShowAddProjectModal(false)} />
+      )}
+
+      {teamId && showAddProjectModal && (
+        <AddEditProject
+          workspaceId={teamId}
+          onClose={() => {
+            setShowAddProjectModal(false);
+          }}
+        />
+      )}
+
+      {teamId && showAddChannel && setShowAddChannel && (
+        <AddEditChannel
+          teamId={teamId}
+          onClose={() => {
+            setShowAddChannel(false);
+          }}
+        />
+      )}
     </>
   );
 };
 
-export default ProjectPlusDropdown;
+export default SidebarPlusDropdown;

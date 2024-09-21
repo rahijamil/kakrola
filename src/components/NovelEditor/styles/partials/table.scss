@@ -4,7 +4,7 @@
   }
 
   table {
-    @apply border-collapse border-text-200 rounded box-border w-full;
+    @apply border-collapse border-text-100 rounded box-border w-full;
 
     tr:first-child {
       td:first-child {
@@ -26,7 +26,7 @@
 
     td,
     th {
-      @apply border border-text-200 min-w-[100px] p-2 relative text-left align-top;
+      @apply border border-text-100 min-w-[100px] p-2 relative text-left align-top;
 
       &:first-of-type:not(a) {
         @apply mt-0;
@@ -64,7 +64,7 @@
     }
 
     .grip-column {
-      @apply w-[calc(100%+1px)] border-l border-text-200 h-3 left-0 -ml-[1px] -top-3;
+      @apply w-[calc(100%+1px)] border-l border-text-100 h-3 left-0 -ml-[1px] -top-3;
 
       &:hover,
       &.selected {
@@ -100,7 +100,7 @@
     }
 
     .grip-row {
-      @apply h-[calc(100%+1px)] border-t border-text-200 -left-3 w-3 top-0 -mt-[1px];
+      @apply h-[calc(100%+1px)] border-t border-text-100 -left-3 w-3 top-0 -mt-[1px];
    
       &:hover,
       &.selected {

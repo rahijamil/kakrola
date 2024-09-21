@@ -147,7 +147,7 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
                 }
                 onClick={createCommandClickHandler(groupIndex, commandIndex)}
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-md border border-text-200 bg-background">
+                <div className="flex h-10 w-10 items-center justify-center rounded-md border border-text-100 bg-background">
                   <Icon name={command.iconName} className="mr-1 text-text-900" />
                 </div>
 

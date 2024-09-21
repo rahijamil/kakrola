@@ -1,10 +1,16 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import useScreen from "@/hooks/useScreen";
 import MobileSidebar from "./MobileSidebar";
+import AddTeam from "../AddTeam";
+import AddEditProject from "../AddEditProject";
+import AddEditChannel from "../AddEditChannel";
+import AddTaskModal from "../AddTask/AddTaskModal";
+import ConfirmAlert from "../AlertBox/ConfirmAlert";
+import axios from "axios";
 
 const SidebarWrapper = () => {
   const pathname = usePathname();
@@ -18,6 +24,39 @@ const SidebarWrapper = () => {
   const [sidebarWidth, setSidebarWidth] = useState(260);
   const [sidebarLeft, setSidebarLeft] = useState(0);
   const [isResizing, setIsResizing] = useState(false);
+
+  const [showAddTaskModal, setShowAddTaskModal] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [logoutLoading, setLogoutLoading] = useState(false);
+  const [showAddTeam, setShowAddTeam] = useState<boolean | number>(false);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const activeElement = document.activeElement;
+      const isInputField =
+        activeElement instanceof HTMLInputElement ||
+        activeElement instanceof HTMLTextAreaElement ||
+        (activeElement instanceof HTMLElement &&
+          activeElement.isContentEditable);
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+
+        setShowAddTaskModal(false);
+      }
+
+      if (event.key.toLowerCase() == "q" && !isInputField) {
+        event.preventDefault();
+        setShowAddTaskModal(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -91,6 +130,7 @@ const SidebarWrapper = () => {
   }, [sidebarWidth]);
 
   const { screenWidth } = useScreen();
+  const router = useRouter();
 
   return (
     <>
@@ -125,7 +165,12 @@ const SidebarWrapper = () => {
                   isCollapsed && "pointer-events-none opacity-0"
                 } w-full whitespace-nowrap`}
               >
-                <Sidebar sidebarWidth={sidebarWidth} />
+                <Sidebar
+                  sidebarWidth={sidebarWidth}
+                  setShowAddTeam={setShowAddTeam}
+                  setShowLogoutConfirm={setShowLogoutConfirm}
+                  setShowAddTaskModal={setShowAddTaskModal}
+                />
               </div>
 
               <div
@@ -159,8 +204,43 @@ const SidebarWrapper = () => {
           </>
         </div>
       ) : (
-        <MobileSidebar />
+        <MobileSidebar setShowAddTaskModal={setShowAddTaskModal} />
       )}
+
+      {showAddTaskModal && (
+        <AddTaskModal onClose={() => setShowAddTaskModal(false)} />
+      )}
+
+      {showLogoutConfirm && (
+        <ConfirmAlert
+          title="Log out?"
+          description="Are you sure you want to log out?"
+          onCancel={() => setShowLogoutConfirm(false)}
+          submitBtnText="Log out"
+          loading={logoutLoading}
+          onConfirm={async () => {
+            setLogoutLoading(true);
+            try {
+              const response = await axios("/api/auth/signout", {
+                method: "POST",
+              });
+
+              if (response.data.success) {
+                router.push("/auth/login");
+              } else {
+                // Handle error case (e.g., show an error message)
+                console.error("Failed to log out:", response.data.message);
+              }
+            } catch (error) {
+              console.error("Error during logout:", error);
+            } finally {
+              setLogoutLoading(false);
+            }
+          }}
+        />
+      )}
+
+      {showAddTeam && <AddTeam onClose={() => setShowAddTeam(false)} />}
     </>
   );
 };

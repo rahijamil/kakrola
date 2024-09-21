@@ -318,7 +318,7 @@ const AddTaskForm = ({
         </div>
       </div>
 
-      <div className="border-t border-text-200">
+      <div className="border-t border-text-100">
         {error && (
           <p className="text-red-500 pt-3 text-center text-xs">{error}</p>
         )}

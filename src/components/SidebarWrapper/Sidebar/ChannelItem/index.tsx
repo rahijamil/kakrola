@@ -7,7 +7,7 @@ import ExportCSVModal from "../SidebarProjectMoreOptions/ExportCSVModal";
 import ImportCSVModal from "../SidebarProjectMoreOptions/ImportCSVModal";
 import AddEditProject from "../../../AddEditProject";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
-import { CheckCircle, Ellipsis, File, Hash, Users } from "lucide-react";
+import { CheckCircle, Ellipsis, Hash, Users } from "lucide-react";
 import ProjectDeleteConfirm from "../ProjectDeleteConfirm";
 import ProjectArchiveConfirm from "../ProjectArchiveConfirm";
 import Skeleton from "react-loading-skeleton";
@@ -16,43 +16,28 @@ import { useQuery } from "@tanstack/react-query";
 import ProjectLeaveConfirm from "../ProjectLeaveConfirm";
 import useScreen from "@/hooks/useScreen";
 import { PageType } from "@/types/pageTypes";
-import SidebarPageMoreOptions from "./SidebarPageMoreOptions";
+import SidebarChannelMoreOptions from "./SidebarChannelMoreOptions";
+import { ChannelType } from "@/types/channel";
 
-const PageItem = ({
-  page,
+const ChannelItem = ({
+  channel,
   pathname,
   isDragging,
   setIsDragDisabled,
 }: {
-  page: PageType;
+  channel: ChannelType;
   pathname: string;
   isDragging?: boolean;
   setIsDragDisabled?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { sidebarLoading } = useSidebarDataProvider();
 
-  const { data: thisProjectAllMembers } = useQuery({
-    queryKey: ["personal_members", page.id],
-    queryFn: async () => {
-      const { data, error } = await supabaseBrowser
-        .from("personal_members")
-        .select("id")
-        .eq("project_id", page.id);
-      if (error) console.error("Failed to fetch project members", error);
-      if (!error) {
-        return data;
-      }
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    enabled: !!page.id,
-  });
-
   // useEffect(() => {
   //   const fetchTasks = async () => {
   //     const { data: tasksData, error: tasksError } = await supabaseBrowser
   //       .from("tasks")
   //       .select("id")
-  //       .eq("project_id", page.id);
+  //       .eq("project_id", channel.id);
 
   //     if (tasksError) console.error("Failed to fetch tasks", tasksError);
 
@@ -62,7 +47,7 @@ const PageItem = ({
   //   };
 
   //   fetchTasks();
-  // }, [page.id]);
+  // }, [channel.id]);
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
   const [showLeaveConfirm, setShowLeaveConfirm] = useState<boolean>(false);
@@ -95,36 +80,32 @@ const PageItem = ({
           className={`sidebar_project_item flex-1 flex items-center justify-between transition-colors rounded-lg text-text-900 pl-2 ${
             isDragging
               ? "bg-surface shadow-[0_0_8px_1px_rgba(0,0,0,0.2)]"
-              : pathname === `/app/page/${page.slug}`
+              : pathname === `/app/ch/${channel.slug}`
               ? "bg-primary-100"
               : "md:hover:bg-primary-50"
           }`}
         >
           <Link
-            href={`/app/page/${page.slug}`}
+            href={`/app/ch/${channel.slug}`}
             className={`py-1 md:py-0 p-px w-full`}
             draggable={false}
           >
             <div className="flex items-center">
               <div className="p-2">
-                <File
-                  className={`w-4 h-4 text-${page.settings.color}`}
+                <Hash
+                  className={`w-4 h-4 text-${channel.settings.color}`}
                   strokeWidth={2}
                 />
               </div>
-              {page.title}
-
-              {thisProjectAllMembers?.length! > 1 && (
-                <Users strokeWidth={1.5} className="w-4 h-4 ml-2" />
-              )}
+              {channel.name}
             </div>
           </Link>
 
           <div className="relative mr-1">
             <div className="w-7 h-7 flex items-center justify-center">
               {screenWidth > 768 && (
-                <SidebarPageMoreOptions
-                  page={page}
+                <SidebarChannelMoreOptions
+                  channel={channel}
                   stateActions={{
                     setShowDeleteConfirm,
                     setShowLeaveConfirm,
@@ -190,11 +171,11 @@ const PageItem = ({
           onClose={() => setAboveBellow(null)}
           aboveBellow={aboveBellow}
           project={project}
-          workspaceId={page.team_id}
+          workspaceId={channel.team_id}
         />
       )} */}
     </li>
   );
 };
 
-export default PageItem;
+export default ChannelItem;

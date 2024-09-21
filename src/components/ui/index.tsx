@@ -56,7 +56,7 @@ interface DialogHeaderProps {
 }
 
 export const DialogHeader: React.FC<DialogHeaderProps> = ({ children }) => (
-  <div className="flex items-center justify-between gap-8 border-b border-text-200 p-4 py-2">
+  <div className="flex items-center justify-between gap-8 border-b border-text-100 p-4 py-2">
     {children}
   </div>
 );
@@ -96,7 +96,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <input
           className={`w-full transition py-1 bg-transparent outline-none ${
             label &&
-            "px-2 border rounded-lg border-text-200 focus:border-text-400"
+            "px-2 border rounded-lg border-text-100 focus:border-text-400"
           } ${className}`}
           ref={ref}
           id={id}

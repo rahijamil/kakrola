@@ -28,7 +28,7 @@ const ViewSkeleton = ({
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
-    <div className="rounded-lg border border-text-400 cursor-default select-none pointer-events-none w-full p-4 space-y-2 h-[666px]">
+    <div className="rounded-lg border border-text-400 cursor-default select-none pointer-events-none w-full p-4 space-y-2 h-[666px] bg-background">
       <div className="flex items-center justify-between gap-8">
         <div className="flex items-center gap-2">
           <CheckCircle
@@ -75,7 +75,7 @@ const ViewSkeleton = ({
           {activeView == "List" ? (
             <table className="w-full border-collapse">
               <thead>
-                <tr className="border-y border-text-200 text-xs whitespace-nowrap grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200">
+                <tr className="border-y border-text-100 text-xs whitespace-nowrap grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200">
                   <th className="p-2 text-left font-medium flex items-center gap-2 pl-8">
                     <AlignLeft strokeWidth={2} className="w-4 h-4" />
                     <span>Task name</span>
@@ -102,12 +102,12 @@ const ViewSkeleton = ({
               <tbody>
                 <tr>
                   <td colSpan={5} className="p-0 w-full pb-4">
-                    <tr className="border-b border-text-200 block">
+                    <tr className="border-b border-text-100 block">
                       <td colSpan={5} className=" p-2">
                         <h3 className="font-bold">To do</h3>
                       </td>
                     </tr>
-                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
                       <td className="p-2 flex items-center gap-2">
                         <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
                           <Check strokeWidth={1.5} size={16} />
@@ -130,7 +130,7 @@ const ViewSkeleton = ({
                         <Skeleton enableAnimation={false} width={"60%"} />
                       </td>
                     </tr>
-                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
                       <td className="p-2 flex items-center gap-2">
                         <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
                           <Check strokeWidth={1.5} size={16} />
@@ -153,7 +153,7 @@ const ViewSkeleton = ({
                         <Skeleton enableAnimation={false} width={"60%"} />
                       </td>
                     </tr>
-                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
                       <td className="p-2 flex items-center gap-2">
                         <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
                           <Check strokeWidth={1.5} size={16} />
@@ -181,12 +181,12 @@ const ViewSkeleton = ({
 
                 <tr>
                   <td colSpan={5} className="p-0 w-full pb-4">
-                    <tr className="border-b border-text-200 block">
+                    <tr className="border-b border-text-100 block">
                       <td colSpan={5} className=" p-2">
                         <h3 className="font-bold">In Progress</h3>
                       </td>
                     </tr>
-                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
                       <td className="p-2 flex items-center gap-2">
                         <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
                           <Check strokeWidth={1.5} size={16} />
@@ -209,7 +209,7 @@ const ViewSkeleton = ({
                         <Skeleton enableAnimation={false} width={"60%"} />
                       </td>
                     </tr>
-                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
                       <td className="p-2 flex items-center gap-2">
                         <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
                           <Check strokeWidth={1.5} size={16} />
@@ -232,7 +232,7 @@ const ViewSkeleton = ({
                         <Skeleton enableAnimation={false} width={"60%"} />
                       </td>
                     </tr>
-                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
                       <td className="p-2 flex items-center gap-2">
                         <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
                           <Check strokeWidth={1.5} size={16} />
@@ -260,12 +260,12 @@ const ViewSkeleton = ({
 
                 <tr>
                   <td colSpan={5} className="p-0 w-full pb-12">
-                    <tr className="border-b border-text-200 block">
+                    <tr className="border-b border-text-100 block">
                       <td colSpan={5} className=" p-2">
                         <h3 className="font-bold">Complete</h3>
                       </td>
                     </tr>
-                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
                       <td className="p-2 flex items-center gap-2">
                         <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
                           <Check strokeWidth={1.5} size={16} />
@@ -288,7 +288,7 @@ const ViewSkeleton = ({
                         <Skeleton enableAnimation={false} width={"60%"} />
                       </td>
                     </tr>
-                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
                       <td className="p-2 flex items-center gap-2">
                         <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
                           <Check strokeWidth={1.5} size={16} />
@@ -311,7 +311,7 @@ const ViewSkeleton = ({
                         <Skeleton enableAnimation={false} width={"60%"} />
                       </td>
                     </tr>
-                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-200">
+                    <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
                       <td className="p-2 flex items-center gap-2">
                         <div className="w-5 h-5 min-w-5 min-h-5 flex items-center justify-center border border-text-500 rounded-full">
                           <Check strokeWidth={1.5} size={16} />
@@ -490,8 +490,8 @@ const ViewSkeleton = ({
                 </div>
               </div>
 
-              <div className="rounded-lg border-l border-text-200 overflow-hidden">
-                <div className="grid grid-cols-7 place-items-center bg-text-100 border border-text-200 rounded-t-lg">
+              <div className="rounded-lg border-l border-text-100 overflow-hidden">
+                <div className="grid grid-cols-7 place-items-center bg-text-100 border border-text-100 rounded-t-lg">
                   {days.map((day, _index) => (
                     <div
                       key={day}
@@ -509,7 +509,7 @@ const ViewSkeleton = ({
                     return (
                       <div
                         key={index}
-                        className={`h-full w-full p-2 border-r border-b border-text-200 transition space-y-1 aspect-square max-h-[93px]`}
+                        className={`h-full w-full p-2 border-r border-b border-text-100 transition space-y-1 aspect-square max-h-[93px]`}
                       >
                         <div className="flex items-center justify-end">
                           <div className="w-2 h-2 rounded-lg bg-text-200"></div>

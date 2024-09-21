@@ -294,7 +294,7 @@ const TaskItemForListView = ({
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
-              className={`group border-b border-text-200 cursor-pointer flex items-center justify-between h-10 ring-1 divide-x divide-text-200 relative ${
+              className={`group border-b border-text-100 cursor-pointer flex items-center justify-between h-10 ring-1 divide-x divide-text-200 relative ${
                 showModal === task.id.toString()
                   ? "ring-primary-300 bg-primary-10"
                   : "ring-transparent bg-transparent"

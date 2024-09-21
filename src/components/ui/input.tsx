@@ -14,6 +14,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   >;
   rightIcon?: ReactNode;
   howBig?: "xs" | "sm" | "md" | "lg";
+  showFocusInMobile?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -27,23 +28,26 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       labelRight,
       rightIcon,
       howBig = "md",
+      showFocusInMobile = false,
+      type,
       ...props
     },
     ref
   ) => {
     return (
-      <div className={`space-y-1 ${fullWidth && "w-full"}`}>
-        <div className="flex items-center justify-between">
-          {label && (
-            <>
-              <label htmlFor={id} className="font-semibold text-text-700">
-                {label}
-              </label>
+      <div className={`space-y-2 ${fullWidth && "w-full"}`}>
+        {label && (
+          <div className="flex items-center justify-between">
+            <label
+              htmlFor={id}
+              className="font-semibold text-text-700 pl-4 md:p-0"
+            >
+              {label}
+            </label>
 
-              {labelRight}
-            </>
-          )}
-        </div>
+            {labelRight}
+          </div>
+        )}
 
         <div className="relative">
           {Icon && (
@@ -53,17 +57,25 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             />
           )}
           <input
-            className={`flex w-full rounded-lg border border-text-300 hover:border-text-400 focus:border-text-300 bg-transparent ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-50 read-only:bg-primary-10 read-only:cursor-default ${
-              howBig == "xs"
+            className={`flex w-full border-text-300 hover:border-text-400 focus:border-text-300 bg-transparent ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-offset-2 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-50 read-only:bg-primary-10 read-only:cursor-default ${
+              showFocusInMobile
+                ? `rounded-lg ${type !== "radio" && "border focus:ring-2"}`
+                : `md:rounded-lg ${
+                    type !== "radio" && "border-b md:border md:focus:ring-2"
+                  }`
+            } ${
+              type !== "radio" &&
+              (howBig == "xs"
                 ? "px-3 h-8"
                 : howBig == "sm"
                 ? "px-3 h-10"
                 : howBig == "md"
                 ? "px-4 py-2 h-10"
-                : "px-4 py-3 h-14"
+                : "px-4 py-3 h-14")
             } ${fullWidth ? "w-full" : ""} ${className} ${Icon && "pl-10"}`}
             ref={ref}
             id={id}
+            type={type}
             {...props}
           />
 

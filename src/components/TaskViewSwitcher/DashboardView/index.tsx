@@ -345,7 +345,7 @@ const ChartCard: React.FC<{
   screenWidth: number;
 }> = ({ title, children, icon, screenWidth }) => (
   <div
-    className={`bg-surface rounded-lg shadow-sm border border-text-200 transition-shadow duration-300 ease-in-out hover:shadow-md ${
+    className={`bg-surface rounded-lg shadow-sm border border-text-100 transition-shadow duration-300 ease-in-out hover:shadow-md ${
       screenWidth > 768 ? "p-6" : "p-4"
     }`}
   >
@@ -365,7 +365,7 @@ const OverviewCard: React.FC<{
   screenWidth: number;
 }> = ({ title, value, color, icon, screenWidth }) => (
   <div
-    className={`bg-surface rounded-lg shadow-sm border border-text-200 transition-shadow duration-300 ease-in-out hover:shadow-md ${color} ${
+    className={`bg-surface rounded-lg shadow-sm border border-text-100 transition-shadow duration-300 ease-in-out hover:shadow-md ${color} ${
       screenWidth > 768 ? "p-6" : "p-4"
     }`}
   >

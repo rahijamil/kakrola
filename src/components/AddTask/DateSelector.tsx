@@ -350,9 +350,7 @@ const DateSelector = ({
                 <>
                   <div className="flex items-center gap-1">
                     {task.dates.start_date && (
-                      <span>
-                        {format(task.dates.start_date, "dd LLL")}
-                      </span>
+                      <span>{format(task.dates.start_date, "dd LLL")}</span>
                     )}
 
                     {task.dates.start_date && task.dates.end_date && (
@@ -453,7 +451,7 @@ const DateSelector = ({
         ) : (
           <div
             ref={triggerRef}
-            className={`flex items-center gap-1 cursor-pointer p-1 px-1.5 text-[11px] rounded-lg border border-text-200 text-text-600 ${
+            className={`flex items-center gap-1 cursor-pointer p-1 px-1.5 text-[11px] rounded-lg border border-text-100 text-text-600 ${
               isOpen ? "bg-text-50" : "hover:bg-text-100"
             }`}
             onClick={onClick}
@@ -507,7 +505,7 @@ const DateSelector = ({
       }
       content={
         <div data-form-element={dataFromElement} className="cursor-default">
-          <div className="p-2 space-y-2 transition-all">
+          <div className="px-4 md:px-2 p-2 space-y-2 transition-all">
             <div className="space-y-1">
               <span className="text-xs font-medium text-text-500">
                 Start date
@@ -523,6 +521,7 @@ const DateSelector = ({
                     ref={startInputRef}
                     className="flex-1 w-full"
                     readOnly
+                    showFocusInMobile
                   />
                 </div>
 
@@ -540,7 +539,7 @@ const DateSelector = ({
                         handleTimeSelect(value, "start");
                       }}
                       placeholder="Time"
-                      contentClassName="w-fit py-1"
+                      showFocusInMobile
                     />
                   </div>
                 )}
@@ -562,6 +561,7 @@ const DateSelector = ({
                       autoFocus={focusedInput === "end" || showEndDate}
                       ref={endInputRef}
                       readOnly
+                      showFocusInMobile
                     />
                   </div>
 
@@ -579,7 +579,7 @@ const DateSelector = ({
                           handleTimeSelect(value, "end");
                         }}
                         placeholder="Time"
-                        contentClassName="w-fit py-1"
+                        showFocusInMobile
                       />
                     </div>
                   )}
@@ -588,7 +588,7 @@ const DateSelector = ({
             )}
           </div>
 
-          <div className="border-t border-text-200 pt-1 grid grid-cols-7 gap-1 place-items-center mt-1">
+          <div className="border-t border-text-100 pt-1 grid grid-cols-7 gap-1 place-items-center mt-1">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
               <div
                 key={day}
@@ -610,7 +610,7 @@ const DateSelector = ({
           >
             {months.map((month, index) => (
               <div key={index}>
-                <div className="border-b py-1 px-2 border-text-200 space-y-2 sticky top-0 bg-surface z-10">
+                <div className="border-b py-1 px-2 border-text-100 space-y-2 sticky top-0 bg-surface z-10">
                   <div className="flex justify-between items-center">
                     <span className="font-semibold">
                       {format(month, "MMM yyyy")}
@@ -641,8 +641,8 @@ const DateSelector = ({
             ))}
           </div>
 
-          <div className="space-y-1">
-            <div className="border-y border-text-200 py-1">
+          <div className="space-y-1 pb-4 md:pb-0">
+            <div className="border-y border-text-100 py-1">
               <CustomSelect
                 options={reminderOptions}
                 onChange={({ target: { value } }) => {
@@ -657,7 +657,7 @@ const DateSelector = ({
             </div>
 
             <button
-              className="flex items-center justify-between w-full px-4 py-1.5 hover:bg-text-100 transition rounded-lg"
+              className="flex items-center justify-between w-full px-4 py-2.5 md:py-1.5 hover:bg-text-100 transition md:rounded-lg"
               type="button"
               onClick={() => setShowEndDate((prev) => !prev)}
             >
@@ -671,7 +671,7 @@ const DateSelector = ({
             </button>
 
             <button
-              className="flex items-center justify-between w-full px-4 py-1.5 hover:bg-text-100 transition rounded-lg"
+              className="flex items-center justify-between w-full px-4 py-2.5 md:py-1.5 hover:bg-text-100 transition md:rounded-lg"
               type="button"
               onClick={() => setShowTimeInput((prev) => !prev)}
             >

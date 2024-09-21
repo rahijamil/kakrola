@@ -4,6 +4,8 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import { useAuthProvider } from "@/context/AuthContext";
 
 const fetchPageDetails = async (page_slug: string, profile_id: string) => {
+  if (!page_slug || !profile_id) return { page: null };
+
   try {
     const { data, error } = await supabaseBrowser
       .from("pages")
@@ -29,6 +31,7 @@ const fetchPageDetails = async (page_slug: string, profile_id: string) => {
 
 const usePageDetails = (page_slug: string) => {
   const { profile } = useAuthProvider();
+
   const queryClient = useQueryClient();
 
   const { data, error, isPending, isError } = useQuery({

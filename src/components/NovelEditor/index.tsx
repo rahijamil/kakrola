@@ -137,7 +137,7 @@ const NovelEditor = ({
           }}
           slotAfter={<ImageResizer />}
         >
-          {/* <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-text-200 bg-surface px-1 py-2 shadow-md transition-all">
+          {/* <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-text-100 bg-surface px-1 py-2 shadow-md transition-all">
             <EditorCommandEmpty className="px-2 text-text-600">
               No results
             </EditorCommandEmpty>
@@ -149,7 +149,7 @@ const NovelEditor = ({
                   className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-text-100 aria-selected:bg-text-200 cursor-pointer"
                   key={item.title}
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md border border-text-200 bg-text-900 text-surface">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md border border-text-100 bg-text-900 text-surface">
                     {item.icon}
                   </div>
                   <div>
@@ -165,7 +165,7 @@ const NovelEditor = ({
             tippyOptions={{
               placement: openAI ? "bottom-start" : "top",
             }}
-            className="flex w-fit max-w-[90vw] overflow-hidden rounded border border-text-200 bg-surface shadow-xl"
+            className="flex w-fit max-w-[90vw] overflow-hidden rounded border border-text-100 bg-surface shadow-xl"
           >
             <NodeSelector open={openNode} onOpenChange={setOpenNode} />
             <LinkSelector open={openLink} onOpenChange={setOpenLink} />

@@ -152,7 +152,7 @@ const AddNewSectionBoardView = ({
           {(columns ? columns.length - 1 == index : true) ? (
             <div
               className={`${
-                theme == "dark" ? `bg-gray-900` : `bg-text-50`
+                theme == "dark" ? `bg-surface` : `bg-text-50`
               } p-3 py-2 rounded-lg w-72 md:w-[300px] h-fit ml-3`}
             >
               <button

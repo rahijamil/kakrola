@@ -188,7 +188,7 @@ const CalendarView = ({
     >
       <div className="flex items-center justify-between gap-4 mb-4 mt-0 md:mt-4 whitespace-nowrap overflow-x-auto">
         <div className="flex items-center gap-4">
-          <div className="font-medium rounded-lg border border-text-200 text-xs flex items-center gap-1 text-text-600 overflow-hidden">
+          <div className="font-medium rounded-lg border border-text-100 text-xs flex items-center gap-1 text-text-600 overflow-hidden">
             <motion.button
               onClick={navigatePrev}
               className="hover:bg-text-100 transition p-0.5"
@@ -248,7 +248,7 @@ const CalendarView = ({
               <motion.button
                 ref={triggerRef}
                 onClick={onClick}
-                className="px-2 py-0.5 hover:bg-text-100 transition rounded-lg border border-text-200 text-xs font-medium text-text-600 flex items-center gap-2"
+                className="px-2 py-0.5 hover:bg-text-100 transition rounded-lg border border-text-100 text-xs font-medium text-text-600 flex items-center gap-2"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -289,7 +289,7 @@ const CalendarView = ({
           {setShowNoDateTasks && (
             <motion.button
               onClick={() => setShowNoDateTasks((prev) => !prev)}
-              className={`p-2 py-0.5 transition rounded-lg border border-text-200 text-xs flex items-center gap-2 font-medium ${
+              className={`p-2 py-0.5 transition rounded-lg border border-text-100 text-xs flex items-center gap-2 font-medium ${
                 showNoDateTasks
                   ? "bg-text-100 text-text-700"
                   : "hover:bg-text-100 text-text-600"
@@ -320,7 +320,7 @@ const CalendarView = ({
           animate="center"
           exit="exit"
           transition={transition}
-          className="grid grid-cols-7 border-l border-t border-text-200 rounded-lg overflow-hidden"
+          className="grid grid-cols-7 border-l border-t border-text-100 rounded-lg overflow-hidden"
           onWheel={handleWheel}
         >
           {days.map((day, _index) => (
@@ -379,7 +379,7 @@ const CalendarView = ({
                       onClick={() =>
                         !snapshot.isDraggingOver && setSelectedDay(day)
                       }
-                      className={`h-full w-full p-2 border-r border-b border-text-200 cursor-crosshair transition space-y-1 ${
+                      className={`h-full w-full p-2 border-r border-b border-text-100 cursor-crosshair transition space-y-1 ${
                         selectedDay?.getDate() === day.getDate() &&
                         selectedDay.getMonth() === day.getMonth() &&
                         "bg-text-100"
@@ -431,7 +431,7 @@ const CalendarView = ({
                                       ev.stopPropagation();
                                       setShowTaskDetails(task);
                                     }}
-                                    className="cursor-pointer relative bg-background hover:bg-text-100 transition p-1 rounded-lg border border-text-200"
+                                    className="cursor-pointer relative bg-background hover:bg-text-100 transition p-1 rounded-lg border border-text-100"
                                   >
                                     <div
                                       ref={draggableProvided.innerRef}

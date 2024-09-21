@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { LucideIcon, LucideProps } from "lucide-react";
+import { LucideProps } from "lucide-react";
 
 // Simplified utility function to combine class names
 const cn = (...classes: (string | undefined)[]) => {
@@ -8,12 +8,12 @@ const cn = (...classes: (string | undefined)[]) => {
 
 // Simplified types for button variants and colors
 type ButtonVariant = "default" | "outline" | "ghost" | "secondary" | "gray";
-type ButtonColor = "indigo" | "red" | "gray";
+type ButtonColor = "primary" | "red" | "gray";
 type ButtonSize = "default" | "xs" | "sm" | "lg" | "icon";
 
 const getButtonClasses = (
   variant: ButtonVariant = "default",
-  color: ButtonColor = "indigo",
+  color: ButtonColor = "primary",
   size: ButtonSize = "default",
   fullWidth: boolean = false,
   className?: string,
@@ -26,28 +26,28 @@ const getButtonClasses = (
 
   const variantClasses = {
     default: {
-      indigo:
-        "text-surface bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-400 hover:to-primary-500 disabled:hover:to-primary-500",
+      primary:
+        "text-surface bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-400 hover:to-primary-500",
       red: "text-surface bg-gradient-to-r from-red-700 to-red-600 hover:to-red-700",
       gray: "",
     },
     outline: {
-      indigo: "border border-primary-600 text-primary-600 hover:bg-primary-50",
+      primary: "border border-primary-600 text-primary-600 hover:bg-primary-50",
       red: "border border-red-600 text-red-600 hover:bg-red-50",
       gray: "border border-text-300 hover:border-text-400 focus:border-text-300",
     },
     ghost: {
-      indigo: "text-primary-600 hover:bg-primary-50",
+      primary: "text-primary-600 hover:bg-primary-50",
       red: "text-red-600 hover:bg-red-50",
       gray: "",
     },
     secondary: {
-      indigo: "bg-surface text-primary-600 hover:bg-text-100",
+      primary: "bg-surface text-primary-600 hover:bg-text-100",
       red: "bg-surface text-red-600 hover:bg-text-100",
       gray: "",
     },
     gray: {
-      indigo:
+      primary:
         "bg-gradient-to-r from-text-300 to-text-200 text-text-600 hover:to-text-300",
       red: "bg-gradient-to-r from-text-300 to-text-200 text-text-600 hover:to-text-300",
       gray: "",
@@ -88,7 +88,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     {
       className,
       variant = "default",
-      color = "indigo",
+      color = "primary",
       size = "default",
       fullWidth = false,
       icon: Icon,

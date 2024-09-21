@@ -127,7 +127,7 @@ const LayoutView = ({
   return screenWidth > 768 ? (
     <div
       className={`flex items-center gap-1 ${
-        view !== "List" && "border-b border-text-200"
+        view !== "List" && "border-b border-text-100"
       }`}
     >
       <ul className={`flex items-center gap-1`}>

@@ -1,38 +1,34 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import PageWrapper from "./PageWrapper";
-import { PageType } from "@/types/pageTypes";
-import { useAuthProvider } from "@/context/AuthContext";
-import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import Image from "next/image";
 import Spinner from "@/components/ui/Spinner";
 import { Link } from "@nextui-org/react";
 import { Button } from "@/components/ui/button";
-import usePageDetails from "@/hooks/usePageDetails";
-import PageContent from "./PageContent";
+import useChannelDetails from "@/hooks/useChannelDetails";
 
-const PageDetails = ({
-  params: { page_slug },
+const ChannelDetails = ({
+  params: { channel_slug },
 }: {
-  params: { page_slug: string };
+  params: { channel_slug: string };
 }) => {
   const [notFound, setNotFound] = useState<boolean>(false);
 
-  const { page, setPage, isPending, isError } = usePageDetails(page_slug);
+  const { channel, setChannel, isPending, isError } =
+    useChannelDetails(channel_slug);
 
   useEffect(() => {
-    if (!isPending && !page?.id) {
+    if (!isPending && !channel?.id) {
       setNotFound(true);
     }
-  }, [isPending, page]);
+  }, [isPending, channel]);
 
   useEffect(() => {
-    if (page?.id) {
-      document.title = `${page.title} - Kakrola`;
+    if (channel?.id) {
+      document.title = `${channel.name} - Kakrola`;
     } else {
       document.title = "Kakrola";
     }
-  }, [page]);
+  }, [channel]);
 
   if (isPending) {
     return (
@@ -45,7 +41,7 @@ const PageDetails = ({
   if (isError) {
     return (
       <div className="flex items-center justify-center w-full h-screen">
-        <p>Error loading page details</p>
+        <p>Error loading channel details</p>
       </div>
     );
   }
@@ -57,14 +53,14 @@ const PageDetails = ({
           src="/not_found.png"
           width={220}
           height={200}
-          alt="Page not found"
+          alt="Channel not found"
           className="rounded-md object-cover"
           draggable={false}
         />
         <div className="text-center space-y-2 w-72">
-          <h3 className="font-bold text-base">Page not found</h3>
+          <h3 className="font-bold text-base">Channel not found</h3>
           <p className="text-sm text-text-600 pb-4">
-            The page doesn&apos;t seem to exist or you don&apos;t have
+            The channel doesn&apos;t seem to exist or you don&apos;t have
             permission to access it.
           </p>
           <Link href="/app">
@@ -75,13 +71,9 @@ const PageDetails = ({
     );
   }
 
-  if (page?.id) {
-    return (
-      <PageWrapper page={page}>
-        <PageContent page={page} setPage={setPage} />
-      </PageWrapper>
-    );
+  if (channel?.id) {
+    return <h1 className="text-3xl font-bold">{channel.name}</h1>;
   }
 };
 
-export default PageDetails;
+export default ChannelDetails;

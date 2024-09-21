@@ -4,6 +4,7 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import { ProjectType, SectionType } from "@/types/project";
 import { PersonalMemberType, TeamMemberType, TeamType } from "@/types/team";
 import { PageType } from "@/types/pageTypes";
+import { ChannelType } from "@/types/channel";
 
 interface SidebarData {
   personal_members: PersonalMemberType[];
@@ -12,6 +13,7 @@ interface SidebarData {
   team_members: TeamMemberType[];
   teams: TeamType[];
   pages: PageType[];
+  channels: ChannelType[];
 }
 
 // Fetching merged data for projects, teams, sections, and pages
@@ -53,14 +55,17 @@ const useSidebarData = () => {
     setProjects: (newProjects: ProjectType[]) =>
       queryClient.setQueryData(
         ["sidebar_data", profile?.id],
-        (oldData: SidebarData = {
-          personal_members: [],
-          projects: [],
-          sections: [],
-          team_members: [],
-          teams: [],
-          pages: [],
-        }) => ({
+        (
+          oldData: SidebarData = {
+            personal_members: [],
+            projects: [],
+            sections: [],
+            team_members: [],
+            teams: [],
+            pages: [],
+            channels: [],
+          }
+        ) => ({
           ...oldData,
           projects: newProjects,
         })
@@ -69,14 +74,17 @@ const useSidebarData = () => {
     setProjectMembers: (members: PersonalMemberType[]) =>
       queryClient.setQueryData(
         ["sidebar_data", profile?.id],
-        (oldData: SidebarData = {
-          personal_members: [],
-          projects: [],
-          sections: [],
-          team_members: [],
-          teams: [],
-          pages: [],
-        }) => ({
+        (
+          oldData: SidebarData = {
+            personal_members: [],
+            projects: [],
+            sections: [],
+            team_members: [],
+            teams: [],
+            pages: [],
+            channels: [],
+          }
+        ) => ({
           ...oldData,
           personal_members: members,
         })
@@ -86,14 +94,17 @@ const useSidebarData = () => {
     setTeams: (teams: TeamType[]) =>
       queryClient.setQueryData(
         ["sidebar_data", profile?.id],
-        (oldData: SidebarData = {
-          personal_members: [],
-          projects: [],
-          sections: [],
-          team_members: [],
-          teams: [],
-          pages: [],
-        }) => ({
+        (
+          oldData: SidebarData = {
+            personal_members: [],
+            projects: [],
+            sections: [],
+            team_members: [],
+            teams: [],
+            pages: [],
+            channels: [],
+          }
+        ) => ({
           ...oldData,
           teams,
         })
@@ -103,18 +114,22 @@ const useSidebarData = () => {
     setPages: (newPages: PageType[]) =>
       queryClient.setQueryData(
         ["sidebar_data", profile?.id],
-        (oldData: SidebarData = {
-          personal_members: [],
-          projects: [],
-          sections: [],
-          team_members: [],
-          teams: [],
-          pages: [],
-        }) => ({
+        (
+          oldData: SidebarData = {
+            personal_members: [],
+            projects: [],
+            sections: [],
+            team_members: [],
+            teams: [],
+            pages: [],
+            channels: [],
+          }
+        ) => ({
           ...oldData,
           pages: newPages,
         })
       ),
+    channels: data?.channels || [],
     isLoading,
     isError,
     error,

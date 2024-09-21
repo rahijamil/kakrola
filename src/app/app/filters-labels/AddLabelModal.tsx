@@ -84,7 +84,7 @@ const AddLabelModal = ({ onClose }: { onClose: () => void }) => {
         className="bg-surface rounded-lg shadow-xl w-full max-w-md mx-4"
         onClick={(ev) => ev.stopPropagation()}
       >
-        <div className="flex justify-between items-center p-4 border-b border-text-200">
+        <div className="flex justify-between items-center p-4 border-b border-text-100">
           <h2 className="text-xl font-semibold">Add label</h2>
           <button
             onClick={onClose}
@@ -146,7 +146,7 @@ const AddLabelModal = ({ onClose }: { onClose: () => void }) => {
 
           {error && <p className="text-red-500 text-xs text-center">{error}</p>}
 
-          <div className="flex items-center justify-end gap-4 border-t border-text-200 p-4">
+          <div className="flex items-center justify-end gap-4 border-t border-text-100 p-4">
             <Button
               type="button"
               variant="gray"

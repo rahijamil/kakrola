@@ -6,12 +6,8 @@ import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import {
   Inbox,
   Calendar,
-  ChevronDown,
-  PanelLeft,
   LucideProps,
   Search,
-  CalendarDays,
-  LayoutPanelTop,
   Bell,
   SwatchBook,
   MessagesSquare,
@@ -28,6 +24,7 @@ import AddTeam from "@/components/AddTeam";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import AddEditProject from "@/components/AddEditProject";
+import AddEditChannel from "@/components/AddEditChannel";
 
 const menuItems: {
   id: number;
@@ -44,50 +41,22 @@ const menuItems: {
   { id: 4, icon: MessagesSquare, text: "DMs", path: "/app/dm" },
 ];
 
-const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
+const Sidebar = ({
+  sidebarWidth,
+  setShowAddTeam,
+  setShowLogoutConfirm,
+  setShowAddTaskModal
+}: {
+  sidebarWidth: number;
+  setShowAddTeam: React.Dispatch<React.SetStateAction<boolean | number>>;
+  setShowLogoutConfirm: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowAddTaskModal: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const pathname = usePathname();
 
   const { teams, sidebarLoading } = useSidebarDataProvider();
 
-  const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);
-
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [logoutLoading, setLogoutLoading] = useState(false);
-  const [showAddTeam, setShowAddTeam] = useState<boolean | number>(false);
-
-  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
-  const [teamId, setTeamId] = useState<number | null>(null);
-
-  const router = useRouter();
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const activeElement = document.activeElement;
-      const isInputField =
-        activeElement instanceof HTMLInputElement ||
-        activeElement instanceof HTMLTextAreaElement ||
-        (activeElement instanceof HTMLElement &&
-          activeElement.isContentEditable);
-
-      if (event.key === "Escape") {
-        event.preventDefault();
-
-        setShowAddTaskModal(false);
-      }
-
-      if (event.key.toLowerCase() == "q" && !isInputField) {
-        event.preventDefault();
-        setShowAddTaskModal(true);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
 
   return (
     <>
@@ -150,7 +119,10 @@ const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
                           : "hover:bg-primary-50"
                       }`}
                     >
-                      <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3 text-primary-500" />
+                      <item.icon
+                        strokeWidth={1.5}
+                        className="w-5 h-5 mr-3 text-primary-500"
+                      />
                       {item.text}
                     </Link>
                   ) : (
@@ -176,17 +148,13 @@ const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
             showFavoritesProjects={showFavoritesProjects}
           />
 
-          <Personal
-            sidebarWidth={sidebarWidth}
-            setShowAddProjectModal={setShowAddProjectModal}
-          />
+          <Personal sidebarWidth={sidebarWidth} />
 
           {teams.map((team) => (
             <TeamProjects
               key={team.id}
               team={team}
               sidebarWidth={sidebarWidth}
-              setTeamId={setTeamId}
             />
           ))}
         </nav>
@@ -205,49 +173,6 @@ const Sidebar = ({ sidebarWidth }: { sidebarWidth: number }) => {
           </Link>
         </div>
       </aside>
-
-      {showAddTaskModal && (
-        <AddTaskModal onClose={() => setShowAddTaskModal(false)} />
-      )}
-
-      {showLogoutConfirm && (
-        <ConfirmAlert
-          title="Log out?"
-          description="Are you sure you want to log out?"
-          onCancel={() => setShowLogoutConfirm(false)}
-          submitBtnText="Log out"
-          loading={logoutLoading}
-          onConfirm={async () => {
-            setLogoutLoading(true);
-            try {
-              const response = await axios("/api/auth/signout", {
-                method: "POST",
-              });
-
-              if (response.data.success) {
-                router.push("/auth/login");
-              } else {
-                // Handle error case (e.g., show an error message)
-                console.error("Failed to log out:", response.data.message);
-              }
-            } catch (error) {
-              console.error("Error during logout:", error);
-            } finally {
-              setLogoutLoading(false);
-            }
-          }}
-        />
-      )}
-
-      {showAddTeam && <AddTeam onClose={() => setShowAddTeam(false)} />}
-
-      {showAddProjectModal && (
-        <AddEditProject onClose={() => setShowAddProjectModal(false)} />
-      )}
-
-      {teamId && (
-        <AddEditProject workspaceId={teamId} onClose={() => setTeamId(null)} />
-      )}
     </>
   );
 };

@@ -63,7 +63,7 @@ const AuthWrapper = ({
                     className={`flex items-center justify-center cursor-pointer rounded-lg px-4 border w-20 h-20 relative ${
                       activeView === v.name
                         ? "border-primary-500 bg-primary-25"
-                        : "border-text-200 hover:bg-text-50"
+                        : "border-text-100 hover:bg-text-50"
                     } focus:outline-none`}
                     onClick={() => setActiveView(v.name)}
                   >

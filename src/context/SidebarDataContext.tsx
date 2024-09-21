@@ -4,6 +4,7 @@ import React, { createContext, ReactNode, useContext, useState } from "react";
 import { TeamType, TeamMemberType, PersonalMemberType } from "@/types/team";
 import { PageType } from "@/types/pageTypes";
 import useSidebarData from "@/hooks/useSidebarData";
+import { ChannelType } from "@/types/channel";
 
 const SidebarDataContext = createContext<{
   projects: ProjectType[];
@@ -27,7 +28,8 @@ const SidebarDataContext = createContext<{
   setProjectMembers: (members: PersonalMemberType[]) => void;
   isShowViewModal: boolean;
   setIsShowViewModal: React.Dispatch<React.SetStateAction<boolean>>;
-  isError: boolean
+  isError: boolean;
+  channels: ChannelType[];
 }>({
   projects: [],
   setProjects: () => {},
@@ -44,7 +46,8 @@ const SidebarDataContext = createContext<{
   setProjectMembers: () => {},
   isShowViewModal: false,
   setIsShowViewModal: () => {},
-  isError: false
+  isError: false,
+  channels: [],
 });
 
 const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
@@ -61,7 +64,8 @@ const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
     isError,
     error,
     pages,
-    setPages
+    setPages,
+    channels,
   } = useSidebarData();
 
   const [activeProject, setActiveProject] = useState<ProjectType | null>(null);
@@ -86,6 +90,7 @@ const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
         isShowViewModal,
         setIsShowViewModal,
         isError,
+        channels,
       }}
     >
       {children}

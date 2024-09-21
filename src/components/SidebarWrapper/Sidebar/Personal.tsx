@@ -16,17 +16,11 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import ProjectPlusDropdown from "./ProjectPlusDropdown";
+import SidebarPlusDropdown from "./SidebarPlusDropdown";
 import useScreen from "@/hooks/useScreen";
 import PageItem from "./PageItem";
 
-const Personal = ({
-  sidebarWidth,
-  setShowAddProjectModal,
-}: {
-  sidebarWidth: number;
-  setShowAddProjectModal: Dispatch<SetStateAction<boolean>>;
-}) => {
+const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
   const { profile } = useAuthProvider();
   const {
     projects: allProjects,
@@ -89,7 +83,7 @@ const Personal = ({
   };
 
   const { screenWidth } = useScreen();
-
+  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
   return (
     <>
       <div>
@@ -150,12 +144,14 @@ const Personal = ({
 
             <div
               className={`${
-                screenWidth > 768 && "opacity-0 group-hover:opacity-100"
+                (screenWidth > 768 && !showAddProjectModal) && "opacity-0 group-hover:opacity-100"
               } transition flex items-center`}
             >
-              <ProjectPlusDropdown
-                forPersonal
-                setShowAddProjectModal={setShowAddProjectModal}
+              <SidebarPlusDropdown
+                modalStates={{
+                  setShowAddProjectModal,
+                  showAddProjectModal,
+                }}
               />
 
               <button

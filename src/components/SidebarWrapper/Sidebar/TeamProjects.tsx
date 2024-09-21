@@ -18,28 +18,37 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import ProjectPlusDropdown from "./ProjectPlusDropdown";
+import SidebarPlusDropdown from "./SidebarPlusDropdown";
 import useScreen from "@/hooks/useScreen";
+import { PageType } from "@/types/pageTypes";
+import PageItem from "./PageItem";
+import { ChannelType } from "@/types/channel";
+import ChannelItem from "./ChannelItem";
 
 const TeamProjects = ({
   team,
   sidebarWidth,
-  setTeamId,
 }: {
   team: TeamType;
   sidebarWidth: number;
-  setTeamId: Dispatch<SetStateAction<number | null>>;
 }) => {
-  const { projects, sidebarLoading } = useSidebarDataProvider();
+  const { projects, pages, channels, sidebarLoading } =
+    useSidebarDataProvider();
   const pathname = usePathname();
   const [showProjects, setShowProjects] = useState(true);
   const [teamProjects, setTeamProjects] = useState<ProjectType[]>([]);
+  const [teamPages, setTeamPages] = useState<PageType[]>([]);
+  const [teamChannels, setTeamChannels] = useState<ChannelType[]>([]);
+
+  const [isDragDisabled, setIsDragDisabled] = useState(false);
 
   useEffect(() => {
     if (team) {
       setTeamProjects(projects.filter((p) => p.team_id === team.id));
+      setTeamPages(pages.filter((p) => p.team_id === team.id));
+      setTeamChannels(channels.filter((p) => p.team_id === team.id));
     }
-  }, [team, projects]);
+  }, [team, projects, pages]);
 
   const handleOnDragEnd = async (result: DropResult) => {
     const { source, destination } = result;
@@ -90,6 +99,8 @@ const TeamProjects = ({
   };
 
   const { screenWidth } = useScreen();
+  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+  const [showAddChannel, setShowAddChannel] = useState(false);
 
   return (
     <>
@@ -149,10 +160,21 @@ const TeamProjects = ({
 
             <div
               className={`${
-                screenWidth > 768 && "opacity-0 group-hover:opacity-100"
+                screenWidth > 768 &&
+                !showAddProjectModal &&
+                !showAddChannel &&
+                "opacity-0 group-hover:opacity-100"
               } transition flex items-center`}
             >
-              <ProjectPlusDropdown teamId={team.id} setTeamId={setTeamId} />
+              <SidebarPlusDropdown
+                teamId={team.id}
+                modalStates={{
+                  setShowAddProjectModal,
+                  setShowAddChannel,
+                  showAddProjectModal,
+                  showAddChannel,
+                }}
+              />
 
               <button
                 className="p-1 hover:bg-primary-100 rounded-lg transition duration-150"
@@ -211,6 +233,65 @@ const TeamProjects = ({
                           }}
                         </Draggable>
                       ))}
+
+                      {teamPages.map((page, index) => (
+                        <Draggable
+                          key={page.id}
+                          draggableId={page.id.toString()}
+                          index={index}
+                          isDragDisabled={isDragDisabled}
+                        >
+                          {(provided, snapshot) => {
+                            return (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className={`${
+                                  snapshot.isDragging && "bg-surface"
+                                }`}
+                              >
+                                <PageItem
+                                  page={page}
+                                  pathname={pathname}
+                                  isDragging={snapshot.isDragging}
+                                  setIsDragDisabled={setIsDragDisabled}
+                                />
+                              </div>
+                            );
+                          }}
+                        </Draggable>
+                      ))}
+
+                      {teamChannels.map((channel, index) => (
+                        <Draggable
+                          key={channel.id}
+                          draggableId={channel.id.toString()}
+                          index={index}
+                          isDragDisabled={isDragDisabled}
+                        >
+                          {(provided, snapshot) => {
+                            return (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className={`${
+                                  snapshot.isDragging && "bg-surface"
+                                }`}
+                              >
+                                <ChannelItem
+                                  channel={channel}
+                                  pathname={pathname}
+                                  isDragging={snapshot.isDragging}
+                                  setIsDragDisabled={setIsDragDisabled}
+                                />
+                              </div>
+                            );
+                          }}
+                        </Draggable>
+                      ))}
+
                       {provided.placeholder}
                     </ul>
                   );

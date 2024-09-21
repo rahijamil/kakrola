@@ -170,7 +170,7 @@ const BoardViewColumn = ({
     theme == "dark"
       ? `${
           sectionColor == "gray"
-            ? `bg-${sectionColor}-900`
+            ? `bg-surface`
             : `bg-${sectionColor}-500/20`
         }`
       : `bg-${sectionColor}-25`;

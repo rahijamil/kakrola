@@ -133,7 +133,7 @@ const ListViewSection = ({
 
   return (
     <>
-      <tr className="border-b border-text-200 block pt-2">
+      <tr className="border-b border-text-100 block pt-2">
         <td
           onTouchStart={(ev) => ev.currentTarget.classList.add("bg-text-100")}
           onTouchEnd={(ev) => ev.currentTarget.classList.remove("bg-text-100")}

@@ -274,6 +274,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                     <>
                       <div key={_index} onClick={(ev) => ev.stopPropagation()}>
                         <button
+                          type="button"
                           onClick={() => {
                             if (item.onClick && !item.content) {
                               item.onClick();
@@ -403,7 +404,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                     <div className="px-4">{beforeItemsContent}</div>
                   )}
                   {items.length > 0 && (
-                    <div className="pb-4 h-automax-h-[50vh]overflow-y-auto">
+                    <div className="pb-4 h-auto max-h-[50vh] overflow-y-auto">
                       {items.map((item, _index) => (
                         <>
                           <div
@@ -411,6 +412,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                             onClick={(ev) => ev.stopPropagation()}
                           >
                             <button
+                            type="button"
                               onTouchStart={(ev) => {
                                 ev.currentTarget.classList.add("bg-text-100");
                               }}
@@ -517,7 +519,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
             data-form-element="true"
-            className={`fixed top-0 left-0 bottom-0 right-0 z-20 ${
+            className={`fixed inset-0 z-20 ${
               screenWidth <= 768 &&
               mobileBottomSheet &&
               "bg-black bg-opacity-60"

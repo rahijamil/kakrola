@@ -87,7 +87,7 @@
     font-family: "Poppins", sans-serif;
   }
   .custom-quill-editor .ql-toolbar {
-    @apply rounded-t-2xl bg-transparent border-b border-text-200;
+    @apply rounded-t-2xl bg-transparent border-b border-text-100;
   }
 
   .custom-quill-editor .ql-toolbar button {
@@ -140,7 +140,7 @@
   }
 
   .custom-quill-editor .ql-editor blockquote {
-    @apply border-l-2 border-text-200 pl-4 italic text-text-600;
+    @apply border-l-2 border-text-100 pl-4 italic text-text-600;
   }
 
   .custom-quill-editor .ql-editor ul,
@@ -169,12 +169,12 @@
   }
 
   .custom-quill-editor .ql-editor table {
-    @apply w-full border border-text-200;
+    @apply w-full border border-text-100;
   }
 
   .custom-quill-editor .ql-editor td,
   .custom-quill-editor .ql-editor th {
-    @apply border border-text-200 p-2;
+    @apply border border-text-100 p-2;
   }
 
   .custom-quill-editor .ql-editor th {

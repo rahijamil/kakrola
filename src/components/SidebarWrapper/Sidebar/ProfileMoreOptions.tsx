@@ -117,8 +117,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
 );
 
 interface ProfileMoreOptionsProps {
-  setShowAddTeam: React.Dispatch<React.SetStateAction<boolean | number>>;
-  setShowLogoutConfirm: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowAddTeam?: React.Dispatch<React.SetStateAction<boolean | number>>;
+  setShowLogoutConfirm?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
@@ -139,7 +139,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
         {
           icon: Plus,
           label: "Add a team",
-          onClick: () => setShowAddTeam(true),
+          onClick: () => setShowAddTeam && setShowAddTeam(true),
         },
       ],
     },
@@ -192,7 +192,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
         {
           icon: LogOut,
           label: "Log out",
-          onClick: () => setShowLogoutConfirm(true),
+          onClick: () => setShowLogoutConfirm && setShowLogoutConfirm(true),
         },
       ],
     },
@@ -283,7 +283,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
                   />
 
                   {item.subMenu && activeSubmenu === item.label && (
-                    <div className="absolute bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg border border-text-200 top-0 left-full z-20 w-60 py-1">
+                    <div className="absolute bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg border border-text-100 top-0 left-full z-20 w-60 py-1">
                       {item.subMenu.map((subItem, subIndex) => (
                         <MenuItem
                           key={subIndex}

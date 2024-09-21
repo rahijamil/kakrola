@@ -43,56 +43,19 @@ const MobileMorePage = () => {
 
   const { teams, sidebarLoading } = useSidebarDataProvider();
 
-  const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);
-
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [logoutLoading, setLogoutLoading] = useState(false);
-  const [showAddTeam, setShowAddTeam] = useState<boolean | number>(false);
-
-  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
-  const [teamId, setTeamId] = useState<number | null>(null);
-
-  const router = useRouter();
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const activeElement = document.activeElement;
-      const isInputField =
-        activeElement instanceof HTMLInputElement ||
-        activeElement instanceof HTMLTextAreaElement ||
-        (activeElement instanceof HTMLElement &&
-          activeElement.isContentEditable);
-
-      if (event.key === "Escape") {
-        event.preventDefault();
-
-        setShowAddTaskModal(false);
-      }
-
-      if (event.key.toLowerCase() == "q" && !isInputField) {
-        event.preventDefault();
-        setShowAddTaskModal(true);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
 
   const pathname = usePathname();
 
+  if (screenWidth > 768) {
+    return null;
+  }
+
   return (
     <>
-      <aside className="h-[calc(100vh-57px)] flex flex-col w-full bg-primary-10">
-        <div className="mb-4 p-2 px-4 flex items-center justify-between relative border-b border-primary-50">
-          <ProfileMoreOptions
-            setShowAddTeam={setShowAddTeam}
-            setShowLogoutConfirm={setShowLogoutConfirm}
-          />
+      <aside className="h-[calc(100vh-57px)] flex flex-col w-full">
+        <div className="mb-4 p-2 px-4 flex items-center justify-between relative border-b border-text-100">
+          <ProfileMoreOptions />
 
           {sidebarLoading ? (
             <div className="flex items-center w-full justify-end gap-2">
@@ -181,17 +144,13 @@ const MobileMorePage = () => {
             showFavoritesProjects={showFavoritesProjects}
           />
 
-          <Personal
-            sidebarWidth={sidebarWidth}
-            setShowAddProjectModal={setShowAddProjectModal}
-          />
+          <Personal sidebarWidth={sidebarWidth} />
 
           {teams.map((team) => (
             <TeamProjects
               key={team.id}
               team={team}
               sidebarWidth={sidebarWidth}
-              setTeamId={setTeamId}
             />
           ))}
         </nav>
@@ -210,49 +169,6 @@ const MobileMorePage = () => {
           </Link>
         </div> */}
       </aside>
-
-      {showAddTaskModal && (
-        <AddTaskModal onClose={() => setShowAddTaskModal(false)} />
-      )}
-
-      {showLogoutConfirm && (
-        <ConfirmAlert
-          title="Log out?"
-          description="Are you sure you want to log out?"
-          onCancel={() => setShowLogoutConfirm(false)}
-          submitBtnText="Log out"
-          loading={logoutLoading}
-          onConfirm={async () => {
-            setLogoutLoading(true);
-            try {
-              const response = await axios("/api/auth/signout", {
-                method: "POST",
-              });
-
-              if (response.data.success) {
-                router.push("/auth/login");
-              } else {
-                // Handle error case (e.g., show an error message)
-                console.error("Failed to log out:", response.data.message);
-              }
-            } catch (error) {
-              console.error("Error during logout:", error);
-            } finally {
-              setLogoutLoading(false);
-            }
-          }}
-        />
-      )}
-
-      {showAddTeam && <AddTeam onClose={() => setShowAddTeam(false)} />}
-
-      {showAddProjectModal && (
-        <AddEditProject onClose={() => setShowAddProjectModal(false)} />
-      )}
-
-      {teamId && (
-        <AddEditProject workspaceId={teamId} onClose={() => setTeamId(null)} />
-      )}
     </>
   );
 };

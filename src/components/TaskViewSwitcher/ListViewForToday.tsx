@@ -45,7 +45,7 @@ const ListViewForToday = ({
               .map((task, index) => (
                 <Fragment key={task.id}>
                   <li
-                    className={`border-b border-text-200 p-1 pl-0 flex items-center gap-3 cursor-pointer ${
+                    className={`border-b border-text-100 p-1 pl-0 flex items-center gap-3 cursor-pointer ${
                       task.parent_task_id && "ml-8"
                     }`}
                   >
@@ -73,7 +73,7 @@ const ListViewForToday = ({
                         .map((childTask, childIndex) => (
                           <li
                             key={childTask.id}
-                            className={`border-b border-text-200 p-1 pl-0 flex items-center gap-3 cursor-pointer ${
+                            className={`border-b border-text-100 p-1 pl-0 flex items-center gap-3 cursor-pointer ${
                               childTask.parent_task_id && "ml-8"
                             }`}
                           >

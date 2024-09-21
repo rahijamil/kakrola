@@ -135,7 +135,7 @@ export const NodeSelector = ({ open, onOpenChange }: NodeSelectorProps) => {
             className="flex cursor-pointer items-center justify-between rounded-sm px-2 py-1 text-sm hover:bg-text-100"
           >
             <div className="flex items-center space-x-2">
-              <div className="rounded-sm border border-text-200 p-1">
+              <div className="rounded-sm border border-text-100 p-1">
                 <item.icon className="h-3 w-3" />
               </div>
               <span>{item.name}</span>

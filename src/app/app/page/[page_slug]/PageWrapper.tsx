@@ -113,7 +113,7 @@ const PageWrapper = ({
                           />
                         ) : (
                           <h1
-                            className="font-semibold border border-transparent hover:border-text-200 rounded-lg w-full p-1 py-0.5 cursor-text inline-block overflow-hidden text-ellipsis"
+                            className="font-semibold border border-transparent hover:border-text-100 rounded-lg w-full p-1 py-0.5 cursor-text inline-block overflow-hidden text-ellipsis"
                             onClick={() => toggleModal("editTitle", true)}
                           >
                             {page.name}
@@ -150,7 +150,7 @@ const PageWrapper = ({
                 />
               ) : (
                 <h1
-                  className="font-semibold border border-transparent hover:border-text-200 rounded-lg w-full p-1 py-0.5 cursor-text inline-block overflow-hidden text-ellipsis"
+                  className="font-semibold border border-transparent hover:border-text-100 rounded-lg w-full p-1 py-0.5 cursor-text inline-block overflow-hidden text-ellipsis"
                   onClick={() => toggleModal("editTitle", true)}
                 >
                   {page.title}

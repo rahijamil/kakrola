@@ -164,7 +164,7 @@ const MentionInput = ({
       />
 
       {showMentionList && filteredProfiles.length > 0 && (
-        <ul className="absolute bg-background border border-text-200 shadow-md mb-2 max-h-40 overflow-y-auto w-full z-10 rounded-lg bottom-full">
+        <ul className="absolute bg-background border border-text-100 shadow-md mb-2 max-h-40 overflow-y-auto w-full z-10 rounded-lg bottom-full">
           {filteredProfiles.map((profile) => (
             <li
               key={profile.id}

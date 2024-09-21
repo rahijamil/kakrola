@@ -1,7 +1,7 @@
 "use client";
 import React, { FormEvent, useCallback, useMemo, useState } from "react";
 import { ProjectType, TaskPriority } from "@/types/project";
-import { SquareGanttChart, X } from "lucide-react";
+import { ChevronLeft, SquareGanttChart, X } from "lucide-react";
 import { ToggleSwitch } from "../ui/ToggleSwitch";
 import { Input } from "../ui/input";
 import { useAuthProvider } from "@/context/AuthContext";
@@ -25,6 +25,8 @@ import { Button } from "../ui/button";
 import "react-loading-skeleton/dist/skeleton.css";
 import ViewSkeleton from "../ViewSkeleton";
 import { projectViewsToSelect } from "@/data/project_views";
+import useScreen from "@/hooks/useScreen";
+import { AnimatePresence, motion } from "framer-motion";
 
 const AddEditProject = ({
   workspaceId,
@@ -40,6 +42,7 @@ const AddEditProject = ({
   const { profile } = useAuthProvider();
   const { projects, setProjects, teams, personalMembers } =
     useSidebarDataProvider();
+  const { screenWidth } = useScreen();
 
   const initialProjectData: Omit<ProjectType, "id"> = useMemo(
     () =>
@@ -304,13 +307,10 @@ const AddEditProject = ({
           ? personalMembers
               .filter(
                 (m) =>
-                  m.settings.order <
-                  (currentProjectMember?.settings.order || 0)
+                  m.settings.order < (currentProjectMember?.settings.order || 0)
               )
-              .sort(
-                (a, b) => b.settings.order - a.settings.order
-              )[0].settings.order ||
-            (currentProjectMember?.settings.order || 0) - 1
+              .sort((a, b) => b.settings.order - a.settings.order)[0].settings
+              .order || (currentProjectMember?.settings.order || 0) - 1
           : currentProjectMember?.settings.order || 0;
 
       const nextOrder =
@@ -318,13 +318,10 @@ const AddEditProject = ({
           ? personalMembers
               .filter(
                 (m) =>
-                  m.settings.order >
-                  (currentProjectMember?.settings.order || 0)
+                  m.settings.order > (currentProjectMember?.settings.order || 0)
               )
-              .sort(
-                (a, b) => a.settings.order - b.settings.order
-              )[0]?.settings.order ||
-            (currentProjectMember?.settings.order || 0) + 1
+              .sort((a, b) => a.settings.order - b.settings.order)[0]?.settings
+              .order || (currentProjectMember?.settings.order || 0) + 1
           : currentProjectMember?.settings.order || 0;
 
       const newOrder = (prevOrder + nextOrder) / 2;
@@ -368,33 +365,83 @@ const AddEditProject = ({
   };
 
   return (
-    <div className="bg-background fixed inset-0 z-20 flex flex-col">
-      <div className="flex justify-end p-4 pr-6">
-        <button
-          className="p-1 rounded-lg hover:bg-text-100 transition"
-          onClick={onClose}
-        >
-          <X size={20} strokeWidth={1.5} />
-        </button>
-      </div>
+    <AnimatePresence>
+      <motion.div
+        initial={{
+          opacity: 0,
+          y: 20,
+        }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{
+          opacity: 0,
+          y: 20,
+        }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+        className="bg-surface md:bg-background fixed inset-0 z-50 flex flex-col"
+      >
+        {screenWidth > 768 && (
+          <div className="flex justify-end p-4 md:pr-6">
+            <button
+              className="p-1 rounded-lg hover:bg-text-100 transition"
+              onClick={onClose}
+            >
+              <X size={20} strokeWidth={1.5} />
+            </button>
+          </div>
+        )}
 
-      <div className="w-full md:w-11/12 mx-auto flex flex-1 gap-16">
-        <div className="w-full space-y-8 max-w-sm">
-          <h1 className="font-medium text-3xl">
-            {project && !aboveBellow ? "Edit project" : "New Project"}
-          </h1>
+        <div className="w-full md:w-11/12 mx-auto flex flex-1 gap-16">
+          <div className="w-full space-y-6 md:space-y-8 max-w-sm">
+            {screenWidth > 768 ? (
+              <h1 className="font-medium text-xl md:text-3xl">
+                {project && !aboveBellow ? "Edit project" : "New Project"}
+              </h1>
+            ) : (
+              <div className="flex justify-between items-center px-4 py-2 border-b border-text-100">
+                <div className="flex items-center gap-3">
+                  <button onClick={onClose} className="w-6 h-6">
+                    <ChevronLeft strokeWidth={1.5} size={24} />
+                  </button>
+                  <h1 className="font-semibold">
+                    {project && !aboveBellow ? "Edit project" : "New Project"}
+                  </h1>
+                </div>
 
-          <form
-            onSubmit={(ev) => {
-              if (aboveBellow) {
-                handleAddProjectAboveBellow(ev, aboveBellow);
-              } else {
-                handleAddProject(ev);
-              }
-            }}
-            className="space-y-8"
-          >
-            <div className="space-y-8">
+                <Button
+                  type="submit"
+                  size="xs"
+                  disabled={loading || !projectData.name.trim()}
+                  variant="ghost"
+                >
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <Spinner color="white" />
+
+                      {project && !aboveBellow ? (
+                        <span>Editing...</span>
+                      ) : (
+                        <span>Creating...</span>
+                      )}
+                    </div>
+                  ) : project && !aboveBellow ? (
+                    "Edit"
+                  ) : (
+                    "Create"
+                  )}
+                </Button>
+              </div>
+            )}
+
+            <form
+              onSubmit={(ev) => {
+                if (aboveBellow) {
+                  handleAddProjectAboveBellow(ev, aboveBellow);
+                } else {
+                  handleAddProject(ev);
+                }
+              }}
+              className="space-y-6 md:space-y-8"
+            >
               <Input
                 type="text"
                 value={projectData?.name}
@@ -427,120 +474,132 @@ const AddEditProject = ({
                 }
               />
 
-              <div>
-                <button
-                  className="flex items-center space-x-2 w-full"
-                  type="button"
-                  onClick={() =>
-                    setProjectMembersData((prev) => ({
-                      ...prev,
-                      settings: {
-                        ...projectMembersData?.settings,
-                        is_favorite:
-                          !projectMembersData?.settings.is_favorite,
-                      },
-                    }))
-                  }
-                >
-                  <ToggleSwitch
-                    checked={projectMembersData.settings.is_favorite}
-                    onCheckedChange={(value) =>
+              <div className="space-y-6 md:space-y-8 px-4 md:px-0">
+                <div>
+                  <button
+                    className="flex items-center space-x-2 w-full"
+                    type="button"
+                    onClick={() =>
                       setProjectMembersData((prev) => ({
                         ...prev,
                         settings: {
-                          ...projectMembersData.settings,
-                          is_favorite: value,
+                          ...projectMembersData?.settings,
+                          is_favorite:
+                            !projectMembersData?.settings.is_favorite,
                         },
                       }))
                     }
-                  />
-
-                  <span className="">Add to favorites</span>
-                </button>
-              </div>
-
-              <div className="space-y-1">
-                <p className="block font-bold text-text-700">View</p>
-                <ul className="flex gap-4 items-center">
-                  {projectViewsToSelect.map((v) => (
-                    <li
-                      key={v.id}
-                      tabIndex={0}
-                      className={`flex items-center justify-center cursor-pointer rounded-lg px-4 border w-full aspect-square relative ${
-                        projectData.settings.view === v.name
-                          ? "border-primary-500 bg-primary-25"
-                          : "border-text-200 hover:bg-text-50"
-                      } focus:outline-none`}
-                      onClick={() =>
-                        setProjectData({
-                          ...projectData,
+                  >
+                    <ToggleSwitch
+                      checked={projectMembersData.settings.is_favorite}
+                      onCheckedChange={(value) =>
+                        setProjectMembersData((prev) => ({
+                          ...prev,
                           settings: {
-                            ...projectData.settings,
-                            view: v.name,
+                            ...projectMembersData.settings,
+                            is_favorite: value,
                           },
-                        })
+                        }))
                       }
-                    >
-                      <div className="flex flex-col items-center gap-1">
-                        {v.icon}
-                        <span className="text-text-700">{v.name}</span>
-                      </div>
+                    />
 
-                      <div className="absolute top-1.5 right-1.5">
-                        <AnimatedCircleCheck
-                          handleCheckSubmit={() =>
-                            setProjectData({
-                              ...projectData,
-                              settings: {
-                                ...projectData.settings,
-                                view: v.name,
-                              },
-                            })
-                          }
-                          priority={TaskPriority.P3}
-                          is_completed={projectData.settings.view === v.name}
-                          playSound={false}
-                          disabled
-                        />
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {error && (
-              <p className="text-red-500 p-4 pt-0 text-center text-xs whitespace-normal">
-                {error}
-              </p>
-            )}
-
-            <Button type="submit" fullWidth disabled={loading}>
-              {loading ? (
-                <div className="flex items-center gap-2">
-                  <Spinner color="white" />
-
-                  {project && !aboveBellow ? (
-                    <span>Editing...</span>
-                  ) : (
-                    <span>Creating...</span>
-                  )}
+                    <label className="block font-semibold text-text-700">
+                      Add to favorites
+                    </label>
+                  </button>
                 </div>
-              ) : project && !aboveBellow ? (
-                "Edit project"
-              ) : (
-                "Create Project"
-              )}
-            </Button>
-          </form>
-        </div>
 
-        <ViewSkeleton
-          projectData={projectData}
-          activeView={projectData.settings.view}
-        />
-      </div>
-    </div>
+                <div className="space-y-1">
+                  <p className="block font-bold text-text-700">View</p>
+                  <ul className="flex gap-4 items-center">
+                    {projectViewsToSelect.map((v) => (
+                      <li
+                        key={v.id}
+                        tabIndex={0}
+                        className={`flex items-center justify-center cursor-pointer rounded-lg px-4 border w-full aspect-square relative ${
+                          projectData.settings.view === v.name
+                            ? "border-primary-500 bg-primary-25"
+                            : "border-text-100 hover:bg-text-50"
+                        } focus:outline-none`}
+                        onClick={() =>
+                          setProjectData({
+                            ...projectData,
+                            settings: {
+                              ...projectData.settings,
+                              view: v.name,
+                            },
+                          })
+                        }
+                      >
+                        <div className="flex flex-col items-center gap-1">
+                          {v.icon}
+                          <span className="text-text-700">{v.name}</span>
+                        </div>
+
+                        <div className="absolute top-1.5 right-1.5">
+                          <AnimatedCircleCheck
+                            handleCheckSubmit={() =>
+                              setProjectData({
+                                ...projectData,
+                                settings: {
+                                  ...projectData.settings,
+                                  view: v.name,
+                                },
+                              })
+                            }
+                            priority={TaskPriority.P3}
+                            is_completed={projectData.settings.view === v.name}
+                            playSound={false}
+                            disabled
+                          />
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {error && (
+                <p className="text-red-500 p-4 pt-0 text-center text-xs whitespace-normal">
+                  {error}
+                </p>
+              )}
+
+              {screenWidth > 768 && (
+                <Button
+                  type="submit"
+                  fullWidth
+                  disabled={loading || !projectData.name.trim()}
+                >
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <Spinner color="white" />
+
+                      {project && !aboveBellow ? (
+                        <span>Editing...</span>
+                      ) : (
+                        <span>Creating...</span>
+                      )}
+                    </div>
+                  ) : project && !aboveBellow ? (
+                    "Edit project"
+                  ) : (
+                    "Create Project"
+                  )}
+                </Button>
+              )}
+            </form>
+          </div>
+
+          {screenWidth > 768 && (
+            <ViewSkeleton
+              projectData={projectData}
+              activeView={projectData.settings.view}
+            />
+          )}
+        </div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 

@@ -293,13 +293,13 @@ const TaskItemModal = ({
               damping: 15,
             },
           }}
-          className={`bg-background rounded-l-2xl max-w-[52rem] overflow-y-auto flex flex-col fixed top-0 right-0 bottom-0 border-l border-text-200 shadow-md ${
+          className={`bg-background rounded-l-2xl max-w-[52rem] overflow-y-auto flex flex-col fixed top-0 right-0 bottom-0 border-l border-text-100 shadow-md ${
             screenWidth > 768 ? "w-11/12" : "w-full"
           }`}
           onClick={(ev) => ev.stopPropagation()}
         >
           <div
-            className={`p-2 flex items-center justify-between border-b border-text-200 ${
+            className={`p-2 flex items-center justify-between border-b border-text-100 ${
               screenWidth > 768 ? "px-4" : "px-3"
             }`}
           >
@@ -486,7 +486,7 @@ const TaskItemModal = ({
                   />
 
                   <div
-                    className="flex items-center justify-between w-full border border-text-200 rounded-lg py-2 px-4 bg-background hover:bg-text-100 cursor-pointer transition text-xs"
+                    className="flex items-center justify-between w-full border border-text-100 rounded-lg py-2 px-4 bg-background hover:bg-text-100 cursor-pointer transition text-xs"
                     onClick={() => setShowCommentForm(true)}
                   >
                     <p className="">Write a comment</p>

@@ -47,7 +47,7 @@
 
   /* Details */
   [data-type='details'] {
-    @apply flex gap-1 my-6 mx-auto p-2 border border-text-200 rounded;
+    @apply flex gap-1 my-6 mx-auto p-2 border border-text-100 rounded;
 
     summary {
       @apply font-bold block;

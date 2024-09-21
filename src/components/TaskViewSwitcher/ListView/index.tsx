@@ -538,7 +538,7 @@ const ListView: React.FC<ListViewProps> = ({
               {...listProvided.droppableProps}
             >
               <table className="w-full min-w-[1000px] border-collapse">
-                <tr className="border-y border-text-200 text-xs divide-x divide-text-200 whitespace-nowrap flex sticky top-0 z-10 bg-background">
+                <tr className="border-y border-text-100 text-xs divide-x divide-text-200 whitespace-nowrap flex sticky top-0 z-10 bg-background">
                   <th className="p-2 text-left w-[30%] md:w-[40%] font-medium flex items-center gap-2 pl-4 md:pl-8">
                     <AlignLeft strokeWidth={2} className="w-4 h-4" />
                     <span>Task name</span>

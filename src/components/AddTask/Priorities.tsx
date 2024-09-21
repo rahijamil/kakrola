@@ -151,7 +151,7 @@ const Priorities = ({
           ) : (
             <div
               ref={triggerRef}
-              className={`flex items-center gap-1 cursor-pointer p-1 px-2 rounded-lg border border-text-200 text-[11px] ${
+              className={`flex items-center gap-1 cursor-pointer p-1 px-2 rounded-lg border border-text-100 text-[11px] ${
                 isOpen ? "bg-text-50" : "hover:bg-text-100"
               }`}
               onClick={onClick}

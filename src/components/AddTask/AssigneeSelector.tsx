@@ -195,7 +195,7 @@ const AssigneeSelector = ({
             data-form-element={dataFromElement}
             ref={triggerRef}
             data-state={"assignee"}
-            className={`flex items-center gap-1 cursor-pointer p-1 px-2 text-[11px] rounded-lg border border-text-200 text-text-500 ${
+            className={`flex items-center gap-1 cursor-pointer p-1 px-2 text-[11px] rounded-lg border border-text-100 text-text-500 ${
               isOpen ? "bg-text-50" : "hover:bg-text-100"
             }`}
             onClick={onClick}

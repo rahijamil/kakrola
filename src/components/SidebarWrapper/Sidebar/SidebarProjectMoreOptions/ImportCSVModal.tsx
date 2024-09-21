@@ -26,7 +26,7 @@ const ImportCSVModal = ({ onClose }: { onClose: () => void }) => {
           </button>
         </div>
 
-        <div className="border border-dashed border-text-2000 rounded-lg space-y-6 p-10 flex flex-col items-center justify-center">
+        <div className="border border-dashed border-text-1000 rounded-lg space-y-6 p-10 flex flex-col items-center justify-center">
           <p>Drag and drop a CSV file</p>
 
           <p className="font-bold text-xs">Upload from your computer</p>

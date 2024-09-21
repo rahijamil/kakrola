@@ -67,7 +67,7 @@ const SubTasks = ({
                   damping: 15,
                 },
               }}
-              className="rounded-lg border border-text-200 focus-within:border-text-400 bg-surface"
+              className="rounded-lg border border-text-100 focus-within:border-text-400 bg-surface"
             >
               <AddTaskForm
                 onClose={() => setShowAddSubtask(false)}

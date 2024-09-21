@@ -44,7 +44,7 @@ const NoDueDate = ({
                 .map((task: TaskType, index) => (
                   <li
                     key={task.id}
-                    className={`border-b border-text-200 p-1 flex items-center gap-3 cursor-pointer`}
+                    className={`border-b border-text-100 p-1 flex items-center gap-3 cursor-pointer`}
                   >
                     <TaskItem
                       key={task.id}

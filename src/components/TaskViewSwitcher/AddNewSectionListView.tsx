@@ -47,7 +47,7 @@ const AddNewSectionListView = ({
             value={newSectionName}
             onChange={(e) => setNewSectionName(e.target.value)}
             placeholder="Name this section"
-            className="border border-text-200 focus:outline-none focus:border-text-400 w-full rounded px-2 py-1 font-semibold"
+            className="border border-text-100 focus:outline-none focus:border-text-400 w-full rounded px-2 py-1 font-semibold"
             autoFocus
           />
 

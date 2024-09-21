@@ -153,7 +153,7 @@ const ProjectsSelector = ({
       }
       content={
         <div className="text-[13px] pb-4">
-          <div className="p-2 border-b border-text-200 px-4">
+          <div className="p-2 border-b border-text-100 px-4">
             <Input
               howBig="xs"
               fullWidth

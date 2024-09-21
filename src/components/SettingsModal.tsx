@@ -232,7 +232,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
               </nav>
             </div>
 
-            <div className="border-t border-text-200 p-1 px-3">
+            <div className="border-t border-text-100 p-1 px-3">
               <button
                 onClick={() => setShowAddTeam(true)}
                 className={`flex items-center px-2 py-2 rounded-lg transition-colors hover:bg-primary-50 text-text-700 w-full`}
@@ -244,7 +244,7 @@ const SettingsModal = ({ children }: { children: React.ReactNode }) => {
           </div>
 
           <div className="flex-1">
-            <div className="p-3 flex items-center justify-between border-b border-text-200">
+            <div className="p-3 flex items-center justify-between border-b border-text-100">
               <div className="flex items-center gap-2">
                 {pathname === "/app/settings/account/password" && (
                   <button

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
@@ -13,7 +13,6 @@ import {
   Search,
 } from "lucide-react";
 import "react-loading-skeleton/dist/skeleton.css";
-import AddTaskModal from "../AddTask/AddTaskModal";
 
 const menuItems: {
   id: number;
@@ -29,11 +28,13 @@ const menuItems: {
   { id: 4, icon: Menu, text: "More", path: "/app/more" },
 ];
 
-const MobileSidebar = () => {
+const MobileSidebar = ({
+  setShowAddTaskModal,
+}: {
+  setShowAddTaskModal: Dispatch<SetStateAction<boolean>>;
+}) => {
   const pathname = usePathname();
   const router = useRouter();
-
-  const [showAddTaskModal, setShowAddTaskModal] = useState(false);
 
   return (
     <>
@@ -76,10 +77,6 @@ const MobileSidebar = () => {
           <Plus strokeWidth={1.5} className="w-6 h-6" />
         </button>
       </div>
-
-      {showAddTaskModal && (
-        <AddTaskModal onClose={() => setShowAddTaskModal(false)} />
-      )}
     </>
   );
 };

@@ -59,7 +59,7 @@ const AppProjectsActivePage = () => {
 
             <div className="flex items-center justify-between">
               <div>
-                <button className="flex items-center gap-2 hover:bg-text-100 transition px-2 py-1 rounded-lg border border-text-200">
+                <button className="flex items-center gap-2 hover:bg-text-100 transition px-2 py-1 rounded-lg border border-text-100">
                   <span>Active projects</span>
                   <ChevronDown className="w-5 h-5" />
                 </button>
@@ -80,7 +80,7 @@ const AppProjectsActivePage = () => {
           </div>
 
           <div>
-            <div className="border-b border-text-200 py-1 font-medium">
+            <div className="border-b border-text-100 py-1 font-medium">
               {activeProjects.length} Projects
             </div>
 
