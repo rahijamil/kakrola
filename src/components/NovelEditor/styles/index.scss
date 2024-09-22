@@ -74,8 +74,26 @@
   --novel-highlight-gray: #3a3a3a;
 }
 
+.page-content {
+  .ProseMirror {
+    @apply p-4 md:px-80 pb-40 md:pb-60;
+
+    &.editor-content {
+      @apply min-h-[calc(100vh-10vh)];
+    }
+  }
+}
+
+.thread-wrapper {
+  .ProseMirror {
+    &.editor-content {
+      @apply min-h-[calc(100vh-13vh)];
+    }
+  }
+}
+
 .ProseMirror {
-  @apply caret-black dark:caret-white outline-0 z-0 px-80 pb-60;
+  @apply caret-black dark:caret-white outline-0 z-0 p-4 md:px-80 pb-40 md:pb-60;
 
   .selection {
     @apply inline-block;

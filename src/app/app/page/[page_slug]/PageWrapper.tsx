@@ -203,11 +203,11 @@ const PageWrapper = ({
       </div>
 
       <div className="flex-1 flex flex-col h-full w-full overflow-y-auto">
-        <div className="w-full h-64 min-h-64 bg-text-100"></div>
+        <div className="w-full h-60 min-h-60 bg-text-100"></div>
 
         {screenWidth > 768 && (
           <div className="relative px-80">
-            <div className="absolute -top-1/2 translate-y-1/2">
+            <div className="absolute -top-1/2 translate-y-1/3">
               <File size={60} className={`text-${page?.settings.color}`} />
             </div>
             <div className="mt-16">

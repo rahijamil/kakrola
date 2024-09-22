@@ -1,5 +1,5 @@
 "use client";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, ReactNode, SetStateAction, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
@@ -11,22 +11,11 @@ import {
   Menu,
   Plus,
   Search,
+  Home,
 } from "lucide-react";
 import "react-loading-skeleton/dist/skeleton.css";
-
-const menuItems: {
-  id: number;
-  icon: React.ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
-  >;
-  text: string;
-  path: string;
-}[] = [
-  { id: 1, icon: Calendar, text: "My Tasks", path: "/app" },
-  { id: 2, icon: MessagesSquare, text: "DMs", path: "/app/dm" },
-  { id: 3, icon: Search, text: "Search", path: "/app/search" },
-  { id: 4, icon: Menu, text: "More", path: "/app/more" },
-];
+import Image from "next/image";
+import { useAuthProvider } from "@/context/AuthContext";
 
 const MobileSidebar = ({
   setShowAddTaskModal,
@@ -35,6 +24,47 @@ const MobileSidebar = ({
 }) => {
   const pathname = usePathname();
   const router = useRouter();
+  const { profile } = useAuthProvider();
+
+  const menuItems: {
+    id: number;
+    icon: ReactNode;
+    text: string;
+    path: string;
+  }[] = [
+    {
+      id: 1,
+      icon: <Home strokeWidth={1.5} className={`w-5 h-5`} />,
+      text: "Home",
+      path: "/app/home",
+    },
+    {
+      id: 2,
+      icon: <Calendar strokeWidth={1.5} className={`w-5 h-5`} />,
+      text: "My Tasks",
+      path: "/app",
+    },
+    {
+      id: 3,
+      icon: <MessagesSquare strokeWidth={1.5} className={`w-5 h-5`} />,
+      text: "DMs",
+      path: "/app/dm",
+    },
+    {
+      id: 4,
+      icon: (
+        <Image
+          src={profile?.avatar_url || "/default_avatar.png"}
+          alt="Profile"
+          className="w-5 h-5 min-w-5 min-h-5 rounded-md object-cover"
+          width={20}
+          height={20}
+        />
+      ),
+      text: "More",
+      path: "/app/more",
+    },
+  ];
 
   return (
     <>
@@ -58,7 +88,7 @@ const MobileSidebar = ({
                       item.path === pathname && "bg-primary-100"
                     } p-1 px-5`}
                   >
-                    <item.icon strokeWidth={1.5} className={`w-5 h-5`} />
+                    {item.icon}
                   </div>
                   <span className="text-xs font-medium">{item.text}</span>
                 </button>

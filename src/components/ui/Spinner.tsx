@@ -4,7 +4,7 @@ import { Spinner as NextUISpinner } from "@nextui-org/react";
 const Spinner = ({
   color = "primary",
   className,
-  size = "md",
+  size = "sm",
 }: {
   color?:
     | "white"

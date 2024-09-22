@@ -13,6 +13,8 @@ import {
   MessagesSquare,
   Plus,
   Settings,
+  LogOut,
+  UserCircle,
 } from "lucide-react";
 import AddTaskModal from "@/components/AddTask/AddTaskModal";
 import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
@@ -26,24 +28,18 @@ import FavoriteProjects from "@/components/SidebarWrapper/Sidebar/FavoriteProjec
 import Personal from "@/components/SidebarWrapper/Sidebar/Personal";
 import TeamProjects from "@/components/SidebarWrapper/Sidebar/TeamProjects";
 import useScreen from "@/hooks/useScreen";
-
-const moreMenuItems: {
-  id: number;
-  icon: React.ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
-  >;
-  text: string;
-  path?: string;
-  onClick?: () => void;
-}[] = [{ id: 1, icon: Inbox, text: "Inbox", path: "/app/inbox" }];
+import Image from "next/image";
+import { useAuthProvider } from "@/context/AuthContext";
 
 const MobileMorePage = () => {
   const { screenWidth } = useScreen();
-  const sidebarWidth = screenWidth;
+  const { profile } = useAuthProvider();
 
-  const { teams, sidebarLoading } = useSidebarDataProvider();
+  const { sidebarLoading } = useSidebarDataProvider();
+  const router = useRouter();
 
-  const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [logoutLoading, setLogoutLoading] = useState(false);
 
   const pathname = usePathname();
 
@@ -51,124 +47,176 @@ const MobileMorePage = () => {
     return null;
   }
 
+  const moreMenuItems: {
+    id: number;
+    name: string;
+    items: {
+      id: number;
+      icon: React.ForwardRefExoticComponent<
+        Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+      >;
+      text: string;
+      path?: string;
+      onClick?: () => void;
+      divide?: boolean;
+    }[];
+  }[] = [
+    {
+      id: 1,
+      name: "You",
+      items: [
+        {
+          id: 1,
+          icon: UserCircle,
+          text: "Profile",
+          path: "/app/profile",
+          divide: true,
+        },
+        {
+          id: 2,
+          icon: Settings,
+          text: "Settings",
+          path: "/app/settings",
+          divide: true,
+        },
+        {
+          id: 3,
+          icon: LogOut,
+          text: "Log out",
+          onClick: () => {
+            if (logoutLoading) {
+              return;
+            }
+            setShowLogoutConfirm(true);
+          },
+        },
+      ],
+    },
+  ];
+
   return (
     <>
       <aside className="h-[calc(100vh-57px)] flex flex-col w-full">
-        <div className="mb-4 p-2 px-4 flex items-center justify-between relative border-b border-text-100">
-          <ProfileMoreOptions />
-
-          {sidebarLoading ? (
-            <div className="flex items-center w-full justify-end gap-2">
-              <Skeleton width={28} height={28} borderRadius={9999} />
-              <Skeleton width={28} height={28} borderRadius={9999} />
-              <Skeleton width={28} height={28} borderRadius={9999} />
-            </div>
-          ) : (
-            <div
-              className={`flex items-center justify-end w-full transition duration-150 ${
-                sidebarWidth > 220 ? "gap-2" : "gap-1"
-              }`}
-            >
-              <button
-                className={`text-text-700 hover:bg-primary-50 rounded-lg transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
-              >
-                <Bell strokeWidth={1.5} width={20} />
-              </button>
-
-              <button
-                className={`text-text-700 hover:bg-primary-50 rounded-lg transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
-              >
-                <Settings strokeWidth={1.5} width={20} />
-              </button>
-            </div>
-          )}
-        </div>
-
-        <nav className="flex-grow overflow-y-auto space-y-4 px-4 md:px-2">
-          <ul>
-            {moreMenuItems.map((item) =>
-              sidebarLoading ? (
-                <Skeleton
-                  key={item.id}
-                  height={16}
-                  width={150}
-                  borderRadius={9999}
-                  style={{ marginBottom: ".5rem" }}
-                />
-              ) : (
-                <li key={item.id}>
-                  {item.path ? (
-                    <Link
-                      onTouchStart={(ev) =>
-                        ev.currentTarget.classList.add("bg-primary-50")
-                      }
-                      onTouchEnd={(ev) =>
-                        ev.currentTarget.classList.remove("bg-primary-50")
-                      }
-                      href={item.path}
-                      className={`flex items-center p-2 rounded-lg transition-colors duration-150 text-text-900 ${
-                        item.path === pathname
-                          ? "bg-primary-100"
-                          : "md:hover:bg-primary-50"
-                      }`}
-                    >
-                      <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3" />
-                      {item.text}
-                    </Link>
-                  ) : (
-                    <button
-                      onTouchStart={(ev) =>
-                        ev.currentTarget.classList.add("bg-primary-50")
-                      }
-                      onTouchEnd={(ev) =>
-                        ev.currentTarget.classList.remove("bg-primary-50")
-                      }
-                      className={`flex items-center p-2 rounded-lg transition-colors duration-150 w-full ${
-                        item.path === pathname
-                          ? "bg-primary-500 text-surface"
-                          : "md:hover:bg-primary-50 text-text-700"
-                      }`}
-                      onClick={item.onClick}
-                    >
-                      <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3" />
-                      {item.text}
-                    </button>
-                  )}
-                </li>
-              )
-            )}
-          </ul>
-
-          <FavoriteProjects
-            setShowFavoritesProjects={setShowFavoritesProjects}
-            showFavoritesProjects={showFavoritesProjects}
+        <div className="flex items-center gap-4 p-4">
+          <Image
+            src={profile?.avatar_url || "/default_avatar.png"}
+            alt="avatar"
+            className="max-w-12 max-h-12 rounded-lg object-cover"
+            width={48}
+            height={48}
           />
 
-          <Personal sidebarWidth={sidebarWidth} />
+          <div>
+            <h1 className="font-medium">{profile?.full_name}</h1>
+            <p className="text-text-500 text-xs">{profile?.email}</p>
+          </div>
+        </div>
 
-          {teams.map((team) => (
-            <TeamProjects
-              key={team.id}
-              team={team}
-              sidebarWidth={sidebarWidth}
-            />
-          ))}
+        <nav className="flex-grow overflow-y-auto space-y-4">
+          <ul>
+            {moreMenuItems.map((group) => (
+              <li key={group.id}>
+                <div className="text-text-500 text-sm font-medium mb-2 px-4">
+                  {group.name}
+                </div>
+
+                <ul>
+                  {group.items.map((item) =>
+                    sidebarLoading ? (
+                      <Skeleton
+                        key={item.id}
+                        height={16}
+                        width={150}
+                        borderRadius={9999}
+                        style={{ marginBottom: ".5rem" }}
+                      />
+                    ) : (
+                      <li key={item.id}>
+                        {item.path ? (
+                          <Link
+                            onTouchStart={(ev) =>
+                              ev.currentTarget.classList.add("bg-text-100")
+                            }
+                            onTouchEnd={(ev) =>
+                              ev.currentTarget.classList.remove("bg-text-100")
+                            }
+                            href={item.path}
+                            className={`flex items-center py-2.5 px-4 transition-colors duration-150 text-text-900 ${
+                              item.path === pathname
+                                ? "bg-primary-100"
+                                : "md:hover:bg-text-100"
+                            }`}
+                          >
+                            <item.icon
+                              strokeWidth={1.5}
+                              className="w-5 h-5 mr-3"
+                            />
+                            {item.text}
+                          </Link>
+                        ) : (
+                          <button
+                            onTouchStart={(ev) =>
+                              ev.currentTarget.classList.add("bg-text-100")
+                            }
+                            onTouchEnd={(ev) =>
+                              ev.currentTarget.classList.remove("bg-text-100")
+                            }
+                            className={`flex items-center py-2.5 px-4 transition-colors duration-150 w-full ${
+                              item.path === pathname
+                                ? "bg-primary-500 text-surface"
+                                : "md:hover:bg-text-100 text-text-900"
+                            }`}
+                            onClick={item.onClick}
+                          >
+                            <item.icon
+                              strokeWidth={1.5}
+                              className="w-5 h-5 mr-3"
+                            />
+                            {item.text}
+                          </button>
+                        )}
+
+                        {item.divide && (
+                          <div className="h-px bg-text-100"></div>
+                        )}
+                      </li>
+                    )
+                  )}
+                </ul>
+              </li>
+            ))}
+          </ul>
         </nav>
-
-        {/* <div className="p-2">
-          <Link
-            href={"/app/templates"}
-            className={`flex items-center p-2 rounded-lg transition-colors duration-150 text-text-900 ${
-              pathname.startsWith("/app/templates")
-                ? "bg-primary-100"
-                : "hover:bg-primary-50"
-            }`}
-          >
-            <SwatchBook strokeWidth={1.5} className="w-5 h-5 mr-3" />
-            Templates
-          </Link>
-        </div> */}
       </aside>
+
+      {showLogoutConfirm && (
+        <ConfirmAlert
+          title="Log out?"
+          description="Are you sure you want to log out?"
+          onCancel={() => setShowLogoutConfirm(false)}
+          submitBtnText="Log out"
+          loading={logoutLoading}
+          onConfirm={async () => {
+            setLogoutLoading(true);
+            try {
+              const response = await axios("/api/auth/signout", {
+                method: "POST",
+              });
+
+              if (response.data.success) {
+                router.push("/auth/login");
+              } else {
+                // Handle error case (e.g., show an error message)
+                console.error("Failed to log out:", response.data.message);
+              }
+            } catch (error) {
+              console.error("Error during logout:", error);
+            } finally {
+              setLogoutLoading(false);
+            }
+          }}
+        />
+      )}
     </>
   );
 };

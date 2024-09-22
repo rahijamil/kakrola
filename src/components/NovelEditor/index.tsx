@@ -41,11 +41,13 @@ import { SlashCommand } from "./extensions/SlashCommand";
 const extensions = [...defaultExtensions, SlashCommand];
 
 const NovelEditor = ({
+  autofocus = true,
   content,
   handleSave,
 }: {
   content: JSONContent | null;
   handleSave: (content: JSONContent) => void;
+  autofocus?: boolean;
 }) => {
   const { theme } = useTheme();
   const menuContainerRef = useRef(null);
@@ -61,40 +63,22 @@ const NovelEditor = ({
   const [openAI, setOpenAI] = useState(false);
 
   //Apply Codeblock Highlighting on the HTML from editor.getHTML()
-  const highlightCodeblocks = (content: string) => {
-    const doc = new DOMParser().parseFromString(content, "text/html");
-    doc.querySelectorAll("pre code").forEach((el) => {
-      // @ts-ignore
-      // https://highlightjs.readthedocs.io/en/latest/api.html?highlight=highlightElement#highlightelement
-      hljs.highlightElement(el);
-    });
-    return new XMLSerializer().serializeToString(doc);
-  };
+  // const highlightCodeblocks = (content: string) => {
+  //   const doc = new DOMParser().parseFromString(content, "text/html");
+  //   doc.querySelectorAll("pre code").forEach((el) => {
+  //     // @ts-ignore
+  //     // https://highlightjs.readthedocs.io/en/latest/api.html?highlight=highlightElement#highlightelement
+  //     hljs.highlightElement(el);
+  //   });
+  //   return new XMLSerializer().serializeToString(doc);
+  // };
 
   const debouncedUpdates = debounce(async (editor: EditorInstance) => {
     const json = editor.getJSON();
     setCharsCount(editor.storage.characterCount?.words());
-    window.localStorage.setItem(
-      "html-content",
-      highlightCodeblocks(editor.getHTML())
-    );
-    window.localStorage.setItem("novel-content", JSON.stringify(json));
-    window.localStorage.setItem(
-      "markdown",
-      editor.storage.markdown?.getMarkdown()
-    );
-
     handleSave(json);
     setSaveStatus("Saved");
   }, 500);
-
-  useEffect(() => {
-    const content = window.localStorage.getItem("novel-content");
-    if (content) setInitialContent(JSON.parse(content));
-    else setInitialContent(defaultEditorContent);
-  }, []);
-
-  if (!initialContent) return null;
 
   return (
     <div className="relative w-full" ref={menuContainerRef}>
@@ -113,10 +97,10 @@ const NovelEditor = ({
 
       <EditorRoot>
         <EditorContent
-          autofocus
-          initialContent={initialContent}
+          autofocus={autofocus}
+          initialContent={initialContent || defaultEditorContent}
           extensions={extensions}
-          className="relative min-h-[calc(100vh-10vh)] w-full"
+          className="relative w-full"
           editorProps={{
             handleDOMEvents: {
               keydown: (_view, event) => handleCommandNavigation(event),
@@ -126,7 +110,7 @@ const NovelEditor = ({
             handleDrop: (view, event, _slice, moved) =>
               handleImageDrop(view, event, moved, uploadFn),
             attributes: {
-              class: `prose prose-sm min-h-[calc(100vh-10vh)] ${
+              class: `prose prose-sm editor-content ${
                 theme == "dark" && "prose-invert"
               } prose-headings:font-title font-default focus:outline-none max-w-full`,
             },

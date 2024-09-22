@@ -1,34 +1,18 @@
 "use client";
 import { ProfileType } from "@/types/user";
-import { supabaseBrowser } from "@/utils/supabase/client";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { useRouter } from "next/navigation";
-import React, {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { createContext, ReactNode, useContext, useEffect } from "react";
 
 const fetchProfile = async () => {
   try {
-    const {
-      data: { user },
-      error,
-    } = await supabaseBrowser.auth.getUser();
-    if (error) throw error;
+    const response = await axios.get("/api/profile");
 
-    if (user) {
-      const { data, error } = await supabaseBrowser
-        .from("profiles")
-        .select("id, username, email, full_name, avatar_url, is_onboarded")
-        .eq("id", user.id)
-        .single();
-      if (error) throw error;
-
-      return data;
+    if (response.data) {
+      return response.data;
     }
+
     return null;
   } catch (error) {
     console.error("Error loading user data:", error);
@@ -46,7 +30,6 @@ const AuthContext = createContext<{
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   const { data, error, isPending } = useQuery({
     queryKey: ["profile"],

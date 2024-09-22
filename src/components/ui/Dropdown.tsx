@@ -80,6 +80,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   const menuRef = useRef<HTMLDivElement>(null);
   const { screenWidth } = useScreen();
 
+  const [animateDirection, setAnimateDirection] = useState(direction);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartY, setDragStartY] = useState(0);
   const [dragOffsetY, setDragOffsetY] = useState(0);
@@ -88,7 +89,9 @@ const Dropdown: React.FC<DropdownProps> = ({
     const updatePosition = () => {
       if (menuRef.current && triggerRef?.current) {
         const buttonRect = triggerRef.current.getBoundingClientRect();
-        const menuRect = menuRef.current.getBoundingClientRect();
+
+        const menuClientHeight = menuRef.current.clientHeight;
+        const menuClientWidth = menuRef.current.clientWidth;
 
         const spaceFromBottom = window.innerHeight - buttonRect.bottom;
         const spaceFromTop = buttonRect.top;
@@ -102,29 +105,31 @@ const Dropdown: React.FC<DropdownProps> = ({
         let transform = "none";
 
         // Vertical positioning
-        if (spaceFromBottom >= menuRect.height) {
+        if (spaceFromBottom >= menuClientHeight) {
           top = `${buttonRect.bottom}px`;
-        } else if (spaceFromTop >= menuRect.height) {
+        } else if (spaceFromTop >= menuClientHeight) {
           bottom = `${window.innerHeight - buttonRect.top}px`;
+
+          setAnimateDirection("bottom-left");
         } else {
           // Not enough space on either side; position below and scroll
           top = `${buttonRect.bottom}px`;
           transform = `translateY(${Math.min(
-            spaceFromBottom - menuRect.height,
+            spaceFromBottom - menuClientHeight,
             0
           )}px)`;
         }
 
         // Horizontal positioning
-        if (spaceFromRight >= menuRect.width) {
+        if (spaceFromRight >= menuClientWidth) {
           left = `${buttonRect.left}px`;
-        } else if (spaceFromLeft >= menuRect.width) {
+        } else if (spaceFromLeft >= menuClientWidth) {
           right = `${window.innerWidth - buttonRect.right}px`;
         } else {
           // Not enough space on either side; position left and scroll
           left = `${buttonRect.left}px`;
           transform += ` translateX(${Math.min(
-            spaceFromRight - menuRect.width,
+            spaceFromRight - menuClientWidth,
             0
           )}px)`;
         }
@@ -177,7 +182,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     setShowContent(!showContent);
   };
 
-  const isTopRight = direction === "top-right";
+  const isTopRight = animateDirection === "top-right";
 
   const handleTouchStart = (e: any) => {
     setIsDragging(true);
@@ -255,11 +260,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                   }}
                   ref={menuRef}
                   style={{
-                    top: position.top,
-                    bottom: position.bottom,
-                    left: position.left,
-                    right: position.right,
-                    transform: position.transform,
+                    ...position,
                     ...style,
                   }}
                   className={`z-50 bg-surface shadow-[2px_2px_8px_0px_rgba(0,0,0,0.2)] rounded-lg fixed overflow-hidden px-1 ${
@@ -412,7 +413,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                             onClick={(ev) => ev.stopPropagation()}
                           >
                             <button
-                            type="button"
+                              type="button"
                               onTouchStart={(ev) => {
                                 ev.currentTarget.classList.add("bg-text-100");
                               }}

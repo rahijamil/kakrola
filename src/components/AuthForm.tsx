@@ -120,6 +120,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
     if (!captchaToken) {
       setError("Please complete the hCaptcha");
+      captcha.current?.resetCaptcha();
       setLoading(false);
       return;
     }
@@ -127,6 +128,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
     // Basic validation
     if (!email && type !== "updatePassword") {
       setError("Please enter your email address.");
+      captcha.current?.resetCaptcha();
       setLoading(false);
       return;
     }
@@ -135,12 +137,14 @@ const AuthForm: React.FC<AuthFormProps> = ({
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email) && type !== "updatePassword") {
       setError("Please enter a valid email address.");
+      captcha.current?.resetCaptcha();
       setLoading(false);
       return;
     }
 
     if (type !== "forgotPassword" && !password) {
       setError("Please enter your password.");
+      captcha.current?.resetCaptcha();
       setLoading(false);
       return;
     }
@@ -152,6 +156,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
       );
 
       if (failedCriteria.length > 0) {
+        captcha.current?.resetCaptcha();
         setError(
           <div className="text-left text-sm">
             <p className="font-semibold mb-2">Password must:</p>
@@ -176,6 +181,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
     if (type === "updatePassword" && password !== confirmPassword) {
       setError("Passwords do not match.");
+      captcha.current?.resetCaptcha();
       setLoading(false);
       return;
     }
@@ -186,6 +192,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
       if (result?.error) {
         setError(result?.error);
         setLoading(false);
+        captcha.current?.resetCaptcha();
         return;
       }
 
@@ -326,7 +333,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
                   disabled={loading}
                 >
                   {loading ? (
-                    <Spinner color="white" />
+                    <Spinner color="white" size="sm" />
                   ) : (
                     <>
                       {type === "signup" && "Sign up"}

@@ -54,8 +54,8 @@ const FavoriteProjects = ({
           {hasFavoriteProjects && (
             <div className="w-full flex items-center justify-between p-1 text-text-600 rounded-lg transition-colors">
               <div className="flex items-center gap-2 pl-1">
-                <Heart strokeWidth={1.5} size={20} />
-                <span className="font-medium">Favorites</span>
+                {/* <Heart strokeWidth={1.5} size={20} /> */}
+                <span className="font-medium text-xs">Favorites</span>
               </div>
 
               <div
@@ -92,6 +92,7 @@ const FavoriteProjects = ({
             transition: { type: "spring" },
           }}
           exit={{ opacity: 0.5, height: 0, y: -10 }}
+          className="bg-text-100 dark:bg-surface md:bg-transparent md:dark:bg-transparent rounded-lg overflow-hidden"
         >
           <ul>
             {favoriteProjects.map((project) => (

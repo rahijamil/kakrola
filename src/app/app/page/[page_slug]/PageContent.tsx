@@ -31,10 +31,10 @@ const PageContent = ({
   };
 
   return (
-    <>
+    <div className="page-content">
       {/* Notion-like Editor */}
       <NovelEditor content={page.content} handleSave={handleEditContent} />
-    </>
+    </div>
   );
 };
 

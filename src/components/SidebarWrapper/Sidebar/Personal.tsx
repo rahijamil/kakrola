@@ -120,16 +120,8 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
                     }px`,
                   }}
                 >
-                  <Image
-                    src={profile?.avatar_url || "/default-avatar.png"}
-                    alt={profile?.full_name || profile?.username || ""}
-                    width={20}
-                    height={20}
-                    className="rounded-md object-cover max-w-[20px] max-h-[20px]"
-                  />
-
                   <span
-                    className={`font-medium transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis`}
+                    className={`font-medium text-xs transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis`}
                   >
                     Personal
                   </span>
@@ -144,7 +136,9 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
 
             <div
               className={`${
-                (screenWidth > 768 && !showAddProjectModal) && "opacity-0 group-hover:opacity-100"
+                screenWidth > 768 &&
+                !showAddProjectModal &&
+                "opacity-0 group-hover:opacity-100"
               } transition flex items-center`}
             >
               <SidebarPlusDropdown
@@ -179,6 +173,7 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
               transition: { type: "spring" },
             }}
             exit={{ opacity: 0.5, height: 0, y: -10 }}
+            className="bg-text-100 dark:bg-surface md:bg-transparent md:dark:bg-transparent rounded-lg overflow-hidden"
           >
             <DragDropContext onDragEnd={handleOnDragEnd}>
               <Droppable droppableId="projects">

@@ -5,6 +5,8 @@ import Spinner from "@/components/ui/Spinner";
 import { Link } from "@nextui-org/react";
 import { Button } from "@/components/ui/button";
 import useChannelDetails from "@/hooks/useChannelDetails";
+import ChannelWrapper from "./ChannelWrapper";
+import { ChannelType } from "@/types/channel";
 
 const ChannelDetails = ({
   params: { channel_slug },
@@ -33,7 +35,7 @@ const ChannelDetails = ({
   if (isPending) {
     return (
       <div className="flex items-center justify-center w-full h-screen text-primary-500">
-        <Spinner color="primary" />
+        <Spinner color="primary" size="md" />
       </div>
     );
   }
@@ -72,7 +74,13 @@ const ChannelDetails = ({
   }
 
   if (channel?.id) {
-    return <h1 className="text-3xl font-bold">{channel.name}</h1>;
+    return (
+      <ChannelWrapper channel={channel as ChannelType}>
+        <div className="p-4 md:px-80">threads</div>
+      </ChannelWrapper>
+    );
+  } else {
+    return null;
   }
 };
 

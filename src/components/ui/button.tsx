@@ -39,7 +39,7 @@ const getButtonClasses = (
     ghost: {
       primary: "text-primary-600 hover:bg-primary-50",
       red: "text-red-600 hover:bg-red-50",
-      gray: "",
+      gray: "text-text-600 hover:bg-text-100",
     },
     secondary: {
       primary: "bg-surface text-primary-600 hover:bg-text-100",

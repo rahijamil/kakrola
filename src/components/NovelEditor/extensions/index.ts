@@ -12,6 +12,7 @@ import {
   HighlightExtension,
   Mathematics,
   MarkdownExtension,
+  TiptapUnderline
 } from "novel/extensions";
 
 import Emoji from "@tiptap-pro/extension-emoji";
@@ -204,4 +205,5 @@ export const defaultExtensions = [
   Mathematics,
   MarkdownExtension,
   Text,
+  TiptapUnderline,
 ];

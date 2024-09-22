@@ -22,7 +22,7 @@
   }
 
   ::placeholder {
-    @apply text-text-400;
+    @apply text-text-400 select-none;
   }
 
   #scrollable,

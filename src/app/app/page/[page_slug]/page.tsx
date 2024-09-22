@@ -37,7 +37,7 @@ const PageDetails = ({
   if (isPending) {
     return (
       <div className="flex items-center justify-center w-full h-screen text-primary-500">
-        <Spinner color="primary" />
+        <Spinner color="primary" size="md" />
       </div>
     );
   }
