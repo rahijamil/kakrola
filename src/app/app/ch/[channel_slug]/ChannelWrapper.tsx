@@ -96,7 +96,7 @@ const ChannelWrapper = ({
         className={`flex flex-col h-full w-full flex-1 transition-all duration-300`}
       >
         <div
-          className={`flex items-center justify-between ${
+          className={`flex items-center justify-between gap-3 md:gap-0 ${
             screenWidth > 768 ? "py-3 px-6" : "p-3"
           }`}
         >
@@ -191,7 +191,20 @@ const ChannelWrapper = ({
             </div>
           )}
 
-          <div className={`flex items-center justify-end flex-1`}>
+          {screenWidth <= 768 && (
+            <div className="flex-1 flex justify-end">
+              <button
+                onClick={() => router.push(`/app/ch/${channel.slug}/th/new`)}
+                type="button"
+                className="flex items-center gap-1 bg-primary-600 hover:bg-primary-500 text-surface p-1 px-1.5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Edit size={20} />
+                Thread
+              </button>
+            </div>
+          )}
+
+          <div className={`flex items-center justify-end md:flex-1`}>
             <ul className="flex items-center">
               {/* <li>
               <Button icon={Edit} size="xs" onClick={() => router.push(`/app/ch/${channel.slug}/th/new`)}>

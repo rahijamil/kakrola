@@ -90,7 +90,7 @@ const MobileHomePage = () => {
           )}
         </div>
 
-        <nav className="flex-grow max-h-[calc(100vh-164px)] overflow-y-auto space-y-4 p-4 pb-6 md:pb-0 md:px-2">
+        <nav className="flex-grow max-h-[calc(100vh-120px)] overflow-y-auto space-y-4 p-4 pb-6 md:pb-0 md:px-2">
           <ul>
             {moreMenuItems.map((item) =>
               sidebarLoading ? (

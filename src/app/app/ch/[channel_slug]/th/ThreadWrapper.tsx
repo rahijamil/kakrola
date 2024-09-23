@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import useScreen from "@/hooks/useScreen";
 import { ChannelType, ThreadType } from "@/types/channel";
-import { ChevronLeft, Hash } from "lucide-react";
+import { Check, ChevronLeft, Hash, SendHorizonal, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -58,41 +58,70 @@ const ThreadWrapper = ({
           </Link>
         </div>
 
-        {!thread && (
-          <>
-            <div className="flex items-center justify-center">
-              <p className="font-semibold text-lg">New Thread</p>
-            </div>
+        {!thread &&
+          (screenWidth > 768 ? (
+            <>
+              <div className="flex items-center justify-center">
+                <p className="font-semibold text-lg">New Thread</p>
+              </div>
 
-            <div className="flex items-center justify-end gap-4">
-              <Button
-                onClick={() => router.push(`/app/ch/${channel.slug}`)}
-                disabled={loading}
-                type="button"
-                variant="outline"
-                color="gray"
-              >
-                Discard
-              </Button>
+              <div className="flex items-center justify-end gap-4">
+                <Button
+                  onClick={() => router.push(`/app/ch/${channel.slug}`)}
+                  disabled={loading}
+                  type="button"
+                  variant="outline"
+                  color="gray"
+                >
+                  Discard
+                </Button>
 
-              <Button
-                onClick={handleAddThread}
-                disabled={loading || !threadTitle.trim()}
-                type="button"
-              >
-                {loading ? (
-                  <div className="flex items-center gap-2">
-                    <Spinner color="white" size="sm" />
+                <Button
+                  onClick={handleAddThread}
+                  disabled={loading || !threadTitle.trim()}
+                  type="button"
+                >
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <Spinner color="white" size="sm" />
 
-                    <span>Creating...</span>
-                  </div>
-                ) : (
-                  "Post"
-                )}
-              </Button>
-            </div>
-          </>
-        )}
+                      <span>Creating...</span>
+                    </div>
+                  ) : (
+                    "Post"
+                  )}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center justify-end gap-4">
+                <button
+                  onClick={() => router.push(`/app/ch/${channel.slug}`)}
+                  disabled={loading}
+                  type="button"
+                  className="flex items-center gap-2 bg-text-100 text-text-700 hover:text-text-900 p-2 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg"
+                >
+                  <X size={20} />
+                </button>
+
+                <button
+                  onClick={handleAddThread}
+                  disabled={loading || !threadTitle.trim()}
+                  type="button"
+                  className="flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-surface p-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <Spinner color="white" size="sm" />
+                    </div>
+                  ) : (
+                    <SendHorizonal size={20} />
+                  )}
+                </button>
+              </div>
+            </>
+          ))}
 
         {thread && (
           <div className={`flex items-center justify-end flex-1`}>

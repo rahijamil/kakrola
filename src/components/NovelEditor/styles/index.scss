@@ -86,14 +86,16 @@
 
 .thread-wrapper {
   .ProseMirror {
+    @apply p-4 md:px-80 pb-20 md:pb-40;
+
     &.editor-content {
-      @apply min-h-[calc(100vh-13vh)];
+      @apply min-h-[calc(100vh-24vh)] md:min-h-[calc(100vh-13vh)];
     }
   }
 }
 
 .ProseMirror {
-  @apply caret-black dark:caret-white outline-0 z-0 p-4 md:px-80 pb-40 md:pb-60;
+  @apply caret-black dark:caret-white outline-0 z-0 p-4;
 
   .selection {
     @apply inline-block;
