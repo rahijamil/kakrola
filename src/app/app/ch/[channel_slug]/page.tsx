@@ -6,7 +6,8 @@ import { Link } from "@nextui-org/react";
 import { Button } from "@/components/ui/button";
 import useChannelDetails from "@/hooks/useChannelDetails";
 import ChannelWrapper from "./ChannelWrapper";
-import { ChannelType } from "@/types/channel";
+import { ChannelType, ThreadType } from "@/types/channel";
+import ThreadCard from "./ThreadCard";
 
 const ChannelDetails = ({
   params: { channel_slug },
@@ -15,7 +16,7 @@ const ChannelDetails = ({
 }) => {
   const [notFound, setNotFound] = useState<boolean>(false);
 
-  const { channel, setChannel, isPending, isError } =
+  const { channel, threads, setChannel, isPending, isError } =
     useChannelDetails(channel_slug);
 
   useEffect(() => {
@@ -76,11 +77,20 @@ const ChannelDetails = ({
   if (channel?.id) {
     return (
       <ChannelWrapper channel={channel as ChannelType}>
-        <div className="p-4 md:px-80">threads</div>
+        <div className="p-4 md:px-80">
+          {threads.map((thread) => (
+            <div key={thread.id}>
+              <ThreadCard
+                channel_slug={channel_slug}
+                thread={thread as ThreadType}
+              />
+            </div>
+          ))}
+        </div>
       </ChannelWrapper>
     );
   } else {
-    return null;
+    return <div>No channel found</div>;
   }
 };
 

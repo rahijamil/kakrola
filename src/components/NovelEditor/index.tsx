@@ -11,13 +11,14 @@ import {
   type JSONContent,
 } from "novel";
 import { ImageResizer, handleCommandNavigation } from "novel/extensions";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { defaultExtensions } from "./extensions";
 import { ColorSelector } from "./selectors/color-selector";
 import { LinkSelector } from "./selectors/link-selector";
 import { NodeSelector } from "./selectors/node-selector";
 import { MathSelector } from "./selectors/math-selector";
 import { Separator } from "./EditorUI/Separator";
+import DOMPurify from "dompurify";
 
 import "./styles/index.scss";
 
@@ -41,13 +42,17 @@ import { SlashCommand } from "./extensions/SlashCommand";
 const extensions = [...defaultExtensions, SlashCommand];
 
 const NovelEditor = ({
+  editable = true,
   autofocus = true,
   content,
   handleSave,
+  setCharsCount,
 }: {
+  editable?: boolean;
   content: JSONContent | null;
   handleSave: (content: JSONContent) => void;
   autofocus?: boolean;
+  setCharsCount?: Dispatch<SetStateAction<number>>;
 }) => {
   const { theme } = useTheme();
   const menuContainerRef = useRef(null);
@@ -55,7 +60,6 @@ const NovelEditor = ({
     content
   );
   const [saveStatus, setSaveStatus] = useState("Saved");
-  const [charsCount, setCharsCount] = useState();
 
   const [openNode, setOpenNode] = useState(false);
   const [openColor, setOpenColor] = useState(false);
@@ -75,28 +79,24 @@ const NovelEditor = ({
 
   const debouncedUpdates = debounce(async (editor: EditorInstance) => {
     const json = editor.getJSON();
-    setCharsCount(editor.storage.characterCount?.words());
+
+    const sanitizedContent = DOMPurify.sanitize(editor.getHTML());
+    const textContent = sanitizedContent.replace(/<[^>]+>/g, "").trim();
+    setCharsCount && setCharsCount(textContent.length);
+
     handleSave(json);
     setSaveStatus("Saved");
   }, 500);
 
   return (
     <div className="relative w-full" ref={menuContainerRef}>
-      <div className="flex absolute right-5 top-5 z-10 mb-5 gap-2">
+      {/* <div className="flex absolute right-5 top-5 z-10 mb-5 gap-2">
         <div className="rounded-lg bg-primary-200 px-2 py-1">{saveStatus}</div>
-        <div
-          className={
-            charsCount
-              ? "rounded-lg bg-primary-200 px-2 py-1 text-sm text-text-700"
-              : "hidden"
-          }
-        >
-          {charsCount} Words
-        </div>
-      </div>
+      </div> */}
 
       <EditorRoot>
         <EditorContent
+          editable={editable}
           autofocus={autofocus}
           initialContent={initialContent || defaultEditorContent}
           extensions={extensions}

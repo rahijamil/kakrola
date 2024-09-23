@@ -94,8 +94,14 @@
   }
 }
 
+.reply-editor {
+  .ProseMirror {
+    @apply min-h-[60px] overflow-y-auto;
+  }
+}
+
 .ProseMirror {
-  @apply caret-black dark:caret-white outline-0 z-0 p-4;
+  @apply caret-black dark:caret-white outline-0 z-0;
 
   .selection {
     @apply inline-block;

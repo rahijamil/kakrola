@@ -56,6 +56,7 @@ const AddEditThread = ({
           content: threadContent,
           profile_id: profile.id,
           channel_id: channel.id,
+          is_edited: false,
         };
 
         const { data, error } = await supabaseBrowser

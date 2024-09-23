@@ -1,99 +1,84 @@
-import { Home, LogIn, LucideProps, Rocket } from "lucide-react";
+"use client";
+
+import React from "react";
 import { usePathname, useRouter } from "next/navigation";
-import React, { ReactNode } from "react";
-import KakrolaLogo from "./kakrolaLogo";
+import { motion } from "framer-motion";
+import { Home, LogIn, Rocket, User } from "lucide-react";
 import { useAuthProvider } from "@/context/AuthContext";
+import KakrolaLogo from "./kakrolaLogo";
 
-const menuItems: {
-  id: number;
-  icon: ReactNode;
-  text: string;
-  path: string;
-}[] = [
-  {
-    id: 1,
-    icon: <Home strokeWidth={1.5} className={`w-5 h-5`} />,
-    text: "Home",
-    path: "/",
-  },
-  {
-    id: 2,
-    icon: <Rocket strokeWidth={1.5} className={`w-5 h-5`} />,
-    text: "Start Your Journey",
-    path: "/auth/signup",
-  },
-  {
-    id: 3,
-    icon: <LogIn strokeWidth={1.5} className={`w-5 h-5`} />,
-    text: "Log In",
-    path: "/auth/login",
-  },
-];
-
-const authItems: {
-  id: number;
-  icon: ReactNode;
-  text: string;
-  path: string;
-}[] = [
-  {
-    id: 1,
-    icon: <Home strokeWidth={1.5} className={`w-5 h-5`} />,
-    text: "Home",
-    path: "/",
-  },
-  {
-    id: 2,
-    icon: <KakrolaLogo size="xs" />,
-    text: "Open Kakrola",
-    path: "/app",
-  },
-  {
-    id: 3,
-    icon: <LogIn strokeWidth={1.5} className={`w-5 h-5`} />,
-    text: "Upgrade to Pro",
-    path: "/app/pricing",
-  },
-];
-
-const BottomNav = () => {
+export default function BottomNav() {
   const router = useRouter();
   const pathname = usePathname();
   const { profile } = useAuthProvider();
 
+  const menuItems = profile
+    ? [
+        { id: 1, icon: Home, text: "Home", path: "/" },
+        { id: 2, icon: KakrolaLogo, text: "Open Kakrola", path: "/app" },
+        { id: 3, icon: Rocket, text: "Upgrade to Pro", path: "/app/pricing" },
+      ]
+    : [
+        { id: 1, icon: Home, text: "Home", path: "/" },
+        {
+          id: 2,
+          icon: Rocket,
+          text: "Start Your Journey",
+          path: "/auth/signup",
+        },
+        { id: 3, icon: LogIn, text: "Log In", path: "/auth/login" },
+      ];
+
   return (
-    <aside className="group bg-primary-10 fixed bottom-0 left-0 right-0 z-20 border-t border-primary-50 select-none">
-      <nav>
-        <ul className="grid grid-cols-3 p-4 px-2 pt-1 place-items-center">
-          {(profile ? authItems : menuItems).map((item) => (
-            <li key={item.id}>
+    <motion.aside
+      initial={{ y: "100%" }}
+      animate={{ y: 0 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      className="fixed bottom-0 left-0 right-0 z-20 bg-primary-10 shadow-lg rounded-t-xl border-t border-primary-50"
+    >
+      <nav className="px-4 py-2">
+        <ul className="flex justify-around items-center">
+          {menuItems.map((item) => (
+            <li key={item.id} className="relative">
               <button
                 onClick={() => router.push(item.path)}
-                className={`flex flex-col items-center space-y-0.5 transition ${
-                  item.path == pathname ? "text-text-900" : "text-text-900"
-                }`}
-                onTouchStart={(ev) => {
-                  ev.currentTarget.classList.add("scale-95");
-                }}
-                onTouchEnd={(ev) => {
-                  ev.currentTarget.classList.remove("scale-95");
-                }}
+                className="flex flex-col items-center p-2 transition-colors duration-200"
               >
-                <div
-                  className={`rounded-lg transition ${
-                    item.path === pathname && "bg-primary-100"
-                  } p-1 px-5`}
+                {item.icon === KakrolaLogo ? (
+                  <KakrolaLogo size="xs" />
+                ) : (
+                  <item.icon
+                    strokeWidth={1.5}
+                    size="xs"
+                    className={`w-6 h-6 ${
+                      pathname === item.path
+                        ? "text-primary-500"
+                        : "text-gray-500"
+                    }`}
+                  />
+                )}
+                <span
+                  className={`text-xs mt-1 font-medium ${
+                    pathname === item.path
+                      ? "text-primary-500"
+                      : "text-gray-500"
+                  }`}
                 >
-                  {item.icon}
-                </div>
-                <span className="text-xs font-medium">{item.text}</span>
+                  {item.text}
+                </span>
+                {pathname === item.path && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500"
+                    initial={false}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                )}
               </button>
             </li>
           ))}
         </ul>
       </nav>
-    </aside>
+    </motion.aside>
   );
-};
-
-export default BottomNav;
+}

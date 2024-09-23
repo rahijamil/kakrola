@@ -132,6 +132,8 @@ const SidebarWrapper = () => {
   const { screenWidth } = useScreen();
   const router = useRouter();
 
+  const isNotRenderMobileSidebar = pathname.includes("/th/");
+
   return (
     <>
       {screenWidth > 768 ? (
@@ -204,7 +206,9 @@ const SidebarWrapper = () => {
           </>
         </div>
       ) : (
-        <MobileSidebar setShowAddTaskModal={setShowAddTaskModal} />
+        !isNotRenderMobileSidebar && (
+          <MobileSidebar setShowAddTaskModal={setShowAddTaskModal} />
+        )
       )}
 
       {showAddTaskModal && (

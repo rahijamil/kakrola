@@ -80,8 +80,8 @@ const ChannelItem = ({
           className={`sidebar_project_item flex-1 flex items-center justify-between transition-colors rounded-lg pl-2 font-medium md:font-normal ${
             isDragging
               ? "bg-surface shadow-[0_0_8px_1px_rgba(0,0,0,0.2)]"
-              : pathname === `/app/ch/${channel.slug}`
-               ? "bg-primary-100 text-text-900"
+              : pathname.startsWith(`/app/ch/${channel.slug}`)
+              ? "bg-primary-100 text-text-900"
               : "md:hover:bg-primary-50 text-text-700"
           }`}
         >

@@ -15,6 +15,8 @@ const useAddThread = ({ channel }: { channel: ChannelType }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [charsCount, setCharsCount] = useState(0);
+
   const handleAddThread = async () => {
     if (!profile?.id || !channel) return;
 
@@ -23,7 +25,7 @@ const useAddThread = ({ channel }: { channel: ChannelType }) => {
       return;
     }
 
-    if (!threadContent) {
+    if (charsCount === 0 || !threadContent) {
       setError("Thread content is required.");
       return;
     }
@@ -38,6 +40,7 @@ const useAddThread = ({ channel }: { channel: ChannelType }) => {
         content: threadContent,
         profile_id: profile.id,
         channel_id: channel.id,
+        is_edited: false,
       };
 
       const { data, error } = await supabaseBrowser
@@ -49,12 +52,12 @@ const useAddThread = ({ channel }: { channel: ChannelType }) => {
       if (error) throw error;
 
       if (data) {
-        router.push(`/app/ch/${channel.slug}/th/${data.slug}`);
+        router.replace(`/app/ch/${channel.slug}/th/${data.slug}`);
       }
     } catch (error: any) {
       console.error(error);
       error.message && setError(error.message);
-    } finally {
+
       setLoading(false);
     }
   };
@@ -67,6 +70,8 @@ const useAddThread = ({ channel }: { channel: ChannelType }) => {
     setThreadContent,
     error,
     handleAddThread,
+    setCharsCount,
+    charsCount,
   };
 };
 

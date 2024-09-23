@@ -16,6 +16,16 @@ export interface ChannelType {
   };
 }
 
+export interface ReactionType {
+  id: number;
+  createdAt?: string;
+  updatedAt?: string;
+  profile_id: string;
+  thread_id: number;
+  thread_reply_id: number | null;
+  emoji: string;
+}
+
 export interface ThreadType {
   id: number;
   created_at?: string;
@@ -25,4 +35,15 @@ export interface ThreadType {
   title: string;
   slug: string;
   content: JSONContent;
+  is_edited: boolean;
+}
+
+export interface ThreadReplyType {
+  id: number;
+  created_at?: string;
+  updated_at?: string;
+  profile_id: string;
+  thread_id: number;
+  content: JSONContent;
+  is_edited: boolean;
 }

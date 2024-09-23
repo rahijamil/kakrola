@@ -1,19 +1,25 @@
 import NovelEditor from "@/components/NovelEditor";
 import { ChannelType } from "@/types/channel";
+import { TriangleAlert } from "lucide-react";
 import { JSONContent } from "novel";
+import { Dispatch, SetStateAction } from "react";
+import { motion } from "framer-motion";
 
 const AddNewThread = ({
   threadTitle,
   setThreadTitle,
   threadContent,
   setThreadContent,
+  setCharsCount,
   error,
 }: {
-  channel: ChannelType;  threadTitle: string;
+  channel: ChannelType;
+  threadTitle: string;
   setThreadTitle: (title: string) => void;
   threadContent: JSONContent | null;
   setThreadContent: (content: JSONContent) => void;
   error: string | null;
+  setCharsCount: Dispatch<SetStateAction<number>>;
 }) => {
   return (
     <div>
@@ -38,12 +44,22 @@ const AddNewThread = ({
           handleSave={(content) => {
             setThreadContent(content);
           }}
+          setCharsCount={setCharsCount}
         />
       </div>
 
-      <div className="p-4 md:p-0 whitespace-normal text-xs px-4 md:px-80">
-        {error && <p className="text-red-500 text-center">{error}</p>}
-      </div>
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: 100 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 100 }}
+          transition={{ duration: 0.3 }}
+          className="fixed bottom-4 right-4 rounded-lg bg-text-900 text-text-100 p-2 flex items-center gap-2 w-11/12 max-w-72 shadow-lg z-50"
+        >
+          <TriangleAlert strokeWidth={1.5} className="w-4 h-4 text-red-500" />
+          <p> {error}</p>
+        </motion.div>
+      )}
     </div>
   );
 };

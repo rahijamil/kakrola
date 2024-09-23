@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import useScreen from "@/hooks/useScreen";
 import { ChannelType, ThreadType } from "@/types/channel";
-import { Check, ChevronLeft, Hash, SendHorizonal, X } from "lucide-react";
-import Image from "next/image";
+import { ChevronLeft, Headphones, SendHorizonal, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -36,15 +35,19 @@ const ThreadWrapper = ({
     error,
     handleAddThread,
     loading,
+    setCharsCount,
+    charsCount,
   } = useAddThread({ channel });
 
   return (
     <div
-      className={`flex flex-col h-full w-full flex-1 transition-all duration-300 thread-wrapper`}
+      className={`flex flex-col h-full w-full flex-1 transition-all duration-300 ${
+        !thread ? "thread-wrapper" : ""
+      }`}
     >
       <div
-        className={`flex items-center justify-between border-b border-text-100 ${
-          screenWidth > 768 ? "py-3 px-6" : "p-3"
+        className={`flex items-center justify-between gap-4 border-b border-text-100 ${
+          screenWidth > 768 ? "py-3 px-6" : thread ? "px-3 py-1" : "p-3"
         }`}
       >
         <div className="flex items-center gap-3">
@@ -54,12 +57,20 @@ const ThreadWrapper = ({
           >
             <ChevronLeft strokeWidth={1.5} size={24} />
 
-            <h1 className="font-medium">{channel.name}</h1>
+            <div>
+              {screenWidth <= 768 && thread && (
+                <h2 className="font-semibold md:text-lg">{thread.title}</h2>
+              )}
+              <h3 className="font-normal md:font-medium text-text-500 md:text-text-900">
+                <span>#</span>
+                {channel.name}
+              </h3>
+            </div>
           </Link>
         </div>
 
-        {!thread &&
-          (screenWidth > 768 ? (
+        {!thread ? (
+          screenWidth > 768 ? (
             <>
               <div className="flex items-center justify-center">
                 <p className="font-semibold text-lg">New Thread</p>
@@ -78,14 +89,14 @@ const ThreadWrapper = ({
 
                 <Button
                   onClick={handleAddThread}
-                  disabled={loading || !threadTitle.trim()}
+                  disabled={loading || !threadTitle.trim() || charsCount === 0}
                   type="button"
                 >
                   {loading ? (
                     <div className="flex items-center gap-2">
                       <Spinner color="white" size="sm" />
 
-                      <span>Creating...</span>
+                      <span>Posting...</span>
                     </div>
                   ) : (
                     "Post"
@@ -107,7 +118,7 @@ const ThreadWrapper = ({
 
                 <button
                   onClick={handleAddThread}
-                  disabled={loading || !threadTitle.trim()}
+                  disabled={loading || !threadTitle.trim() || charsCount === 0}
                   type="button"
                   className="flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-surface p-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -121,29 +132,24 @@ const ThreadWrapper = ({
                 </button>
               </div>
             </>
-          ))}
+          )
+        ) : (
+          <div className="hidden md:flex items-center justify-center">
+            <h2 className="font-semibold text-lg">{thread.title}</h2>
+          </div>
+        )}
 
         {thread && (
-          <div className={`flex items-center justify-end flex-1`}>
+          <div className={`flex items-center justify-end`}>
             <ul className="flex items-center">
-              {/* <li>
-        <Button icon={Edit} size="xs" onClick={() => router.push(`/app/ch/${channel.slug}/th/new`)}>
-          New Thread
-        </Button>
-      </li> */}
               <li>
-                <ShareOption projectId={null} />
+                <button className="text-text-500 hover:bg-text-100 px-2 p-1 rounded-lg transition flex items-center gap-1">
+                  <Headphones strokeWidth={1.5} size={20} />
+
+                  <span className="hidden md:inline-block">Huddle</span>
+                </button>
               </li>
 
-              {screenWidth > 768 && (
-                <li>
-                  <FilterOptions
-                    hideCalendarView={true}
-                    // setTasks={setTasks}
-                    // tasks={tasks}
-                  />
-                </li>
-              )}
               {/* <li>
         {project && (
           <ActiveProjectMoreOptions
@@ -173,14 +179,17 @@ const ThreadWrapper = ({
       </div>
 
       <div className={`flex-1`}>
-        <AddNewThread
-          channel={channel}
-          threadTitle={threadTitle}
-          setThreadTitle={setThreadTitle}
-          threadContent={threadContent}
-          setThreadContent={setThreadContent}
-          error={error}
-        />
+        {!thread && (
+          <AddNewThread
+            channel={channel}
+            threadTitle={threadTitle}
+            setThreadTitle={setThreadTitle}
+            threadContent={threadContent}
+            setThreadContent={setThreadContent}
+            error={error}
+            setCharsCount={setCharsCount}
+          />
+        )}
 
         {children}
       </div>

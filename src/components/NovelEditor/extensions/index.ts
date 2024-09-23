@@ -12,7 +12,7 @@ import {
   HighlightExtension,
   Mathematics,
   MarkdownExtension,
-  TiptapUnderline
+  TiptapUnderline,
 } from "novel/extensions";
 
 import Emoji from "@tiptap-pro/extension-emoji";
