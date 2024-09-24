@@ -1,9 +1,12 @@
-import NovelEditor from "@/components/NovelEditor";
+const NovelEditor = dynamic(() => import("@/components/NovelEditor"), {
+  ssr: false,
+});
 import { ChannelType } from "@/types/channel";
 import { TriangleAlert } from "lucide-react";
 import { JSONContent } from "novel";
 import { Dispatch, SetStateAction } from "react";
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
 
 const AddNewThread = ({
   threadTitle,

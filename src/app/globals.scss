@@ -21,6 +21,11 @@
     @apply opacity-100;
   }
 
+  .selection,
+  *::selection {
+    @apply bg-black/10 dark:bg-white/20 inline-block;
+  }
+
   ::placeholder {
     @apply text-text-400 select-none;
   }

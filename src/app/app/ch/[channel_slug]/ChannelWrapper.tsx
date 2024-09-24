@@ -9,12 +9,17 @@ import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import useScreen from "@/hooks/useScreen";
 import { ChannelType } from "@/types/channel";
 import { PageType } from "@/types/pageTypes";
-import { ChevronLeft, Edit, Hash } from "lucide-react";
+import {
+  ChevronLeft,
+  Edit,
+  Hash,
+  Headphones,
+  MoreVertical,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { ReactNode, useState } from "react";
-import AddEditThread from "./AddEditThread";
 
 const ChannelWrapper = ({
   children,
@@ -96,7 +101,7 @@ const ChannelWrapper = ({
         className={`flex flex-col h-full w-full flex-1 transition-all duration-300`}
       >
         <div
-          className={`flex items-center justify-between gap-3 md:gap-0 ${
+          className={`flex items-center justify-between gap-3 md:gap-0 border-b border-text-100 ${
             screenWidth > 768 ? "py-3 px-6" : "p-3"
           }`}
         >
@@ -135,32 +140,10 @@ const ChannelWrapper = ({
               </Link>
               <span className="text-text-400">/</span>
 
-              <div className="flex items-center">
-                <div className="bg-surface rounded-md w-5 h-5 min-w-5 min-h-5 flex items-center justify-center">
-                  <Hash
-                    size={16}
-                    className={`text-${channel?.settings.color}`}
-                  />
-                </div>
-                {modalState.editTitle ? (
-                  <input
-                    type="text"
-                    className="font-medium border border-text-300 rounded-lg p-1 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 bg-transparent"
-                    value={pageTitle}
-                    onBlur={handleEditTitle}
-                    autoFocus
-                    onChange={(ev) => setPageTitle(ev.target.value)}
-                    onKeyDown={(ev) => ev.key === "Enter" && handleEditTitle()}
-                  />
-                ) : (
-                  <h1
-                    className="font-medium border border-transparent hover:border-text-100 rounded-lg w-full p-1 py-0.5 cursor-text inline-block overflow-hidden text-ellipsis"
-                    onClick={() => toggleModal("editTitle", true)}
-                  >
-                    {channel.name}
-                  </h1>
-                )}
-              </div>
+              <h2 className="font-medium text-text-900 hover:bg-text-100 rounded-lg p-1 py-0.5 transition cursor-pointer">
+                <span>#</span>
+                {channel.name}
+              </h2>
             </div>
           ) : (
             <div className="flex items-center gap-3">
@@ -191,19 +174,6 @@ const ChannelWrapper = ({
             </div>
           )}
 
-          {screenWidth <= 768 && (
-            <div className="flex-1 flex justify-end">
-              <button
-                onClick={() => router.push(`/app/ch/${channel.slug}/th/new`)}
-                type="button"
-                className="flex items-center gap-1 bg-primary-600 hover:bg-primary-500 text-surface p-1 px-1.5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Edit size={20} />
-                Thread
-              </button>
-            </div>
-          )}
-
           <div className={`flex items-center justify-end md:flex-1`}>
             <ul className="flex items-center">
               {/* <li>
@@ -215,15 +185,12 @@ const ChannelWrapper = ({
                 <ShareOption projectId={null} />
               </li>
 
-              {screenWidth > 768 && (
-                <li>
-                  <FilterOptions
-                    hideCalendarView={true}
-                    // setTasks={setTasks}
-                    // tasks={tasks}
-                  />
-                </li>
-              )}
+              <li>
+                <button className="text-text-500 hover:bg-text-100 p-1.5 rounded-lg transition flex items-center gap-1">
+                  <MoreVertical strokeWidth={1.5} size={16} />
+                </button>
+              </li>
+
               {/* <li>
               {project && (
                 <ActiveProjectMoreOptions
@@ -251,7 +218,7 @@ const ChannelWrapper = ({
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col h-full w-full overflow-y-auto">
+        {/* <div className="flex-1 flex flex-col h-full w-full overflow-y-auto">
           <div className="w-full h-60 min-h-60 bg-text-100"></div>
 
           {screenWidth > 768 && (
@@ -270,10 +237,10 @@ const ChannelWrapper = ({
                 </Button>
               </div>
             </div>
-          )}
+          )} */}
 
-          <div className={`flex-1`}>{children}</div>
-        </div>
+        <div className={`flex-1`}>{children}</div>
+        {/* </div> */}
       </div>
     </>
   );

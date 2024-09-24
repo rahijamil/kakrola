@@ -113,7 +113,7 @@ export default function MobileSidebar({
           <li className="py-3 pb-4">
             <button
               onClick={() => setShowAddTaskModal(true)}
-              className="bg-primary-500 text-primary-10 p-3 rounded-full shadow-lg transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50"
+              className="bg-primary-500 text-primary-10 p-3 rounded-lg shadow-lg transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50"
               aria-label="Add new task"
             >
               <Plus strokeWidth={2} className="w-6 h-6" aria-hidden="true" />

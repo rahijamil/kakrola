@@ -1,16 +1,15 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import { usePathname, useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import useScreen from "@/hooks/useScreen";
 import MobileSidebar from "./MobileSidebar";
 import AddTeam from "../AddTeam";
-import AddEditProject from "../AddEditProject";
-import AddEditChannel from "../AddEditChannel";
 import AddTaskModal from "../AddTask/AddTaskModal";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
 import axios from "axios";
+import useSidebarCollapse from "./useSidebarCollapse";
 
 const SidebarWrapper = () => {
   const pathname = usePathname();
@@ -19,16 +18,19 @@ const SidebarWrapper = () => {
     return null;
   }
 
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [afterCollapse, setAfterCollapse] = useState(false);
-  const [sidebarWidth, setSidebarWidth] = useState(260);
-  const [sidebarLeft, setSidebarLeft] = useState(0);
-  const [isResizing, setIsResizing] = useState(false);
-
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [showAddTeam, setShowAddTeam] = useState<boolean | number>(false);
+
+  const {
+    sidebarWidth,
+    sidebarLeft,
+    isResizing,
+    handleMouseDown,
+    toggleSidebar,
+    isCollapsed,
+  } = useSidebarCollapse();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -58,84 +60,13 @@ const SidebarWrapper = () => {
     };
   }, []);
 
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-    setSidebarLeft(isCollapsed ? 0 : -sidebarWidth);
-  };
-
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-
-    if (!isCollapsed) {
-      setIsResizing(true);
-      document.body.style.cursor = "col-resize"; // Set cursor to col-resize
-    }
-  }, []);
-
-  const handleMouseUp = useCallback(() => {
-    setIsResizing(false);
-    document.body.style.cursor = ""; // Reset cursor to default
-  }, []);
-
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (!isResizing) return;
-      const newWidth = Math.max(220, Math.min(480, e.clientX));
-
-      setSidebarWidth(newWidth);
-      if (isCollapsed) {
-        setSidebarLeft(-newWidth);
-      }
-    },
-    [isResizing, isCollapsed]
-  );
-
-  useEffect(() => {
-    if (isResizing) {
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
-    }
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [isResizing, handleMouseMove, handleMouseUp]);
-
-  useEffect(() => {
-    if (isCollapsed) {
-      setTimeout(() => {
-        setAfterCollapse(true);
-      }, 150);
-    } else {
-      setAfterCollapse(false);
-    }
-  }, [isCollapsed]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 768) {
-        setIsCollapsed(true);
-        setSidebarLeft(-sidebarWidth);
-      } else {
-        setIsCollapsed(false);
-        setSidebarLeft(0);
-      }
-    };
-
-    handleResize(); // Initial check
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, [sidebarWidth]);
-
   const { screenWidth } = useScreen();
   const router = useRouter();
 
   const isNotRenderMobileSidebar = pathname.includes("/th/");
 
   return (
-    <>
+    <div className="select-none">
       {screenWidth > 768 ? (
         <div className="flex h-screen">
           <>
@@ -147,7 +78,7 @@ const SidebarWrapper = () => {
             )}
 
             <div
-              className={`fixed md:relative flex transition-all duration-300 h-screen whitespace-nowrap origin-left z-20 group ${
+              className={`fixed md:relative flex transition-all duration-300 h-screen whitespace-nowrap origin-left z-20 group desktop_sidebar ${
                 isCollapsed
                   ? "bg-primary-10 hover:bg-primary-50"
                   : "bg-primary-10"
@@ -245,7 +176,7 @@ const SidebarWrapper = () => {
       )}
 
       {showAddTeam && <AddTeam onClose={() => setShowAddTeam(false)} />}
-    </>
+    </div>
   );
 };
 

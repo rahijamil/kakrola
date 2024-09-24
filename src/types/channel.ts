@@ -34,16 +34,16 @@ export interface ThreadType {
   channel_id: number;
   title: string;
   slug: string;
-  content: JSONContent;
+  content: string;
   is_edited: boolean;
 }
 
 export interface ThreadReplyType {
-  id: number;
+  id: number | string;
   created_at?: string;
   updated_at?: string;
   profile_id: string;
   thread_id: number;
-  content: JSONContent;
+  content: string;
   is_edited: boolean;
 }

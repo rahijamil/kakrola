@@ -26,10 +26,11 @@ const config: Config = {
         },
         primary2: "var(--color-primary2)",
         secondary: "var(--color-secondary)",
-        // accent: "var(--color-accent)",
+        accent: "var(--color-accent)",
         background: "var(--color-background)",
         surface: "var(--color-surface)",
         text: {
+          10: "var(--color-text-10)",
           50: "var(--color-text-50)",
           100: "var(--color-text-100)",
           200: "var(--color-text-200)",

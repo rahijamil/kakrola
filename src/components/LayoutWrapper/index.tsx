@@ -30,6 +30,7 @@ import { useRole } from "@/context/RoleContext";
 import { canEditProject } from "@/types/hasPermission";
 import useScreen from "@/hooks/useScreen";
 import { useRouter } from "next/navigation";
+import { AnimatePresence } from "framer-motion";
 
 const LayoutWrapper = ({
   children,
@@ -446,12 +447,14 @@ const LayoutWrapper = ({
         />
       )}
 
-      {modalState.projectEdit && (
-        <AddEditProject
-          onClose={() => toggleModal("projectEdit", false)}
-          project={project}
-        />
-      )}
+      <AnimatePresence>
+        {modalState.projectEdit && (
+          <AddEditProject
+            onClose={() => toggleModal("projectEdit", false)}
+            project={project}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };

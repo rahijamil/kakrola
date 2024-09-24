@@ -9,8 +9,11 @@ import { ChannelType, ThreadType } from "@/types/channel";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/Spinner";
 import { Input } from "@/components/ui/input";
-import NovelEditor from "@/components/NovelEditor";
+const NovelEditor = dynamic(() => import("@/components/NovelEditor"), {
+  ssr: false,
+});
 import { JSONContent } from "novel";
+import dynamic from "next/dynamic";
 
 const AddEditThread = ({
   threadId,

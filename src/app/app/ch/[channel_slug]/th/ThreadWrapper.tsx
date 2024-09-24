@@ -4,13 +4,22 @@ import { Button } from "@/components/ui/button";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import useScreen from "@/hooks/useScreen";
 import { ChannelType, ThreadType } from "@/types/channel";
-import { ChevronLeft, Headphones, SendHorizonal, X } from "lucide-react";
+import {
+  ChevronLeft,
+  Hash,
+  Headphones,
+  MoreHorizontal,
+  MoreVertical,
+  SendHorizonal,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 import AddNewThread from "./new/AddNewThread";
 import useAddThread from "./new/useAddThread";
 import Spinner from "@/components/ui/Spinner";
+import Image from "next/image";
 
 const ThreadWrapper = ({
   channel,
@@ -46,28 +55,83 @@ const ThreadWrapper = ({
       }`}
     >
       <div
-        className={`flex items-center justify-between gap-4 border-b border-text-100 ${
+        className={`flex items-center justify-between gap-3 md:gap-4 border-b border-text-100 bg-background z-10 ${
           screenWidth > 768 ? "py-3 px-6" : thread ? "px-3 py-1" : "p-3"
         }`}
       >
-        <div className="flex items-center gap-3">
-          <Link
-            href={`/app/ch/${channel.slug}`}
-            className="flex items-center gap-2 rounded-lg p-1 pr-2.5 text-text-700 hover:text-text-900 hover:bg-text-100 transition-all"
-          >
-            <ChevronLeft strokeWidth={1.5} size={24} />
-
-            <div>
-              {screenWidth <= 768 && thread && (
-                <h2 className="font-semibold md:text-lg">{thread.title}</h2>
+        {screenWidth > 768 ? (
+          <div className="flex items-center w-64 whitespace-nowrap gap-1">
+            <Link
+              href={`/app/projects`}
+              className="hover:bg-text-100 p-1 py-0.5 rounded-lg transition-colors flex items-center gap-1"
+            >
+              {team ? (
+                <>
+                  {team.avatar_url ? (
+                    <Image
+                      src={team.avatar_url}
+                      alt={team.name}
+                      width={20}
+                      height={20}
+                      className="rounded-md"
+                    />
+                  ) : (
+                    <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-md flex items-center justify-center">
+                      <span className="text-surface text-[10px] font-bold">
+                        {team.name?.slice(0, 1).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <span
+                    className={`font-medium transition overflow-hidden whitespace-nowrap text-ellipsis`}
+                  >
+                    {team.name}
+                  </span>{" "}
+                </>
+              ) : (
+                "Personal"
               )}
-              <h3 className="font-normal md:font-medium text-text-500 md:text-text-900">
-                <span>#</span>
-                {channel.name}
+            </Link>
+            <span className="text-text-400">/</span>
+
+            <Link
+              href={`/app/ch/${channel.slug}`}
+              className="font-medium text-text-900 hover:bg-text-100 rounded-lg p-1 py-0.5 transition cursor-pointer"
+            >
+              <span>#</span>
+              {channel.name}
+            </Link>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.push(`/app/ch/${channel.slug}`)}
+              className="flex items-center text-text-700 transition p-1"
+            >
+              <ChevronLeft
+                strokeWidth={1.5}
+                size={24}
+                className="min-w-6 min-h-6"
+              />
+            </button>
+
+            <button className="text-left bg-text-10 p-1 px-2 rounded-lg">
+              {screenWidth <= 768 && thread && (
+                <h2 className="font-semibold md:text-lg text-text-900 line-clamp-1">
+                  {thread.title}
+                </h2>
+              )}
+              <h3 className="font-normal md:font-medium text-text-500 md:text-text-900 text-xs flex items-center gap-1">
+                <div>
+                  <span>#</span>
+                  {channel.name}
+                </div>
+                <span>•</span>
+                <span>More</span>
               </h3>
-            </div>
-          </Link>
-        </div>
+            </button>
+          </div>
+        )}
 
         {!thread ? (
           screenWidth > 768 ? (
@@ -140,40 +204,48 @@ const ThreadWrapper = ({
         )}
 
         {thread && (
-          <div className={`flex items-center justify-end`}>
-            <ul className="flex items-center">
-              <li>
-                <button className="text-text-500 hover:bg-text-100 px-2 p-1 rounded-lg transition flex items-center gap-1">
-                  <Headphones strokeWidth={1.5} size={20} />
+          <div className={`flex items-center justify-end  h-full`}>
+            <div className="flex items-center h-full">
+              {screenWidth > 768 && <ShareOption projectId={null} />}
 
-                  <span className="hidden md:inline-block">Huddle</span>
+              <button className="text-text-500 md:hover:bg-text-100 md:px-2 p-1 justify-center md:rounded-lg transition flex items-center gap-1">
+                <Headphones
+                  strokeWidth={1.5}
+                  size={screenWidth > 768 ? 16 : 24}
+                />
+                <span className="hidden md:inline-block">Huddle</span>
+              </button>
+
+              {screenWidth > 768 && (
+                <button className="text-text-500 hover:bg-text-100 px-2 p-1 md:rounded-lg transition flex items-center gap-1">
+                  <MoreVertical strokeWidth={1.5} size={16} />
                 </button>
-              </li>
+              )}
 
               {/* <li>
-        {project && (
-          <ActiveProjectMoreOptions
-            project={project}
-            stateActions={{
-              setProjectEdit: (value) =>
-                toggleModal("projectEdit", value as boolean),
-              setSaveTemplate: (value) =>
-                toggleModal("saveTemplate", value as boolean),
-              setImportFromCSV: (value) =>
-                toggleModal("showImportFromCSV", value as boolean),
-              setExportAsCSV: (value) =>
-                toggleModal("showExportAsCSV", value as boolean),
-              setShowArchiveConfirm: (value) =>
-                toggleModal("showArchiveConfirm", value as boolean),
-              setShowDeleteConfirm: (value) =>
-                toggleModal("showDeleteConfirm", value as boolean),
-              setShowCommentOrActivity: (value) =>
-                toggleModal("showCommentOrActivity", value as null),
-            }}
-          />
-        )}
-      </li> */}
-            </ul>
+              {project && (
+                <ActiveProjectMoreOptions
+                  project={project}
+                  stateActions={{
+                    setProjectEdit: (value) =>
+                      toggleModal("projectEdit", value as boolean),
+                    setSaveTemplate: (value) =>
+                      toggleModal("saveTemplate", value as boolean),
+                    setImportFromCSV: (value) =>
+                      toggleModal("showImportFromCSV", value as boolean),
+                    setExportAsCSV: (value) =>
+                      toggleModal("showExportAsCSV", value as boolean),
+                    setShowArchiveConfirm: (value) =>
+                      toggleModal("showArchiveConfirm", value as boolean),
+                    setShowDeleteConfirm: (value) =>
+                      toggleModal("showDeleteConfirm", value as boolean),
+                    setShowCommentOrActivity: (value) =>
+                      toggleModal("showCommentOrActivity", value as null),
+                  }}
+                />
+              )}
+            </li> */}
+            </div>
           </div>
         )}
       </div>

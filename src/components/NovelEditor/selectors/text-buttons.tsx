@@ -1,5 +1,5 @@
 import { EditorBubbleItem, useEditor } from "novel";
-import { BoldIcon, ItalicIcon, UnderlineIcon, StrikethroughIcon, CodeIcon } from "lucide-react";
+import { BoldIcon, ItalicIcon, UnderlineIcon, StrikethroughIcon, CodeXml } from "lucide-react";
 import type { SelectorItem } from "./node-selector";
 import { Button } from "../EditorUI/Button";
 import { cn } from "../utils";
@@ -36,7 +36,7 @@ export const TextButtons = () => {
       name: "code",
       isActive: (editor) => !!editor?.isActive("code"),
       command: (editor) => editor?.chain().focus().toggleCode().run(),
-      icon: CodeIcon,
+      icon: CodeXml,
     },
   ];
   return (

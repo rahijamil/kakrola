@@ -11,7 +11,15 @@ import {
   type JSONContent,
 } from "novel";
 import { ImageResizer, handleCommandNavigation } from "novel/extensions";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import {
+  Dispatch,
+  MutableRefObject,
+  RefObject,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { defaultExtensions } from "./extensions";
 import { ColorSelector } from "./selectors/color-selector";
 import { LinkSelector } from "./selectors/link-selector";
@@ -47,12 +55,16 @@ const NovelEditor = ({
   content,
   handleSave,
   setCharsCount,
+  editorRef,
+  hideContentItemMenu,
 }: {
   editable?: boolean;
   content: JSONContent | null;
   handleSave: (content: JSONContent) => void;
   autofocus?: boolean;
   setCharsCount?: Dispatch<SetStateAction<number>>;
+  editorRef?: MutableRefObject<HTMLDivElement | null>;
+  hideContentItemMenu?: boolean;
 }) => {
   const { theme } = useTheme();
   const menuContainerRef = useRef(null);
@@ -98,12 +110,20 @@ const NovelEditor = ({
         <EditorContent
           editable={editable}
           autofocus={autofocus}
+          ref={editorRef}
           initialContent={initialContent || defaultEditorContent}
           extensions={extensions}
           className="relative w-full"
           editorProps={{
             handleDOMEvents: {
-              keydown: (_view, event) => handleCommandNavigation(event),
+              keydown: (_view, event) => {
+                handleCommandNavigation(event);
+
+                if (event.key == "Enter" && !event.shiftKey) {
+                  // submit the form
+                  console.log("submit the form");
+                }
+              },
             },
             handlePaste: (view, event) =>
               handleImagePaste(view, event, uploadFn),
@@ -172,7 +192,7 @@ const NovelEditor = ({
             <ColorSelector open={openColor} onOpenChange={setOpenColor} />
           </GenerativeMenuSwitch> */}
 
-          <ContentItemMenu />
+          {!hideContentItemMenu && <ContentItemMenu />}
           <LinkMenu appendTo={menuContainerRef} />
           <ColumnsMenu appendTo={menuContainerRef} />
           <TableRowMenu appendTo={menuContainerRef} />

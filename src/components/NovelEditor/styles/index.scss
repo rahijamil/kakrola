@@ -96,7 +96,7 @@
 
 .reply-editor {
   .ProseMirror {
-    @apply min-h-[60px] overflow-y-auto;
+    @apply max-h-[500px] overflow-y-auto px-4 md:px-3 py-2.5 md:py-2;
   }
 }
 

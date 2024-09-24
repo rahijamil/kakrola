@@ -16,6 +16,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { useQuery } from "@tanstack/react-query";
 import ProjectLeaveConfirm from "./ProjectLeaveConfirm";
 import useScreen from "@/hooks/useScreen";
+import { AnimatePresence } from "framer-motion";
 
 const ProjectItem = ({
   project,
@@ -185,21 +186,23 @@ const ProjectItem = ({
         <ImportCSVModal onClose={() => setImportFromCSV(false)} />
       )}
 
-      {projectEdit && (
-        <AddEditProject
-          onClose={() => setProjectEdit(false)}
-          project={project}
-        />
-      )}
+      <AnimatePresence>
+        {projectEdit && (
+          <AddEditProject
+            onClose={() => setProjectEdit(false)}
+            project={project}
+          />
+        )}
 
-      {aboveBellow && (
-        <AddEditProject
-          onClose={() => setAboveBellow(null)}
-          aboveBellow={aboveBellow}
-          project={project}
-          workspaceId={project.team_id}
-        />
-      )}
+        {aboveBellow && (
+          <AddEditProject
+            onClose={() => setAboveBellow(null)}
+            aboveBellow={aboveBellow}
+            project={project}
+            workspaceId={project.team_id}
+          />
+        )}
+      </AnimatePresence>
     </li>
   );
 };

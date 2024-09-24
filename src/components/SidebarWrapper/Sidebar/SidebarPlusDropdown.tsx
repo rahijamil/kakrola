@@ -6,6 +6,7 @@ import useSidebarData from "@/hooks/useSidebarData";
 import { PageType } from "@/types/pageTypes";
 import { generateSlug } from "@/utils/generateSlug";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import { AnimatePresence } from "framer-motion";
 import { CheckCircle, File, Hash, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
@@ -147,18 +148,20 @@ const SidebarPlusDropdown = ({
         ]}
       />
 
-      {showAddProjectModal && !teamId && (
-        <AddEditProject onClose={() => setShowAddProjectModal(false)} />
-      )}
+      <AnimatePresence>
+        {showAddProjectModal && !teamId && (
+          <AddEditProject onClose={() => setShowAddProjectModal(false)} />
+        )}
 
-      {teamId && showAddProjectModal && (
-        <AddEditProject
-          workspaceId={teamId}
-          onClose={() => {
-            setShowAddProjectModal(false);
-          }}
-        />
-      )}
+        {teamId && showAddProjectModal && (
+          <AddEditProject
+            workspaceId={teamId}
+            onClose={() => {
+              setShowAddProjectModal(false);
+            }}
+          />
+        )}
+      </AnimatePresence>
 
       {teamId && showAddChannel && setShowAddChannel && (
         <AddEditChannel

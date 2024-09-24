@@ -1,6 +1,6 @@
 import { ThreadReplyType, ThreadType } from "@/types/channel";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 
 const getThread = async (
@@ -37,19 +37,45 @@ const getThread = async (
       return { thread: null, replies: [] };
     }
   } catch (error) {
-    console.error(error);
-    return { thread: null, replies: [] };
+    throw error;
   }
 };
 
 const useThread = (channel_id?: number, thread_slug?: string) => {
+  const queryClient = useQueryClient();
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ["thread", thread_slug],
+    queryKey: ["thread", channel_id, thread_slug],
     queryFn: () => getThread(channel_id, thread_slug),
     enabled: !!channel_id && !!thread_slug,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: false, // Optional: adjust as needed
   });
 
-  return { thread: data?.thread, replies: data?.replies, isLoading, error };
+  const setReplies = (replies: ThreadReplyType[]) => {
+    queryClient.setQueryData(
+      ["thread", channel_id, thread_slug],
+      (
+        oldData: { thread: ThreadType | null; replies: ThreadReplyType[] } = {
+          thread: null,
+          replies: [],
+        }
+      ) => {
+        return {
+          ...oldData,
+          replies,
+        };
+      }
+    );
+  };
+
+  return {
+    thread: data?.thread,
+    replies: data?.replies || [],
+    setReplies,
+    isLoading,
+    error,
+  };
 };
 
 export default useThread;

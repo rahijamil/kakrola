@@ -13,7 +13,7 @@ const poppins = Poppins({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   fallback: ["Helvetica", "Arial", "sans-serif"],
-  display: "swap"
+  // display: "swap"
 });
 
 const nunito = Nunito({ subsets: ["latin"], fallback: ["Helvetica", "Arial"] });

@@ -6,6 +6,7 @@ import { ProfileType } from "@/types/user";
 import Spinner from "@/components/ui/Spinner";
 import { JSONContent } from "novel";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const getTextFromContent = (content: JSONContent): string => {
   let text = "";
@@ -28,6 +29,7 @@ const ThreadCard = ({
   channel_slug: string;
 }) => {
   const [threadProfile, setThreadProfile] = useState<ProfileType | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const fetchThreadProfile = async () => {
@@ -43,12 +45,16 @@ const ThreadCard = ({
 
   const content: JSONContent = JSON.parse(thread.content as any);
   const textContent = getTextFromContent(content);
-  const first100Chars = textContent.substring(0, 100);
+  const firstChars = textContent.substring(0, 35);
 
   return (
     <Link
       href={`/app/ch/${channel_slug}/th/${thread.slug}`}
-      className="flex items-center gap-2 w-full hover:bg-primary-50 border border-transparent hover:border-primary-200 transition py-4 px-6 rounded-lg cursor-pointer"
+      className={`flex gap-2 w-full transition px-4 py-2 cursor-pointer border-transparent border-r-4 ${
+        pathname === `/app/ch/${channel_slug}/th/${thread.slug}`
+          ? "bg-primary-50 border-primary-200"
+          : "hover:bg-primary-10"
+      }`}
     >
       <Image
         src={threadProfile?.avatar_url || "/default_avatar.png"}
@@ -59,11 +65,11 @@ const ThreadCard = ({
       />
 
       <div>
-        <h2 className="font-bold">{thread.title}</h2>
+        <h2 className="font-semibold text-xs">{thread.title}</h2>
 
-        <p className="flex gap-1 text-xs whitespace-nowrap text-text-500">
-          {threadProfile.full_name} : {first100Chars}{" "}
-          {textContent.length > 100 ? "..." : ""}
+        <p className="flex gap-1 text-xs text-text-500">
+          {threadProfile.full_name} : {firstChars}{" "}
+          {textContent.length > 36 ? "..." : ""}
         </p>
       </div>
     </Link>
