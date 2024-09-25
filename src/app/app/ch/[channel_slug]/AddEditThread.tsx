@@ -56,7 +56,7 @@ const AddEditThread = ({
         const threadData: Omit<ThreadType, "id"> = {
           title: threadTitle,
           slug: generateSlug(threadTitle),
-          content: threadContent,
+          content: JSON.stringify(threadContent),
           profile_id: profile.id,
           channel_id: channel.id,
           is_edited: false,
