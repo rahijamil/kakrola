@@ -5,14 +5,26 @@ import React from "react";
 
 export default function MainContent({
   children,
+  isCollapsed,
 }: {
   children: React.ReactNode;
+  isCollapsed: boolean;
 }) {
   const { screenWidth } = useScreen();
 
   return screenWidth > 768 ? (
-    <div className="flex-1 transition-all duration-300 p-2 pl-0 bg-primary-10 flex">
-      <div className="bg-background rounded-lg overflow-hidden h-full w-full border border-text-100 shadow-lg dark:shadow-none">
+    <div
+      className={`flex-1 transition-all duration-300 flex ${
+        isCollapsed ? "p-0" : "p-2 pl-0 bg-primary-10"
+      }`}
+    >
+      <div
+        className={`${
+          isCollapsed
+            ? "h-full w-full"
+            : "bg-background rounded-lg overflow-hidden h-full w-full border border-text-100 shadow-lg dark:shadow-none"
+        }`}
+      >
         {children}
       </div>
     </div>

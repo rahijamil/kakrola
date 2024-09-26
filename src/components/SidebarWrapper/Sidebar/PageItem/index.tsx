@@ -7,7 +7,7 @@ import ExportCSVModal from "../SidebarProjectMoreOptions/ExportCSVModal";
 import ImportCSVModal from "../SidebarProjectMoreOptions/ImportCSVModal";
 import AddEditProject from "../../../AddEditProject";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
-import { CheckCircle, Ellipsis, File, Hash, Users } from "lucide-react";
+import { CheckCircle, Ellipsis, File, FileText, Hash, Users } from "lucide-react";
 import ProjectDeleteConfirm from "../ProjectDeleteConfirm";
 import ProjectArchiveConfirm from "../ProjectArchiveConfirm";
 import Skeleton from "react-loading-skeleton";
@@ -107,7 +107,7 @@ const PageItem = ({
           >
             <div className="flex items-center">
               <div className="p-2">
-                <File
+                <FileText
                   className={`w-4 h-4 text-${page.settings.color}`}
                   strokeWidth={2}
                 />

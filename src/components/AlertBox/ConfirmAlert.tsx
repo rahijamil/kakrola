@@ -54,7 +54,7 @@ const ConfirmAlert = ({
             <Button size="xs" onClick={onConfirm} disabled={loading} variant="ghost">
               {loading ? (
                 <div className="flex items-center gap-2">
-                  <Spinner color="primary" size="sm" />
+                  <Spinner color="current" size="sm" />
                   {submitBtnText}
                 </div>
               ) : (

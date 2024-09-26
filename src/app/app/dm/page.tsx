@@ -1,521 +1,397 @@
 "use client";
 
-import React, { useState } from "react";
-import { User, Send, Phone, Video, Info } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/ScrollArea";
+import React, { useEffect, useState } from "react";
+import { MessageCircleMore } from "lucide-react";
+import useDms from "./useDms";
+import Spinner from "@/components/ui/Spinner";
+import Image from "next/image";
+import ReplyEditor from "../ch/[channel_slug]/th/[thread_slug]/ReplyEditor";
+import DmWrapper from "./DmWrapper";
+import { Bookmark, MoreVertical, SmilePlus } from "lucide-react";
+import DmSidebar from "./DmSidebar";
+import { useAuthProvider } from "@/context/AuthContext";
+import { DmType } from "@/types/channel";
+import useScreen from "@/hooks/useScreen";
+import { AnimatePresence, motion } from "framer-motion";
 
-interface Message {
-  id: string;
-  sender: string;
-  content: string;
-  timestamp: string;
-}
-
-interface Contact {
-  id: string;
-  name: string;
-  avatar: string;
-  lastMessage: string;
-  lastMessageTime: string;
-}
+const renderOptions = (replyId: string) => (
+  <ul className="flex items-center gap-1 bg-background shadow-sm border border-text-200 rounded-lg p-0.5 mt-2 select-none">
+    <li>
+      <button
+        className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-text-100 text-base transition"
+        aria-label="React with checkmark"
+      >
+        ✅
+      </button>
+    </li>
+    <li>
+      <button
+        className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-text-100 text-base transition"
+        aria-label="React with eyes"
+      >
+        👀
+      </button>
+    </li>
+    <li>
+      <button
+        className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-text-100 text-base transition"
+        aria-label="React with raised hands"
+      >
+        🙌
+      </button>
+    </li>
+    <li>
+      <button
+        className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-text-100 transition"
+        aria-label="Bookmark"
+      >
+        <Bookmark strokeWidth={2} className="w-4 h-4" />
+      </button>
+    </li>
+    <li>
+      <button
+        className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-text-100 transition"
+        aria-label="Add reaction"
+      >
+        <SmilePlus strokeWidth={2} className="w-4 h-4" />
+      </button>
+    </li>
+    <li>
+      <button
+        className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-text-100 transition"
+        aria-label="More options"
+      >
+        <MoreVertical strokeWidth={2} className="w-4 h-4" />
+      </button>
+    </li>
+  </ul>
+);
 
 const DmPage: React.FC = () => {
-  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
-  const [message, setMessage] = useState("");
+  const [activeContact, setActiveContact] = useState<{
+    id: number;
+    profile_id: string;
+    name: string;
+    avatar_url: string;
+  } | null>(null);
+  const { getDmsForContact, isLoading, loadMore, limit, setLimit } = useDms();
+  const [dmMessages, setDmMessages] = useState<DmType[]>([]);
+  const [hasMore, setHasMore] = useState(true);
 
-  const contacts: Contact[] = [
-    {
-      id: "1",
-      name: "Alice Johnson",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "Hey, how are you?",
-      lastMessageTime: "10:30 AM",
-    },
-    {
-      id: "2",
-      name: "Bob Smith",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "Can we meet tomorrow?",
-      lastMessageTime: "Yesterday",
-    },
-    {
-      id: "3",
-      name: "Charlie Brown",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "Thanks for your help!",
-      lastMessageTime: "Monday",
-    },
-    {
-      id: "4",
-      name: "Diana Prince",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "I'm sorry, I can't do that.",
-      lastMessageTime: "Today",
-    },
-    {
-      id: "5",
-      name: "Eve Adams",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "What's the project deadline?",
-      lastMessageTime: "Tomorrow",
-    },
-    {
-      id: "6",
-      name: "Fiona Green",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "Can you send me the report?",
-      lastMessageTime: "Yesterday",
-    },
-    {
-      id: "7",
-      name: "Grace White",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "I'll send it to you later.",
-      lastMessageTime: "Today",
-    },
-    {
-      id: "8",
-      name: "Hannah Lee",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "I'm not sure about that.",
-      lastMessageTime: "Yesterday",
-    },
-    {
-      id: "9",
-      name: "Ivy Moore",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "I'm not sure about that.",
-      lastMessageTime: "Yesterday",
-    },
-    {
-      id: "10",
-      name: "Jasmine Kim",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "I'm not sure about that.",
-      lastMessageTime: "Yesterday",
-    },
+  const { profile } = useAuthProvider();
 
-    {
-      id: "11",
-      name: "Katherine Chen",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "I'm not sure about that.",
-      lastMessageTime: "Yesterday",
-    },
-    {
-      id: "1",
-      name: "Alice Johnson",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "Hey, how are you?",
-      lastMessageTime: "10:30 AM",
-    },
-    {
-      id: "2",
-      name: "Bob Smith",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "Can we meet tomorrow?",
-      lastMessageTime: "Yesterday",
-    },
-    {
-      id: "3",
-      name: "Charlie Brown",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "Thanks for your help!",
-      lastMessageTime: "Monday",
-    },
-    {
-      id: "4",
-      name: "Diana Prince",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "I'm sorry, I can't do that.",
-      lastMessageTime: "Today",
-    },
-    {
-      id: "5",
-      name: "Eve Adams",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "What's the project deadline?",
-      lastMessageTime: "Tomorrow",
-    },
-    {
-      id: "6",
-      name: "Fiona Green",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "Can you send me the report?",
-      lastMessageTime: "Yesterday",
-    },
-    {
-      id: "7",
-      name: "Grace White",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "I'll send it to you later.",
-      lastMessageTime: "Today",
-    },
-    {
-      id: "8",
-      name: "Hannah Lee",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "I'm not sure about that.",
-      lastMessageTime: "Yesterday",
-    },
-    {
-      id: "9",
-      name: "Ivy Moore",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "I'm not sure about that.",
-      lastMessageTime: "Yesterday",
-    },
-    {
-      id: "10",
-      name: "Jasmine Kim",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "I'm not sure about that.",
-      lastMessageTime: "Yesterday",
-    },
+  const { screenWidth } = useScreen();
 
-    {
-      id: "11",
-      name: "Katherine Chen",
-      avatar: "/placeholder.svg?height=40&width=40",
-      lastMessage: "I'm not sure about that.",
-      lastMessageTime: "Yesterday",
-    },
-  ];
+  useEffect(() => {
+    if (activeContact) {
+      const dmMessages = getDmsForContact(activeContact.id);
+      setDmMessages(dmMessages);
+    }
+  }, [activeContact]);
 
-  const messages: Message[] = [
-    {
-      id: "1",
-      sender: "Alice Johnson",
-      content: "Hey, how are you?",
-      timestamp: "10:30 AM",
-    },
-    {
-      id: "2",
-      sender: "You",
-      content: "I'm good, thanks! How about you?",
-      timestamp: "10:32 AM",
-    },
-    {
-      id: "3",
-      sender: "Alice Johnson",
-      content: "Doing well! Just wanted to check in.",
-      timestamp: "10:33 AM",
-    },
-    {
-      id: "1",
-      sender: "Alice Johnson",
-      content: "Hey, how are you?",
-      timestamp: "10:30 AM",
-    },
-    {
-      id: "2",
-      sender: "You",
-      content: "I'm good, thanks! How about you?",
-      timestamp: "10:32 AM",
-    },
-    {
-      id: "3",
-      sender: "Alice Johnson",
-      content: "Doing well! Just wanted to check in.",
-      timestamp: "10:33 AM",
-    },
-    {
-      id: "1",
-      sender: "Alice Johnson",
-      content: "Hey, how are you?",
-      timestamp: "10:30 AM",
-    },
-    {
-      id: "2",
-      sender: "You",
-      content: "I'm good, thanks! How about you?",
-      timestamp: "10:32 AM",
-    },
-    {
-      id: "3",
-      sender: "Alice Johnson",
-      content: "Doing well! Just wanted to check in.",
-      timestamp: "10:33 AM",
-    },
-    {
-      id: "1",
-      sender: "Alice Johnson",
-      content: "Hey, how are you?",
-      timestamp: "10:30 AM",
-    },
-    {
-      id: "2",
-      sender: "You",
-      content: "I'm good, thanks! How about you?",
-      timestamp: "10:32 AM",
-    },
-    {
-      id: "3",
-      sender: "Alice Johnson",
-      content: "Doing well! Just wanted to check in.",
-      timestamp: "10:33 AM",
-    },
-    {
-      id: "1",
-      sender: "Alice Johnson",
-      content: "Hey, how are you?",
-      timestamp: "10:30 AM",
-    },
-    {
-      id: "2",
-      sender: "You",
-      content: "I'm good, thanks! How about you?",
-      timestamp: "10:32 AM",
-    },
-    {
-      id: "3",
-      sender: "Alice Johnson",
-      content: "Doing well! Just wanted to check in.",
-      timestamp: "10:33 AM",
-    },
-    {
-      id: "1",
-      sender: "Alice Johnson",
-      content: "Hey, how are you?",
-      timestamp: "10:30 AM",
-    },
-    {
-      id: "2",
-      sender: "You",
-      content: "I'm good, thanks! How about you?",
-      timestamp: "10:32 AM",
-    },
-    {
-      id: "3",
-      sender: "Alice Johnson",
-      content: "Doing well! Just wanted to check in.",
-      timestamp: "10:33 AM",
-    },
-    {
-      id: "1",
-      sender: "Alice Johnson",
-      content: "Hey, how are you?",
-      timestamp: "10:30 AM",
-    },
-    {
-      id: "2",
-      sender: "You",
-      content: "I'm good, thanks! How about you?",
-      timestamp: "10:32 AM",
-    },
-    {
-      id: "3",
-      sender: "Alice Johnson",
-      content: "Doing well! Just wanted to check in.",
-      timestamp: "10:33 AM",
-    },
-    {
-      id: "1",
-      sender: "Alice Johnson",
-      content: "Hey, how are you?",
-      timestamp: "10:30 AM",
-    },
-    {
-      id: "2",
-      sender: "You",
-      content: "I'm good, thanks! How about you?",
-      timestamp: "10:32 AM",
-    },
-    {
-      id: "3",
-      sender: "Alice Johnson",
-      content: "Doing well! Just wanted to check in.",
-      timestamp: "10:33 AM",
-    },
-    {
-      id: "1",
-      sender: "Alice Johnson",
-      content: "Hey, how are you?",
-      timestamp: "10:30 AM",
-    },
-    {
-      id: "2",
-      sender: "You",
-      content: "I'm good, thanks! How about you?",
-      timestamp: "10:32 AM",
-    },
-    {
-      id: "3",
-      sender: "Alice Johnson",
-      content: "Doing well! Just wanted to check in.",
-      timestamp: "10:33 AM",
-    },
-    {
-      id: "1",
-      sender: "Alice Johnson",
-      content: "Hey, how are you?",
-      timestamp: "10:30 AM",
-    },
-    {
-      id: "2",
-      sender: "You",
-      content: "I'm good, thanks! How about you?",
-      timestamp: "10:32 AM",
-    },
-    {
-      id: "3",
-      sender: "Alice Johnson",
-      content: "Doing well! Just wanted to check in.",
-      timestamp: "10:33 AM",
-    },
-    {
-      id: "1",
-      sender: "Alice Johnson",
-      content: "Hey, how are you?",
-      timestamp: "10:30 AM",
-    },
-    {
-      id: "2",
-      sender: "You",
-      content: "I'm good, thanks! How about you?",
-      timestamp: "10:32 AM",
-    },
-    {
-      id: "3",
-      sender: "Alice Johnson",
-      content: "Doing well! Just wanted to check in.",
-      timestamp: "10:33 AM",
-    },
-  ];
-
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (message.trim()) {
-      // Here you would typically send the message to your backend
-      console.log("Sending message:", message);
-      setMessage("");
+  const handleScroll = async () => {
+    if (hasMore && dmMessages.length >= limit && activeContact) {
+      const newLimit = limit + 20;
+      setLimit(newLimit);
+      const newDms = await loadMore(activeContact.id);
+      setDmMessages([...dmMessages, ...newDms]);
+      if (newDms.length < limit) {
+        setHasMore(false);
+      }
     }
   };
 
   return (
     <div className="flex h-screen bg-background">
-      {/* Contacts List */}
-      <div className="w-1/4 border-r border-border">
-        <div className="p-4 border-b border-border">
-          <h2 className="text-lg font-semibold">Direct Messages</h2>
-        </div>
-        <ScrollArea className="h-[calc(100vh-5rem)]">
-          {contacts.map((contact) => (
-            <div
-              key={contact.id}
-              className={`flex items-center p-4 hover:bg-accent cursor-pointer ${
-                selectedContact?.id === contact.id ? "bg-accent text-surface" : ""
-              }`}
-              onClick={() => setSelectedContact(contact)}
+      {screenWidth > 768 ? (
+        <DmSidebar
+          setActiveContact={setActiveContact}
+          activeContact={activeContact}
+        />
+      ) : (
+        <DmSidebar
+          setActiveContact={setActiveContact}
+          activeContact={activeContact}
+        />
+      )}
+
+      <AnimatePresence>
+        {screenWidth > 768 ? (
+          isLoading ? (
+            <div className="flex-1 flex items-center justify-center h-full text-primary-500">
+              <Spinner color="current" size="md" />
+            </div>
+          ) : activeContact ? (
+            <motion.div
+              initial={{ opacity: 0, x: -100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 100 }}
+              transition={{ duration: 0.2 }}
+              className="flex-1 flex flex-col h-full"
             >
-              <img
-                src={contact.avatar}
-                alt={contact.name}
-                className="w-10 h-10 rounded-full mr-3"
-              />
-              <div className="flex-1">
-                <h3 className="font-medium">{contact.name}</h3>
-                <p className="text-sm text-muted-foreground truncate">
-                  {contact.lastMessage}
-                </p>
-              </div>
-              <span className="text-xs text-muted-foreground">
-                {contact.lastMessageTime}
-              </span>
-            </div>
-          ))}
-        </ScrollArea>
-      </div>
+              <DmWrapper
+                contact={activeContact}
+                setActiveContact={setActiveContact}
+              >
+                <div className="flex flex-col h-full">
+                  {/* Messages */}
+                  <div className="flex-1 flex flex-col justify-end h-full">
+                    <div
+                      className="max-h-[calc(100vh-170px)] overflow-y-auto"
+                      onScroll={handleScroll}
+                    >
+                      <div className="space-y-4 p-6 pt-8">
+                        <div className="flex items-center gap-3">
+                          <Image
+                            src={activeContact.avatar_url}
+                            alt={activeContact.name}
+                            className="w-20 h-20 min-w-20 min-h-20 rounded-lg object-cover"
+                            width={80}
+                            height={80}
+                          />
 
-      {/* Chat Window */}
-      <div className="flex-1 flex flex-col">
-        {selectedContact ? (
-          <>
-            {/* Chat Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border">
-              <div className="flex items-center">
-                <img
-                  src={selectedContact.avatar}
-                  alt={selectedContact.name}
-                  className="w-10 h-10 rounded-full mr-3"
-                />
-                <h2 className="text-lg font-semibold">
-                  {selectedContact.name}
-                </h2>
-              </div>
-              <div className="flex space-x-2">
-                <Button variant="ghost" size="icon">
-                  <Phone className="h-5 w-5" />
-                </Button>
-                <Button variant="ghost" size="icon">
-                  <Video className="h-5 w-5" />
-                </Button>
-                <Button variant="ghost" size="icon">
-                  <Info className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
+                          <h2 className="font-semibold text-base">
+                            {activeContact.name}
+                          </h2>
+                        </div>
 
-            {/* Messages */}
-            <ScrollArea className="flex-1 p-4">
-              {messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex mb-4 ${
-                    msg.sender === "You" ? "justify-end" : ""
-                  }`}
-                >
-                  <div
-                    className={`max-w-[70%] p-3 rounded-lg ${
-                      msg.sender === "You"
-                        ? "bg-primary-500 text-primary-foreground"
-                        : "bg-accent"
-                    }`}
-                  >
-                    <p>{msg.content}</p>
-                    <span className="text-xs opacity-50 mt-1 block">
-                      {msg.timestamp}
-                    </span>
+                        {profile?.id == activeContact.profile_id ? (
+                          <p className="font-base">
+                            <span className="font-medium">
+                              This is your space.
+                            </span>{" "}
+                            Draft messages, list your to-dos, or keep links and
+                            files handy. You can also talk to yourself here, but
+                            please bear in mind you&apos;ll have to supply both
+                            sides of the conversation.
+                          </p>
+                        ) : (
+                          <p className="font-base">
+                            This conversation is just between{" "}
+                            <span className="bg-primary-50 hover:bg-primary-100 transition cursor-pointer text-primary-500 rounded-lg px-1 py-0.5">
+                              @{activeContact.name}
+                            </span>{" "}
+                            and you. Check out their profile to learn more about
+                            them.
+                          </p>
+                        )}
+                      </div>
+
+                      {getDmsForContact(activeContact.id).map((dm, index) => (
+                        <div
+                          key={dm.id}
+                          className={`relative group md:hover:bg-text-10 transition px-4 md:px-6 select-none md:select-auto py-2`}
+                          // onTouchStart={(ev) => {
+                          //   ev.currentTarget.classList.add("bg-text-100");
+                          //   handleTouchStart(reply.id.toString());
+                          // }}
+                          // onTouchEnd={(ev) => {
+                          //   ev.currentTarget.classList.remove("bg-text-100");
+                          //   handleTouchEnd();
+                          // }}
+                          // onClick={() => handleClick(reply.id.toString())}
+                        >
+                          <div className="flex gap-2">
+                            <div className="w-9 h-9 flex items-center justify-center">
+                              <Image
+                                src={
+                                  index % 2 === 0
+                                    ? "/today.png"
+                                    : "/default_avatar.png"
+                                }
+                                alt={"User"}
+                                width={36}
+                                height={36}
+                                className="rounded-lg w-9 h-9 min-w-9 min-h-9 object-cover"
+                              />
+                            </div>
+
+                            <div className={`flex-1`}>
+                              <div className="flex gap-2 items-center">
+                                <h3 className="font-bold">
+                                  {dm.sender_profile_id}
+                                </h3>
+                                <p className="text-xs text-text-500">
+                                  {new Date().toLocaleString()}
+                                </p>
+                              </div>
+
+                              <div className="flex">
+                                <div>
+                                  {/* <EditorContent
+                      editable={false}
+                      initialContent={JSON.parse(reply.content)}
+                      extensions={defaultExtensions}
+                    /> */}
+                                  {dm.content}
+                                  {dm.is_edited && (
+                                    <p className="text-xs text-text-500 mt-1">
+                                      (edited)
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="absolute -top-6 right-6 hidden group-hover:block">
+                            {renderOptions(dm.id.toString())}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </ScrollArea>
 
-            {/* Message Input */}
-            <form
-              onSubmit={handleSendMessage}
-              className="p-4 border-t border-border"
-            >
-              <div className="flex space-x-2">
-                <Input
-                  type="text"
-                  placeholder="Type a message..."
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  className="flex-1"
-                />
-                <Button type="submit">
-                  <Send className="h-5 w-5" />
-                </Button>
+                  {/* Message Input */}
+                  <ReplyEditor
+                    thread_id={0}
+                    setReplies={() => {}}
+                    replies={[]}
+                  />
+                </div>
+              </DmWrapper>
+            </motion.div>
+          ) : (
+            <div className="flex-1 flex items-center justify-center h-full">
+              <div className="text-center">
+                <MessageCircleMore className="h-32 w-32 mx-auto mb-4 text-primary-500" />
               </div>
-            </form>
-          </>
-        ) : (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <User className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-              <h2 className="text-xl font-semibold mb-2">
-                Select a conversation
-              </h2>
-              <p className="text-muted-foreground">
-                Choose a contact to start chatting
-              </p>
             </div>
-          </div>
+          )
+        ) : (
+          activeContact && (
+            <motion.div
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 100 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-10 flex flex-col h-full"
+            >
+              <DmWrapper
+                contact={activeContact}
+                setActiveContact={setActiveContact}
+              >
+                <div className="flex flex-col h-full pb-20 md:pb-0">
+                  {/* Messages */}
+                  <div className="flex-1 flex flex-col justify-end h-full">
+                    <div
+                      className="max-h-[calc(100vh-170px)] overflow-y-auto"
+                      onScroll={handleScroll}
+                    >
+                      <div className="space-y-4 p-6 pt-8">
+                        <div className="flex items-center gap-3">
+                          <Image
+                            src={activeContact.avatar_url}
+                            alt={activeContact.name}
+                            className="w-20 h-20 min-w-20 min-h-20 rounded-lg object-cover"
+                            width={80}
+                            height={80}
+                          />
+
+                          <h2 className="font-semibold text-base">
+                            {activeContact.name}
+                          </h2>
+                        </div>
+
+                        {profile?.id == activeContact.profile_id ? (
+                          <p className="font-base">
+                            <span className="font-medium">
+                              This is your space.
+                            </span>{" "}
+                            Draft messages, list your to-dos, or keep links and
+                            files handy. You can also talk to yourself here, but
+                            please bear in mind you&apos;ll have to supply both
+                            sides of the conversation.
+                          </p>
+                        ) : (
+                          <p className="font-base">
+                            This conversation is just between{" "}
+                            <span className="bg-primary-50 hover:bg-primary-100 transition cursor-pointer text-primary-500 rounded-lg px-1 py-0.5">
+                              @{activeContact.name}
+                            </span>{" "}
+                            and you. Check out their profile to learn more about
+                            them.
+                          </p>
+                        )}
+                      </div>
+
+                      {getDmsForContact(activeContact.id).map((dm, index) => (
+                        <div
+                          key={dm.id}
+                          className={`relative group md:hover:bg-text-10 transition px-4 md:px-6 select-none md:select-auto py-2`}
+                          // onTouchStart={(ev) => {
+                          //   ev.currentTarget.classList.add("bg-text-100");
+                          //   handleTouchStart(reply.id.toString());
+                          // }}
+                          // onTouchEnd={(ev) => {
+                          //   ev.currentTarget.classList.remove("bg-text-100");
+                          //   handleTouchEnd();
+                          // }}
+                          // onClick={() => handleClick(reply.id.toString())}
+                        >
+                          <div className="flex gap-2">
+                            <div className="w-9 h-9 flex items-center justify-center">
+                              <Image
+                                src={
+                                  index % 2 === 0
+                                    ? "/today.png"
+                                    : "/default_avatar.png"
+                                }
+                                alt={"User"}
+                                width={36}
+                                height={36}
+                                className="rounded-lg w-9 h-9 min-w-9 min-h-9 object-cover"
+                              />
+                            </div>
+
+                            <div className={`flex-1`}>
+                              <div className="flex gap-2 items-center">
+                                <h3 className="font-bold">
+                                  {dm.sender_profile_id}
+                                </h3>
+                                <p className="text-xs text-text-500">
+                                  {new Date().toLocaleString()}
+                                </p>
+                              </div>
+
+                              <div className="flex">
+                                <div>
+                                  {/* <EditorContent
+                      editable={false}
+                      initialContent={JSON.parse(reply.content)}
+                      extensions={defaultExtensions}
+                    /> */}
+                                  {dm.content}
+                                  {dm.is_edited && (
+                                    <p className="text-xs text-text-500 mt-1">
+                                      (edited)
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="absolute -top-6 right-6 hidden group-hover:block">
+                            {renderOptions(dm.id.toString())}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Message Input */}
+                  <ReplyEditor
+                    thread_id={0}
+                    setReplies={() => {}}
+                    replies={[]}
+                  />
+                </div>
+              </DmWrapper>
+            </motion.div>
+          )
         )}
-      </div>
+      </AnimatePresence>
     </div>
   );
 };

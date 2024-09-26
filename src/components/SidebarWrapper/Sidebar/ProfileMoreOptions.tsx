@@ -230,7 +230,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
           >
             <div className="flex items-center gap-1">
               <Image
-                src={profile?.avatar_url || "/default-avatar.png"}
+                src={profile?.avatar_url || "/default_avatar.png"}
                 alt={profile?.full_name || profile?.username || ""}
                 width={20}
                 height={20}
@@ -245,26 +245,25 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
         )
       }
       isOpen={isOpen}
-      contentWidthClass="w-60 pb-1"
+      beforeItemsContent={
+        <>
+          <div className="flex items-center gap-2 p-2 pb-0.5">
+            <Image
+              src={profile?.avatar_url || "/default_avatar.png"}
+              alt="profile"
+              width={32}
+              height={32}
+              className="rounded-md object-cover max-w-[32px] max-h-[32px]"
+            />
+
+            <h2 className="font-bold">{profile?.full_name}</h2>
+          </div>
+
+          <div className="h-[1px] bg-text-200 my-1"></div>
+        </>
+      }
       content={
         <div>
-          {profile && (
-            <>
-              <div className="flex items-center gap-2 p-2 pb-0.5">
-                <Image
-                  src={profile?.avatar_url || "/default-avatar.png"}
-                  alt="profile"
-                  width={32}
-                  height={32}
-                  className="rounded-md object-cover max-w-[32px] max-h-[32px]"
-                />
-
-                <h2 className="font-bold">{profile.full_name}</h2>
-              </div>
-
-              <div className="h-[1px] bg-text-200 my-1"></div>
-            </>
-          )}
           {menuItems.map((group, groupIndex) => (
             <React.Fragment key={groupIndex}>
               {group.items.map((item, itemIndex) => (
@@ -312,7 +311,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
   ) : (
     <button className="flex items-center gap-2">
       <Image
-        src={profile?.avatar_url || "/default-avatar.png"}
+        src={profile?.avatar_url || "/default_avatar.png"}
         alt={profile?.full_name || profile?.username || ""}
         width={20}
         height={20}

@@ -1,5 +1,6 @@
 import { ProfileType } from "@/types/user";
 import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
 
 export async function getUser(): Promise<ProfileType | null> {
   const supabase = createClient();

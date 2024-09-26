@@ -59,7 +59,7 @@ const ReplyCard: React.FC<ReplyCardProps> = ({
   );
 
   const renderOptions = (replyId: string) => (
-    <ul className="flex items-center gap-1 bg-background shadow-sm border border-text-200 rounded-lg p-0.5 mt-2">
+    <ul className="flex items-center gap-1 bg-background shadow-sm border border-text-200 rounded-lg p-0.5 mt-2 select-none">
       <li>
         <button
           className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-text-100 text-base transition"
@@ -133,7 +133,7 @@ const ReplyCard: React.FC<ReplyCardProps> = ({
             {index === 0 && (
               <div className="w-9 h-9 flex items-center justify-center">
                 <Image
-                  src={profile?.avatar_url || "/default-avatar.png"}
+                  src={profile?.avatar_url || "/default_avatar.png"}
                   alt={profile?.full_name || "User"}
                   width={36}
                   height={36}

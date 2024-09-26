@@ -21,7 +21,7 @@ const SidebarDataContext = createContext<{
   sidebarLoading: boolean;
   teams: TeamType[];
   setTeams: (teams: TeamType[]) => void;
-  teamMemberships: TeamMemberType[];
+  teamMembers: TeamMemberType[];
   activeProject: ProjectType | null;
   setActiveProject: React.Dispatch<React.SetStateAction<ProjectType | null>>;
   personalMembers: PersonalMemberType[];
@@ -39,7 +39,7 @@ const SidebarDataContext = createContext<{
   setPages: () => {},
   teams: [],
   setTeams: () => {},
-  teamMemberships: [],
+  teamMembers: [],
   activeProject: null,
   setActiveProject: () => {},
   personalMembers: [],
@@ -82,7 +82,7 @@ const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
         setPages,
         teams,
         setTeams,
-        teamMemberships: [],
+        teamMembers,
         activeProject,
         setActiveProject,
         personalMembers,

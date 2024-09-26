@@ -40,20 +40,20 @@ const ThreadCard = ({
   }, [thread.profile_id]);
 
   if (!threadProfile) {
-    return <Spinner color="primary" size="sm" />;
+    return <Spinner color="current" size="sm" />;
   }
 
   const content: JSONContent = JSON.parse(thread.content as any);
   const textContent = getTextFromContent(content);
-  const firstChars = textContent.substring(0, 35);
+  const firstChars = textContent.substring(0, 50);
 
   return (
     <Link
       href={`/app/ch/${channel_slug}/th/${thread.slug}`}
-      className={`flex gap-2 w-full transition px-4 py-2 cursor-pointer border-transparent border-r-4 ${
+      className={`flex gap-2 w-full transition p-4 cursor-pointer border-r-4 ${
         pathname === `/app/ch/${channel_slug}/th/${thread.slug}`
           ? "bg-primary-50 border-primary-200"
-          : "hover:bg-primary-10"
+          : "hover:bg-primary-10 border-transparent"
       }`}
     >
       <Image
@@ -65,11 +65,10 @@ const ThreadCard = ({
       />
 
       <div>
-        <h2 className="font-semibold text-xs">{thread.title}</h2>
+        <h2 className="font-medium line-clamp-1">{thread.title}</h2>
 
-        <p className="flex gap-1 text-xs text-text-500">
-          {threadProfile.full_name} : {firstChars}{" "}
-          {textContent.length > 36 ? "..." : ""}
+        <p className="text-text-500 text-xs line-clamp-1">
+          {threadProfile.full_name} : {firstChars}
         </p>
       </div>
     </Link>

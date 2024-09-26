@@ -31,8 +31,6 @@ const ThreadWrapper = ({
   thread?: ThreadType;
 }) => {
   const { screenWidth } = useScreen();
-  const { teams } = useSidebarDataProvider();
-  const team = teams.find((t) => t.id === channel.team_id);
 
   const router = useRouter();
 
@@ -55,84 +53,10 @@ const ThreadWrapper = ({
       }`}
     >
       <div
-        className={`flex items-center justify-between gap-3 md:gap-4 border-b border-text-100 bg-background z-10 ${
+        className={`flex items-center justify-between gap-3 md:gap-4 border-b border-text-100 bg-background z-10 select-none ${
           screenWidth > 768 ? "py-3 px-6" : thread ? "px-3 py-1" : "p-3"
         }`}
       >
-        {screenWidth > 768 ? (
-          <div className="flex items-center w-64 whitespace-nowrap gap-1">
-            <Link
-              href={`/app/projects`}
-              className="hover:bg-text-100 p-1 py-0.5 rounded-lg transition-colors flex items-center gap-1"
-            >
-              {team ? (
-                <>
-                  {team.avatar_url ? (
-                    <Image
-                      src={team.avatar_url}
-                      alt={team.name}
-                      width={20}
-                      height={20}
-                      className="rounded-md"
-                    />
-                  ) : (
-                    <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-md flex items-center justify-center">
-                      <span className="text-surface text-[10px] font-bold">
-                        {team.name?.slice(0, 1).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
-                  <span
-                    className={`font-medium transition overflow-hidden whitespace-nowrap text-ellipsis`}
-                  >
-                    {team.name}
-                  </span>{" "}
-                </>
-              ) : (
-                "Personal"
-              )}
-            </Link>
-            <span className="text-text-400">/</span>
-
-            <Link
-              href={`/app/ch/${channel.slug}`}
-              className="font-medium text-text-900 hover:bg-text-100 rounded-lg p-1 py-0.5 transition cursor-pointer"
-            >
-              <span>#</span>
-              {channel.name}
-            </Link>
-          </div>
-        ) : (
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => router.push(`/app/ch/${channel.slug}`)}
-              className="flex items-center text-text-700 transition p-1"
-            >
-              <ChevronLeft
-                strokeWidth={1.5}
-                size={24}
-                className="min-w-6 min-h-6"
-              />
-            </button>
-
-            <button className="text-left bg-text-10 p-1 px-2 rounded-lg">
-              {screenWidth <= 768 && thread && (
-                <h2 className="font-semibold md:text-lg text-text-900 line-clamp-1">
-                  {thread.title}
-                </h2>
-              )}
-              <h3 className="font-normal md:font-medium text-text-500 md:text-text-900 text-xs flex items-center gap-1">
-                <div>
-                  <span>#</span>
-                  {channel.name}
-                </div>
-                <span>•</span>
-                <span>More</span>
-              </h3>
-            </button>
-          </div>
-        )}
-
         {!thread ? (
           screenWidth > 768 ? (
             <>
@@ -197,9 +121,38 @@ const ThreadWrapper = ({
               </div>
             </>
           )
-        ) : (
-          <div className="hidden md:flex items-center justify-center">
+        ) : screenWidth > 768 ? (
+          <div className="flex items-center justify-center">
             <h2 className="font-semibold text-lg">{thread.title}</h2>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.push(`/app/ch/${channel.slug}`)}
+              className="flex items-center text-text-700 transition p-1"
+            >
+              <ChevronLeft
+                strokeWidth={1.5}
+                size={24}
+                className="min-w-6 min-h-6"
+              />
+            </button>
+
+            <button className="text-left bg-text-10 p-1 px-2 rounded-lg">
+              {screenWidth <= 768 && thread && (
+                <h2 className="font-semibold md:text-lg text-text-900 line-clamp-1">
+                  {thread.title}
+                </h2>
+              )}
+              <h3 className="font-normal md:font-medium text-text-500 md:text-text-900 text-xs flex items-center gap-1">
+                <div>
+                  <span>#</span>
+                  {channel.name}
+                </div>
+                <span>•</span>
+                <span>More</span>
+              </h3>
+            </button>
           </div>
         )}
 
@@ -211,7 +164,7 @@ const ThreadWrapper = ({
               <button className="text-text-500 md:hover:bg-text-100 md:px-2 p-1 justify-center md:rounded-lg transition flex items-center gap-1">
                 <Headphones
                   strokeWidth={1.5}
-                  size={screenWidth > 768 ? 16 : 24}
+                  size={screenWidth > 768 ? 16 : 20}
                 />
                 <span className="hidden md:inline-block">Huddle</span>
               </button>

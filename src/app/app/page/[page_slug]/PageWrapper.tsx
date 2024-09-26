@@ -7,7 +7,7 @@ import { useRole } from "@/context/RoleContext";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import useScreen from "@/hooks/useScreen";
 import { PageType } from "@/types/pageTypes";
-import { ChevronLeft, File } from "lucide-react";
+import { ChevronLeft, File, FileText } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { ReactNode, useState } from "react";
@@ -137,7 +137,7 @@ const PageWrapper = ({
               <ChevronLeft strokeWidth={1.5} size={24} />
             </button>
             <div className="flex items-center gap-1">
-              <File size={24} className={`text-${page?.settings.color}`} />
+              <FileText size={24} className={`text-${page?.settings.color}`} />
               {modalState.editTitle ? (
                 <input
                   type="text"
@@ -208,7 +208,7 @@ const PageWrapper = ({
         {screenWidth > 768 && (
           <div className="relative px-80">
             <div className="absolute -top-1/2 translate-y-1/3">
-              <File size={60} className={`text-${page?.settings.color}`} />
+              <FileText size={60} className={`text-${page?.settings.color}`} />
             </div>
             <div className="mt-16">
               <input

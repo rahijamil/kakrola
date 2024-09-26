@@ -12,8 +12,6 @@ export async function POST(req: NextRequest) {
     const userId = userIdCookie ? userIdCookie.value : null;
     const email = emailCookie ? emailCookie.value : null;
 
-    console.log({ userId, email });
-
     if (!email) {
       return NextResponse.json(
         { message: "Email is required" },

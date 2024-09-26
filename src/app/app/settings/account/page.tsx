@@ -164,7 +164,7 @@ export default function AccountSettingsPage() {
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 min-w-16 min-h-16 rounded-lg relative bg-text-200 overflow-hidden">
                 <Image
-                  src={avatarUrl || "/default-avatar.png"}
+                  src={avatarUrl || "/default_avatar.png"}
                   alt="Profile Picture"
                   fill
                   objectFit="cover"

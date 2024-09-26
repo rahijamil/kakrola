@@ -140,7 +140,7 @@ const Step5InviteMembers = () => {
               fullWidth
               variant="gray"
             >
-              {skipLoading ? <Spinner color="primary" /> : "Skip for now"}
+              {skipLoading ? <Spinner color="current" /> : "Skip for now"}
             </Button>
 
             <p className="text-xs text-text-500">

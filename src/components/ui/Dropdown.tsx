@@ -24,6 +24,7 @@ interface DropdownProps {
     textColor?: string;
     disabled?: boolean;
     rightContent?: ReactNode;
+    parentTitle?: string;
   }[];
   dataFromElement?: boolean;
   autoClose?: boolean;
@@ -31,7 +32,7 @@ interface DropdownProps {
   contentWidthClass?: string;
   className?: string;
   isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  setIsOpen: Dispatch<SetStateAction<boolean>> | ((value: boolean) => void);
   triggerRef: RefObject<HTMLElement> | null;
   direction?: "top-right" | "bottom-left";
   beforeItemsContent?: ReactNode;
@@ -177,6 +178,21 @@ const Dropdown: React.FC<DropdownProps> = ({
     };
   }, [isOpen, screenWidth]);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   const [showContent, setShowContent] = useState(false);
   const toggleContent = () => {
     setShowContent(!showContent);
@@ -274,6 +290,11 @@ const Dropdown: React.FC<DropdownProps> = ({
                   {items.map((item, _index) => (
                     <>
                       <div key={_index} onClick={(ev) => ev.stopPropagation()}>
+                        {item.parentTitle && (
+                          <p className="px-4 py-1.5 font-medium text-xs text-text-500">
+                            {item.parentTitle}
+                          </p>
+                        )}
                         <button
                           type="button"
                           onClick={() => {
@@ -412,6 +433,11 @@ const Dropdown: React.FC<DropdownProps> = ({
                             key={_index}
                             onClick={(ev) => ev.stopPropagation()}
                           >
+                            {item.parentTitle && (
+                              <p className="px-4 py-1.5 font-medium text-xs text-text-500">
+                                {item.parentTitle}
+                              </p>
+                            )}
                             <button
                               type="button"
                               onTouchStart={(ev) => {

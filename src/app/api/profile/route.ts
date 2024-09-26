@@ -2,14 +2,14 @@ import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  try {
-    const supabase = createClient();
+  const supabase = createClient();
 
+  try {
     const {
       data: { user },
       error,
     } = await supabase.auth.getUser();
-    
+
     if (error) throw error;
 
     if (user) {

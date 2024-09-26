@@ -9,6 +9,7 @@ import {
 } from "@/types/team";
 import { ProfileType } from "@/types/user";
 import { differenceInDays } from "date-fns";
+import { cookies } from "next/headers";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);

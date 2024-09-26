@@ -28,6 +28,7 @@ import AddEditProject from "@/components/AddEditProject";
 import AddEditChannel from "@/components/AddEditChannel";
 import useScreen from "@/hooks/useScreen";
 import { motion } from "framer-motion";
+import SidebarCreateMore from "./SidebarCreateMore";
 
 const menuItems: {
   id: number;
@@ -48,12 +49,30 @@ const Sidebar = ({
   sidebarWidth,
   setShowAddTeam,
   setShowLogoutConfirm,
-  setShowAddTaskModal,
+  quickActions,
+  setQuickActions,
 }: {
   sidebarWidth: number;
   setShowAddTeam: React.Dispatch<React.SetStateAction<boolean | number>>;
   setShowLogoutConfirm: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowAddTaskModal: React.Dispatch<React.SetStateAction<boolean>>;
+  quickActions: {
+    showAddTaskModal: boolean;
+    showAddSectionModal: boolean;
+    showCreateDMModal: boolean;
+    showCreateThreadModal: boolean;
+    showCreateThreadReplyModal: boolean;
+    isOpen: boolean;
+  };
+  setQuickActions: React.Dispatch<
+    React.SetStateAction<{
+      showAddTaskModal: boolean;
+      showAddSectionModal: boolean;
+      showCreateDMModal: boolean;
+      showCreateThreadModal: boolean;
+      showCreateThreadReplyModal: boolean;
+      isOpen: boolean;
+    }>
+  >;
 }) => {
   const pathname = usePathname();
   const { screenWidth } = useScreen();
@@ -90,14 +109,10 @@ const Sidebar = ({
                 <Bell strokeWidth={1.5} width={20} />
               </button>
 
-              <button
-                onClick={() => setShowAddTaskModal(true)}
-                className="flex items-center gap-1 text-primary-600 font-semibold hover:bg-primary-50 rounded-lg transition-colors duration-150 z-10 w-8 h-8 justify-center"
-              >
-                <div className="w-5 h-5 bg-primary-500 rounded-full">
-                  <Plus className="w-5 h-5 text-surface" strokeWidth={1.5} />
-                </div>
-              </button>
+              <SidebarCreateMore
+                quickActions={quickActions}
+                setQuickActions={setQuickActions}
+              />
             </div>
           )}
         </div>

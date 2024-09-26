@@ -102,6 +102,8 @@ const TeamProjects = ({
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
   const [showAddChannel, setShowAddChannel] = useState(false);
 
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <>
       <div>
@@ -115,7 +117,7 @@ const TeamProjects = ({
             onTouchEnd={(ev) =>
               ev.currentTarget.classList.remove("bg-primary-50")
             }
-            className="relative text-text-600 md:hover:bg-primary-50 rounded-lg transition flex items-center justify-between pr-1"
+            className={`relative text-text-600  rounded-lg transition flex items-center justify-between pr-1  ${!isOpen ? "md:hover:bg-primary-50" : "md:bg-primary-50"}`}
           >
             <Link
               href={`/app/${team.id}`}
@@ -163,6 +165,7 @@ const TeamProjects = ({
                 screenWidth > 768 &&
                 !showAddProjectModal &&
                 !showAddChannel &&
+                !isOpen &&
                 "opacity-0 group-hover:opacity-100"
               } transition flex items-center`}
             >
@@ -174,6 +177,8 @@ const TeamProjects = ({
                   showAddProjectModal,
                   showAddChannel,
                 }}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
               />
 
               <button

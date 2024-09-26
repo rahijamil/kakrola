@@ -38,7 +38,7 @@ const AppProjectsActivePage = () => {
         <div className="space-y-3">
           <div className={`flex items-center gap-2`}>
             <Image
-              src={profile?.avatar_url || "/default-avatar.png"}
+              src={profile?.avatar_url || "/default_avatar.png"}
               alt={profile?.full_name || profile?.username || ""}
               width={26}
               height={26}

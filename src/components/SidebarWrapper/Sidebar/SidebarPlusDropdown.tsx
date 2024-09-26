@@ -7,7 +7,7 @@ import { PageType } from "@/types/pageTypes";
 import { generateSlug } from "@/utils/generateSlug";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { AnimatePresence } from "framer-motion";
-import { CheckCircle, File, Hash, Plus } from "lucide-react";
+import { CheckCircle, FileText, Hash, Plus, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { v4 as uuid4 } from "uuid";
@@ -20,6 +20,8 @@ const SidebarPlusDropdown = ({
     setShowAddChannel,
     showAddChannel,
   },
+  isOpen,
+  setIsOpen,
 }: {
   teamId?: number;
   modalStates: {
@@ -28,10 +30,11 @@ const SidebarPlusDropdown = ({
     showAddChannel?: boolean;
     setShowAddChannel?: Dispatch<SetStateAction<boolean>>;
   };
+  isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const triggerRef = useRef(null);
 
-  const [isOpen, setIsOpen] = useState(false);
   const { profile } = useAuthProvider();
   const { setPages, pages } = useSidebarData();
   const router = useRouter();
@@ -126,7 +129,7 @@ const SidebarPlusDropdown = ({
           {
             id: 2,
             label: "New Page",
-            icon: <File strokeWidth={1.5} size={20} />,
+            icon: <FileText strokeWidth={1.5} size={20} />,
             onClick: handleCreatePage,
             summary: "Create and share docs.",
           },
@@ -142,6 +145,15 @@ const SidebarPlusDropdown = ({
                     setShowAddChannel(true);
                   },
                   summary: "Set up team channels.",
+                },
+                {
+                  id: 4,
+                  label: "Invite Members",
+                  icon: <UserPlus strokeWidth={1.5} size={20} />,
+                  onClick: () => {
+                    // setShowAddChannel(true);
+                  },
+                  summary: "Add team members to collaborate.",
                 },
               ]
             : []),

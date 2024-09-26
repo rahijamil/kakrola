@@ -3,6 +3,7 @@ import {
   CalendarDays,
   ChevronDown,
   File,
+  FileText,
   LayoutDashboard,
   MapPin,
   Plus,
@@ -67,7 +68,7 @@ const allViews: {
   {
     id: 6,
     name: "Page",
-    icon: <File size={16} strokeWidth={1.5} />,
+    icon: <FileText size={16} strokeWidth={1.5} />,
     visible: true,
   },
 ];

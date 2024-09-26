@@ -21,7 +21,7 @@ import { useAuthProvider } from "./AuthContext";
 import { ProjectType } from "@/types/project";
 
 const RoleProvider = ({ children }: { children: ReactNode }) => {
-  const { personalMembers, teamMemberships } = useSidebarDataProvider();
+  const { personalMembers, teamMembers } = useSidebarDataProvider();
   const { profile } = useAuthProvider();
 
   const role = useCallback(
@@ -36,7 +36,7 @@ const RoleProvider = ({ children }: { children: ReactNode }) => {
         return projectMember.role;
       }
 
-      const teamMember = teamMemberships.find(
+      const teamMember = teamMembers.find(
         (member) => member.profile_id === profile.id
       );
 
@@ -46,7 +46,7 @@ const RoleProvider = ({ children }: { children: ReactNode }) => {
 
       return null;
     },
-    [profile, personalMembers, teamMemberships]
+    [profile, personalMembers, teamMembers]
   );
 
   return (

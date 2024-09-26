@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import React from "react";
 import AppLayoutWrapper from "./AppLayoutWrapper";
-import SidebarWrapper from "@/components/SidebarWrapper";
-import MainContent from "./MainContent";
 
 export const metadata: Metadata = {
   title: "Today - Kakrola",
@@ -17,14 +15,8 @@ export default function AppLayout({
   modal: React.ReactNode;
 }>) {
   return (
-    <AppLayoutWrapper>
-      <main className="fixed top-0 left-0 bottom-0 right-0 bg-background">
-        <div className="flex h-full">
-          <SidebarWrapper />
-          <MainContent>{children}</MainContent>
-        </div>
-        {modal}
-      </main>
+    <AppLayoutWrapper modal={modal}>
+     {children}
     </AppLayoutWrapper>
   );
 }

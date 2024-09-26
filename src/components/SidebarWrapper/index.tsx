@@ -9,28 +9,44 @@ import AddTeam from "../AddTeam";
 import AddTaskModal from "../AddTask/AddTaskModal";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
 import axios from "axios";
-import useSidebarCollapse from "./useSidebarCollapse";
 
-const SidebarWrapper = () => {
+const SidebarWrapper = ({
+  props: {
+    isCollapsed,
+    toggleSidebar,
+    sidebarWidth,
+    sidebarLeft,
+    isResizing,
+    handleMouseDown,
+  },
+}: {
+  props: {
+    sidebarWidth: number;
+    sidebarLeft: number;
+    isResizing: boolean;
+    setIsResizing: React.Dispatch<React.SetStateAction<boolean>>;
+    toggleSidebar: () => void;
+    handleMouseDown: (e: React.MouseEvent) => void;
+    isCollapsed: boolean;
+  };
+}) => {
   const pathname = usePathname();
 
   if (pathname.startsWith("/app/onboard")) {
     return null;
   }
 
-  const [showAddTaskModal, setShowAddTaskModal] = useState(false);
+  const [quickActions, setQuickActions] = useState({
+    showAddTaskModal: false,
+    showAddSectionModal: false,
+    showCreateDMModal: false,
+    showCreateThreadModal: false,
+    showCreateThreadReplyModal: false,
+    isOpen: false,
+  });
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [showAddTeam, setShowAddTeam] = useState<boolean | number>(false);
-
-  const {
-    sidebarWidth,
-    sidebarLeft,
-    isResizing,
-    handleMouseDown,
-    toggleSidebar,
-    isCollapsed,
-  } = useSidebarCollapse();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -41,15 +57,15 @@ const SidebarWrapper = () => {
         (activeElement instanceof HTMLElement &&
           activeElement.isContentEditable);
 
-      if (event.key === "Escape") {
-        event.preventDefault();
+      // if (event.key === "Escape") {
+      //   event.preventDefault();
 
-        setShowAddTaskModal(false);
-      }
+      //   setQuickActions((prev) => ({ ...prev, isOpen: false }));
+      // }
 
       if (event.key.toLowerCase() == "q" && !isInputField) {
         event.preventDefault();
-        setShowAddTaskModal(true);
+        setQuickActions((prev) => ({ ...prev, isOpen: true }));
       }
     };
 
@@ -80,7 +96,7 @@ const SidebarWrapper = () => {
             <div
               className={`fixed md:relative flex transition-all duration-300 h-screen whitespace-nowrap origin-left z-20 group desktop_sidebar ${
                 isCollapsed
-                  ? "bg-primary-10 hover:bg-primary-50"
+                  ? "bg-primary-10 hover:bg-primary-50 is_collapsed"
                   : "bg-primary-10"
               }`}
               style={{
@@ -102,7 +118,8 @@ const SidebarWrapper = () => {
                   sidebarWidth={sidebarWidth}
                   setShowAddTeam={setShowAddTeam}
                   setShowLogoutConfirm={setShowLogoutConfirm}
-                  setShowAddTaskModal={setShowAddTaskModal}
+                  setQuickActions={setQuickActions}
+                  quickActions={quickActions}
                 />
               </div>
 
@@ -138,12 +155,19 @@ const SidebarWrapper = () => {
         </div>
       ) : (
         !isNotRenderMobileSidebar && (
-          <MobileSidebar setShowAddTaskModal={setShowAddTaskModal} />
+          <MobileSidebar
+            setQuickActions={setQuickActions}
+            quickActions={quickActions}
+          />
         )
       )}
 
-      {showAddTaskModal && (
-        <AddTaskModal onClose={() => setShowAddTaskModal(false)} />
+      {quickActions.showAddTaskModal && (
+        <AddTaskModal
+          onClose={() =>
+            setQuickActions({ ...quickActions, showAddTaskModal: false })
+          }
+        />
       )}
 
       {showLogoutConfirm && (

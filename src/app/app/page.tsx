@@ -37,35 +37,33 @@ const Today = () => {
   };
 
   return (
-    <AppWrapper>
-      <LayoutWrapper
-        headline="Today"
-        view={view}
-        setView={setView}
-        hideCalendarView
-      >
-        {renderTaskViewSwitcherForToday()}
+    <LayoutWrapper
+      headline="Today"
+      view={view}
+      setView={setView}
+      hideCalendarView
+    >
+      {renderTaskViewSwitcherForToday()}
 
-        {todayTasks.length === 0 && view === "List" && (
-          <div className="flex items-center justify-center flex-col gap-1 h-[35vh] select-none">
-            <Image
-              src="/today.png"
-              width={200}
-              height={200}
-              alt="Today"
-              className="rounded-md object-cover"
-              draggable={false}
-            />
-            <div className="text-center space-y-1 w-72">
-              <h3 className="font-medium text-base">Your tasks for today</h3>
-              <p className="text-sm text-text-600">
-                Add your tasks here to focus on what’s important today.
-              </p>
-            </div>
+      {todayTasks.length === 0 && view === "List" && (
+        <div className="flex items-center justify-center flex-col gap-1 h-[35vh] select-none">
+          <Image
+            src="/today.png"
+            width={200}
+            height={200}
+            alt="Today"
+            className="rounded-md object-cover"
+            draggable={false}
+          />
+          <div className="text-center space-y-1 w-72">
+            <h3 className="font-medium text-base">Your tasks for today</h3>
+            <p className="text-sm text-text-600">
+              Add your tasks here to focus on what’s important today.
+            </p>
           </div>
-        )}
-      </LayoutWrapper>
-    </AppWrapper>
+        </div>
+      )}
+    </LayoutWrapper>
   );
 };
 

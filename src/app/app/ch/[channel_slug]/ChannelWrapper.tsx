@@ -105,74 +105,7 @@ const ChannelWrapper = ({
             screenWidth > 768 ? "py-3 px-6" : "p-3"
           }`}
         >
-          {screenWidth > 768 ? (
-            <div className="flex items-center w-64 whitespace-nowrap gap-1">
-              <Link
-                href={`/app/projects`}
-                className="hover:bg-text-100 p-1 py-0.5 rounded-lg transition-colors flex items-center gap-1"
-              >
-                {team ? (
-                  <>
-                    {team.avatar_url ? (
-                      <Image
-                        src={team.avatar_url}
-                        alt={team.name}
-                        width={20}
-                        height={20}
-                        className="rounded-md"
-                      />
-                    ) : (
-                      <div className="w-5 h-5 min-w-5 min-h-5 bg-primary-500 rounded-md flex items-center justify-center">
-                        <span className="text-surface text-[10px] font-bold">
-                          {team.name?.slice(0, 1).toUpperCase()}
-                        </span>
-                      </div>
-                    )}
-                    <span
-                      className={`font-medium transition overflow-hidden whitespace-nowrap text-ellipsis`}
-                    >
-                      {team.name}
-                    </span>{" "}
-                  </>
-                ) : (
-                  "Personal"
-                )}
-              </Link>
-              <span className="text-text-400">/</span>
-
-              <h2 className="font-medium text-text-900 hover:bg-text-100 rounded-lg p-1 py-0.5 transition cursor-pointer">
-                <span>#</span>
-                {channel.name}
-              </h2>
-            </div>
-          ) : (
-            <div className="flex items-center gap-3">
-              <button onClick={() => router.back()} className="w-6 h-6">
-                <ChevronLeft strokeWidth={1.5} size={24} />
-              </button>
-              <div className="flex items-center gap-1">
-                <Hash size={24} className={`text-${channel?.settings.color}`} />
-                {modalState.editTitle ? (
-                  <input
-                    type="text"
-                    className="font-semibold border border-text-300 rounded-lg p-1 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 bg-transparent"
-                    value={pageTitle}
-                    onBlur={handleEditTitle}
-                    autoFocus
-                    onChange={(ev) => setPageTitle(ev.target.value)}
-                    onKeyDown={(ev) => ev.key === "Enter" && handleEditTitle()}
-                  />
-                ) : (
-                  <h1
-                    className="font-semibold border border-transparent hover:border-text-100 rounded-lg w-full p-1 py-0.5 cursor-text inline-block overflow-hidden text-ellipsis"
-                    onClick={() => toggleModal("editTitle", true)}
-                  >
-                    {channel.name}
-                  </h1>
-                )}
-              </div>
-            </div>
-          )}
+          
 
           <div className={`flex items-center justify-end md:flex-1`}>
             <ul className="flex items-center">

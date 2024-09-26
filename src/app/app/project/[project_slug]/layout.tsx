@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import React from "react";
 
 export async function generateMetadata({

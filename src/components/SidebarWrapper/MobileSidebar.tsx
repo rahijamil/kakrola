@@ -1,126 +1,161 @@
-'use client'
+"use client";
 
-import React, { Dispatch, SetStateAction, useMemo, useState, useEffect } from "react"
-import { usePathname, useRouter } from "next/navigation"
-import { useAuthProvider } from "@/context/AuthContext"
+import React, {
+  Dispatch,
+  SetStateAction,
+  useMemo,
+  useState,
+  useEffect,
+} from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Home,
-  Calendar,
+  CheckSquare,
   MessagesSquare,
-  Plus,
   User,
-  LucideIcon,
+  Plus,
   Loader2,
-} from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
-import Link from "next/link"
-import { useTransition } from "react"
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { useTransition } from "react";
+import SidebarCreateMore from "./Sidebar/SidebarCreateMore";
 
 interface MenuItem {
-  id: number
-  icon: LucideIcon
-  text: string
-  path: string
+  id: number;
+  icon: React.ElementType;
+  text: string;
+  path: string;
 }
 
 interface MobileSidebarProps {
-  setShowAddTaskModal: Dispatch<SetStateAction<boolean>>
-  className?: string
+  quickActions: {
+    isOpen: boolean;
+  };
+  setQuickActions: Dispatch<
+    SetStateAction<{
+      showAddTaskModal: boolean;
+      showAddSectionModal: boolean;
+      showCreateDMModal: boolean;
+      showCreateThreadModal: boolean;
+      showCreateThreadReplyModal: boolean;
+      isOpen: boolean;
+    }>
+  >;
+  className?: string;
 }
 
-export default function MobileSidebar({
-  setShowAddTaskModal,
+function MobileSidebar({
+  setQuickActions,
+  quickActions,
   className = "",
 }: MobileSidebarProps) {
-  const pathname = usePathname()
-  const router = useRouter()
-  const [isPending, startTransition] = useTransition()
-  const [activeItem, setActiveItem] = useState<string | null>(null)
+  const pathname = usePathname();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [activeItem, setActiveItem] = useState<string | null>(null);
 
   const menuItems: MenuItem[] = useMemo(
     () => [
       { id: 1, icon: Home, text: "Home", path: "/app/home" },
-      { id: 2, icon: Calendar, text: "Tasks", path: "/app" },
+      { id: 2, icon: CheckSquare, text: "Tasks", path: "/app" },
       { id: 3, icon: MessagesSquare, text: "DMs", path: "/app/dm" },
       { id: 4, icon: User, text: "Profile", path: "/app/more" },
     ],
     []
-  )
+  );
 
   const handleNavigation = (path: string) => {
-    setActiveItem(path)
+    setActiveItem(path);
     startTransition(() => {
-      router.push(path)
-    })
-  }
+      router.push(path);
+    });
+  };
 
   useEffect(() => {
     if (!isPending) {
-      setActiveItem(null)
+      setActiveItem(null);
     }
-  }, [isPending])
+  }, [isPending]);
 
   return (
-    <motion.aside
+    <motion.nav
       initial={{ y: "100%" }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className={`fixed bottom-0 left-0 right-0 z-20 bg-primary-10 shadow-lg rounded-t-xl border-t border-primary-50 ${className}`}
+      className={`fixed bottom-0 left-0 right-0 z-20 bg-primary-10 shadow-lg border-t border-primary-50 ${className}`}
+      aria-label="Mobile navigation"
     >
-      <nav aria-label="Mobile navigation">
-        <ul className="flex justify-around items-center px-4">
-          {menuItems.map((item) => (
-            <li key={item.id} className="relative">
+      <ul className="flex justify-around items-center px-2 py-2">
+        {menuItems.map((item) => {
+          const isActive = pathname === item.path;
+          return (
+            <li key={item.id} className="relative flex-1">
               <Link
                 href={item.path}
                 onClick={() => handleNavigation(item.path)}
-                className={`flex flex-col items-center p-2 transition-colors duration-200 py-4 ${
-                  isPending && activeItem !== item.path ? 'pointer-events-none opacity-50' : ''
+                className={`flex flex-col items-center justify-center p-2 transition-all duration-200 ${
+                  isPending && activeItem !== item.path
+                    ? "pointer-events-none opacity-50"
+                    : ""
                 }`}
-                aria-current={pathname === item.path ? "page" : undefined}
+                aria-current={isActive ? "page" : undefined}
               >
-                {isPending && activeItem === item.path ? (
-                  <Loader2 className="w-6 h-6 animate-spin text-primary-500" />
-                ) : (
-                  <item.icon
-                    strokeWidth={1.5}
-                    className={`w-6 h-6 ${
-                      pathname === item.path ? "text-primary-500" : "text-gray-500"
-                    }`}
-                    aria-hidden="true"
-                  />
-                )}
+                <span className="relative inline-flex items-center justify-center">
+                  {isPending && activeItem === item.path ? (
+                    <Loader2 className="w-6 h-6 animate-spin text-primary-500" />
+                  ) : (
+                    <item.icon
+                      strokeWidth={1.5}
+                      className={`w-6 h-6 ${
+                        isActive ? "text-primary-500" : "text-text-500"
+                      }`}
+                      aria-hidden="true"
+                    />
+                  )}
+                  {isActive && (
+                    <motion.span
+                      layoutId="activeIndicator"
+                      className="absolute -top-1 left-[calc(50%-2px)] w-1 h-1 bg-primary-500 rounded-full"
+                      initial={false}
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 30,
+                      }}
+                    />
+                  )}
+                </span>
                 <span
                   className={`text-xs mt-1 font-medium ${
-                    pathname === item.path ? "text-primary-500" : "text-gray-500"
+                    isActive ? "text-primary-500" : "text-text-500"
                   }`}
                 >
                   {item.text}
                 </span>
-                <AnimatePresence>
-                  {pathname === item.path && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute top-0 w-6 h-0.5 bg-primary-500 rounded-lg"
-                      initial={false}
-                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                    />
-                  )}
-                </AnimatePresence>
               </Link>
             </li>
-          ))}
-          <li className="py-3 pb-4">
-            <button
-              onClick={() => setShowAddTaskModal(true)}
-              className="bg-primary-500 text-primary-10 p-3 rounded-lg shadow-lg transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50"
-              aria-label="Add new task"
-            >
-              <Plus strokeWidth={2} className="w-6 h-6" aria-hidden="true" />
-            </button>
-          </li>
-        </ul>
-      </nav>
-    </motion.aside>
-  )
+          );
+        })}
+      </ul>
+
+      <div className="fixed bottom-[calc(6rem-4px)] right-4">
+        <SidebarCreateMore
+          quickActions={quickActions}
+          setQuickActions={setQuickActions}
+        />
+      </div>
+    </motion.nav>
+  );
+}
+
+export default function MobileSidebarWrapper(props: MobileSidebarProps) {
+  const searchParams = useSearchParams();
+  const contactId = searchParams.get("contact-id");
+
+  if (contactId) {
+    return null;
+  }
+
+  return <MobileSidebar {...props} />;
 }

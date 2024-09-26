@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { v4 as uuidv4 } from "uuid";
 import { InviteStatus, InviteType } from "@/types/team";
 import { RoleType } from "@/types/role";
+import { cookies } from "next/headers";
 
 export async function POST(req: NextRequest) {
   const supabase = createClient();

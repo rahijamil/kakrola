@@ -84,6 +84,8 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
 
   const { screenWidth } = useScreen();
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <>
       <div>
@@ -97,9 +99,9 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
             onTouchEnd={(ev) =>
               ev.currentTarget.classList.remove("bg-primary-50")
             }
-            className={`relative text-text-600 rounded-lg transition md:hover:bg-primary-50 flex items-center justify-between pr-1 ${
+            className={`relative text-text-600 rounded-lg transition flex items-center justify-between pr-1 ${
               pathname.startsWith("/app/projects") && "bg-primary-100"
-            }`}
+            } ${!isOpen ? "md:hover:bg-primary-50" : "md:bg-primary-50"}`}
           >
             <Link
               href={`/app/projects`}
@@ -138,6 +140,7 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
               className={`${
                 screenWidth > 768 &&
                 !showAddProjectModal &&
+                !isOpen &&
                 "opacity-0 group-hover:opacity-100"
               } transition flex items-center`}
             >
@@ -146,6 +149,8 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
                   setShowAddProjectModal,
                   showAddProjectModal,
                 }}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
               />
 
               <button
