@@ -100,6 +100,7 @@ function MobileSidebar({
                     : ""
                 }`}
                 aria-current={isActive ? "page" : undefined}
+                onContextMenu={(e) => e.preventDefault()}
               >
                 <span className="relative inline-flex items-center justify-center">
                   {isPending && activeItem === item.path ? (

@@ -2,73 +2,100 @@
 
 import React from "react";
 import ThreadWrapper from "../ThreadWrapper";
+import { ChannelType } from "@/types/channel";
+import Spinner from "@/components/ui/Spinner";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import Thread from "../../Thread";
+import { usePathname } from "next/navigation";
+import { AnimatePresence } from "framer-motion";
+import useThread from "../[thread_slug]/useThread";
 
-const NewThreadPage = ({
+const ThreadNewPage = ({
   params: { channel_slug },
 }: {
-  params: { channel_slug: string };
+  params: { channel_slug: string; thread_slug: string };
 }) => {
-  const { channels } = useSidebarDataProvider();
-  const channel = channels.find((c) => c.slug === channel_slug);
+  const { channels, sidebarLoading } = useSidebarDataProvider();
+  const findChannel = channels.find(
+    (channel: ChannelType) => channel.slug === channel_slug
+  );
 
-  if (!channel) return null;
+  const pathname = usePathname();
+  const threadSlug =
+    pathname === `/app/ch/${channel_slug}/th/new`
+      ? null
+      : pathname.split("/").pop();
+
+  const {
+    thread,
+    replies,
+    setReplies,
+    error,
+    isLoading,
+    threadProfile,
+    groupedReplies,
+    showOptions,
+    setShowOptions,
+  } = useThread(findChannel?.id, threadSlug);
+
+  if (threadSlug !== null && (isLoading || sidebarLoading)) {
+    return (
+      <div className="flex items-center justify-center w-full h-screen text-primary-500">
+        <Spinner color="current" size="md" />
+      </div>
+    );
+  }
+
+  if (!findChannel || (threadSlug !== null && (!thread || error))) {
+    return (
+      <div className="flex items-center justify-center flex-col gap-1 h-[70vh] select-none w-full">
+        <Image
+          src="/not_found.png"
+          width={220}
+          height={200}
+          alt="Channel not found"
+          className="rounded-md object-cover"
+          draggable={false}
+        />
+        <div className="text-center space-y-2 w-72">
+          <h3 className="font-bold text-base">Thread not found</h3>
+          <p className="text-sm text-text-600 pb-4">
+            The thread doesn&apos;t seem to exist or you don&apos;t have
+            permission to access it.
+          </p>
+          <Link href="/app">
+            <Button>Go back to home</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <ThreadWrapper channel={channel}>
-      <div>
-        {/* {screenWidth > 768 ? (
-            <div className="flex justify-between items-center">
-              <h1 className="font-semibold text-xl">
-                {forEdit ? "Edit Channel" : "New thread"}
-              </h1>
-
-              <button
-                onClick={onClose}
-                className="text-text-500 hover:text-text-700 hover:bg-text-100 transition p-1 rounded-lg"
-              >
-                <X size={20} />
-              </button>
-            </div>
-          ) : (
-            <div className="flex justify-between items-center px-4 py-2 border-b border-text-100">
-              <div className="flex items-center gap-3">
-                <button onClick={onClose} className="w-6 h-6">
-                  <ChevronLeft strokeWidth={1.5} size={24} />
-                </button>
-
-                <h1 className="font-medium">
-                  {forEdit ? "Edit Channel" : "New thread"}
-                </h1>
-              </div>
-
-              <Button
-                type="submit"
-                disabled={loading || !threadTitle.trim()}
-                size="xs"
-                variant="ghost"
-              >
-                {loading ? (
-                  <div className="flex items-center gap-2">
-                    <Spinner color="white" />
-
-                    {forEdit ? (
-                      <span>Editing...</span>
-                    ) : (
-                      <span>Posting...</span>
-                    )}
-                  </div>
-                ) : forEdit ? (
-                  "Edit"
-                ) : (
-                  "Post"
-                )}
-              </Button>
-            </div>
-          )} */}
-      </div>
+    <ThreadWrapper
+      channel={findChannel}
+      thread={threadSlug == thread?.slug ? thread : null}
+    >
+      <AnimatePresence>
+        {thread && threadSlug === thread.slug ? (
+          <Thread
+            channel={findChannel}
+            thread={thread}
+            replies={replies}
+            setReplies={setReplies}
+            showOptions={showOptions}
+            setShowOptions={setShowOptions}
+            threadProfile={threadProfile}
+            groupedReplies={groupedReplies}
+            channel_slug={channel_slug}
+          />
+        ) : null}
+      </AnimatePresence>
     </ThreadWrapper>
   );
 };
 
-export default NewThreadPage;
+export default ThreadNewPage;

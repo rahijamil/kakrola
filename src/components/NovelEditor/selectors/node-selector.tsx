@@ -6,11 +6,12 @@ import {
   Heading3,
   TextQuote,
   ListOrdered,
-  TextIcon,
   Code,
   CheckSquare,
   type LucideIcon,
   ListCollapse,
+  ALargeSmall,
+  CodeXml,
 } from "lucide-react";
 import { EditorBubbleItem, useEditor } from "novel";
 
@@ -25,10 +26,36 @@ export type SelectorItem = {
   isActive: (editor: ReturnType<typeof useEditor>["editor"]) => boolean;
 };
 
+const headingItems: SelectorItem[] = document.querySelector(".reply-editor")
+  ? []
+  : [
+      {
+        name: "Heading 1",
+        icon: Heading1,
+        command: (editor) =>
+          editor?.chain().focus().toggleHeading({ level: 1 }).run(),
+        isActive: (editor) => !!!!editor?.isActive("heading", { level: 1 }),
+      },
+      {
+        name: "Heading 2",
+        icon: Heading2,
+        command: (editor) =>
+          editor?.chain().focus().toggleHeading({ level: 2 }).run(),
+        isActive: (editor) => !!editor?.isActive("heading", { level: 2 }),
+      },
+      {
+        name: "Heading 3",
+        icon: Heading3,
+        command: (editor) =>
+          editor?.chain().focus().toggleHeading({ level: 3 }).run(),
+        isActive: (editor) => !!editor?.isActive("heading", { level: 3 }),
+      },
+    ];
+
 const items: SelectorItem[] = [
   {
     name: "Text",
-    icon: TextIcon,
+    icon: ALargeSmall,
     command: (editor) =>
       editor?.chain().focus().toggleNode("paragraph", "paragraph").run(),
     // I feel like there has to be a more efficient way to do this – feel free to PR if you know how!
@@ -37,33 +64,7 @@ const items: SelectorItem[] = [
       !editor.isActive("bulletList") &&
       !editor.isActive("orderedList"),
   },
-  {
-    name: "Heading 1",
-    icon: Heading1,
-    command: (editor) =>
-      editor?.chain().focus().toggleHeading({ level: 1 }).run(),
-    isActive: (editor) => !!!!editor?.isActive("heading", { level: 1 }),
-  },
-  {
-    name: "Heading 2",
-    icon: Heading2,
-    command: (editor) =>
-      editor?.chain().focus().toggleHeading({ level: 2 }).run(),
-    isActive: (editor) => !!editor?.isActive("heading", { level: 2 }),
-  },
-  {
-    name: "Heading 3",
-    icon: Heading3,
-    command: (editor) =>
-      editor?.chain().focus().toggleHeading({ level: 3 }).run(),
-    isActive: (editor) => !!editor?.isActive("heading", { level: 3 }),
-  },
-  {
-    name: "To-do List",
-    icon: CheckSquare,
-    command: (editor) => editor?.chain().focus().toggleTaskList().run(),
-    isActive: (editor) => !!editor?.isActive("taskItem"),
-  },
+  ...headingItems,
   {
     name: "Bullet List",
     icon: ListOrdered,
@@ -75,6 +76,12 @@ const items: SelectorItem[] = [
     icon: ListOrdered,
     command: (editor) => editor?.chain().focus().toggleOrderedList().run(),
     isActive: (editor) => !!editor?.isActive("orderedList"),
+  },
+  {
+    name: "To-do List",
+    icon: CheckSquare,
+    command: (editor) => editor?.chain().focus().toggleTaskList().run(),
+    isActive: (editor) => !!editor?.isActive("taskItem"),
   },
   {
     name: "Toggle list",
@@ -96,7 +103,7 @@ const items: SelectorItem[] = [
   },
   {
     name: "Code",
-    icon: Code,
+    icon: CodeXml,
     command: (editor) => editor?.chain().focus().toggleCodeBlock().run(),
     isActive: (editor) => !!editor?.isActive("codeBlock"),
   },
@@ -132,15 +139,15 @@ export const NodeSelector = ({ open, onOpenChange }: NodeSelectorProps) => {
               item.command(editor);
               onOpenChange(false);
             }}
-            className="flex cursor-pointer items-center justify-between rounded-sm px-2 py-1 text-sm hover:bg-text-100"
+            className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-1 text-xs hover:bg-text-100"
           >
             <div className="flex items-center space-x-2">
-              <div className="rounded-sm border border-text-100 p-1">
-                <item.icon className="h-3 w-3" />
+              <div className="rounded-md border border-text-100 p-1 bg-background">
+                <item.icon className="h-4 w-4" strokeWidth={1.5} />
               </div>
               <span>{item.name}</span>
             </div>
-            {activeItem.name === item.name && <Check className="h-4 w-4" />}
+            {activeItem.name === item.name && <Check className="h-4 w-4" strokeWidth={1.5} />}
           </EditorBubbleItem>
         ))}
       </PopoverContent>

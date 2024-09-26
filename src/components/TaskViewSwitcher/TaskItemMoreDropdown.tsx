@@ -43,7 +43,7 @@ const TaskItemMoreDropdown = ({
         <button
           ref={triggerRef}
           className={`p-1 transition rounded-lg hidden group-hover:inline-block absolute right-1 top-1 ${
-            isOpen ? "bg-text-100" : "bg-text-100 hover:bg-text-200"
+            isOpen ? "bg-text-100" : "bg-text-100 hover:bg-text-100"
           }`}
           onClick={onClick}
         >
@@ -94,7 +94,7 @@ const TaskItemMoreDropdown = ({
         <div>
           {!column?.is_archived && (
             <>
-              {/* <div className="h-[1px] bg-text-200 my-1"></div>
+              {/* <div className="h-[1px] bg-text-100 my-1"></div>
           <div>
             <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center">
               <Calendar strokeWidth={1.5} className="w-4 h-4 mr-4" /> Dates
@@ -103,14 +103,14 @@ const TaskItemMoreDropdown = ({
               <Flag strokeWidth={1.5} className="w-4 h-4 mr-4" /> Priority
             </button>
           </div>
-          <div className="h-[1px] bg-text-200 my-1"></div>
+          <div className="h-[1px] bg-text-100 my-1"></div>
           <div>
             <button className="w-full text-left px-4 py-2 text-sm text-text-700 hover:bg-text-100 transition flex items-center">
               <AlarmClockIcon strokeWidth={1.5} className="w-4 h-4 mr-4" />{" "}
               Reminders
             </button>
           </div>
-          <div className="h-[1px] bg-text-200 my-1"></div> */}
+          <div className="h-[1px] bg-text-100 my-1"></div> */}
             </>
           )}
 

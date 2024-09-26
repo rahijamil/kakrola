@@ -3,7 +3,7 @@ import { ChannelType, ThreadType } from "@/types/channel";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useAuthProvider } from "@/context/AuthContext";
 
-const fetchPageDetails = async (channel_slug: string, profile_id: string) => {
+const fetchChannelDetails = async (channel_slug: string, profile_id: string) => {
   if (!channel_slug || !profile_id) return { channel: null };
 
   try {
@@ -48,7 +48,7 @@ const useChannelDetails = (channel_slug: string) => {
         return { channel: null, threads: [] };
       }
 
-      return fetchPageDetails(channel_slug, profile?.id);
+      return fetchChannelDetails(channel_slug, profile?.id);
     },
     enabled: !!channel_slug || !!profile?.id, // Only run the query if projectId is not null
     staleTime: 300000, // 5 minutes

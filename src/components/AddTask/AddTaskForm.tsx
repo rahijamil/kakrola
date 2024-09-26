@@ -339,7 +339,7 @@ const AddTaskForm = ({
                   resetTaskData();
                   onClose();
                 }}
-                className="px-3 py-[6px] text-[13px] text-text-600 transition bg-text-200 hover:bg-text-100 rounded-lg"
+                className="px-3 py-[6px] text-[13px] text-text-600 transition bg-text-100 hover:bg-text-100 rounded-lg"
                 disabled={loading}
               >
                 {isSmall ? (

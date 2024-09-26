@@ -1,11 +1,14 @@
+import { getProfileById } from "@/lib/queries";
 import { ThreadReplyType, ThreadType } from "@/types/channel";
+import { ProfileType } from "@/types/user";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import React from "react";
+import { isSameDay } from "date-fns";
+import React, { useEffect, useState } from "react";
 
 const getThread = async (
   channel_id?: number,
-  thread_slug?: string
+  thread_slug?: string | null
 ): Promise<{
   thread: ThreadType | null;
   replies: ThreadReplyType[];
@@ -41,7 +44,15 @@ const getThread = async (
   }
 };
 
-const useThread = (channel_id?: number, thread_slug?: string) => {
+interface GroupedReply {
+  date: Date;
+  replies: {
+    profile: ProfileType;
+    replies: ThreadReplyType[];
+  }[];
+}
+
+const useThread = (channel_id?: number, thread_slug?: string | null) => {
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
@@ -69,12 +80,78 @@ const useThread = (channel_id?: number, thread_slug?: string) => {
     );
   };
 
+  const [threadProfile, setThreadProfile] = useState<ProfileType | null>(null);
+  const [groupedReplies, setGroupedReplies] = useState<GroupedReply[]>([]);
+  const [showOptions, setShowOptions] = useState<string | null>(null);
+
+  const thread = data?.thread;
+  const replies = data?.replies;
+
+  useEffect(() => {
+    if (thread?.profile_id) {
+      const fetchProfile = async () => {
+        try {
+          const profile = await getProfileById(thread.profile_id);
+          setThreadProfile(profile);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      fetchProfile();
+    }
+  }, [thread?.profile_id]);
+
+  useEffect(() => {
+    if (replies && replies.length > 0) {
+      const fetchReplyProfiles = async () => {
+        const profiles = await Promise.all(
+          replies.map((reply) => getProfileById(reply.profile_id))
+        );
+
+        // Group replies by date and then by author
+        const grouped = replies.reduce<GroupedReply[]>((acc, reply) => {
+          const profile = profiles.find((p) => p.id === reply.profile_id);
+          if (!profile) return acc;
+
+          const replyDate = new Date(reply.created_at || "");
+          let dateGroup = acc.find((group) => isSameDay(group.date, replyDate));
+
+          if (!dateGroup) {
+            dateGroup = { date: replyDate, replies: [] };
+            acc.push(dateGroup);
+          }
+
+          let authorGroup = dateGroup.replies.find(
+            (group) => group.profile.id === profile.id
+          );
+
+          if (!authorGroup) {
+            authorGroup = { profile, replies: [] };
+            dateGroup.replies.push(authorGroup);
+          }
+
+          authorGroup.replies.push(reply);
+          return acc;
+        }, []);
+
+        setGroupedReplies(
+          grouped.sort((a, b) => a.date.getTime() - b.date.getTime())
+        );
+      };
+      fetchReplyProfiles();
+    }
+  }, [replies]);
+
   return {
     thread: data?.thread,
     replies: data?.replies || [],
     setReplies,
     isLoading,
     error,
+    threadProfile,
+    groupedReplies,
+    showOptions,
+    setShowOptions,
   };
 };
 

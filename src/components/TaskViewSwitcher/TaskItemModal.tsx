@@ -419,7 +419,7 @@ const TaskItemModal = ({
                   <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
               </div>
-              <div className="h-[1px] bg-text-200 m-2"></div>
+              <div className="h-[1px] bg-text-100 m-2"></div>
             </div>
             <div>
               <div className="space-y-2">
@@ -428,7 +428,7 @@ const TaskItemModal = ({
                   <Plus strokeWidth={1.5} className="w-4 h-4" />
                 </div>
               </div>
-              <div className="h-[1px] bg-text-200 m-2"></div>
+              <div className="h-[1px] bg-text-100 m-2"></div>
             </div>
             <div>
               <div className="space-y-2">
@@ -442,7 +442,7 @@ const TaskItemModal = ({
                   <LockKeyhole strokeWidth={1.5} className="w-4 h-4" />
                 </div>
               </div>
-              <div className="h-[1px] bg-text-200 m-2"></div>
+              <div className="h-[1px] bg-text-100 m-2"></div>
             </div> */}
               </div>
 
@@ -473,7 +473,7 @@ const TaskItemModal = ({
                 </ul>
               </div>
 
-              <div className="mb-8 bg-text-200 h-[1px]" />
+              <div className="mb-8 bg-text-100 h-[1px]" />
 
               {!showCommentForm && (
                 <div className="flex items-center gap-2">

@@ -512,7 +512,7 @@ const ViewSkeleton = ({
                         className={`h-full w-full p-2 border-r border-b border-text-100 transition space-y-1 aspect-square max-h-[93px]`}
                       >
                         <div className="flex items-center justify-end">
-                          <div className="w-2 h-2 rounded-lg bg-text-200"></div>
+                          <div className="w-2 h-2 rounded-lg bg-text-100"></div>
                         </div>
                       </div>
                     );

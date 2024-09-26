@@ -196,7 +196,7 @@ export default function AccountSettingsPage() {
         </Button>
       </section>
 
-      <div className="h-[1px] bg-text-200"></div> */}
+      <div className="h-[1px] bg-text-100"></div> */}
 
         {error && <p className="text-red-500">{error}</p>}
 
@@ -205,7 +205,7 @@ export default function AccountSettingsPage() {
             <label className="font-semibold">Profile</label>
 
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 min-w-16 min-h-16 rounded-lg relative bg-text-200 overflow-hidden">
+              <div className="w-16 h-16 min-w-16 min-h-16 rounded-lg relative bg-text-100 overflow-hidden">
                 <Image
                   src={avatarUrl || "/default_avatar.png"}
                   alt="Profile Picture"
@@ -329,7 +329,7 @@ export default function AccountSettingsPage() {
         </div> */}
         </section>
 
-        {/* <div className="h-[1px] bg-text-200"></div> */}
+        {/* <div className="h-[1px] bg-text-100"></div> */}
 
         {/* <section className="space-y-3">
         <div className="space-y-1">
@@ -367,7 +367,7 @@ export default function AccountSettingsPage() {
         </div>
       </section>
 
-      <div className="h-[1px] bg-text-200"></div> */}
+      <div className="h-[1px] bg-text-100"></div> */}
 
         {/* <section className="space-y-3">
         <div className="space-y-1">

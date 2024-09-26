@@ -24,7 +24,7 @@ const ThreadSidebar = ({ channel_slug }: { channel_slug: string }) => {
   const team = teams.find((t) => t.id === channel.team_id);
 
   return (
-    <div className="md:border-r border-text-100 w-full md:w-[25%] select-none">
+    <div className="md:border-r border-text-100 w-full md:w-1/4 max-w-[400px] select-none shadow-[inset_-1rem_0_1rem_-1rem_rgba(0,0,0,0.1),inset_1rem_0_1rem_-1rem_rgba(0,0,0,0.1)]">
       <div
         className={`border-b border-text-100 h-[53px] ${
           screenWidth > 768 ? "py-3 px-6" : "p-3"
@@ -111,6 +111,14 @@ const ThreadSidebar = ({ channel_slug }: { channel_slug: string }) => {
             <h2 className="font-semibold">Threads</h2>
 
             <Link
+              onClick={(ev) => {
+                ev.preventDefault();
+                window.history.pushState(
+                  null,
+                  "",
+                  `/app/ch/${channel_slug}/th/new`
+                );
+              }}
               href={`/app/ch/${channel_slug}/th/new`}
               className="text-primary-500 hover:text-primary-600 hover:bg-primary-50 transition text-sm flex items-center gap-1 px-2 py-1 rounded-lg"
             >

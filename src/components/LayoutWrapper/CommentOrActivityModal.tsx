@@ -36,7 +36,7 @@ const CommentOrActivityModal = ({
       </div>
 
       <div className="px-4">
-        <ul className="flex items-center p-1 rounded-lg bg-text-200 w-fit">
+        <ul className="flex items-center p-1 rounded-lg bg-text-100 w-fit">
           <li
             className={`p-1 px-4 rounded-lg font-medium cursor-pointer transition ${
               showCommentOrActivity === "comment" ? "bg-surface" : ""

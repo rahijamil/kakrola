@@ -70,7 +70,7 @@ const AddNewSectionListView = ({
             <button
               type="button"
               onClick={() => setShowAddSection(null)}
-              className="px-3 py-[6px] text-xs text-text-600 transition bg-text-200 hover:bg-text-100 rounded-lg disabled:opacity-50 disabled:hover:bg-text-100 disabled:cursor-not-allowed"
+              className="px-3 py-[6px] text-xs text-text-600 transition bg-text-100 hover:bg-text-100 rounded-lg disabled:opacity-50 disabled:hover:bg-text-100 disabled:cursor-not-allowed"
               disabled={sectionAddLoading}
             >
               Cancel

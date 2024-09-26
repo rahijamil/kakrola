@@ -19,7 +19,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuthProvider } from "@/context/AuthContext";
 import Image from "next/image";
-import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
 import Dropdown from "@/components/ui/Dropdown";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import Skeleton from "react-loading-skeleton";
@@ -65,8 +64,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
   <>
     {path ? (
       <Link
-        className={`w-full text-left px-4 py-1.5 text-sm text-text-700 hover:bg-text-100 transition flex items-center justify-between rounded-lg ${
-          isActive ? "bg-text-50" : ""
+        className={`w-full text-left px-4 py-1.5 text-sm text-text-700 hover:bg-primary-50 border-l-4 border-transparent hover:border-primary-200 transition flex items-center justify-between ${
+          isActive ? "bg-primary-50 border-primary-200" : ""
         }`}
         href={path}
         onMouseEnter={onMouseEnter}
@@ -90,8 +89,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
       </Link>
     ) : (
       <button
-        className={`w-full text-left px-4 py-1.5 text-sm text-text-700 hover:bg-text-100 transition flex items-center justify-between rounded-lg ${
-          isActive ? "bg-text-50" : ""
+        className={`w-full text-left px-4 py-1.5 text-sm text-text-700 hover:bg-primary-50 border-l-4 border-transparent hover:border-primary-200 transition flex items-center justify-between ${
+          isActive ? "bg-primary-50 border-primary-200" : ""
         }`}
         onClick={onClick}
         onMouseEnter={onMouseEnter}
@@ -127,7 +126,6 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
 }) => {
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
 
-  const router = useRouter();
   const { profile } = useAuthProvider();
   const { sidebarLoading } = useSidebarDataProvider();
 
@@ -259,9 +257,10 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
             <h2 className="font-bold">{profile?.full_name}</h2>
           </div>
 
-          <div className="h-[1px] bg-text-200 my-1"></div>
+          <div className="h-[1px] bg-text-100 my-1"></div>
         </>
       }
+      items={[]}
       content={
         <div>
           {menuItems.map((group, groupIndex) => (
@@ -299,7 +298,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
                 </div>
               ))}
               {groupIndex < menuItems.length - 1 && (
-                <div className="h-[1px] bg-text-200 my-1"></div>
+                <div className="h-[1px] bg-text-100 my-1"></div>
               )}
             </React.Fragment>
           ))}

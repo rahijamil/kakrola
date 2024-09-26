@@ -142,7 +142,7 @@ const Priorities = ({
                     ev.stopPropagation();
                     setTaskData({ ...taskData, priority: TaskPriority.Priority });
                   }}
-                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-200 rounded-lg hidden group-data-[state=priority]:group-hover:inline-block absolute top-1/2 -translate-y-1/2 right-2"
+                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-lg hidden group-data-[state=priority]:group-hover:inline-block absolute top-1/2 -translate-y-1/2 right-2"
                 >
                   <X strokeWidth={1.5} className="w-4 h-4 text-text-500" />
                 </button>

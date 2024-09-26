@@ -49,6 +49,14 @@ const ThreadCard = ({
 
   return (
     <Link
+      onClick={(ev) => {
+        ev.preventDefault();
+        window.history.pushState(
+          null,
+          "",
+          `/app/ch/${channel_slug}/th/${thread.slug}`
+        );
+      }}
       href={`/app/ch/${channel_slug}/th/${thread.slug}`}
       className={`flex gap-2 w-full transition p-4 cursor-pointer border-r-4 ${
         pathname === `/app/ch/${channel_slug}/th/${thread.slug}`

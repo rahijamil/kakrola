@@ -22,7 +22,7 @@ export interface ReactionType {
   type: "thread" | "thread_reply" | "dm";
   thread_id?: number;
   thread_reply_id?: number;
-  dm_id?: number;
+  dm_id?: DmType['id'];
 }
 
 export interface ThreadReactionType extends ReactionType {
@@ -57,15 +57,22 @@ export interface ThreadReplyType {
 }
 
 export interface DmType {
-  id: number;
+  id: number | string;
   created_at?: string;
   updated_at?: string;
   sender_profile_id: string;
-  receiver_profile_id: string;
+  recipient_profile_id: string;
   content: string;
   is_edited: boolean;
 }
 
 export interface DmReactionType extends ReactionType {
-  dm_id: number;
+  dm_id: DmType['id'];
+}
+
+export interface DmContactType {
+  profile_id: string;
+  name: string;
+  avatar_url: string;
+  last_message: DmType | null;
 }

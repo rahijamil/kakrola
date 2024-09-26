@@ -102,7 +102,7 @@ const SectionMoreOptions = ({
   const hoverBgColorClass =
     theme == "dark"
       ? `hover:bg-${sectionColor}-400`
-      : `hover:bg-${sectionColor}-100 hover:bg-text-200`;
+      : `hover:bg-${sectionColor}-100 hover:bg-text-100`;
 
   return (
     <Dropdown

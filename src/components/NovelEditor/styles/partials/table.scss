@@ -49,7 +49,7 @@
       @apply -bottom-[2px] flex pointer-events-none absolute -right-1 top-0 w-2;
 
       &::before {
-        @apply bg-text-200 h-full w-[1px] ml-2;
+        @apply bg-text-100 h-full w-[1px] ml-2;
         content: "";
       }
     }
@@ -75,7 +75,7 @@
       }
 
       &:hover {
-        @apply bg-text-200;
+        @apply bg-text-100;
 
         &::before {
           @apply border-b-2 border-dotted border-text-600;
@@ -110,7 +110,7 @@
         }
       }
       &:hover {
-        @apply bg-text-200;
+        @apply bg-text-100;
 
         &::before {
           @apply border-l-2 border-dotted border-text-600;

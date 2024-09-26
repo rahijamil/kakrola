@@ -1,75 +1,38 @@
 const NovelEditor = dynamic(() => import("@/components/NovelEditor"), {
   ssr: false,
 });
-import { defaultExtensions } from "@/components/NovelEditor/extensions";
-import { slashCommand } from "@/components/NovelEditor/slash-command";
 import { Button } from "@/components/ui/button";
-import { useAuthProvider } from "@/context/AuthContext";
 import useScreen from "@/hooks/useScreen";
-import { ThreadReplyType } from "@/types/channel";
-import { supabaseBrowser } from "@/utils/supabase/client";
-import { SendHorizonal, Slash, SquareSlash } from "lucide-react";
+import { SendHorizonal, SquareSlash } from "lucide-react";
 import dynamic from "next/dynamic";
 import { JSONContent, useEditor } from "novel";
 import React, { useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 
 const ReplyEditor = ({
-  thread_id,
-  setReplies,
-  replies,
+  handleReplySave,
 }: {
-  thread_id: number;
-  setReplies: (replies: ThreadReplyType[]) => void;
-  replies: ThreadReplyType[];
+  handleReplySave: ({
+    ev,
+    replyContent,
+    setReplyContent,
+    charsCount,
+    ProseMirror,
+  }: {
+    ev:
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
+      | KeyboardEvent;
+    replyContent: JSONContent;
+    setReplyContent: (content: JSONContent | null) => void;
+    charsCount: number;
+    ProseMirror: HTMLDivElement;
+  }) => void;
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const [replyContent, setReplyContent] = useState<JSONContent | null>(null);
   const [charsCount, setCharsCount] = useState(0);
   const ProseMirror = (editorRef.current as any)?.querySelector(".ProseMirror");
-  const { profile } = useAuthProvider();
 
   const { screenWidth } = useScreen();
-
-  const handleReplySave = async (
-    ev: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    ev.stopPropagation();
-    try {
-      if (!profile || charsCount == 0 || !replyContent) return;
-
-      const tempId = uuidv4();
-      const replyData: Omit<ThreadReplyType, "id"> = {
-        content: JSON.stringify(replyContent),
-        profile_id: profile.id,
-        is_edited: false,
-        thread_id,
-      };
-
-      const tempReplies = [...replies, { ...replyData, id: tempId }];
-      //   optimistic update
-      setReplies(tempReplies);
-      setReplyContent(null);
-      ProseMirror.innerHTML = `<p data-placeholder="Press '/' for commands" class="is-empty is-editor-empty"><br class="ProseMirror-trailingBreak"></p>`;
-
-      const { data, error } = await supabaseBrowser
-        .from("thread_replies")
-        .insert(replyData)
-        .select("id")
-        .single();
-
-      if (error) throw error;
-
-      setReplies(
-        tempReplies.map((reply) =>
-          reply.id == tempId ? { ...reply, id: data.id } : reply
-        )
-      );
-    } catch (error) {
-      console.error(error);
-      setReplies(replies);
-    }
-  };
 
   return (
     <div
@@ -88,10 +51,20 @@ const ReplyEditor = ({
           setCharsCount={setCharsCount}
           hideContentItemMenu
           autofocus={screenWidth > 768 ? true : false}
+          handleEnterWithoutShift={(ev) => {
+            replyContent &&
+              handleReplySave({
+                ev,
+                replyContent,
+                setReplyContent,
+                charsCount,
+                ProseMirror,
+              });
+          }}
         />
       </div>
 
-      <div className="flex items-center justify-between gap-4 p-1 pt-0">
+      <div className="flex items-center justify-between gap-4 p-1 px-2 pt-0">
         <div className="flex items-center gap-1">
           <button
             disabled={charsCount > 0}
@@ -118,7 +91,16 @@ const ReplyEditor = ({
         <div>
           <Button
             size="sm"
-            onClick={handleReplySave}
+            onClick={(ev) =>
+              replyContent &&
+              handleReplySave({
+                ev,
+                replyContent,
+                setReplyContent,
+                charsCount,
+                ProseMirror,
+              })
+            }
             disabled={charsCount == 0}
             variant={charsCount == 0 ? "ghost" : "default"}
             className="disabled:cursor-text disabled:pointer-events-none"

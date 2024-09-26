@@ -1,44 +1,40 @@
-import { getProfileById } from "@/lib/queries";
 import { PersonalMemberType, TeamMemberType } from "@/types/team";
+import { DmContactType } from "@/types/channel";
+import { supabaseBrowser } from "@/utils/supabase/client";
 
 export const getDmContacts = async ({
   personalMembers,
   teamMembers,
+  currentUserId,
 }: {
   personalMembers: PersonalMemberType[];
   teamMembers: TeamMemberType[];
-}): Promise<
-  {
-    id: number;
-    profile_id: string;
-    name: string;
-    avatar_url: string;
-  }[]
-> => {
-  const allMembers = [...personalMembers, ...teamMembers];
-
-  const uniqueMembers = allMembers.filter(
-    (member, index, self) =>
-      index === self.findIndex((t) => t.profile_id === member.profile_id)
+  currentUserId: string;
+}): Promise<DmContactType[]> => {
+  const { data: dmContacts, error } = await supabaseBrowser.rpc(
+    "get_last_messages_for_profile",
+    { _profile_id: currentUserId }
   );
 
-  const contacts = await Promise.all(
-    uniqueMembers.map(async (member) => {
-      const memberProfile = await getProfileById(member.profile_id);
-      return {
-        id: member.id,
-        profile_id: member.profile_id,
-        name: memberProfile?.full_name,
-        avatar_url: memberProfile.avatar_url,
-      };
-    })
+  if (error) throw error;
+
+  // Create a set of all member profile IDs
+  const allMemberIds = new Set([
+    ...personalMembers.map((m) => m.profile_id),
+    ...teamMembers.map((m) => m.profile_id),
+  ]);
+
+  // Filter dmContacts to only include members from personalMembers and teamMembers
+  const filteredContacts = (dmContacts as DmContactType[]).filter((contact) =>
+    allMemberIds.has(contact.profile_id)
   );
 
-  const uniqueContacts = contacts.filter(
-    (contact, index, self) =>
-      index === self.findIndex((t) => t.profile_id === contact.profile_id)
-  );
+  // Sort contacts by last message timestamp (most recent first)
+  const sortedContacts = filteredContacts.sort((a, b) => {
+    const timeA = a.last_message?.created_at ?? "0";
+    const timeB = b.last_message?.created_at ?? "0";
+    return timeB.localeCompare(timeA);
+  });
 
-  return uniqueContacts;
+  return sortedContacts;
 };
-  

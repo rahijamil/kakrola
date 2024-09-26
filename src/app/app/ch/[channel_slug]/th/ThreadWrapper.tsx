@@ -14,12 +14,11 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import AddNewThread from "./new/AddNewThread";
 import useAddThread from "./new/useAddThread";
 import Spinner from "@/components/ui/Spinner";
-import Image from "next/image";
 
 const ThreadWrapper = ({
   channel,
@@ -28,11 +27,12 @@ const ThreadWrapper = ({
 }: {
   channel: ChannelType;
   children: React.ReactNode;
-  thread?: ThreadType;
+  thread?: ThreadType | null;
 }) => {
   const { screenWidth } = useScreen();
 
   const router = useRouter();
+  const pathname = usePathname();
 
   const {
     threadTitle,
@@ -52,130 +52,143 @@ const ThreadWrapper = ({
         !thread ? "thread-wrapper" : ""
       }`}
     >
-      <div
-        className={`flex items-center justify-between gap-3 md:gap-4 border-b border-text-100 bg-background z-10 select-none ${
-          screenWidth > 768 ? "py-3 px-6" : thread ? "px-3 py-1" : "p-3"
-        }`}
-      >
-        {!thread ? (
-          screenWidth > 768 ? (
-            <>
-              <div className="flex items-center justify-center">
-                <p className="font-semibold text-lg">New Thread</p>
-              </div>
-
-              <div className="flex items-center justify-end gap-4">
-                <Button
-                  onClick={() => router.push(`/app/ch/${channel.slug}`)}
-                  disabled={loading}
-                  type="button"
-                  variant="outline"
-                  color="gray"
-                >
-                  Discard
-                </Button>
-
-                <Button
-                  onClick={handleAddThread}
-                  disabled={loading || !threadTitle.trim() || charsCount === 0}
-                  type="button"
-                >
-                  {loading ? (
-                    <div className="flex items-center gap-2">
-                      <Spinner color="white" size="sm" />
-
-                      <span>Posting...</span>
-                    </div>
-                  ) : (
-                    "Post"
-                  )}
-                </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="flex items-center justify-end gap-4">
-                <button
-                  onClick={() => router.push(`/app/ch/${channel.slug}`)}
-                  disabled={loading}
-                  type="button"
-                  className="flex items-center gap-2 bg-text-100 text-text-700 hover:text-text-900 p-2 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg"
-                >
-                  <X size={20} />
-                </button>
-
-                <button
-                  onClick={handleAddThread}
-                  disabled={loading || !threadTitle.trim() || charsCount === 0}
-                  type="button"
-                  className="flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-surface p-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? (
-                    <div className="flex items-center gap-2">
-                      <Spinner color="white" size="sm" />
-                    </div>
-                  ) : (
-                    <SendHorizonal size={20} />
-                  )}
-                </button>
-              </div>
-            </>
-          )
-        ) : screenWidth > 768 ? (
-          <div className="flex items-center justify-center">
-            <h2 className="font-semibold text-lg">{thread.title}</h2>
-          </div>
-        ) : (
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => router.push(`/app/ch/${channel.slug}`)}
-              className="flex items-center text-text-700 transition p-1"
-            >
-              <ChevronLeft
-                strokeWidth={1.5}
-                size={24}
-                className="min-w-6 min-h-6"
-              />
-            </button>
-
-            <button className="text-left bg-text-10 p-1 px-2 rounded-lg">
-              {screenWidth <= 768 && thread && (
-                <h2 className="font-semibold md:text-lg text-text-900 line-clamp-1">
-                  {thread.title}
-                </h2>
-              )}
-              <h3 className="font-normal md:font-medium text-text-500 md:text-text-900 text-xs flex items-center gap-1">
-                <div>
-                  <span>#</span>
-                  {channel.name}
+      {pathname !== `/app/ch/${channel.slug}` && (
+        <div
+          className={`flex items-center justify-between gap-3 md:gap-4 border-b border-text-100 bg-background z-10 select-none ${
+            screenWidth > 768 ? "py-3 px-6" : thread ? "px-3 py-1" : "p-3"
+          }`}
+        >
+          {!thread && pathname === `/app/ch/${channel.slug}/th/new` ? (
+            screenWidth > 768 ? (
+              <>
+                <div className="flex items-center justify-center">
+                  <p className="font-semibold text-lg">New Thread</p>
                 </div>
-                <span>•</span>
-                <span>More</span>
-              </h3>
-            </button>
-          </div>
-        )}
 
-        {thread && (
-          <div className={`flex items-center justify-end  h-full`}>
-            <div className="flex items-center h-full">
-              {screenWidth > 768 && <ShareOption projectId={null} />}
+                <div className="flex items-center justify-end gap-4">
+                  <Button
+                    onClick={() =>
+                      window.history.pushState(
+                        null,
+                        "",
+                        `/app/ch/${channel.slug}`
+                      )
+                    }
+                    disabled={loading}
+                    type="button"
+                    variant="outline"
+                    color="gray"
+                  >
+                    Discard
+                  </Button>
 
-              <button className="text-text-500 md:hover:bg-text-100 md:px-2 p-1 justify-center md:rounded-lg transition flex items-center gap-1">
-                <Headphones
+                  <Button
+                    onClick={handleAddThread}
+                    disabled={
+                      loading || !threadTitle.trim() || charsCount === 0
+                    }
+                    type="button"
+                  >
+                    {loading ? (
+                      <div className="flex items-center gap-2">
+                        <Spinner color="white" size="sm" />
+
+                        <span>Posting...</span>
+                      </div>
+                    ) : (
+                      "Post"
+                    )}
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center justify-end gap-4">
+                  <button
+                    onClick={() => router.push(`/app/ch/${channel.slug}`)}
+                    disabled={loading}
+                    type="button"
+                    className="flex items-center gap-2 bg-text-100 text-text-700 hover:text-text-900 p-2 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg"
+                  >
+                    <X size={20} />
+                  </button>
+
+                  <button
+                    onClick={handleAddThread}
+                    disabled={
+                      loading || !threadTitle.trim() || charsCount === 0
+                    }
+                    type="button"
+                    className="flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-surface p-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? (
+                      <div className="flex items-center gap-2">
+                        <Spinner color="white" size="sm" />
+                      </div>
+                    ) : (
+                      <SendHorizonal size={20} />
+                    )}
+                  </button>
+                </div>
+              </>
+            )
+          ) : screenWidth > 768 ? (
+            thread && (
+              <div className="flex items-center justify-center">
+                <h2 className="font-semibold text-lg">{thread.title}</h2>
+              </div>
+            )
+          ) : (
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => router.push(`/app/ch/${channel.slug}`)}
+                className="flex items-center text-text-700 transition p-1"
+              >
+                <ChevronLeft
                   strokeWidth={1.5}
-                  size={screenWidth > 768 ? 16 : 20}
+                  size={24}
+                  className="min-w-6 min-h-6"
                 />
-                <span className="hidden md:inline-block">Huddle</span>
               </button>
 
-              {screenWidth > 768 && (
-                <button className="text-text-500 hover:bg-text-100 px-2 p-1 md:rounded-lg transition flex items-center gap-1">
-                  <MoreVertical strokeWidth={1.5} size={16} />
-                </button>
-              )}
+              <button className="text-left bg-text-10 p-1 px-2 rounded-lg">
+                {screenWidth <= 768 && thread && (
+                  <h2 className="font-semibold md:text-lg text-text-900 line-clamp-1">
+                    {thread.title}
+                  </h2>
+                )}
+                <h3 className="font-normal md:font-medium text-text-500 md:text-text-900 text-xs flex items-center gap-1">
+                  <div>
+                    <span>#</span>
+                    {channel.name}
+                  </div>
+                  <span>•</span>
+                  <span>More</span>
+                </h3>
+              </button>
+            </div>
+          )}
 
-              {/* <li>
+          {thread && (
+            <div className={`flex items-center justify-end  h-full`}>
+              <div className="flex items-center h-full">
+                {screenWidth > 768 && <ShareOption projectId={null} />}
+
+                <button className="text-text-500 md:hover:bg-text-100 md:px-2 p-1 justify-center md:rounded-lg transition flex items-center gap-1">
+                  <Headphones
+                    strokeWidth={1.5}
+                    size={screenWidth > 768 ? 16 : 20}
+                  />
+                  <span className="hidden md:inline-block">Huddle</span>
+                </button>
+
+                {screenWidth > 768 && (
+                  <button className="text-text-500 hover:bg-text-100 px-2 p-1 md:rounded-lg transition flex items-center gap-1">
+                    <MoreVertical strokeWidth={1.5} size={16} />
+                  </button>
+                )}
+
+                {/* <li>
               {project && (
                 <ActiveProjectMoreOptions
                   project={project}
@@ -198,13 +211,14 @@ const ThreadWrapper = ({
                 />
               )}
             </li> */}
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       <div className={`flex-1`}>
-        {!thread && (
+        {!thread && pathname === `/app/ch/${channel.slug}/th/new` && (
           <AddNewThread
             channel={channel}
             threadTitle={threadTitle}

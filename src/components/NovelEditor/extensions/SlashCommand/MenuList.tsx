@@ -121,45 +121,52 @@ export const MenuList = React.forwardRef((props: MenuListProps, ref) => {
   return (
     <Surface
       ref={scrollContainer}
-      className="text-black max-h-[min(80vh,24rem)] overflow-auto flex-wrap mb-8 p-2"
+      className="text-text-700 max-h-[min(80vh,24rem)] overflow-y-auto flex-wrap mb-8 py-1 min-w-80 rounded-lg"
+      withBorder={false}
+      withShadow={false}
     >
-      <div className="space-y-0.5">
-        {props.items.map((group, groupIndex: number) => (
-          <React.Fragment key={`${group.title}-wrapper`}>
-            <div
-              className="text-text-500 text-[0.65rem] col-[1/-1] mx-2 mt-4 font-semibold tracking-wider select-none uppercase first:mt-0.5"
-              key={`${group.title}`}
+      {props.items.map((group, groupIndex: number) => (
+        <React.Fragment key={`${group.title}-wrapper`}>
+          <div
+            className="select-none first:pt-1 px-4 py-1.5 font-medium text-xs text-text-500"
+            key={`${group.title}`}
+          >
+            {group.title}
+          </div>
+          {group.commands.map((command: Command, commandIndex: number) => (
+            <DropdownButton
+              key={`${command.label}`}
+              ref={
+                selectedGroupIndex === groupIndex &&
+                selectedCommandIndex === commandIndex
+                  ? activeItem
+                  : null
+              }
+              isActive={
+                selectedGroupIndex === groupIndex &&
+                selectedCommandIndex === commandIndex
+              }
+              onClick={createCommandClickHandler(groupIndex, commandIndex)}
+              
             >
-              {group.title}
-            </div>
-            {group.commands.map((command: Command, commandIndex: number) => (
-              <DropdownButton
-                key={`${command.label}`}
-                ref={
-                  selectedGroupIndex === groupIndex &&
-                  selectedCommandIndex === commandIndex
-                    ? activeItem
-                    : null
-                }
-                isActive={
-                  selectedGroupIndex === groupIndex &&
-                  selectedCommandIndex === commandIndex
-                }
-                onClick={createCommandClickHandler(groupIndex, commandIndex)}
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-md border border-text-100 bg-background">
-                  <Icon name={command.iconName} className="mr-1 text-text-900" />
-                </div>
+              <div className="flex h-10 w-10 min-w-10 min-h-10 items-center justify-center rounded-md border border-text-100 bg-background">
+                <Icon
+                  name={command.iconName}
+                  className="w-6 h-6"
+                  strokeWidth={1.5}
+                />
+              </div>
 
-                <div>
-                  <p className="font-medium">{command.label}</p>
-                  <p className="text-xs text-text-600">{command.description}</p>
-                </div>
-              </DropdownButton>
-            ))}
-          </React.Fragment>
-        ))}
-      </div>
+              <div>
+                <p className="font-medium">{command.label}</p>
+                <p className="text-xs text-text-500 line-clamp-1">
+                  {command.description}
+                </p>
+              </div>
+            </DropdownButton>
+          ))}
+        </React.Fragment>
+      ))}
     </Surface>
   );
 });

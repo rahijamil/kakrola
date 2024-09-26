@@ -57,6 +57,7 @@ const NovelEditor = ({
   setCharsCount,
   editorRef,
   hideContentItemMenu,
+  handleEnterWithoutShift,
 }: {
   editable?: boolean;
   content: JSONContent | null;
@@ -65,6 +66,7 @@ const NovelEditor = ({
   setCharsCount?: Dispatch<SetStateAction<number>>;
   editorRef?: MutableRefObject<HTMLDivElement | null>;
   hideContentItemMenu?: boolean;
+  handleEnterWithoutShift?: (ev: KeyboardEvent) => void;
 }) => {
   const { theme } = useTheme();
   const menuContainerRef = useRef(null);
@@ -117,11 +119,15 @@ const NovelEditor = ({
           editorProps={{
             handleDOMEvents: {
               keydown: (_view, event) => {
-                handleCommandNavigation(event);
-
-                if (event.key == "Enter" && !event.shiftKey) {
-                  // submit the form
-                  console.log("submit the form");
+                if (
+                  handleEnterWithoutShift &&
+                  event.key == "Enter" &&
+                  !event.shiftKey
+                ) {
+                  event.preventDefault();
+                  handleEnterWithoutShift(event);
+                } else {
+                  handleCommandNavigation(event);
                 }
               },
             },
@@ -150,7 +156,7 @@ const NovelEditor = ({
                 <EditorCommandItem
                   value={item.title}
                   onCommand={(val) => item.command && item.command(val)}
-                  className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-text-100 aria-selected:bg-text-200 cursor-pointer"
+                  className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-text-100 aria-selected:bg-text-100 cursor-pointer"
                   key={item.title}
                 >
                   <div className="flex h-10 w-10 items-center justify-center rounded-md border border-text-100 bg-text-900 text-surface">

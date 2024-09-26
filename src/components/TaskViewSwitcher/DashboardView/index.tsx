@@ -296,7 +296,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({
             {analytics.topContributors.map(([name, count], index) => (
               <div key={name} className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="w-8 h-8 rounded-lg bg-text-200 flex items-center justify-center mr-3">
+                  <div className="w-8 h-8 rounded-lg bg-text-100 flex items-center justify-center mr-3">
                     {name.charAt(0)}
                   </div>
                   <span className="text-text-700">{name}</span>
