@@ -1,5 +1,4 @@
 "use client";
-import ActiveProjectMoreOptions from "@/components/LayoutWrapper/ActiveProjectMoreOptions";
 import FilterOptions from "@/components/LayoutWrapper/FilterOptions";
 import ShareOption from "@/components/LayoutWrapper/ShareOption";
 import { useAuthProvider } from "@/context/AuthContext";
@@ -7,7 +6,8 @@ import { useRole } from "@/context/RoleContext";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import useScreen from "@/hooks/useScreen";
 import { PageType } from "@/types/pageTypes";
-import { ChevronLeft, File, FileText } from "lucide-react";
+import { ChevronLeft, FileText } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { ReactNode, useState } from "react";
@@ -203,12 +203,22 @@ const PageWrapper = ({
       </div>
 
       <div className="flex-1 flex flex-col h-full w-full overflow-y-auto">
-        <div className="w-full h-60 min-h-60 bg-text-100"></div>
+        <div className="w-full h-60 min-h-60 bg-text-50 relative">
+          <Image
+            src="/images/page_banner.jpg"
+            alt="page banner"
+            fill
+            className="object-cover"
+          />
+        </div>
 
         {screenWidth > 768 && (
           <div className="relative px-80">
             <div className="absolute -top-1/2 translate-y-1/3">
-              <FileText size={60} className={`text-${page?.settings.color}`} />
+              <FileText
+                size={60}
+                className={`text-${page?.settings.color} bg-background rounded-lg shadow-lg`}
+              />
             </div>
             <div className="mt-16">
               <input

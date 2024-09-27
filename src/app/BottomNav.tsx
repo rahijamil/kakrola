@@ -6,8 +6,9 @@ import { motion } from "framer-motion";
 import { Home, LogIn, Rocket, User } from "lucide-react";
 import { useAuthProvider } from "@/context/AuthContext";
 import KakrolaLogo from "./kakrolaLogo";
+import useScreen from "@/hooks/useScreen";
 
-export default function BottomNav() {
+function BottomNav() {
   const router = useRouter();
   const pathname = usePathname();
   const { profile } = useAuthProvider();
@@ -82,3 +83,11 @@ export default function BottomNav() {
     </motion.aside>
   );
 }
+
+const BottomNavWrapper = () => {
+  const { screenWidth } = useScreen();
+
+  return <>{screenWidth <= 768 && <BottomNav />}</>;
+};
+
+export default BottomNavWrapper;

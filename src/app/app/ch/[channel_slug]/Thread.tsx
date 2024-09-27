@@ -9,7 +9,6 @@ import { JSONContent } from "novel";
 import { useAuthProvider } from "@/context/AuthContext";
 import { v4 as uuidv4 } from "uuid";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import { motion } from "framer-motion";
 
 interface GroupedRepliesType {
   date: Date;
@@ -93,19 +92,8 @@ const Thread = ({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{
-        duration: 0.2,
-        ease: "easeInOut",
-        type: "spring",
-        stiffness: 100,
-        damping: 10,
-      }}
+    <div
       className="flex flex-col justify-end h-full"
-      onContextMenu={(e) => e.preventDefault()}
     >
       <div className="max-h-[calc(100vh-170px)] overflow-y-auto">
         <div className="p-4 md:p-6 pt-8">
@@ -170,7 +158,7 @@ const Thread = ({
       </div>
 
       <ReplyEditor handleReplySave={handleReplySave} />
-    </motion.div>
+    </div>
   );
 };
 

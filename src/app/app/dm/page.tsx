@@ -372,7 +372,7 @@ const DmPage: React.FC = () => {
               initial={{ x: 100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 100, opacity: 0 }}
-              transition={{ duration: 0.2, ease: "easeInOut", type: "spring" }}
+              transition={{ duration: 0.3, ease: "easeInOut", type: "spring" }}
               className="fixed inset-0 z-10 flex flex-col h-full bg-background"
               onContextMenu={(e) => e.preventDefault()}
             >
@@ -380,13 +380,13 @@ const DmPage: React.FC = () => {
                 contact={activeContact}
                 setActiveContact={setActiveContact}
               >
-                <div className="flex flex-col justify-end h-full pb-20 md:pb-0">
+                <div className="flex flex-col justify-end h-full">
                   {/* Messages */}
                   <div
-                    className="max-h-[calc(100vh-170px)] overflow-y-auto"
+                    className="max-h-[calc(100vh-50px)] md:max-h-[calc(100vh-170px)] overflow-y-auto pb-20 md:pb-0"
                     onScroll={handleScroll}
                   >
-                    <div className="space-y-4 p-6 pt-8">
+                    <div className="space-y-4 p-6 md:pt-8">
                       <div className="flex items-center gap-3">
                         <Image
                           src={activeContact.avatar_url}

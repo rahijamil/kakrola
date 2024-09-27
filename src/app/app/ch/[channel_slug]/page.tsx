@@ -11,6 +11,7 @@ import useThread from "./th/[thread_slug]/useThread";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { AnimatePresence } from "framer-motion";
 import Thread from "./Thread";
+import useScreen from "@/hooks/useScreen";
 
 const ChannelDetails = ({
   params: { channel_slug },
@@ -22,6 +23,8 @@ const ChannelDetails = ({
   const channel = channels.find(
     (channel: ChannelType) => channel.slug === channel_slug
   );
+
+  const { screenWidth } = useScreen();
 
   const pathname = usePathname();
   const threadSlug =
@@ -89,43 +92,41 @@ const ChannelDetails = ({
 
   if (channel?.id) {
     return (
-      <ThreadWrapper channel={channel} thread={thread}>
-        {pathname === `/app/ch/${channel.slug}` ? (
-          <div className="flex flex-col items-center justify-center gap-4 h-full">
-            <Image
-              src="/images/thread.png"
-              width={180}
-              height={100}
-              alt="Channel not found"
-              className="rounded-md object-cover"
-              draggable={false}
-            />
-
-            <div className="space-y-2 text-center">
-              <h2 className="font-semibold mb-2 text-lg">Select a thread</h2>
-              <p className="text-text-600 text-center">
-                Threads keep discussions on-topic.
-              </p>
-            </div>
-          </div>
-        ) : (
-          <AnimatePresence>
-            {thread && threadSlug === thread.slug ? (
-              <Thread
-                channel={channel}
-                thread={thread}
-                replies={replies}
-                setReplies={setReplies}
-                showOptions={showOptions}
-                setShowOptions={setShowOptions}
-                threadProfile={threadProfile}
-                groupedReplies={groupedReplies}
-                channel_slug={channel_slug}
+      <AnimatePresence>
+        <ThreadWrapper channel={channel} thread={thread}>
+          {screenWidth > 768 && pathname === `/app/ch/${channel.slug}` ? (
+            <div className="flex flex-col items-center justify-center gap-4 h-full">
+              <Image
+                src="/images/thread.png"
+                width={180}
+                height={100}
+                alt="Channel not found"
+                className="rounded-md object-cover"
+                draggable={false}
               />
-            ) : null}
-          </AnimatePresence>
-        )}
-      </ThreadWrapper>
+
+              <div className="space-y-2 text-center">
+                <h2 className="font-semibold mb-2 text-lg">Select a thread</h2>
+                <p className="text-text-600 text-center">
+                  Threads keep discussions on-topic.
+                </p>
+              </div>
+            </div>
+          ) : thread && threadSlug === thread.slug ? (
+            <Thread
+              channel={channel}
+              thread={thread}
+              replies={replies}
+              setReplies={setReplies}
+              showOptions={showOptions}
+              setShowOptions={setShowOptions}
+              threadProfile={threadProfile}
+              groupedReplies={groupedReplies}
+              channel_slug={channel_slug}
+            />
+          ) : null}
+        </ThreadWrapper>
+      </AnimatePresence>
     );
   } else {
     return (

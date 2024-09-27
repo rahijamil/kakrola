@@ -1,7 +1,5 @@
-import FilterOptions from "@/components/LayoutWrapper/FilterOptions";
 import ShareOption from "@/components/LayoutWrapper/ShareOption";
 import { Button } from "@/components/ui/button";
-import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import useScreen from "@/hooks/useScreen";
 import { ChannelType, ThreadType } from "@/types/channel";
 import {
@@ -13,12 +11,12 @@ import {
   SendHorizonal,
   X,
 } from "lucide-react";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import AddNewThread from "./new/AddNewThread";
 import useAddThread from "./new/useAddThread";
 import Spinner from "@/components/ui/Spinner";
+import { motion } from "framer-motion";
 
 const ThreadWrapper = ({
   channel,
@@ -46,11 +44,39 @@ const ThreadWrapper = ({
     charsCount,
   } = useAddThread({ channel });
 
+  const motionProps = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+    transition: {
+      duration: 0.2,
+      ease: "easeInOut",
+      type: "spring",
+    },
+  };
+
+  const motionPropsForMobile = {
+    initial: { opacity: 0, x: 100 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: 100 },
+    transition: {
+      duration: 0.2,
+      ease: "easeInOut",
+      type: "spring",
+      stiffness: 100,
+      damping: 10,
+    },
+  };
+
   return (
-    <div
-      className={`flex flex-col h-full w-full flex-1 transition-all duration-300 ${
-        !thread ? "thread-wrapper" : ""
+    <motion.div
+      {...(screenWidth > 768 ? motionProps : motionPropsForMobile)}
+      className={`flex flex-col h-full w-full flex-1 transition-all duration-300 fixed inset-0 bg-background z-10 md:inset-auto md:static ${
+        !thread
+          ? "thread-wrapper"
+          : ""
       }`}
+      onContextMenu={(e) => e.preventDefault()}
     >
       {pathname !== `/app/ch/${channel.slug}` && (
         <div
@@ -105,7 +131,13 @@ const ThreadWrapper = ({
               <>
                 <div className="flex items-center justify-end gap-4">
                   <button
-                    onClick={() => router.push(`/app/ch/${channel.slug}`)}
+                    onClick={() =>
+                      window.history.pushState(
+                        null,
+                        "",
+                        `/app/ch/${channel.slug}`
+                      )
+                    }
                     disabled={loading}
                     type="button"
                     className="flex items-center gap-2 bg-text-100 text-text-700 hover:text-text-900 p-2 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg"
@@ -141,7 +173,9 @@ const ThreadWrapper = ({
           ) : (
             <div className="flex items-center gap-3">
               <button
-                onClick={() => router.push(`/app/ch/${channel.slug}`)}
+                onClick={() => {
+                  window.history.pushState(null, "", `/app/ch/${channel.slug}`);
+                }}
                 className="flex items-center text-text-700 transition p-1"
               >
                 <ChevronLeft
@@ -232,7 +266,7 @@ const ThreadWrapper = ({
 
         {children}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

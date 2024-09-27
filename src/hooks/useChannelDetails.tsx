@@ -41,7 +41,7 @@ const useChannelDetails = (channel_slug: string) => {
 
   const queryClient = useQueryClient();
 
-  const { data, error, isPending, isError } = useQuery({
+  const { data, error, isLoading, isError } = useQuery({
     queryKey: ["channelDetails", channel_slug, profile?.id],
     queryFn: () => {
       if (channel_slug === null || !profile?.id) {
@@ -86,7 +86,7 @@ const useChannelDetails = (channel_slug: string) => {
     setChannel,
     threads: data?.threads || [],
     setThreads,
-    isPending,
+    isLoading,
     error,
     isError,
   };

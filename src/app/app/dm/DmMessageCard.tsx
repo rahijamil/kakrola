@@ -134,44 +134,44 @@ const DmMessageCard: React.FC<DmMessageCardProps> = ({
     );
   };
 
-  const renderReactions = (messageId: DmType["id"]) => {
-    const { data: reactions, error } = useQuery({
-      queryKey: ["reactions", messageId],
-      queryFn: async (): Promise<DmReactionType[]> => {
-        const { data, error } = await supabaseBrowser
-          .from("reactions")
-          .select("*")
-          .eq("dm_id", messageId);
+  // const renderReactions = (messageId: DmType["id"]) => {
+  //   const { data: reactions, error } = useQuery({
+  //     queryKey: ["reactions", messageId],
+  //     queryFn: async (): Promise<DmReactionType[]> => {
+  //       const { data, error } = await supabaseBrowser
+  //         .from("reactions")
+  //         .select("*")
+  //         .eq("dm_id", messageId);
 
-        if (error) {
-          console.error("Error fetching reactions:", error);
-          return [];
-        }
-        
-        return data || [];
-      },
-    });
+  //       if (error) {
+  //         console.error("Error fetching reactions:", error);
+  //         return [];
+  //       }
 
-    const messageReactions = reactions?.filter((r) => r.dm_id === messageId);
-    const groupedReactions = messageReactions?.reduce((acc, reaction) => {
-      acc[reaction.emoji] = (acc[reaction.emoji] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+  //       return data || [];
+  //     },
+  //   });
 
-    return (
-      <div className="flex flex-wrap gap-1 mt-1">
-        {groupedReactions &&
-          Object.entries(groupedReactions).map(([emoji, count]) => (
-            <span
-              key={emoji}
-              className="bg-text-100 rounded-full px-2 py-0.5 text-xs"
-            >
-              {emoji} {count}
-            </span>
-          ))}
-      </div>
-    );
-  };
+  //   const messageReactions = reactions?.filter((r) => r.dm_id === messageId);
+  //   const groupedReactions = messageReactions?.reduce((acc, reaction) => {
+  //     acc[reaction.emoji] = (acc[reaction.emoji] || 0) + 1;
+  //     return acc;
+  //   }, {} as Record<string, number>);
+
+  //   return (
+  //     <div className="flex flex-wrap gap-1 mt-1">
+  //       {groupedReactions &&
+  //         Object.entries(groupedReactions).map(([emoji, count]) => (
+  //           <span
+  //             key={emoji}
+  //             className="bg-text-100 rounded-full px-2 py-0.5 text-xs"
+  //           >
+  //             {emoji} {count}
+  //           </span>
+  //         ))}
+  //     </div>
+  //   );
+  // };
 
   return (
     <AnimatePresence>
@@ -259,7 +259,7 @@ const DmMessageCard: React.FC<DmMessageCardProps> = ({
                 </div>
               </div>
 
-              {renderReactions(message.id)}
+              {/* {renderReactions(message.id)} */}
 
               {screenWidth > 768 ? (
                 <div className="absolute -top-6 right-6 hidden group-hover:block">

@@ -14,7 +14,7 @@ export default function ChannelLayout({
     <div className="flex h-full">
       <ThreadSidebar channel_slug={channel_slug} />
 
-      <div className="w-full md:w-[75%]">{children}</div>
+      {children}
     </div>
   );
 }

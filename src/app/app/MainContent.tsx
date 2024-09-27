@@ -22,7 +22,7 @@ export default function MainContent({
         className={`${
           isCollapsed
             ? "h-full w-full"
-            : "bg-background rounded-lg overflow-hidden h-full w-full border border-text-100 shadow-lg dark:shadow-none"
+            : "bg-background rounded-lg overflow-hidden h-full w-full border border-text-100 shadow-[1px_1px_8px_0px_rgba(0,0,0,0.1),-1px_-1px_8px_0px_rgba(0,0,0,0.1)] dark:shadow-none"
         }`}
       >
         {children}
