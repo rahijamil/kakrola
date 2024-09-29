@@ -93,26 +93,25 @@ const ProjectItem = ({
           onTouchEnd={(ev) =>
             ev.currentTarget.classList.remove("bg-primary-50")
           }
-          className={`sidebar_project_item flex-1 flex items-center justify-between transition-colors rounded-lg pl-2 font-medium md:font-normal ${
+          className={`sidebar_project_item flex items-center transition-colors duration-150 font-medium md:font-normal w-full border-l-4 ${
             isDragging
-              ? "bg-surface shadow-[0_0_8px_1px_rgba(0,0,0,0.2)]"
+              ? "bg-surface shadow-[1px_1px_8px_1px_rgba(0,0,0,0.1)]"
               : pathname === `/app/project/${project.slug}`
-              ? "bg-primary-100 text-text-900"
-              : "md:hover:bg-primary-50 text-text-700"
+              ? "bg-primary-100 text-text-900 border-primary-300"
+              : "md:hover:bg-primary-50 border-transparent hover:border-primary-200 text-text-700"
           }`}
         >
           <Link
             href={`/app/project/${project.slug}`}
-            className={`py-1 md:py-0 p-px w-full`}
+            className={`py-2 px-4 w-full`}
             draggable={false}
           >
-            <div className="flex items-center">
-              <div className="p-2">
-                <CheckCircle
-                  className={`w-4 h-4 text-${project.settings.color}`}
-                  strokeWidth={2}
-                />
-              </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle
+                className={`w-4 h-4 text-${project.settings.color}`}
+                strokeWidth={2}
+              />
+
               {project.name}
 
               {thisProjectAllMembers?.length! > 1 && (

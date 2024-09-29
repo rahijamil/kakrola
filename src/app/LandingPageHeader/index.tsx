@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -5,6 +7,7 @@ import { Rocket } from "lucide-react";
 import MobileMenu from "./MobileMenu";
 import DesktopMenu from "./DesktopMenu";
 import KakrolaLogo from "../kakrolaLogo";
+import { useAuthProvider } from "@/context/AuthContext";
 
 const menuItems = [
   { id: 1, label: "Product", path: "/product" },
@@ -14,6 +17,8 @@ const menuItems = [
 ];
 
 export default function LandingPageHeader({ forAuth }: { forAuth?: boolean }) {
+  const { profile } = useAuthProvider();
+
   return (
     <header>
       <nav className={`fixed top-0 left-0 right-0 bg-background z-30`}>
@@ -22,7 +27,7 @@ export default function LandingPageHeader({ forAuth }: { forAuth?: boolean }) {
             <Link href="/" className="flex-shrink-0 flex items-center">
               <KakrolaLogo size="md" isTitle />
             </Link>
-            
+
             {!forAuth && (
               <>
                 <DesktopMenu menuItems={menuItems} />
@@ -32,23 +37,39 @@ export default function LandingPageHeader({ forAuth }: { forAuth?: boolean }) {
 
             {/* Auth buttons can be server-rendered */}
             {!forAuth && (
-              <div className="hidden lg:flex items-center space-x-2">
-                <Link href="/auth/login" className="text-sm font-medium text-text-700 hover:bg-primary-50 transition px-4 py-2 rounded-lg">
-                  Log in
-                </Link>
-                <Link href="/auth/signup" className="group">
-                  <Button
-                    className="uppercase shadow-lg hover:shadow-xl transition-all hero_button"
-                    rightContent={
-                      <div className="bg-background text-primary-500 rounded-lg w-8 h-8 flex items-center justify-center">
+              <>
+                {profile ? (
+                  <div className="hidden lg:flex items-center space-x-2">
+                    <Link
+                      href="/app"
+                      className="text-sm font-medium text-text-700 hover:bg-primary-50 transition px-4 py-2 rounded-lg"
+                    >
+                      Open Kakrola
+                    </Link>
+                    <Link href="/app/settings/billing" className="group">
+                      <Button className="uppercase shadow-lg hover:shadow-xl transition-all hero_button">
                         <Rocket className="w-5 h-5" strokeWidth={1.5} />
-                      </div>
-                    }
-                  >
-                    Get Started - It's Free
-                  </Button>
-                </Link>
-              </div>
+                        Upgrade
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="hidden lg:flex items-center space-x-2">
+                    <Link
+                      href="/auth/login"
+                      className="text-sm font-medium text-text-700 hover:bg-primary-50 transition px-4 py-2 rounded-lg"
+                    >
+                      Log in
+                    </Link>
+                    <Link href="/auth/signup">
+                      <Button className="uppercase shadow-lg hover:shadow-xl transition-all hero_button">
+                        <Rocket className="w-5 h-5" strokeWidth={1.5} />
+                        Get Started - It's Free
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

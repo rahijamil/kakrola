@@ -15,21 +15,15 @@ export default function MainContent({
   return screenWidth > 768 ? (
     <div
       className={`flex-1 transition-all duration-300 flex ${
-        isCollapsed ? "p-0" : "p-2 pl-0 bg-primary-10"
+        isCollapsed
+          ? "m-0"
+          : "bg-background m-2 ml-0 rounded-lg shadow-[1px_1px_.5rem_0_rgba(0,0,0,0.1)] dark:shadow-none border border-text-100"
       }`}
     >
-      <div
-        className={`${
-          isCollapsed
-            ? "h-full w-full"
-            : "bg-background rounded-lg overflow-hidden h-full w-full border border-text-100 shadow-[1px_1px_8px_0px_rgba(0,0,0,0.1),-1px_-1px_8px_0px_rgba(0,0,0,0.1)] dark:shadow-none"
-        }`}
-      >
-        {children}
-      </div>
+      <div className="w-full h-full">{children}</div>
     </div>
   ) : (
-    <div className="overflow-x-auto flex-1 transition-all duration-300">
+    <div className="overflow-x-auto flex-1 transition-all duration-300 bg-background">
       {children}
     </div>
   );

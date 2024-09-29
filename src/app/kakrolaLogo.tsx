@@ -1,4 +1,3 @@
-import Image from "next/image";
 import React from "react";
 
 const KakrolaLogo = ({
@@ -20,7 +19,11 @@ const KakrolaLogo = ({
   return (
     <div className="flex items-center gap-2">
       <div className={`relative ${sizeClasses[size]}`}>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+        <svg
+          aria-label="Kakrola Logo"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 200 200"
+        >
           {/* <!-- White Background --> */}
           <rect width="200" height="200" rx="16" ry="16" fill="#ffffff" />
 

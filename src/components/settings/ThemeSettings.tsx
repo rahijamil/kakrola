@@ -115,16 +115,14 @@ const ThemeSettingsPage = () => {
             onClick={() => setTheme(theme.value)}
             className={`overflow-hidden rounded-lg border border-text-100 outline-none ${
               currentTheme == theme.value && "ring-primary-500 ring-2"
-            } ring-offset-2 flex h-full cursor-pointer hover:translate-y-2 hover:scale-110 transition-all duration-300`}
+            } ring-offset-2 flex h-full cursor-pointer transition-all duration-300 hover:shadow-[2px_2px_16px_0px_rgba(0,0,0,0.5)] dark:hover:shadow-[2px_2px_16px_0px_rgba(255,255,255,.8)] w-[200px] aspect-[4/2.5]`}
             style={{
-              width: "200px",
-              height: "100px",
               backgroundColor: theme.sidebarBg,
             }}
           >
             <div
               className="w-1/4 p-1"
-              style={{ width: "30%", backgroundColor: theme.sidebarBg }}
+              style={{ backgroundColor: theme.sidebarBg }}
             >
               <ul className="space-y-1">
                 <li
@@ -145,8 +143,11 @@ const ThemeSettingsPage = () => {
                 ></div>
               </ul>
             </div>
+
             <div
-              className="flex-1 p-2 py-1 space-y-2"
+              className={`flex-1 px-2 p-1 space-y-2 ml-0 m-0.5 border rounded-lg shadow-[.5px_.5px_4px_0px_rgba(0,0,0,0.1)] ${
+                theme.value == "dark" ? "border-[#2a2a2a]" : "border-[#ebebeb]"
+              }`}
               style={{ backgroundColor: theme.mainBg }}
             >
               <span

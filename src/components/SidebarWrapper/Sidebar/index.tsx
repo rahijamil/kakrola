@@ -83,183 +83,183 @@ const Sidebar = ({
   const [showWorkspaces, setShowWorkspaces] = useState(true);
 
   return (
-    <>
-      <aside className="h-full flex flex-col group w-full">
-        <div className="pb-4 p-2 flex items-center justify-between relative">
-          <ProfileMoreOptions
-            setShowAddTeam={setShowAddTeam}
-            setShowLogoutConfirm={setShowLogoutConfirm}
-          />
+    <aside className="h-full flex flex-col group w-full">
+      <div className="pb-4 p-2 flex items-center justify-between">
+        <ProfileMoreOptions
+          setShowAddTeam={setShowAddTeam}
+          setShowLogoutConfirm={setShowLogoutConfirm}
+        />
 
+        {sidebarLoading ? (
+          <div className="flex items-center w-full justify-end gap-2">
+            <Skeleton width={28} height={28} borderRadius={9999} />
+            <Skeleton width={28} height={28} borderRadius={9999} />
+            <Skeleton width={28} height={28} borderRadius={9999} />
+          </div>
+        ) : (
+          <div
+            className={`flex items-center justify-end w-full transition duration-150 ${
+              sidebarWidth > 220 ? "gap-2" : "gap-1"
+            }`}
+          >
+            <button
+              className={`text-text-700 hover:bg-primary-50 rounded-lg transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
+            >
+              <Bell strokeWidth={1.5} width={20} />
+            </button>
+
+            <SidebarCreateMore
+              quickActions={quickActions}
+              setQuickActions={setQuickActions}
+            />
+          </div>
+        )}
+      </div>
+
+      <nav className="flex-grow overflow-y-auto space-y-4">
+        <ul>
+          {menuItems.map((item) =>
+            sidebarLoading ? (
+              <Skeleton
+                key={item.id}
+                height={16}
+                width={150}
+                borderRadius={9999}
+                style={{ marginBottom: ".5rem" }}
+              />
+            ) : (
+              <li key={item.id}>
+                {item.path ? (
+                  <Link
+                    href={item.path}
+                    className={`flex items-center p-2 px-4 transition-colors duration-150 font-medium md:font-normal w-full border-l-4 ${
+                      item.path === pathname
+                        ? "bg-primary-100 text-text-900 border-primary-300"
+                        : "md:hover:bg-primary-50 border-transparent hover:border-primary-200 text-text-700"
+                    }`}
+                  >
+                    <item.icon
+                      strokeWidth={1.5}
+                      className="w-5 h-5 mr-3 text-primary-500"
+                    />
+                    {item.text}
+                  </Link>
+                ) : (
+                  <button
+                    className={`flex items-center p-2 rounded-lg transition-colors duration-150 w-full ${
+                      item.path === pathname
+                        ? "bg-primary-500 text-surface"
+                        : "hover:bg-primary-50 text-text-700"
+                    }`}
+                    onClick={item.onClick}
+                  >
+                    <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3" />
+                    {item.text}
+                  </button>
+                )}
+              </li>
+            )
+          )}
+        </ul>
+
+        <FavoriteProjects
+          setShowFavoritesProjects={setShowFavoritesProjects}
+          showFavoritesProjects={showFavoritesProjects}
+        />
+
+        <Personal sidebarWidth={sidebarWidth} />
+
+        <div>
           {sidebarLoading ? (
-            <div className="flex items-center w-full justify-end gap-2">
-              <Skeleton width={28} height={28} borderRadius={9999} />
-              <Skeleton width={28} height={28} borderRadius={9999} />
-              <Skeleton width={28} height={28} borderRadius={9999} />
-            </div>
+            <Skeleton height={16} width={150} borderRadius={9999} />
           ) : (
             <div
-              className={`flex items-center justify-end w-full transition duration-150 ${
-                sidebarWidth > 220 ? "gap-2" : "gap-1"
+              onTouchStart={(ev) =>
+                ev.currentTarget.classList.add("bg-primary-50")
+              }
+              onTouchEnd={(ev) =>
+                ev.currentTarget.classList.remove("bg-primary-50")
+              }
+              className={`flex items-center justify-between transition-colors duration-150 font-medium pr-1 md:font-normal w-full border-l-4 ${
+                pathname.startsWith("/app/projects")
+                  ? "md:bg-primary-100 text-text-900 md:border-primary-200"
+                  : "md:hover:bg-primary-50 border-transparent md:hover:border-primary-200 text-text-700"
               }`}
             >
-              <button
-                className={`text-text-700 hover:bg-primary-50 rounded-lg transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
-              >
-                <Bell strokeWidth={1.5} width={20} />
-              </button>
-
-              <SidebarCreateMore
-                quickActions={quickActions}
-                setQuickActions={setQuickActions}
-              />
-            </div>
-          )}
-        </div>
-
-        <nav className="flex-grow overflow-y-auto space-y-4 px-2">
-          <ul>
-            {menuItems.map((item) =>
-              sidebarLoading ? (
-                <Skeleton
-                  key={item.id}
-                  height={16}
-                  width={150}
-                  borderRadius={9999}
-                  style={{ marginBottom: ".5rem" }}
-                />
-              ) : (
-                <li key={item.id}>
-                  {item.path ? (
-                    <Link
-                      href={item.path}
-                      className={`flex items-center p-2 rounded-lg transition-colors duration-150 font-medium md:font-normal ${
-                        item.path === pathname
-                          ? "bg-primary-100 text-text-900"
-                          : "md:hover:bg-primary-50 text-text-700"
-                      }`}
-                    >
-                      <item.icon
-                        strokeWidth={1.5}
-                        className="w-5 h-5 mr-3 text-primary-500"
-                      />
-                      {item.text}
-                    </Link>
-                  ) : (
-                    <button
-                      className={`flex items-center p-2 rounded-lg transition-colors duration-150 w-full ${
-                        item.path === pathname
-                          ? "bg-primary-500 text-surface"
-                          : "hover:bg-primary-50 text-text-700"
-                      }`}
-                      onClick={item.onClick}
-                    >
-                      <item.icon strokeWidth={1.5} className="w-5 h-5 mr-3" />
-                      {item.text}
-                    </button>
-                  )}
-                </li>
-              )
-            )}
-          </ul>
-
-          <FavoriteProjects
-            setShowFavoritesProjects={setShowFavoritesProjects}
-            showFavoritesProjects={showFavoritesProjects}
-          />
-
-          <Personal sidebarWidth={sidebarWidth} />
-
-          <div>
-            {sidebarLoading ? (
-              <Skeleton height={16} width={150} borderRadius={9999} />
-            ) : (
               <div
-                onTouchStart={(ev) =>
-                  ev.currentTarget.classList.add("bg-primary-50")
-                }
-                onTouchEnd={(ev) =>
-                  ev.currentTarget.classList.remove("bg-primary-50")
-                }
-                className={`relative text-text-600 rounded-lg transition md:hover:bg-primary-50 flex items-center justify-between pr-1 cursor-pointer ${
-                  pathname.startsWith("/app/projects") && "bg-primary-100"
+                className={`flex items-center pl-4 py-2 ${
+                  sidebarWidth > 220 ? "gap-2" : "gap-1"
                 }`}
               >
                 <div
-                  className={`flex items-center pl-2 py-[7px] ${
+                  className={`flex items-center ${
                     sidebarWidth > 220 ? "gap-2" : "gap-1"
                   }`}
+                  style={{
+                    maxWidth: `${
+                      sidebarWidth - (teams.length > 3 ? 150 : 80)
+                    }px`,
+                  }}
                 >
-                  <div
-                    className={`flex items-center ${
-                      sidebarWidth > 220 ? "gap-2" : "gap-1"
-                    }`}
-                    style={{
-                      maxWidth: `${
-                        sidebarWidth - (teams.length > 3 ? 150 : 80)
-                      }px`,
-                    }}
+                  <span
+                    className={`font-medium text-xs transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis`}
                   >
-                    <span
-                      className={`font-medium text-xs transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis`}
-                    >
-                      Workspaces
-                    </span>
-                  </div>
-                </div>
-
-                <div
-                  className={`${
-                    screenWidth > 768 && "opacity-0 group-hover:opacity-100"
-                  } transition flex items-center`}
-                >
-                  <button
-                    className="p-1 hover:bg-primary-100 rounded-lg transition duration-150"
-                    onClick={() => setShowWorkspaces(!showWorkspaces)}
-                  >
-                    <ChevronRight
-                      strokeWidth={1.5}
-                      className={`w-[18px] h-[18px] transition-transform duration-150 transform ${
-                        showWorkspaces ? "rotate-90" : ""
-                      }`}
-                    />
-                  </button>
+                    Workspaces
+                  </span>
                 </div>
               </div>
-            )}
 
-            {showWorkspaces && (
-              <motion.div>
-                {teams.map((team) => (
-                  <TeamProjects
-                    key={team.id}
-                    team={team}
-                    sidebarWidth={sidebarWidth}
+              <div
+                className={`${
+                  screenWidth > 768 && "opacity-0 group-hover:opacity-100"
+                } transition flex items-center`}
+              >
+                <button
+                  className="p-1 hover:bg-primary-100 rounded-lg transition duration-150"
+                  onClick={() => setShowWorkspaces(!showWorkspaces)}
+                >
+                  <ChevronRight
+                    strokeWidth={1.5}
+                    className={`w-[18px] h-[18px] transition-transform duration-150 transform ${
+                      showWorkspaces ? "rotate-90" : ""
+                    }`}
                   />
-                ))}
-              </motion.div>
-            )}
-          </div>
-        </nav>
+                </button>
+              </div>
+            </div>
+          )}
 
-        <div className="p-2">
-          <Link
-            href={"/app/templates"}
-            className={`flex items-center p-2 rounded-lg transition-colors duration-150 font-medium md:font-normal ${
-              pathname.startsWith("/app/templates")
-                ? "bg-primary-100 text-text-900"
-                : "md:hover:bg-primary-50 text-text-700"
-            }`}
-          >
-            <SwatchBook
-              strokeWidth={1.5}
-              className="w-5 h-5 mr-3 text-primary-500"
-            />
-            Templates
-          </Link>
+          {showWorkspaces && (
+            <motion.div>
+              {teams.map((team) => (
+                <TeamProjects
+                  key={team.id}
+                  team={team}
+                  sidebarWidth={sidebarWidth}
+                />
+              ))}
+            </motion.div>
+          )}
         </div>
-      </aside>
-    </>
+      </nav>
+
+      <div className="py-2">
+        <Link
+          href={"/app/templates"}
+          className={`flex items-center p-2 px-4 transition-colors duration-150 font-medium md:font-normal w-full border-l-4 ${
+            pathname.startsWith("/app/templates")
+              ? "bg-primary-100 text-text-900 border-primary-300"
+              : "md:hover:bg-primary-50 border-transparent hover:border-primary-200 text-text-700"
+          }`}
+        >
+          <SwatchBook
+            strokeWidth={1.5}
+            className="w-5 h-5 mr-3 text-primary-500"
+          />
+          Templates
+        </Link>
+      </div>
+    </aside>
   );
 };
 

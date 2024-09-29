@@ -12,6 +12,8 @@ const LandingPage = () => {
         {/* Hero Section */}
         <HeroSection />
 
+        {/* more... */}
+
         {/* Feature Grid */}
         <FeatureGrid />
       </main>

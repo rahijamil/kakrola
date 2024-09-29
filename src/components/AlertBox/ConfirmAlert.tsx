@@ -25,21 +25,21 @@ const ConfirmAlert = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
-        className="fixed inset-0 z-50 bg-black bg-opacity-50 pt-40"
+        className="fixed inset-0 z-50 bg-black bg-opacity-70 dark:bg-opacity-90 pt-40"
         onClick={onCancel}
       >
         <motion.div
           initial={{
             opacity: 0,
-            scale: 0.8,
+            scale: 0.9,
           }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{
             opacity: 0,
-            scale: 0.8,
+            scale: 0.9,
           }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="bg-surface rounded-lg p-4 space-y-5 w-11/12 max-w-[450px] whitespace-normal mx-auto"
+          className="border-l-4 border-primary-200 p-4 bg-surface rounded-lg space-y-5 w-11/12 max-w-[450px] whitespace-normal mx-auto"
           onClick={(ev) => ev.stopPropagation()}
         >
           <div className={`space-y-1 ${!title && "pt-2"}`}>

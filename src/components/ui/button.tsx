@@ -8,7 +8,7 @@ const cn = (...classes: (string | undefined)[]) => {
 
 // Simplified types for button variants and colors
 type ButtonVariant = "default" | "outline" | "ghost" | "secondary" | "gray";
-type ButtonColor = "primary" | "red" | "gray";
+type ButtonColor = "primary" | "kakrola" | "text" | "red" | "gray";
 type ButtonSize = "default" | "xs" | "sm" | "lg" | "icon";
 
 const getButtonClasses = (
@@ -28,27 +28,39 @@ const getButtonClasses = (
     default: {
       primary:
         "text-surface bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-400 hover:to-primary-500",
+      kakrola:
+        "text-surface bg-gradient-to-r from-kakrola-500 to-kakrola-600 hover:from-kakrola-400 hover:to-kakrola-500 dark:from-[#8698c2] dark:to-[#96a6ca] dark:hover:from-[#4b607b] dark:hover:to-[#8698c2]",
+      text: "text-surface bg-gradient-to-r from-text-500 to-text-600 hover:from-text-400 hover:to-text-500",
       red: "text-surface bg-gradient-to-r from-red-700 to-red-600 hover:to-red-700",
       gray: "",
     },
     outline: {
       primary: "border border-primary-600 text-primary-600 hover:bg-primary-50",
+      kakrola: "border border-kakrola-600 text-kakrola-600 hover:bg-kakrola-50",
+      text: "border border-text-600 text-text-600 hover:bg-text-100",
       red: "border border-red-600 text-red-600 hover:bg-red-50",
       gray: "border border-text-300 hover:border-text-400 focus:border-text-300",
     },
     ghost: {
       primary: "text-primary-600 hover:bg-primary-50",
+      kakrola: "text-kakrola-600 hover:bg-kakrola-50",
+      text: "text-text-600 hover:bg-text-50",
       red: "text-red-600 hover:bg-red-50",
       gray: "text-text-600 hover:bg-text-100",
     },
     secondary: {
       primary: "bg-surface text-primary-600 hover:bg-text-100",
+      kakrola: "bg-surface text-kakrola-600 hover:bg-text-100",
+      text: "bg-surface text-text-600 hover:bg-text-100",
       red: "bg-surface text-red-600 hover:bg-text-100",
       gray: "",
     },
     gray: {
       primary:
         "bg-gradient-to-r from-text-300 to-text-200 text-text-600 hover:to-text-300",
+      kakrola:
+        "bg-gradient-to-r from-text-300 to-text-200 text-text-600 hover:to-text-300",
+      text: "bg-gradient-to-r from-text-300 to-text-200 text-text-600 hover:to-text-300",
       red: "bg-gradient-to-r from-text-300 to-text-200 text-text-600 hover:to-text-300",
       gray: "",
     },

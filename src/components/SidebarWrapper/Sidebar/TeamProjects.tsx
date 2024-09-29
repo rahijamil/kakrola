@@ -117,7 +117,11 @@ const TeamProjects = ({
             onTouchEnd={(ev) =>
               ev.currentTarget.classList.remove("bg-primary-50")
             }
-            className={`relative text-text-600  rounded-lg transition flex items-center justify-between pr-1  ${!isOpen ? "md:hover:bg-primary-50" : "md:bg-primary-50"}`}
+            className={`flex items-center transition-colors duration-150 font-medium pr-1 md:font-normal w-full border-l-4 ${
+              isOpen
+                ? "md:bg-primary-100 text-text-900 md:border-primary-200"
+                : "md:hover:bg-primary-50 border-transparent md:hover:border-primary-200 text-text-700"
+            }`}
           >
             <Link
               href={`/app/${team.id}`}
@@ -206,7 +210,7 @@ const TeamProjects = ({
               transition: { type: "spring" },
             }}
             exit={{ opacity: 0.5, height: 0, y: -10 }}
-            className="bg-text-100 dark:bg-surface md:bg-transparent md:dark:bg-transparent rounded-lg overflow-hidden"
+            className="bg-text-100 dark:bg-surface md:bg-transparent md:dark:bg-transparent rounded-lg md:rounded-none overflow-hidden"
           >
             <DragDropContext onDragEnd={handleOnDragEnd}>
               <Droppable droppableId="teams">

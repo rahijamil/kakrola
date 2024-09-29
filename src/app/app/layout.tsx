@@ -9,14 +9,8 @@ export const metadata: Metadata = {
 
 export default function AppLayout({
   children,
-  modal,
 }: Readonly<{
   children: React.ReactNode;
-  modal: React.ReactNode;
 }>) {
-  return (
-    <AppLayoutWrapper modal={modal}>
-     {children}
-    </AppLayoutWrapper>
-  );
+  return <AppLayoutWrapper>{children}</AppLayoutWrapper>;
 }

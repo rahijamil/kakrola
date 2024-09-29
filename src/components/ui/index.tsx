@@ -1,4 +1,3 @@
-"use client";
 import { generateSlug } from "@/utils/generateSlug";
 import { LucideProps } from "lucide-react";
 import React, {
@@ -8,7 +7,11 @@ import React, {
   ReactNode,
   RefAttributes,
   SetStateAction,
+  createContext,
+  useContext,
+  useId,
 } from "react";
+import { motion } from "framer-motion";
 
 // Dialog Component
 interface DialogProps {
@@ -26,29 +29,31 @@ export const Dialog: React.FC<DialogProps> = ({
 }) => {
   return (
     <div
-      className={`fixed inset-0 z-50 cursor-default flex justify-center ${
-        size == "sm" ? "bg-transparent" : " bg-black bg-opacity-40"
-      } ${position == "center" ? "items-center" : "items-start pt-40"}`}
+      className={`fixed inset-0 z-50 cursor-default flex justify-center bg-black bg-opacity-70 dark:bg-opacity-90 ${position == "center" ? "items-center" : "items-start pt-40"}`}
       onClick={onClose}
     >
-      <div
-        className={`bg-surface rounded-lg shadow-xl w-11/12 flex flex-col ${
+      <motion.div
+        initial={{ opacity: 0, scale: 0.99 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.99 }}
+        transition={{ duration: 0.2 }}
+        className={`bg-surface md:rounded-lg md:shadow-lg w-full md:w-11/12 flex flex-col ${
           size === "xs"
             ? "max-w-md"
             : size === "sm"
             ? "max-w-lg p-2"
             : size === "md"
-            ? "max-w-2xl h-[93%]"
+            ? "max-w-5xl h-full md:h-auto md:aspect-[4/2.5]"
             : size === "lg"
-            ? "max-w-5xl h-[93%]"
-            : "max-w-3xl h-[93%]"
+            ? "max-w-7xl h-full md:h-auto md:aspect-[4/2.5]"
+            : "max-w-3xl h-[90%]"
         }`}
         onClick={(ev) => ev.stopPropagation()}
       >
         {children}
-      </div>
+      </motion.div>
     </div>
-  );
+  ); // Dialog Component
 };
 
 interface DialogHeaderProps {
@@ -76,6 +81,92 @@ interface DialogFooterProps {
 export const DialogFooter: React.FC<DialogFooterProps> = ({ children }) => (
   <div className="mt-6 flex justify-end space-x-2">{children}</div>
 );
+
+type RadioGroupContextType = {
+  value: string;
+  onChange: (value: string) => void;
+  name: string;
+};
+
+const RadioGroupContext = createContext<RadioGroupContextType | undefined>(
+  undefined
+);
+
+interface RadioGroupProps {
+  value: string;
+  onValueChange: (value: string) => void;
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const RadioGroup: React.FC<RadioGroupProps> = ({
+  value,
+  onValueChange,
+  children,
+  className,
+}) => {
+  const name = useId();
+
+  return (
+    <RadioGroupContext.Provider
+      value={{ value, onChange: onValueChange, name }}
+    >
+      <div role="radiogroup" className={className}>
+        {children}
+      </div>
+    </RadioGroupContext.Provider>
+  );
+};
+
+interface RadioGroupItemProps {
+  value: string;
+  id: string;
+  className?: string;
+}
+
+export const RadioGroupItem: React.FC<RadioGroupItemProps> = ({
+  value,
+  id,
+  className,
+}) => {
+  const context = useContext(RadioGroupContext);
+  if (!context) {
+    throw new Error("RadioGroupItem must be used within a RadioGroup");
+  }
+
+  const { value: groupValue, onChange, name } = context;
+
+  return (
+    <input
+      type="radio"
+      id={id}
+      name={name}
+      value={value}
+      checked={value === groupValue}
+      onChange={() => onChange(value)}
+      className={`appearance-none w-4 h-4 rounded-full border border-text-300 checked:border-primary-500 checked:bg-primary-500 checked:border-4 focus:outline-none checked:ring-2 checked:ring-primary-500 checked:ring-offset-2 ${className}`}
+    />
+  );
+};
+
+interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+  children: React.ReactNode;
+}
+
+export const Label: React.FC<LabelProps> = ({
+  children,
+  className,
+  ...props
+}) => {
+  return (
+    <label
+      className={`text-sm font-medium text-text-700 ${className}`}
+      {...props}
+    >
+      {children}
+    </label>
+  );
+};
 
 // Input Component
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -136,7 +227,9 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             />
           )}
           <textarea
-            className={`outline-none border-none bg-transparent placeholder:text-text-400 w-full resize-none overflow-hidden ${className} ${Icon && "pl-10"}`}
+            className={`outline-none border-none bg-transparent placeholder:text-text-400 w-full resize-none overflow-hidden ${className} ${
+              Icon && "pl-10"
+            }`}
             ref={ref}
             id={id}
             rows={rows ? rows : 2}

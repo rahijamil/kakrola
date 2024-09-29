@@ -76,7 +76,10 @@ const MobileMorePage = () => {
           id: 2,
           icon: Settings,
           text: "Settings",
-          path: "/app/settings",
+          onClick: () => {
+            window.history.pushState(null, "", `${pathname}?settings=mobile`);
+            window.dispatchEvent(new Event("popstate"));
+          },
           divide: true,
         },
         {

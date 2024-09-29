@@ -6,14 +6,9 @@ import KakrolaLogo from "../kakrolaLogo";
 import SidebarWrapper from "@/components/SidebarWrapper";
 import MainContent from "./MainContent";
 import useSidebarCollapse from "@/components/SidebarWrapper/useSidebarCollapse";
+import SettingsModal from "@/components/settings/SettingsModal";
 
-const AppLayoutWrapper = ({
-  children,
-  modal,
-}: {
-  children: React.ReactNode;
-  modal: React.ReactNode;
-}) => {
+const AppLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   const { loading } = useAuthProvider();
   const { theme } = useTheme();
 
@@ -21,12 +16,10 @@ const AppLayoutWrapper = ({
 
   if (!loading) {
     return (
-      <main className="fixed top-0 left-0 bottom-0 right-0 bg-background">
-        <div className="flex h-full">
-          <SidebarWrapper props={{ isCollapsed, ...sidebarProps }} />
-          <MainContent isCollapsed={isCollapsed}>{children}</MainContent>
-        </div>
-        {modal}
+      <main className="fixed inset-0 flex h-full bg-primary-10">
+        <SidebarWrapper props={{ isCollapsed, ...sidebarProps }} />
+        <MainContent isCollapsed={isCollapsed}>{children}</MainContent>
+        <SettingsModal />
       </main>
     );
   } else {

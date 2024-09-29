@@ -5,6 +5,12 @@ import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/Spinner";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
+import { useAuthProvider } from "@/context/AuthContext";
 
 const passwordCriteria = [
   { regex: /.{8,}/, message: "At least 8 characters long" },
@@ -17,12 +23,14 @@ const passwordCriteria = [
   },
 ];
 
-const Password = () => {
+const AddPassword = () => {
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const [error, setError] = React.useState<ReactNode | null>(null);
   const [message, setMessage] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
+
+  const { profile } = useAuthProvider();
 
   const router = useRouter();
 
@@ -52,8 +60,7 @@ const Password = () => {
         );
         setLoading(false);
         return;
-      }
-      else {
+      } else {
         setError(null);
       }
     }
@@ -64,6 +71,8 @@ const Password = () => {
     setError(null);
     setMessage(null);
     setLoading(true);
+
+    if (!profile?.id) return;
 
     if (!password) {
       setError("Please enter your password.");
@@ -110,6 +119,14 @@ const Password = () => {
         setError(error.message);
         setLoading(false);
       } else {
+        createActivityLog({
+          actor_id: profile.id,
+          action: ActivityAction.UPDATED_PROFILE,
+          entity_type: EntityType.USER,
+          entity_id: profile.id,
+          metadata: {},
+        });
+
         setMessage("Password updated successfully.");
         setLoading(false);
         router.back();
@@ -175,4 +192,4 @@ const Password = () => {
   );
 };
 
-export default Password;
+export default AddPassword;

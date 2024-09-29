@@ -84,17 +84,17 @@ const SidebarWrapper = ({
   return (
     <div className="select-none">
       {screenWidth > 768 ? (
-        <div className="flex h-screen">
+        <div className="flex h-screen relative">
           <>
             {!isCollapsed && (
               <div
-                className="fixed md:static inset-0 bg-black bg-opacity-50 z-20"
+                className="fixed md:static inset-0 bg-black bg-opacity-50 z-10"
                 onClick={toggleSidebar}
               />
             )}
 
             <div
-              className={`fixed md:relative flex transition-all duration-300 h-screen whitespace-nowrap origin-left z-20 group desktop_sidebar ${
+              className={`fixed md:relative flex transition-all duration-300 h-screen whitespace-nowrap origin-left z-10 group desktop_sidebar ${
                 isCollapsed
                   ? "bg-primary-10 hover:bg-primary-50 is_collapsed"
                   : "bg-primary-10"
@@ -124,7 +124,7 @@ const SidebarWrapper = ({
               </div>
 
               <div
-                className={`w-[3px] min-w-[3px] min-h-full h-full hidden md:block z-10 ${
+                className={`w-[3px] min-w-[3px] min-h-full h-full hidden md:block z-10 absolute left-full ${
                   isResizing
                     ? "bg-primary-200"
                     : ` ${

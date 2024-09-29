@@ -18,15 +18,9 @@ const HeroSection = () => {
           </p>
 
           <div className="mt-8 max-w-md mx-auto">
-            <Link href="/auth/signup" className="group">
-              <Button
-                className="uppercase shadow-lg hover:shadow-xl transition-all hero_button"
-                rightContent={
-                  <div className="bg-background text-primary-500 rounded-lg w-8 h-8 flex items-center justify-center">
-                    <Rocket className="w-5 h-5" strokeWidth={1.5} />
-                  </div>
-                }
-              >
+            <Link href="/auth/signup">
+              <Button className="uppercase shadow-lg hover:shadow-xl transition-all hero_button">
+                <Rocket className="w-5 h-5" strokeWidth={1.5} />
                 Get Started - It's Free
               </Button>
             </Link>

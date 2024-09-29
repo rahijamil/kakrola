@@ -10,24 +10,26 @@ import Link from "next/link";
 import { useAuthProvider } from "@/context/AuthContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import Spinner from "@/components/ui/Spinner";
+import { avatarUploader } from "@/utils/avatarUploader";
 import {
   ActivityAction,
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
+import { usePathname } from "next/navigation";
 
-export default function AccountSettingsPage() {
+export default function AccountSettings() {
   const { profile } = useAuthProvider();
   const [name, setName] = useState(profile?.full_name || "");
   const [email, setEmail] = useState(profile?.email);
-  const [avatarUrl, setAvatarUrl] = useState(
-    profile?.avatar_url || "/default_avatar.png"
-  );
+  const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url);
   const [twoFactorAuth, setTwoFactorAuth] = useState(false);
 
   const [uploadLoading, setUploadLoading] = useState(false);
   const [removeLoading, setRemoveLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const pathname = usePathname();
 
   const uploadAvatar = async (event: ChangeEvent<HTMLInputElement>) => {
     setUploadLoading(true);
@@ -35,51 +37,9 @@ export default function AccountSettingsPage() {
 
     try {
       const file = event.target.files?.[0];
-      if (!file || !profile?.id) return;
+      if (!file || !profile) return;
 
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${file.name.split(".")[0]}-${profile?.id}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      // Upload image to Supabase storage
-      const { data, error: uploadError } = await supabaseBrowser.storage
-        .from("avatars")
-        .upload(filePath, file, {
-          cacheControl: "3600",
-          upsert: true,
-        });
-
-      if (uploadError) throw uploadError;
-
-      // Get public URL for the uploaded avatar
-      const {
-        data: { publicUrl },
-      } = supabaseBrowser.storage.from("avatars").getPublicUrl(filePath);
-
-      // Update profile with new avatar URL
-      const { error: updateError } = await supabaseBrowser
-        .from("profiles")
-        .update({ avatar_url: publicUrl })
-        .eq("id", profile?.id);
-
-      if (updateError) throw updateError;
-
-      setAvatarUrl(publicUrl);
-
-      createActivityLog({
-        actor_id: profile.id,
-        action: ActivityAction.UPDATED_PROFILE,
-        entity_id: profile.id,
-        entity_type: EntityType.USER,
-        metadata: {
-          old_data: {
-            avatar_url: "/default_avatar.png",
-          },
-          new_data: {
-            avatar_url: publicUrl,
-          },
-        },
-      });
+      setAvatarUrl(await avatarUploader(file, profile?.id));
     } catch (error) {
       console.error("Error uploading avatar:", error);
       setError("Failed to upload avatar. Please try again.");
@@ -116,7 +76,7 @@ export default function AccountSettingsPage() {
       // Update profile to remove avatar URL
       const { error: updateError } = await supabaseBrowser
         .from("profiles")
-        .update({ avatar_url: "/default_avatar.png" })
+        .update({ avatar_url: null })
         .eq("id", profile?.id);
 
       if (updateError) throw updateError;
@@ -126,14 +86,14 @@ export default function AccountSettingsPage() {
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.UPDATED_PROFILE,
-        entity_id: profile.id,
         entity_type: EntityType.USER,
+        entity_id: profile?.id,
         metadata: {
           old_data: {
-            avatar_url: profile.avatar_url,
+            avatar_url: profile?.avatar_url,
           },
           new_data: {
-            avatar_url: "/default_avatar.png",
+            avatar_url: null,
           },
         },
       });
@@ -164,11 +124,11 @@ export default function AccountSettingsPage() {
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.UPDATED_PROFILE,
-        entity_id: profile.id,
         entity_type: EntityType.USER,
+        entity_id: profile?.id,
         metadata: {
           old_data: {
-            full_name: profile.full_name,
+            full_name: profile?.full_name,
           },
           new_data: {
             full_name: name,
@@ -188,7 +148,7 @@ export default function AccountSettingsPage() {
       <div className="flex-1">
         {/* <section className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold">Plan</h2>
+          <h2 className="text-2xl font-bold">Plan</h2>
           <p className="text-sm text-text-500">Beginner</p>
         </div>
         <Button variant="outline" size="sm">
@@ -307,11 +267,20 @@ export default function AccountSettingsPage() {
 
           <div className="flex flex-col space-y-1">
             <label className="font-semibold">Password</label>
-            <Link href="/app/settings/account/password" className="w-fit">
-              <Button variant="outline" size="sm" className="w-fit">
-                Add Password
-              </Button>
-            </Link>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-fit"
+              onClick={() =>
+                window.history.pushState(
+                  null,
+                  "",
+                  `${pathname}?settings=account&tab=password`
+                )
+              }
+            >
+              Add Password
+            </Button>
           </div>
 
           {/* <div className="space-y-1">

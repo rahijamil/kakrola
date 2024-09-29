@@ -257,7 +257,7 @@ const PricingPage = () => {
                   key={index}
                   className={`rounded-lg overflow-hidden border border-t-5 bg-white ${
                     plan.businessHighlight
-                      ? "border-kale-500"
+                      ? "border-text-500"
                       : plan.highlighted
                       ? "border-primary-500"
                       : "border-text-100"
@@ -298,6 +298,7 @@ const PricingPage = () => {
                       <Link href="/auth/signup">
                         <Button
                           variant={plan.highlighted ? "default" : "outline"}
+                          color={plan.businessHighlight ? "text" : "primary"}
                           fullWidth
                         >
                           {(plan.highlighted || plan.businessHighlight) && (
@@ -356,7 +357,7 @@ const PricingPage = () => {
                           key={index}
                           className={`px-6 py-3 text-center text-sm font-semibold text-text-700 uppercase tracking-wider w-1/4 rounded-t-lg border border-b-0 border-t-5 h-20 md:h-14 ${
                             plan.businessHighlight
-                              ? "border-kale-500 bg-kale-10"
+                              ? "border-text-500 bg-text-10"
                               : plan.highlighted
                               ? "border-primary-500 bg-primary-10"
                               : "border-text-100 bg-white"
@@ -369,7 +370,7 @@ const PricingPage = () => {
                           key={index}
                           className={`px-6 py-3 text-center text-sm font-semibold text-text-700 uppercase tracking-wider w-1/4 border-x h-20 ${
                             plan.businessHighlight
-                              ? "border-kale-500 bg-kale-10"
+                              ? "border-text-500 bg-text-10"
                               : plan.highlighted
                               ? "border-primary-500 bg-primary-10"
                               : "border-text-100 bg-white"
@@ -398,7 +399,7 @@ const PricingPage = () => {
                           <div className="px-6 py-4 text-sm text-text-500 text-center w-1/4 border-x border-primary-500 bg-primary-10">
                             {renderFeatureValue(feature.pro)}
                           </div>
-                          <div className="px-6 py-4 text-sm text-text-500 text-center w-1/4 border-x border-kale-500 bg-kale-10">
+                          <div className="px-6 py-4 text-sm text-text-500 text-center w-1/4 border-x border-text-500 bg-text-10">
                             {renderFeatureValue(feature.business)}
                           </div>
 
@@ -442,7 +443,7 @@ const PricingPage = () => {
                               </Button>
                             </Link>
                           </div>
-                          <div className="px-6 py-4 text-sm text-text-500 text-center w-1/4 border border-t-0 border-kale-500 bg-kale-10 rounded-b-lg">
+                          <div className="px-6 py-4 text-sm text-text-500 text-center w-1/4 border border-t-0 border-text-500 bg-text-10 rounded-b-lg">
                             <div
                               className={`text-center font-semibold text-text-700 uppercase tracking-widerbg-white pb-4`}
                             >
@@ -450,7 +451,7 @@ const PricingPage = () => {
                             </div>
 
                             <Link href="/auth/signup">
-                              <Button fullWidth variant="outline">
+                              <Button fullWidth variant="outline" color="text">
                                 <Rocket className="w-5 h-5" strokeWidth={1.5} />
                                 Start Free Trial
                               </Button>
@@ -474,7 +475,7 @@ const PricingPage = () => {
                         <div className="px-6 py-4 text-sm text-text-500 text-center w-1/4 border-x border-primary-500 bg-primary-10">
                           {renderFeatureValue(feature.pro)}
                         </div>
-                        <div className="px-6 py-4 text-sm text-text-500 text-center w-1/4 border-x border-kale-500 bg-kale-10">
+                        <div className="px-6 py-4 text-sm text-text-500 text-center w-1/4 border-x border-text-500 bg-text-10">
                           {renderFeatureValue(feature.business)}
                         </div>
 

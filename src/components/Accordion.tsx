@@ -8,17 +8,19 @@ interface AccordionItemProps {
   title: string;
   content: string;
   defaultOpen?: boolean;
+  isLast?: boolean;
 }
 
 const AccordionItem: React.FC<AccordionItemProps> = ({
   title,
   content,
   defaultOpen,
+  isLast,
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen || false);
 
   return (
-    <div className="border-b border-text-200">
+    <div className={`border-b border-text-200 ${isLast ? "border-none" : ""}`}>
       <button
         className="flex justify-between items-center w-full py-5 text-left"
         onClick={() => setIsOpen(!isOpen)}
@@ -66,6 +68,7 @@ export const Accordion: React.FC<AccordionProps> = ({ items }) => {
           title={item.title}
           content={item.content}
           defaultOpen={index === 0}
+          isLast={index === items.length - 1}
         />
       ))}
     </div>

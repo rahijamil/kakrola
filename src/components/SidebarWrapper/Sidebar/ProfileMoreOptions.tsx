@@ -16,7 +16,7 @@ import {
   Smartphone,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuthProvider } from "@/context/AuthContext";
 import Image from "next/image";
 import Dropdown from "@/components/ui/Dropdown";
@@ -24,6 +24,8 @@ import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import useScreen from "@/hooks/useScreen";
+import { usePaddleCheckout } from "@/components/Paddle/usePaddleCheckout";
+import { PricingTier } from "@/lib/constants/pricing-tier";
 
 type IconType = React.ForwardRefExoticComponent<
   React.SVGProps<SVGSVGElement> & { title?: string; titleId?: string }
@@ -125,15 +127,22 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
   setShowLogoutConfirm,
 }) => {
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
-
   const { profile } = useAuthProvider();
   const { sidebarLoading } = useSidebarDataProvider();
+  const pathname = usePathname();
 
   const menuItems: MenuGroup[] = [
     {
       type: "group",
       items: [
-        { icon: Settings, label: "Settings", path: "/app/settings/account" },
+        {
+          icon: Settings,
+          label: "Settings",
+          onClick: () => {
+            window.history.pushState(null, "", `${pathname}?settings=account`);
+            window.dispatchEvent(new Event("popstate"));
+          },
+        },
         {
           icon: Plus,
           label: "Add a team",
@@ -163,27 +172,27 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
     //   type: "group",
     //   items: [{ icon: Gift, label: "What's new" }],
     // },
-    // {
-    //   type: "group",
-    //   items: [
-    //     {
-    //       icon: () => (
-    //         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-    //           <g fill="none" fillRule="evenodd">
-    //             <path
-    //               stroke="#ED9D04"
-    //               fill="#FEBA07"
-    //               fillOpacity=".1"
-    //               strokeLinejoin="bevel"
-    //               d="M8.2 18.6l3.8-2.3 3.8 2.3a.8.8 0 0 0 1-.9l-.9-4.2 3.3-2.8a.8.8 0 0 0-.4-1.3L14.4 9l-1.7-4a.8.8 0 0 0-1.4 0L9.6 9l-4.4.4a.8.8 0 0 0-.4 1.3l3.3 2.8-1 4.2a.8.8 0 0 0 1.1.9z"
-    //             />
-    //           </g>
-    //         </svg>
-    //       ),
-    //       label: "Upgrade to Pro",
-    //     },
-    //   ],
-    // },
+    {
+      type: "group",
+      items: [
+        {
+          icon: () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+              <g fill="none" fillRule="evenodd">
+                <path
+                  stroke="#ED9D04"
+                  fill="#FEBA07"
+                  fillOpacity=".1"
+                  strokeLinejoin="bevel"
+                  d="M8.2 18.6l3.8-2.3 3.8 2.3a.8.8 0 0 0 1-.9l-.9-4.2 3.3-2.8a.8.8 0 0 0-.4-1.3L14.4 9l-1.7-4a.8.8 0 0 0-1.4 0L9.6 9l-4.4.4a.8.8 0 0 0-.4 1.3l3.3 2.8-1 4.2a.8.8 0 0 0 1.1.9z"
+                />
+              </g>
+            </svg>
+          ),
+          label: "Upgrade to Pro",
+        },
+      ],
+    },
     {
       type: "group",
       items: [
