@@ -44,29 +44,24 @@ export class ProcessWebhook {
           .select();
 
         if (error) {
-          // if the subscription is not found, create a new one
-          if (error.code === "PGRST116") {
-            const response = await supabase
-              .from("subscriptions")
-              .insert({
-                subscription_id: eventData.data.id,
-                subscription_status: eventData.data.status,
-                price_id: eventData.data.items[0].price?.id ?? "",
-                product_id: eventData.data.items[0].price?.productId ?? "",
-                scheduled_change: eventData.data.scheduledChange?.effectiveAt,
-                customer_id: eventData.data.customerId,
-                customer_profile_id: (eventData.data.customData as any)
-                  .profile_id,
-              })
-              .select();
+          console.log({ error });
 
-            console.log({ response });
-          }
+          const response = await supabase
+            .from("subscriptions")
+            .insert({
+              subscription_id: eventData.data.id,
+              subscription_status: eventData.data.status,
+              price_id: eventData.data.items[0].price?.id ?? "",
+              product_id: eventData.data.items[0].price?.productId ?? "",
+              scheduled_change: eventData.data.scheduledChange?.effectiveAt,
+              customer_id: eventData.data.customerId,
+              customer_profile_id: (eventData.data.customData as any)
+                .profile_id,
+            })
+            .select();
+
+          console.log({ response });
         }
-
-        console.log({ data });
-
-        console.log({ customData: eventData.data.customData });
       }
     } catch (e) {
       console.error(e);
