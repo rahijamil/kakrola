@@ -64,6 +64,9 @@ export const usePaddleCheckout = ({
           paddle.Checkout.open({
             ...(profile.email && { customer: { email: profile.email } }),
             items: [{ priceId, quantity }],
+            customData: {
+              profile_id: profile.id,
+            },
           });
         }
       });
