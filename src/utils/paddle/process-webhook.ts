@@ -29,9 +29,9 @@ export class ProcessWebhook {
       const supabase = createClient();
 
       if ((eventData.data.customData as any).profile_id) {
-        const response = await supabase
+        const { data, error } = await supabase
           .from("subscriptions")
-          .upsert({
+          .update({
             subscription_id: eventData.data.id,
             subscription_status: eventData.data.status,
             price_id: eventData.data.items[0].price?.id ?? "",
@@ -40,8 +40,32 @@ export class ProcessWebhook {
             customer_id: eventData.data.customerId,
             customer_profile_id: (eventData.data.customData as any).profile_id,
           })
+          .eq("subscription_id", eventData.data.id)
           .select();
-        console.log({ response });
+
+        if (error) {
+          // if the subscription is not found, create a new one
+          if (error.code === "PGRST116") {
+            const response = await supabase
+              .from("subscriptions")
+              .insert({
+                subscription_id: eventData.data.id,
+                subscription_status: eventData.data.status,
+                price_id: eventData.data.items[0].price?.id ?? "",
+                product_id: eventData.data.items[0].price?.productId ?? "",
+                scheduled_change: eventData.data.scheduledChange?.effectiveAt,
+                customer_id: eventData.data.customerId,
+                customer_profile_id: (eventData.data.customData as any)
+                  .profile_id,
+              })
+              .select();
+
+            console.log({ response });
+          }
+        }
+
+        console.log({ data });
+
         console.log({ customData: eventData.data.customData });
       }
     } catch (e) {
