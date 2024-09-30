@@ -7,6 +7,7 @@ import OnboardProvider from "@/context/OnboardContext";
 import GlobalOptionProvider from "@/context/GlobalOptionContext";
 import ClientProviderWrapper from "./ClientProviderWrapper";
 import RoleProvider from "@/context/RoleContext";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({ subsets: ["latin"], fallback: ["Helvetica", "Arial"] });
 const poppins = Poppins({
@@ -48,7 +49,10 @@ export default function RootLayout({
             <SidebarDataProvider>
               <OnboardProvider>
                 <GlobalOptionProvider>
-                  <RoleProvider>{children}</RoleProvider>
+                  <RoleProvider>
+                    {children}
+                    <SpeedInsights />
+                  </RoleProvider>
                 </GlobalOptionProvider>
               </OnboardProvider>
             </SidebarDataProvider>
