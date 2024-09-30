@@ -9,11 +9,11 @@ import {
 import { createClient } from "@/utils/supabase/server";
 
 export class ProcessWebhook {
-  async processEvent(eventData: EventEntity, profile_id: string) {
+  async processEvent(eventData: EventEntity) {
     switch (eventData.eventType) {
       case EventName.SubscriptionCreated:
       case EventName.SubscriptionUpdated:
-        await this.updateSubscriptionData(eventData, profile_id);
+        await this.updateSubscriptionData(eventData);
         break;
       case EventName.CustomerCreated:
       case EventName.CustomerUpdated:
@@ -23,23 +23,27 @@ export class ProcessWebhook {
   }
 
   private async updateSubscriptionData(
-    eventData: SubscriptionCreatedEvent | SubscriptionUpdatedEvent,
-    profile_id: string
+    eventData: SubscriptionCreatedEvent | SubscriptionUpdatedEvent
   ) {
     try {
-      const response = await createClient()
-        .from("subscriptions")
-        .upsert({
-          subscription_id: eventData.data.id,
-          subscription_status: eventData.data.status,
-          price_id: eventData.data.items[0].price?.id ?? "",
-          product_id: eventData.data.items[0].price?.productId ?? "",
-          scheduled_change: eventData.data.scheduledChange?.effectiveAt,
-          customer_id: eventData.data.customerId,
-          customer_profile_id: profile_id,
-        })
-        .select();
-      console.log(response);
+      const supabase = createClient();
+
+      if ((eventData.data.customData as any).profile_id) {
+        const response = await supabase
+          .from("subscriptions")
+          .upsert({
+            subscription_id: eventData.data.id,
+            subscription_status: eventData.data.status,
+            price_id: eventData.data.items[0].price?.id ?? "",
+            product_id: eventData.data.items[0].price?.productId ?? "",
+            scheduled_change: eventData.data.scheduledChange?.effectiveAt,
+            customer_id: eventData.data.customerId,
+            customer_profile_id: (eventData.data.customData as any).profile_id,
+          })
+          .select();
+        console.log({ response });
+        console.log({ customData: eventData.data.customData });
+      }
     } catch (e) {
       console.error(e);
     }
