@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import Spinner from "../ui/Spinner";
 import { AnimatePresence, motion } from "framer-motion";
+import { createPortal } from "react-dom";
 
 const ConfirmAlert = ({
   onCancel,
@@ -18,7 +19,15 @@ const ConfirmAlert = ({
   submitBtnText: string;
   loading?: boolean;
 }) => {
-  return (
+  const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(
+    null
+  );
+
+  useEffect(() => {
+    setPortalContainer(document.body);
+  }, []);
+
+  return portalContainer && createPortal(
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0 }}
@@ -51,7 +60,12 @@ const ConfirmAlert = ({
             <Button size="xs" variant="ghost" color="gray" onClick={onCancel}>
               Cancel
             </Button>
-            <Button size="xs" onClick={onConfirm} disabled={loading} variant="ghost">
+            <Button
+              size="xs"
+              onClick={onConfirm}
+              disabled={loading}
+              variant="ghost"
+            >
               {loading ? (
                 <div className="flex items-center gap-2">
                   <Spinner color="current" size="sm" />
@@ -64,7 +78,8 @@ const ConfirmAlert = ({
           </div>
         </motion.div>
       </motion.div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    portalContainer
   );
 };
 
