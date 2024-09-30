@@ -44,10 +44,9 @@ import ThemeSettingsPage from "./ThemeSettings";
 import { AnimatePresence } from "framer-motion";
 import AddPassword from "./AddPassword";
 import SubscriptionSettings from "./SubscriptionSettings";
-import { Button } from "../ui/button";
-import { usePaddleCheckout } from "../Paddle/usePaddleCheckout";
-import CheckoutSettings from "./CheckoutSettings";
+import CheckoutSettings from "./checkout/CheckoutSettings";
 import { PricingPlanForSettings } from "./pricing.types";
+import CheckoutSuccess from "./checkout/CheckoutSuccess";
 
 const SettingsModal = () => {
   const { teams } = useSidebarDataProvider();
@@ -415,12 +414,15 @@ const SettingsModal = () => {
         {showAddTeam && <AddTeam onClose={() => setShowAddTeam(false)} />}
       </Dialog>
 
-      {selectedPlan && (
+      {tab !== "checkout-success" && selectedPlan && (
         <CheckoutSettings
           selectedPlan={selectedPlan}
           setSelectedPlan={setSelectedPlan}
+          tab={tab}
         />
       )}
+
+      {tab === "checkout-success" && <CheckoutSuccess setSelectedPlan={setSelectedPlan} />}
     </AnimatePresence>
   );
 };

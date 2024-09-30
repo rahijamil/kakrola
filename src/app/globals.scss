@@ -189,4 +189,17 @@
   .custom-quill-editor .ql-editor td {
     @apply bg-text-100;
   }
+
+  // paddle
+  .paddle-checkout-frame {
+    font-family: "Poppins", sans-serif !important;
+  }
+
+  .paddle-checkout-frame h2 {
+    color: var(--color-text-900) !important;
+  }
+
+  .paddle-checkout-frame p {
+    color: var(--color-text-600) !important;
+  }
 }

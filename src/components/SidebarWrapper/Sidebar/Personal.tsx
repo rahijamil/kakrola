@@ -183,7 +183,7 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
               transition: { type: "spring" },
             }}
             exit={{ opacity: 0.5, height: 0, y: -10 }}
-            className="bg-text-100 dark:bg-surface md:bg-transparent md:dark:bg-transparent rounded-lg md:rounded-none overflow-hidden"
+            className="bg-text-100 dark:bg-surface md:bg-transparent rounded-lg md:rounded-none overflow-hidden"
           >
             <DragDropContext onDragEnd={handleOnDragEnd}>
               <Droppable droppableId="projects">

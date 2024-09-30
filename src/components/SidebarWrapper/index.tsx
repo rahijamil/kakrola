@@ -84,7 +84,7 @@ const SidebarWrapper = ({
   return (
     <div className="select-none">
       {screenWidth > 768 ? (
-        <div className="flex h-screen relative">
+        <div className="flex h-screen">
           <>
             {!isCollapsed && (
               <div

@@ -255,7 +255,7 @@ const SubscriptionSettings = ({
             <div
               className={`w-10 h-10 rounded-full flex items-center justify-center ${
                 activePlan?.businessHighlight
-                  ? "bg-text-500 dark:bg-text-500"
+                  ? "bg-text-500"
                   : activePlan?.highlighted
                   ? "bg-kakrola-500 dark:bg-[#8698c2]/10"
                   : "bg-text-10"
@@ -265,7 +265,7 @@ const SubscriptionSettings = ({
                 className={`w-5 h-5 ${
                   activePlan?.highlighted || activePlan?.businessHighlight
                     ? "text-white"
-                    : "text-text-900"
+                    : "text-background"
                 }`}
                 strokeWidth={1.5}
               />
