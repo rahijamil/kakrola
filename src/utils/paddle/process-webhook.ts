@@ -13,8 +13,14 @@ export class ProcessWebhook {
     console.log("Processing event:", eventData.eventType);
     switch (eventData.eventType) {
       case EventName.SubscriptionCreated:
+        await this.handleSubscriptionCreated(
+          eventData as SubscriptionCreatedEvent
+        );
+        break;
       case EventName.SubscriptionUpdated:
-        await this.updateSubscriptionData(eventData);
+        await this.handleSubscriptionUpdated(
+          eventData as SubscriptionUpdatedEvent
+        );
         break;
       case EventName.CustomerCreated:
       case EventName.CustomerUpdated:
@@ -25,10 +31,45 @@ export class ProcessWebhook {
     }
   }
 
-  private async updateSubscriptionData(
-    eventData: SubscriptionCreatedEvent | SubscriptionUpdatedEvent
-  ) {
-    console.log("Updating subscription data:", eventData.data.id);
+  private async handleSubscriptionCreated(eventData: SubscriptionCreatedEvent) {
+    console.log("Handling subscription created:", eventData.data.id);
+    try {
+      const supabase = createClient();
+
+      if ((eventData.data.customData as any).profile_id) {
+        console.log(
+          "Profile ID found:",
+          (eventData.data.customData as any).profile_id
+        );
+        const { data, error } = await supabase
+          .from("subscriptions")
+          .insert({
+            subscription_id: eventData.data.id,
+            subscription_status: eventData.data.status,
+            price_id: eventData.data.items[0].price?.id ?? "",
+            product_id: eventData.data.items[0].price?.productId ?? "",
+            scheduled_change: eventData.data.scheduledChange?.effectiveAt,
+            customer_id: eventData.data.customerId,
+            customer_profile_id: (eventData.data.customData as any).profile_id,
+          })
+          .select();
+
+        if (error) {
+          console.error("Error inserting subscription:", error);
+        } else {
+          console.log("Successfully inserted subscription:", data);
+        }
+      } else {
+        console.error("No profile_id found in customData");
+        throw new Error("No profile_id found in customData");
+      }
+    } catch (e) {
+      console.error("Error in handleSubscriptionCreated:", e);
+    }
+  }
+
+  private async handleSubscriptionUpdated(eventData: SubscriptionUpdatedEvent) {
+    console.log("Handling subscription updated:", eventData.data.id);
     try {
       const supabase = createClient();
 
@@ -40,40 +81,18 @@ export class ProcessWebhook {
         const { data, error } = await supabase
           .from("subscriptions")
           .update({
-            subscription_id: eventData.data.id,
             subscription_status: eventData.data.status,
             price_id: eventData.data.items[0].price?.id ?? "",
             product_id: eventData.data.items[0].price?.productId ?? "",
             scheduled_change: eventData.data.scheduledChange?.effectiveAt,
             customer_id: eventData.data.customerId,
-            customer_profile_id: (eventData.data.customData as any).profile_id,
           })
           .eq("subscription_id", eventData.data.id)
-          .select();
+          .select()
+          .single();
 
         if (error) {
           console.error("Error updating subscription:", error);
-
-          console.log("Attempting to insert new subscription");
-          const { data: insertData, error: insertError } = await supabase
-            .from("subscriptions")
-            .insert({
-              subscription_id: eventData.data.id,
-              subscription_status: eventData.data.status,
-              price_id: eventData.data.items[0].price?.id ?? "",
-              product_id: eventData.data.items[0].price?.productId ?? "",
-              scheduled_change: eventData.data.scheduledChange?.effectiveAt,
-              customer_id: eventData.data.customerId,
-              customer_profile_id: (eventData.data.customData as any)
-                .profile_id,
-            })
-            .select();
-
-          if (insertError) {
-            console.error("Error inserting subscription:", insertError);
-          } else {
-            console.log("Successfully inserted subscription:", insertData);
-          }
         } else {
           console.log("Successfully updated subscription:", data);
         }
@@ -82,7 +101,7 @@ export class ProcessWebhook {
         throw new Error("No profile_id found in customData");
       }
     } catch (e) {
-      console.error("Error in updateSubscriptionData:", e);
+      console.error("Error in handleSubscriptionUpdated:", e);
     }
   }
 
@@ -92,27 +111,13 @@ export class ProcessWebhook {
     console.log("Updating customer data:", eventData.data.id);
     try {
       const supabase = createClient();
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (userError) {
-        console.error("Error getting user:", userError);
-        throw userError;
-      }
-
-      if (!user) {
-        console.error("User not found");
-        throw new Error("User not found");
-      }
 
       const { data, error } = await supabase
         .from("profiles")
         .update({
           customer_id: eventData.data.id,
         })
-        .eq("id", user.id)
+        .eq("id", (eventData.data.customData as any).profile_id)
         .select();
 
       if (error) {
