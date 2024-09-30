@@ -55,7 +55,7 @@ export const usePaddleCheckout = ({
             frameInitialHeight: 450,
             frameStyle:
               "width: 100%; background-color: transparent; border: none",
-            successUrl: `${pathname}?settings=subscriptions&tab=checkout-success`,
+            successUrl: `${pathname}?settings=subscription&tab=checkout-success`,
           },
         },
       }).then(async (paddle) => {
