@@ -4,6 +4,7 @@ import SectionAddTask from "./SectionAddTask";
 import TaskItem from "./TaskItem";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { Droppable } from "@hello-pangea/dnd";
+import TaskItemForListView from "./ListView/TaskItemForListView";
 
 const ListViewForToday = ({
   tasks,
@@ -49,7 +50,7 @@ const ListViewForToday = ({
                       task.parent_task_id && "ml-8"
                     }`}
                   >
-                    <TaskItem
+                    <TaskItemForListView
                       task={task}
                       setTasks={setTasks}
                       subTasks={tasks.filter(
@@ -77,7 +78,7 @@ const ListViewForToday = ({
                               childTask.parent_task_id && "ml-8"
                             }`}
                           >
-                            <TaskItem
+                            <TaskItemForListView
                               task={childTask}
                               setTasks={setTasks}
                               subTasks={tasks.filter(

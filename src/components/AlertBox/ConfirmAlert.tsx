@@ -58,7 +58,7 @@ const ConfirmAlert = ({
 
           <div className="flex items-center justify-end gap-3">
             <Button size="xs" variant="ghost" color="gray" onClick={onCancel}>
-              Cancel
+              Close
             </Button>
             <Button
               size="xs"

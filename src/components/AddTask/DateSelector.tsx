@@ -23,12 +23,11 @@ import {
   isWeekend,
   isBefore,
   isEqual,
+  formatISO,
 } from "date-fns";
 import { Input } from "../ui/input";
 import MonthCalendar from "../ui/MonthCalendar";
 import Dropdown from "../ui/Dropdown";
-import { getDateInfo } from "@/utils/getDateInfo";
-import DueDateButton from "../TaskViewSwitcher/DueDateButton";
 import CustomSelect from "../ui/CustomSelect";
 import { ToggleSwitch } from "../ui/ToggleSwitch";
 
@@ -108,7 +107,7 @@ const DateSelector = ({
   const [focusedInput, setFocusedInput] = useState<"start" | "end">("start");
 
   const [dates, setDates] = useState<TaskType["dates"]>({
-    start_date: task.dates.start_date || format(new Date(), "MMM dd, yyyy"),
+    start_date: task.dates.start_date || formatISO(new Date(), {representation: "date"}),
     start_time: task.dates.start_time || null,
     end_date: task.dates.end_date || null,
     end_time: task.dates.end_time || null,
@@ -139,15 +138,15 @@ const DateSelector = ({
         ...prev,
         dates: {
           ...prev.dates,
-          start_date: format(new Date(), "dd LLL yyyy"),
-          end_date: format(endDate, "dd LLL yyyy"),
+          start_date: formatISO(new Date(), {representation: "date"}),
+          end_date: formatISO(endDate, {representation: "date"}),
         },
       }));
 
       setDates((prev) => ({
         ...prev,
-        start_date: format(new Date(), "dd LLL yyyy"),
-        end_date: format(endDate, "dd LLL yyyy"),
+        start_date: formatISO(new Date(), { representation: "date" }),
+        end_date: formatISO(endDate, { representation: "date" }),
       }));
 
       setShowEndDate(true);
@@ -157,7 +156,7 @@ const DateSelector = ({
   const handleDateSelect = (newDate: Date | undefined) => {
     if (!newDate) return;
 
-    const formattedDate = format(newDate, "dd LLL yyyy");
+    const formattedDate = formatISO(newDate, { representation: "date" });
     let newStartDate = dates.start_date;
     let newEndDate = dates.end_date;
 

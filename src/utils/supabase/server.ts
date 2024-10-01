@@ -29,3 +29,15 @@ export function createClient(useServiceRole = false) {
     },
   });
 }
+
+
+export async function validateUserSession() {
+  const supabase = createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw new Error('You are not allowed to perform this action.');
+  }
+}

@@ -5,6 +5,7 @@ import {
   ReactNode,
   RefAttributes,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -47,6 +48,9 @@ import SubscriptionSettings from "./SubscriptionSettings";
 import CheckoutSettings from "./checkout/CheckoutSettings";
 import { PricingPlanForSettings } from "./pricing.types";
 import CheckoutSuccess from "./checkout/CheckoutSuccess";
+import { useAuthProvider } from "@/context/AuthContext";
+import { supabaseBrowser } from "@/utils/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 const SettingsModal = () => {
   const { teams } = useSidebarDataProvider();
@@ -57,6 +61,29 @@ const SettingsModal = () => {
   const teamIdParam = searchParams.get("teamId");
   const teamId = teamIdParam ? parseInt(teamIdParam, 10) : null;
   const tab = searchParams.get("tab");
+  const { profile } = useAuthProvider();
+
+  const { data: subscriptionData } = useQuery({
+    queryKey: ["subscriptionId", profile?.id],
+    queryFn: async () => {
+      if (!profile) return null;
+
+      const { data, error } = await supabaseBrowser
+        .from("subscriptions")
+        .select("subscription_id")
+        .eq("customer_profile_id", profile.id)
+        .single();
+
+      if (error) throw error;
+      return data?.subscription_id;
+    },
+    enabled: !!profile,
+    refetchInterval: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+
+  const subscriptionId = subscriptionData ?? null;
 
   const [showAddTeam, setShowAddTeam] = useState(false);
 
@@ -160,7 +187,14 @@ const SettingsModal = () => {
       case "account":
         return tab == "password" ? <AddPassword /> : <AccountSettings />;
       case "subscription":
-        return <SubscriptionSettings setSelectedPlan={setSelectedPlan} />;
+        return (
+          <SubscriptionSettings
+            setSelectedPlan={setSelectedPlan}
+            isShowBilling={tab === "billing"}
+            subscriptionId={subscriptionId}
+          />
+        );
+
       case "theme":
         return <ThemeSettingsPage />;
       case "notifications":
@@ -169,6 +203,25 @@ const SettingsModal = () => {
         return "<IntegrationsSettings />";
       case "workspaces":
         return "<WorkspaceSettings teamId={teamId} tab={tab} />";
+      default:
+        return null;
+    }
+  }, [settings, tab]);
+
+  const renderSettingsTitle = useMemo(() => {
+    switch (settings) {
+      case "account":
+        return tab == "password" ? "Password" : "Account";
+      case "subscription":
+        return tab === "billing" ? "Billing" : "Subscription";
+      case "theme":
+        return "Theme";
+      case "notifications":
+        return "Notifications";
+      case "integrations":
+        return "Integrations";
+      case "workspaces":
+        return "Workspaces";
       default:
         return null;
     }
@@ -190,7 +243,7 @@ const SettingsModal = () => {
             }`}
           >
             <div className="flex-1 divide-y divide-text-100">
-              <div className="p-4 md:p-6 pb-3 h-[54px] md:h-[62px] flex items-center gap-4">
+              <div className="p-4 md:p-6 pb-3 h-[58px] flex items-center gap-4">
                 <ChevronLeft
                   strokeWidth={1.5}
                   className="w-6 h-6 block md:hidden"
@@ -380,11 +433,13 @@ const SettingsModal = () => {
 
           <div
             className={`flex-1 bg-background rounded-lg shadow-[1px_1px_.5rem_0_rgba(0,0,0,0.1)] border border-text-100 overflow-y-auto ${
-              settings !== "mobile" ? "" : "hidden md:m-2 md:ml-0 md:block"
+              settings !== "mobile"
+                ? "md:m-1 md:ml-0"
+                : "hidden md:m-2 md:ml-0 md:block"
             }`}
           >
             <div className="p-4 md:p-6 border-b border-text-100 flex items-center gap-2 h-[54px]">
-              {pathname === "/app/settings/account/password" && (
+              {tab && !teamId && (
                 <button
                   className="p-1 rounded-lg hover:bg-primary-50 transition"
                   onClick={() => router.back()}
@@ -399,9 +454,7 @@ const SettingsModal = () => {
                   onClick={() => router.back()}
                 />
 
-                {pathname === "/app/settings/account/password"
-                  ? "Password"
-                  : menuItems.find((item) => item.param === settings)?.name}
+                {renderSettingsTitle}
               </p>
             </div>
 
@@ -422,7 +475,9 @@ const SettingsModal = () => {
         />
       )}
 
-      {tab === "checkout-success" && <CheckoutSuccess setSelectedPlan={setSelectedPlan} />}
+      {tab === "checkout-success" && (
+        <CheckoutSuccess setSelectedPlan={setSelectedPlan} />
+      )}
     </AnimatePresence>
   );
 };

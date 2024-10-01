@@ -113,11 +113,11 @@ export class ProcessWebhook {
       const supabase = createClient();
 
       const { data, error } = await supabase
-        .from("profiles")
+        .from("subscriptions")
         .update({
           customer_id: eventData.data.id,
         })
-        .eq("id", (eventData.data.customData as any).profile_id)
+        .eq("customer_profile_id", (eventData.data.customData as any).profile_id)
         .select();
 
       if (error) {

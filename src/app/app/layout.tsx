@@ -3,8 +3,8 @@ import React from "react";
 import AppLayoutWrapper from "./AppLayoutWrapper";
 
 export const metadata: Metadata = {
-  title: "Today - Kakrola",
-  description: "Kakrola",
+  title: "My Tasks - Kakrola",
+  description: "My Tasks on Kakrola",
 };
 
 export default function AppLayout({

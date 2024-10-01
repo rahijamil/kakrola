@@ -1,8 +1,19 @@
-import React, { Dispatch, ReactNode, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { Check, CheckCircle, ChevronDown, Rocket } from "lucide-react";
 import { PricingPlanForSettings } from "./pricing.types";
+import { usePathname } from "next/navigation";
+import {
+  SubscriptionDetailResponse,
+  TransactionResponse,
+} from "@/lib/api.types";
+import { getSubscription } from "@/utils/paddle/get-subscription";
+import { getTransactions } from "@/utils/paddle/get-transactions";
+import BillingSettings from "./BillingSettings";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { useQuery } from "@tanstack/react-query";
 
 const pricingPlans: PricingPlanForSettings[] = [
   {
@@ -231,325 +242,418 @@ const renderFeatureValue = (value: boolean | string) => {
 
 const SubscriptionSettings = ({
   setSelectedPlan,
+  isShowBilling,
+  subscriptionId,
 }: {
   setSelectedPlan: Dispatch<SetStateAction<PricingPlanForSettings | null>>;
+  isShowBilling: boolean;
+  subscriptionId: string | null;
 }) => {
-  const activePlan = pricingPlans.find((plan) => plan.name === "Free");
   const [showComparison, setShowComparison] = useState(false);
+  const pathname = usePathname();
 
-  return (
-    <>
-      <main className="space-y-6">
-        <div className="space-y-4">
-          <h2 className="font-semibold text-base">Active plan</h2>
+  const { data: subscription, isLoading: isSubscriptionLoading } = useQuery({
+    queryKey: ["subscription", subscriptionId],
+    queryFn: () => getSubscription(subscriptionId!),
+    enabled: !!subscriptionId,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchInterval: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: false,
+  });
 
-          <div
-            className={`flex gap-4 border border-l-4 p-4 rounded-lg ${
-              activePlan?.businessHighlight
-                ? "border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface"
-                : activePlan?.highlighted
-                ? "border-kakrola-500 bg-kakrola-10 dark:border-[#8698c2] dark:bg-[#8698c2]/10"
-                : "border-text-100 bg-background"
-            }`}
-          >
+  const { data: transactions, isLoading: isTransactionsLoading } = useQuery({
+    queryKey: ["transactions", subscriptionId],
+    queryFn: () => getTransactions(subscriptionId!, ""),
+    enabled: !!subscriptionId,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchInterval: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: false,
+  });
+
+  const product = subscription?.data?.items[0].product;
+  const activeSubscription = subscription?.data;
+
+  const loading = isSubscriptionLoading || isTransactionsLoading;
+
+  if (isShowBilling && subscription && transactions) {
+    return (
+      <BillingSettings
+        subscription={subscription}
+        transactions={transactions}
+      />
+    );
+  } else {
+    return (
+      <>
+        <main className="space-y-6">
+          <div className="space-y-4">
+            <h2 className="font-semibold text-base">Active plan</h2>
+
             <div
+              className={`flex gap-4 border border-l-4 p-4 rounded-lg ${
+                pricingPlans.find(
+                  (item) => item.id === product?.name.toLowerCase()
+                )?.businessHighlight
+                  ? "border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface"
+                  : pricingPlans.find(
+                      (item) =>
+                        item.id ===
+                        activeSubscription?.items[0].product.name.toLowerCase()
+                    )?.highlighted
+                  ? "border-kakrola-500 bg-kakrola-10 dark:border-[#8698c2] dark:bg-[#8698c2]/10"
+                  : "border-text-100 bg-background"
+              }`}
+            >
+              {/* <div
               className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                activePlan?.businessHighlight
+                pricingPlans.find(
+                  (item) => item.id === product?.name.toLowerCase()
+                )?.businessHighlight
                   ? "bg-text-500"
-                  : activePlan?.highlighted
+                  : pricingPlans.find(
+                      (item) =>
+                        item.id === product?.name.toLowerCase()
+                    )?.highlighted
                   ? "bg-kakrola-500 dark:bg-[#8698c2]/10"
                   : "bg-text-10"
               }`}
             >
               <Rocket
                 className={`w-5 h-5 ${
-                  activePlan?.highlighted || activePlan?.businessHighlight
+                  pricingPlans.find(
+                    (item) => item.id === product?.name.toLowerCase()
+                  )?.highlighted ||
+                  pricingPlans.find(
+                    (item) => item.id === product?.name.toLowerCase()
+                  )?.businessHighlight
                     ? "text-white"
                     : "text-background"
                 }`}
                 strokeWidth={1.5}
               />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-text-900">
-                {activePlan?.name}
-              </h3>
-              <p className="text-sm text-text-500">{activePlan?.description}</p>
+            </div> */}
+              <div className="flex-1">
+                <div className="flex items-center justify-between gap-4">
+                  {loading ? (
+                    <Skeleton width={150} borderRadius={8} height={20} />
+                  ) : (
+                    <h3 className="text-lg font-semibold text-text-900">
+                      {product?.name}
+                    </h3>
+                  )}
 
-              <p className="mt-4 flex flex-col">
-                <span className="text-xs font-medium text-text-600">
-                  {activePlan?.price1}
-                </span>
-                {activePlan?.price2 && (
-                  <span className="text-xs font-medium text-text-600 opacity-70">
-                    {activePlan?.price2}
-                  </span>
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div className="border-b border-text-100 pb-4">
-            <h2 className="font-semibold text-base">All plans</h2>
-          </div>
-
-          <div className="grid gap-6 lg:grid-cols-3">
-            {pricingPlans.map((plan, index) => (
-              <div
-                key={index}
-                className={`rounded-lg overflow-hidden border border-t-5 bg-background p-6 space-y-6 flex flex-col ${
-                  plan.businessHighlight
-                    ? "border-text-500 dark:border-text-500"
-                    : plan.highlighted
-                    ? "border-kakrola-500 dark:border-[#8698c2]"
-                    : "border-text-100"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-semibold text-text-900">
-                    {plan.name}
-                  </h2>
-
-                  {plan.badge && (
-                    <span className="bg-kakrola-500 text-surface text-xs font-semibold px-2 py-1 rounded-lg dark:bg-[#8698c2]">
-                      {plan.badge}
-                    </span>
+                  {loading ? (
+                    <Skeleton width={100} borderRadius={8} />
+                  ) : (
+                    <button
+                      className="text-xs text-text-500 hover:text-text-700 transition"
+                      onClick={() => {
+                        window.history.pushState(
+                          {},
+                          "",
+                          `${pathname}?settings=subscription&tab=billing`
+                        );
+                      }}
+                    >
+                      View billing
+                    </button>
                   )}
                 </div>
-
-                <p className="mt-4 flex flex-col">
-                  <span className="text-xs font-medium text-text-600">
-                    {plan.price1}
-                  </span>
-                  <span className="text-xs font-medium text-text-600 opacity-70">
-                    {plan.price2}
-                  </span>
-                </p>
-
-                {plan.cta ? (
-                  <div>
-                    <Button
-                      variant={plan.highlighted ? "default" : "outline"}
-                      color={
-                        plan.highlighted
-                          ? "kakrola"
-                          : plan.businessHighlight
-                          ? "text"
-                          : "primary"
-                      }
-                      fullWidth
-                      onClick={() => setSelectedPlan(plan)}
-                    >
-                      {(plan.highlighted || plan.businessHighlight) && (
-                        <Rocket className="w-5 h-5" strokeWidth={1.5} />
-                      )}
-                      {plan.cta}
-                    </Button>
-                  </div>
+                {loading ? (
+                  <Skeleton width={300} borderRadius={8} className="mt-2" />
                 ) : (
-                  <div className="h-[75px]"></div>
+                  <p className="text-text-500">
+                    {product?.description}
+                  </p>
                 )}
 
-                <ul className="space-y-2 flex-1">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start">
-                      <div className="flex-shrink-0 pt-0.5">
-                        <CheckCircle
-                          className="h-4 w-4 text-text-500"
-                          strokeWidth={1.5}
-                        />
-                      </div>
-                      <p className="ml-3 text-text-700">{feature}</p>
-                    </li>
-                  ))}
-                </ul>
+                {/* <p className="mt-4 flex flex-col">
+                <span className="text-xs font-medium text-text-600">
+                  {
+                    pricingPlans.find(
+                      (item) =>
+                        item.id === product?.name.toLowerCase()
+                    )?.price1
+                  }
+                </span>
+                {pricingPlans.find(
+                  (item) => item.id === product?.name.toLowerCase()
+                )?.price2 && (
+                  <span className="text-xs font-medium text-text-600 opacity-70">
+                    {
+                      pricingPlans.find(
+                        (item) =>
+                          item.id === product?.name.toLowerCase()
+                      )?.price2
+                    }
+                  </span>
+                )}
+              </p> */}
               </div>
-            ))}
+            </div>
           </div>
-        </div>
 
-        {/* Comparison Section */}
-        <section className="pt-2 pb-6 hidden md:block">
-          {showComparison ? (
-            <div className="border-b border-text-100 pb-4 mb-6">
-              <h2 className="font-semibold text-base">Plans and features</h2>
+          <div className="space-y-6">
+            <div className="border-b border-text-100 pb-4">
+              <h2 className="font-semibold text-base">All plans</h2>
             </div>
-          ) : (
-            <div className="border-b border-text-100 pb-4 mb-6 flex items-center justify-center">
-              <Button
-                onClick={() => setShowComparison(true)}
-                variant="ghost"
-                size="sm"
-              >
-                Compare plans
-                <ChevronDown className="w-5 h-5" strokeWidth={1.5} />
-              </Button>
-            </div>
-          )}
 
-          {showComparison && (
-            <div className="bg-background overflow-x-auto">
-              {comparisonFeatures.map(
-                (category, categoryIndex, categoryArray) => (
-                  <div key={categoryIndex}>
-                    <div className="flex items-center gap-6 relative">
-                      <div className="absolute h-px w-full bottom-0 bg-black/5 dark:bg-white/5"></div>
+            <div className="grid gap-6 lg:grid-cols-3">
+              {pricingPlans.map((plan, index) => (
+                <div
+                  key={index}
+                  className={`rounded-lg overflow-hidden border border-t-5 bg-background p-6 space-y-6 flex flex-col ${
+                    plan.businessHighlight
+                      ? "border-text-500 dark:border-text-500"
+                      : plan.highlighted
+                      ? "border-kakrola-500 dark:border-[#8698c2]"
+                      : "border-text-100"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-xl font-semibold text-text-900">
+                      {plan.name}
+                    </h2>
 
-                      <div
-                        className={`px-4 py-2 font-medium text-xs text-text-500 w-1/4 ${
-                          categoryIndex !== 0 && "h-14 flex items-end"
-                        }`}
+                    {plan.badge && (
+                      <span className="bg-kakrola-500 text-surface text-xs font-semibold px-2 py-1 rounded-lg dark:bg-[#8698c2]">
+                        {plan.badge}
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="mt-4 flex flex-col">
+                    <span className="text-xs font-medium text-text-600">
+                      {plan.price1}
+                    </span>
+                    <span className="text-xs font-medium text-text-600 opacity-70">
+                      {plan.price2}
+                    </span>
+                  </p>
+
+                  {plan.cta ? (
+                    <div>
+                      <Button
+                        variant={plan.highlighted ? "default" : "outline"}
+                        color={
+                          plan.highlighted
+                            ? "kakrola"
+                            : plan.businessHighlight
+                            ? "text"
+                            : "primary"
+                        }
+                        fullWidth
+                        onClick={() => setSelectedPlan(plan)}
                       >
-                        {category.category}
+                        {(plan.highlighted || plan.businessHighlight) && (
+                          <Rocket className="w-5 h-5" strokeWidth={1.5} />
+                        )}
+                        {plan.cta}
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="h-[75px]"></div>
+                  )}
+
+                  <ul className="space-y-2 flex-1">
+                    {plan.features.map((feature, featureIndex) => (
+                      <li key={featureIndex} className="flex items-start">
+                        <div className="flex-shrink-0 pt-0.5">
+                          <CheckCircle
+                            className="h-4 w-4 text-text-500"
+                            strokeWidth={1.5}
+                          />
+                        </div>
+                        <p className="ml-3 text-text-700">{feature}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Comparison Section */}
+          <section className="pt-2 pb-6 hidden md:block">
+            {showComparison ? (
+              <div className="border-b border-text-100 pb-4 mb-6">
+                <h2 className="font-semibold text-base">Plans and features</h2>
+              </div>
+            ) : (
+              <div className="border-b border-text-100 pb-4 mb-6 flex items-center justify-center">
+                <Button
+                  onClick={() => setShowComparison(true)}
+                  variant="ghost"
+                  size="sm"
+                >
+                  Compare plans
+                  <ChevronDown className="w-5 h-5" strokeWidth={1.5} />
+                </Button>
+              </div>
+            )}
+
+            {showComparison && (
+              <div className="bg-background overflow-x-auto">
+                {comparisonFeatures.map(
+                  (category, categoryIndex, categoryArray) => (
+                    <div key={categoryIndex}>
+                      <div className="flex items-center gap-6 relative">
+                        <div className="absolute h-px w-full bottom-0 bg-black/5 dark:bg-white/5"></div>
+
+                        <div
+                          className={`px-4 py-2 font-medium text-xs text-text-500 w-1/4 ${
+                            categoryIndex !== 0 && "h-14 flex items-end"
+                          }`}
+                        >
+                          {category.category}
+                        </div>
+
+                        {pricingPlans.map((plan, index) =>
+                          categoryIndex == 0 ? (
+                            <div
+                              key={index}
+                              className={`px-6 py-3 text-center text-xs font-medium text-text-700 uppercase tracking-wider w-1/4 rounded-t-lg border border-b-0 border-t-5 h-20 md:h-14 ${
+                                plan.businessHighlight
+                                  ? "border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface"
+                                  : plan.highlighted
+                                  ? "border-kakrola-500 bg-kakrola-10 dark:border-[#8698c2] dark:bg-[#8698c2]/10"
+                                  : "border-text-100 bg-background"
+                              }`}
+                            >
+                              {plan.name}
+                            </div>
+                          ) : (
+                            <div
+                              key={index}
+                              className={`px-6 py-3 text-center text-xs font-medium text-text-700 uppercase tracking-wider w-1/4 border-x h-14 ${
+                                plan.businessHighlight
+                                  ? "border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface"
+                                  : plan.highlighted
+                                  ? "border-kakrola-500 bg-kakrola-10 dark:border-[#8698c2] dark:bg-[#8698c2]/10"
+                                  : "border-text-100 bg-background"
+                              }`}
+                            ></div>
+                          )
+                        )}
                       </div>
 
-                      {pricingPlans.map((plan, index) =>
-                        categoryIndex == 0 ? (
-                          <div
-                            key={index}
-                            className={`px-6 py-3 text-center text-xs font-medium text-text-700 uppercase tracking-wider w-1/4 rounded-t-lg border border-b-0 border-t-5 h-20 md:h-14 ${
-                              plan.businessHighlight
-                                ? "border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface"
-                                : plan.highlighted
-                                ? "border-kakrola-500 bg-kakrola-10 dark:border-[#8698c2] dark:bg-[#8698c2]/10"
-                                : "border-text-100 bg-background"
-                            }`}
-                          >
-                            {plan.name}
+                      {category.features.map((feature, featureIndex, self) =>
+                        categoryIndex == categoryArray.length - 1 &&
+                        featureIndex == self.length - 1 ? (
+                          <div key={featureIndex}>
+                            <div
+                              key={featureIndex}
+                              className={`flex w-full gap-6 relative group ${
+                                self.length - 1 === featureIndex ? "" : ""
+                              }`}
+                            >
+                              <div className="px-4 py-2 text-xs font-medium text-text-900 w-[calc(25%-2px)]">
+                                {feature.name}
+                              </div>
+                              <div className="px-4 py-2 text-xs font-medium text-text-500 text-center w-1/4 border-x border-text-100 bg-background">
+                                {renderFeatureValue(feature.free)}
+                              </div>
+                              <div className="px-4 py-2 text-xs font-medium text-text-500 text-center w-1/4 border-x border-kakrola-500 bg-kakrola-10 dark:border-[#8698c2] dark:bg-[#8698c2]/10">
+                                {renderFeatureValue(feature.pro)}
+                              </div>
+                              <div className="px-4 py-2 text-xs font-medium text-text-500 text-center w-1/4 border-x border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface">
+                                {renderFeatureValue(feature.business)}
+                              </div>
+
+                              <div className="absolute group-hover:bg-black/5 dark:group-hover:bg-white/5 rounded-lg transition w-full h-full"></div>
+                            </div>
+
+                            <div
+                              className={`flex w-full gap-6 relative ${
+                                self.length - 1 === featureIndex ? "" : ""
+                              }`}
+                            >
+                              <div className="absolute h-px w-full top-0 bg-black/5 dark:bg-white/5"></div>
+
+                              <div className="px-4 py-2 text-xs font-medium text-text-900 w-[calc(25%-2px)]">
+                                {/* {feature.name} */}
+                              </div>
+                              <div className="px-4 py-2 text-xs font-medium text-text-500 text-center w-1/4 border border-t-0 border-text-100 bg-background rounded-b-lg">
+                                <div
+                                  className={`text-center font-semibold text-text-700 uppercase tracking-widerbg-background pb-4`}
+                                >
+                                  Free
+                                </div>
+                              </div>
+                              <div className="px-4 py-2 text-xs font-medium text-text-500 text-center w-1/4 border border-t-0 border-kakrola-500 bg-kakrola-10 dark:border-[#8698c2] dark:bg-[#8698c2]/10 rounded-b-lg">
+                                <div
+                                  className={`text-center font-semibold text-text-700 uppercase tracking-widerbg-background pb-4`}
+                                >
+                                  Pro
+                                </div>
+
+                                <Link href="/auth/signup">
+                                  <Button fullWidth color="kakrola">
+                                    <Rocket
+                                      className="w-5 h-5"
+                                      strokeWidth={1.5}
+                                    />
+                                    Upgrade
+                                  </Button>
+                                </Link>
+                              </div>
+                              <div className="px-4 py-2 text-xs font-medium text-text-500 text-center w-1/4 border border-t-0 border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface rounded-b-lg">
+                                <div
+                                  className={`text-center font-semibold text-text-700 uppercase tracking-widerbg-background pb-4`}
+                                >
+                                  Business
+                                </div>
+
+                                <Link href="/auth/signup">
+                                  <Button
+                                    fullWidth
+                                    variant="outline"
+                                    color="text"
+                                  >
+                                    <Rocket
+                                      className="w-5 h-5"
+                                      strokeWidth={1.5}
+                                    />
+                                    Upgrade
+                                  </Button>
+                                </Link>
+                              </div>
+                            </div>
                           </div>
                         ) : (
-                          <div
-                            key={index}
-                            className={`px-6 py-3 text-center text-xs font-medium text-text-700 uppercase tracking-wider w-1/4 border-x h-14 ${
-                              plan.businessHighlight
-                                ? "border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface"
-                                : plan.highlighted
-                                ? "border-kakrola-500 bg-kakrola-10 dark:border-[#8698c2] dark:bg-[#8698c2]/10"
-                                : "border-text-100 bg-background"
-                            }`}
-                          ></div>
-                        )
-                      )}
-                    </div>
-
-                    {category.features.map((feature, featureIndex, self) =>
-                      categoryIndex == categoryArray.length - 1 &&
-                      featureIndex == self.length - 1 ? (
-                        <div key={featureIndex}>
                           <div
                             key={featureIndex}
                             className={`flex w-full gap-6 relative group ${
                               self.length - 1 === featureIndex ? "" : ""
                             }`}
                           >
-                            <div className="px-4 py-2 text-xs font-medium text-text-900 w-[calc(25%-2px)]">
+                            <div className="px-4 py-2 text-xs font-medium text-text-700 w-[calc(25%-2px)]">
                               {feature.name}
                             </div>
-                            <div className="px-4 py-2 text-xs font-medium text-text-500 text-center w-1/4 border-x border-text-100 bg-background">
+                            <div className="px-4 py-2 text-xs font-medium text-text-700 text-center w-1/4 border-x border-text-100 bg-background">
                               {renderFeatureValue(feature.free)}
                             </div>
-                            <div className="px-4 py-2 text-xs font-medium text-text-500 text-center w-1/4 border-x border-kakrola-500 bg-kakrola-10 dark:border-[#8698c2] dark:bg-[#8698c2]/10">
+                            <div className="px-4 py-2 text-xs font-medium text-text-700 text-center w-1/4 border-x border-kakrola-500 bg-kakrola-10 dark:border-[#8698c2] dark:bg-[#8698c2]/10">
                               {renderFeatureValue(feature.pro)}
                             </div>
-                            <div className="px-4 py-2 text-xs font-medium text-text-500 text-center w-1/4 border-x border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface">
+                            <div className="px-4 py-2 text-xs font-medium text-text-700 text-center w-1/4 border-x border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface">
                               {renderFeatureValue(feature.business)}
                             </div>
 
                             <div className="absolute group-hover:bg-black/5 dark:group-hover:bg-white/5 rounded-lg transition w-full h-full"></div>
                           </div>
-
-                          <div
-                            className={`flex w-full gap-6 relative ${
-                              self.length - 1 === featureIndex ? "" : ""
-                            }`}
-                          >
-                            <div className="absolute h-px w-full top-0 bg-black/5 dark:bg-white/5"></div>
-
-                            <div className="px-4 py-2 text-xs font-medium text-text-900 w-[calc(25%-2px)]">
-                              {/* {feature.name} */}
-                            </div>
-                            <div className="px-4 py-2 text-xs font-medium text-text-500 text-center w-1/4 border border-t-0 border-text-100 bg-background rounded-b-lg">
-                              <div
-                                className={`text-center font-semibold text-text-700 uppercase tracking-widerbg-background pb-4`}
-                              >
-                                Free
-                              </div>
-                            </div>
-                            <div className="px-4 py-2 text-xs font-medium text-text-500 text-center w-1/4 border border-t-0 border-kakrola-500 bg-kakrola-10 dark:border-[#8698c2] dark:bg-[#8698c2]/10 rounded-b-lg">
-                              <div
-                                className={`text-center font-semibold text-text-700 uppercase tracking-widerbg-background pb-4`}
-                              >
-                                Pro
-                              </div>
-
-                              <Link href="/auth/signup">
-                                <Button fullWidth color="kakrola">
-                                  <Rocket
-                                    className="w-5 h-5"
-                                    strokeWidth={1.5}
-                                  />
-                                  Upgrade
-                                </Button>
-                              </Link>
-                            </div>
-                            <div className="px-4 py-2 text-xs font-medium text-text-500 text-center w-1/4 border border-t-0 border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface rounded-b-lg">
-                              <div
-                                className={`text-center font-semibold text-text-700 uppercase tracking-widerbg-background pb-4`}
-                              >
-                                Business
-                              </div>
-
-                              <Link href="/auth/signup">
-                                <Button
-                                  fullWidth
-                                  variant="outline"
-                                  color="text"
-                                >
-                                  <Rocket
-                                    className="w-5 h-5"
-                                    strokeWidth={1.5}
-                                  />
-                                  Upgrade
-                                </Button>
-                              </Link>
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        <div
-                          key={featureIndex}
-                          className={`flex w-full gap-6 relative group ${
-                            self.length - 1 === featureIndex ? "" : ""
-                          }`}
-                        >
-                          <div className="px-4 py-2 text-xs font-medium text-text-700 w-[calc(25%-2px)]">
-                            {feature.name}
-                          </div>
-                          <div className="px-4 py-2 text-xs font-medium text-text-700 text-center w-1/4 border-x border-text-100 bg-background">
-                            {renderFeatureValue(feature.free)}
-                          </div>
-                          <div className="px-4 py-2 text-xs font-medium text-text-700 text-center w-1/4 border-x border-kakrola-500 bg-kakrola-10 dark:border-[#8698c2] dark:bg-[#8698c2]/10">
-                            {renderFeatureValue(feature.pro)}
-                          </div>
-                          <div className="px-4 py-2 text-xs font-medium text-text-700 text-center w-1/4 border-x border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface">
-                            {renderFeatureValue(feature.business)}
-                          </div>
-
-                          <div className="absolute group-hover:bg-black/5 dark:group-hover:bg-white/5 rounded-lg transition w-full h-full"></div>
-                        </div>
-                      )
-                    )}
-                  </div>
-                )
-              )}
-            </div>
-          )}
-        </section>
-      </main>
-    </>
-  );
+                        )
+                      )}
+                    </div>
+                  )
+                )}
+              </div>
+            )}
+          </section>
+        </main>
+      </>
+    );
+  }
 };
 
 export default SubscriptionSettings;

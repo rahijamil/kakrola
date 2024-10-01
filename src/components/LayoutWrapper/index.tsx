@@ -184,7 +184,7 @@ const LayoutWrapper = ({
               }`}
             >
               {screenWidth > 768 ? (
-                !["Today", "Inbox"].includes(headline) && (
+                !["My Tasks", "Inbox"].includes(headline) && (
                   <div className="flex items-center gap-4">
                     <div className="flex items-center w-64 whitespace-nowrap">
                       <Link
@@ -289,7 +289,7 @@ const LayoutWrapper = ({
               <div className={`flex items-center justify-end flex-1`}>
                 <ul className="flex items-center">
                   {typeof setShowShareOption === "function" &&
-                    headline !== "Today" && (
+                    headline !== "My Tasks" && (
                       <li>
                         <ShareOption
                           projectId={project?.id}
@@ -306,7 +306,7 @@ const LayoutWrapper = ({
                       />
                     </li>
                   )}
-                  {headline !== "Today" && (
+                  {headline !== "My Tasks" && (
                     <li>
                       {project && (
                         <ActiveProjectMoreOptions

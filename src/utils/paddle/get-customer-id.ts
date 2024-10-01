@@ -5,9 +5,9 @@ export async function getCustomerId() {
   const user = await supabase.auth.getUser();
   if (user.data.user?.id) {
     const customersData = await supabase
-      .from("profiles")
-      .select("customer_id,email")
-      .eq("id", user.data.user.id)
+      .from("subscriptions")
+      .select("customer_id")
+      .eq("customer_profile_id", user.data.user.id)
       .single();
     if (customersData?.data?.customer_id) {
       return customersData?.data?.customer_id as string;

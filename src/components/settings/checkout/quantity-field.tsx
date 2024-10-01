@@ -8,12 +8,12 @@ interface Props {
 
 export function QuantityField({ handleQuantityChange, quantity }: Props) {
   return (
-    <div className={'mt-3 bg-background gap-1 w-fit flex items-center rounded-sm border border-border p-[6px]'}>
+    <div className={'mt-3 bg-background gap-1 w-fit flex items-center rounded-sm border border-text-100 p-[6px]'}>
       <Button
         disabled={quantity === 1}
         variant={'secondary'}
         className={
-          'h-[32px] bg-[#182222] disabled:bg-transparent text-muted-foreground border-border w-[32px] p-0 rounded-[4px]'
+          'h-[32px] bg-[#182222] disabled:bg-transparent text-muted-foreground border-text-100 w-[32px] p-0 rounded-[4px]'
         }
         onClick={() => handleQuantityChange(quantity - 1)}
       >
@@ -24,7 +24,7 @@ export function QuantityField({ handleQuantityChange, quantity }: Props) {
       </span>
       <Button
         variant={'secondary'}
-        className={'h-[32px] bg-[#182222] text-muted-foreground border-border w-[32px] p-0 rounded-[4px]'}
+        className={'h-[32px] bg-[#182222] text-muted-foreground border-text-100 w-[32px] p-0 rounded-[4px]'}
         onClick={() => handleQuantityChange(quantity + 1)}
       >
         <Plus />

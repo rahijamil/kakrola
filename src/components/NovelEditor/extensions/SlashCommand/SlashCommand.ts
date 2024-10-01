@@ -139,7 +139,7 @@ export const SlashCommand = Extension.create({
             onStart: (props: SuggestionProps) => {
               component = new ReactRenderer(MenuList, {
                 props,
-                editor: props.editor,
+                editor: props.editor as any,
               });
 
               const { view } = props.editor;

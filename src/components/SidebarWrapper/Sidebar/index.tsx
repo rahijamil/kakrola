@@ -1,11 +1,10 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import {
   Inbox,
-  Calendar,
   LucideProps,
   Search,
   Bell,
@@ -13,19 +12,14 @@ import {
   MessagesSquare,
   Plus,
   ChevronRight,
+  CheckSquare,
 } from "lucide-react";
-import AddTaskModal from "@/components/AddTask/AddTaskModal";
 import Personal from "./Personal";
 import FavoriteProjects from "./FavoriteProjects";
 import TeamProjects from "./TeamProjects";
 import ProfileMoreOptions from "./ProfileMoreOptions";
-import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
-import axios from "axios";
-import AddTeam from "@/components/AddTeam";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import AddEditProject from "@/components/AddEditProject";
-import AddEditChannel from "@/components/AddEditChannel";
 import useScreen from "@/hooks/useScreen";
 import { motion } from "framer-motion";
 import SidebarCreateMore from "./SidebarCreateMore";
@@ -39,7 +33,7 @@ const menuItems: {
   path?: string;
   onClick?: () => void;
 }[] = [
-  { id: 1, icon: Calendar, text: "My Tasks", path: "/app" },
+  { id: 1, icon: CheckSquare, text: "My Tasks", path: "/app" },
   { id: 2, icon: Inbox, text: "Inbox", path: "/app/inbox" },
   { id: 3, icon: Search, text: "Search", path: "#" },
   { id: 4, icon: MessagesSquare, text: "DMs", path: "/app/dm" },

@@ -174,7 +174,9 @@ const TaskItem = ({
 
   const [editTaskId, setEditTaskId] = useState<TaskType["id"] | null>(null);
 
-  const { assigneeProfiles } = useAssignee({ project_id: project?.id });
+  const { assigneeProfiles } = useAssignee({
+    project_id: project?.id || task.project_id,
+  });
 
   const getAssigneeProfileById = (profileId: string | null) => {
     return assigneeProfiles.find((profile) => profile.id === profileId);
@@ -228,9 +230,7 @@ const TaskItem = ({
                 </div>
               )}
 
-              <div
-                className={`p-2 w-full relative bg-background space-y-2`}
-              >
+              <div className={`p-2 w-full relative bg-background space-y-2`}>
                 <div className="flex items-center gap-2 w-full">
                   <div>
                     <AnimatedCircleCheck
