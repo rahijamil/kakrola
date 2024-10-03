@@ -5,13 +5,13 @@ import Image from "next/image";
 import { ViewTypes } from "@/types/viewTypes";
 import ListViewForToday from "@/components/TaskViewSwitcher/ListViewForToday";
 import BoardViewForToday from "@/components/TaskViewSwitcher/BoardViewForToday";
-import { fetchTodayTasks } from "@/utils/fetchTodayTasks";
 import { TaskType } from "@/types/project";
 import { useAuthProvider } from "@/context/AuthContext";
 import LayoutView from "@/components/LayoutView";
 import { CalendarCheck, CalendarDays } from "lucide-react";
 import { motion } from "framer-motion";
-import { fetchUpcomingTasks } from "@/utils/fetchUpcomingTasks";
+import { fetchTodayUpcomingTasks } from "@/utils/fetchTodayUpcomingTasks";
+import useScreen from "@/hooks/useScreen";
 
 const TabsComponent = ({
   tabs,
@@ -73,13 +73,13 @@ const MyTasksPage = () => {
   const { profile } = useAuthProvider();
   const [hoverItem, setHoverItem] = useState<string | null>(null);
 
+  const { screenWidth } = useScreen();
+
   useEffect(() => {
     if (profile?.id) {
-      fetchTodayTasks(profile.id).then((tasks) => {
-        setTodayTasks(tasks);
-      });
-      fetchUpcomingTasks(profile.id).then((tasks) => {
-        setUpcomingTasks(tasks);
+      fetchTodayUpcomingTasks(profile.id).then((tasks) => {
+        setTodayTasks(tasks.today);
+        setUpcomingTasks(tasks.upcoming);
       });
     }
   }, [profile?.id]);
@@ -113,8 +113,10 @@ const MyTasksPage = () => {
       setView={setView}
       hideCalendarView
     >
-      <div className="flex items-center justify-between gap-8 px-8 border-b border-text-100">
-        {view && setView && <LayoutView view={view} setView={setView} />}
+      <div className="flex items-center justify-between gap-8 px-4 md:px-8 border-b border-text-100">
+        {view && setView && screenWidth > 768 && (
+          <LayoutView view={view} setView={setView} />
+        )}
 
         <TabsComponent
           tabs={tabs}

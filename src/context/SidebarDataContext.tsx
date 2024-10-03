@@ -5,6 +5,7 @@ import { TeamType, TeamMemberType, PersonalMemberType } from "@/types/team";
 import { PageType } from "@/types/pageTypes";
 import useSidebarData from "@/hooks/useSidebarData";
 import { ChannelType } from "@/types/channel";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 
 const SidebarDataContext = createContext<{
   projects: ProjectType[];
@@ -30,6 +31,9 @@ const SidebarDataContext = createContext<{
   setIsShowViewModal: React.Dispatch<React.SetStateAction<boolean>>;
   isError: boolean;
   channels: ChannelType[];
+  refetchSidebarData: (
+    options?: RefetchOptions
+  ) => Promise<QueryObserverResult<any, Error>> | void;
 }>({
   projects: [],
   setProjects: () => {},
@@ -48,6 +52,7 @@ const SidebarDataContext = createContext<{
   setIsShowViewModal: () => {},
   isError: false,
   channels: [],
+  refetchSidebarData: () => {},
 });
 
 const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
@@ -66,6 +71,7 @@ const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
     pages,
     setPages,
     channels,
+    refetchSidebarData,
   } = useSidebarData();
 
   const [activeProject, setActiveProject] = useState<ProjectType | null>(null);
@@ -91,6 +97,7 @@ const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
         setIsShowViewModal,
         isError,
         channels,
+        refetchSidebarData,
       }}
     >
       {children}

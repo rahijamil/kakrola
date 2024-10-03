@@ -3,7 +3,13 @@ import React, { useState } from "react";
 import OnboardWrapper from "../OnboardWrapper";
 import { Button } from "@/components/ui/button";
 import useCaseImage from "./use_case.png";
-import { BriefcaseBusiness, Hash, LucideIcon, Rocket, User } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  Hash,
+  LucideIcon,
+  Rocket,
+  User,
+} from "lucide-react";
 import AnimatedCircleCheck from "@/components/TaskViewSwitcher/AnimatedCircleCheck";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -11,7 +17,12 @@ import useTemplates from "@/hooks/useTemplates";
 import { useAuthProvider } from "@/context/AuthContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { TemplateProjectType } from "@/types/template";
-import { ProjectType, SectionType, TaskPriority, TaskType } from "@/types/project";
+import {
+  ProjectType,
+  SectionType,
+  TaskPriority,
+  TaskType,
+} from "@/types/project";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import Spinner from "@/components/ui/Spinner";
 import { PersonalMemberType } from "@/types/team";
@@ -87,9 +98,9 @@ const Step2UseCase = () => {
           is_archived: false,
           updated_at: new Date().toISOString(),
           settings: {
-            color: templateProject.color,
-            view: templateProject.view,
-            selected_views: ["List"],
+            color: templateProject.settings.color,
+            view: templateProject.settings.view,
+            selected_views: [templateProject.settings.view],
           },
         };
 
@@ -201,7 +212,7 @@ const Step2UseCase = () => {
               is_completed: false,
               completed_at: null,
               order: templateTask.order,
-              status: null
+              status: null,
             };
 
             const { error: taskError } = await supabaseBrowser

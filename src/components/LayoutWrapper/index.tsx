@@ -178,13 +178,13 @@ const LayoutWrapper = ({
           <div
             className={`flex flex-col h-full w-full flex-1 transition-all duration-300`}
           >
-            <div
-              className={`flex items-center justify-between ${
-                screenWidth > 768 ? "py-3 px-6 pb-0" : "p-3"
-              }`}
-            >
-              {screenWidth > 768 ? (
-                !["My Tasks", "Inbox"].includes(headline) && (
+            {!["My Tasks", "Inbox"].includes(headline) && (
+              <div
+                className={`flex items-center justify-between ${
+                  screenWidth > 768 ? "py-3 px-6 pb-0" : "p-3"
+                }`}
+              >
+                {screenWidth > 768 ? (
                   <div className="flex items-center gap-4">
                     <div className="flex items-center w-64 whitespace-nowrap">
                       <Link
@@ -239,117 +239,121 @@ const LayoutWrapper = ({
                       )}
                     </div> */}
                   </div>
-                )
-              ) : (
-                <div className="flex items-center gap-3">
-                  <button onClick={() => router.back()} className="w-6 h-6">
-                    <ChevronLeft strokeWidth={1.5} size={24} />
-                  </button>
-                  {project ? (
-                    <div className="flex items-center gap-1">
-                      <CheckCircle
-                        size={24}
-                        className={`text-${activeProject?.settings.color}`}
-                      />
-                      {modalState.editTitle ? (
-                        <input
-                          type="text"
-                          className="font-semibold border border-text-300 rounded-lg p-1 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 bg-transparent"
-                          value={projectTitle}
-                          onBlur={handleEditTitle}
-                          autoFocus
-                          onChange={(ev) => setProjectTitle(ev.target.value)}
-                          onKeyDown={(ev) =>
-                            ev.key === "Enter" && handleEditTitle()
-                          }
-                        />
-                      ) : (
-                        <h1
-                          className="font-semibold border border-transparent hover:border-text-100 rounded-lg w-full p-1 py-0.5 cursor-text inline-block overflow-hidden text-ellipsis"
-                          onClick={() => toggleModal("editTitle", true)}
-                        >
-                          {project.name}
-                        </h1>
-                      )}
-                    </div>
-                  ) : (
-                    <h1
-                      className={`font-semibold inline-block overflow-hidden text-ellipsis p-1 py-0.5 ${
-                        (headline == "Filters & Labels" ||
-                          headline == "Upcoming") &&
-                        "mt-6"
-                      }`}
-                    >
-                      {headline}
-                    </h1>
-                  )}
-                </div>
-              )}
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <button onClick={() => router.back()} className="w-6 h-6">
+                      <ChevronLeft strokeWidth={1.5} size={24} />
+                    </button>
 
-              <div className={`flex items-center justify-end flex-1`}>
-                <ul className="flex items-center">
-                  {typeof setShowShareOption === "function" &&
-                    headline !== "My Tasks" && (
+                    {project ? (
+                      <div className="flex items-center gap-1">
+                        <CheckCircle
+                          size={24}
+                          className={`text-${activeProject?.settings.color}`}
+                        />
+                        {modalState.editTitle ? (
+                          <input
+                            type="text"
+                            className="font-semibold border border-text-300 rounded-lg p-1 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 bg-transparent"
+                            value={projectTitle}
+                            onBlur={handleEditTitle}
+                            autoFocus
+                            onChange={(ev) => setProjectTitle(ev.target.value)}
+                            onKeyDown={(ev) =>
+                              ev.key === "Enter" && handleEditTitle()
+                            }
+                          />
+                        ) : (
+                          <h1
+                            className="font-semibold border border-transparent hover:border-text-100 rounded-lg w-full p-1 py-0.5 cursor-text inline-block overflow-hidden text-ellipsis"
+                            onClick={() => toggleModal("editTitle", true)}
+                          >
+                            {project.name}
+                          </h1>
+                        )}
+                      </div>
+                    ) : (
+                      <h1
+                        className={`font-semibold inline-block overflow-hidden text-ellipsis p-1 py-0.5`}
+                      >
+                        {headline}
+                      </h1>
+                    )}
+                  </div>
+                )}
+
+                <div className={`flex items-center justify-end flex-1`}>
+                  <ul className="flex items-center">
+                    {typeof setShowShareOption === "function" &&
+                      headline !== "My Tasks" && (
+                        <li>
+                          <ShareOption
+                            projectId={project?.id}
+                            teamId={project?.team_id}
+                          />
+                        </li>
+                      )}
+                    {screenWidth > 768 && (
                       <li>
-                        <ShareOption
-                          projectId={project?.id}
-                          teamId={project?.team_id}
+                        <FilterOptions
+                          hideCalendarView={hideCalendarView}
+                          setTasks={setTasks}
+                          tasks={tasks}
                         />
                       </li>
                     )}
-                  {screenWidth > 768 && (
-                    <li>
-                      <FilterOptions
-                        hideCalendarView={hideCalendarView}
-                        setTasks={setTasks}
-                        tasks={tasks}
-                      />
-                    </li>
-                  )}
-                  {headline !== "My Tasks" && (
-                    <li>
-                      {project && (
-                        <ActiveProjectMoreOptions
-                          project={project}
-                          stateActions={{
-                            setProjectEdit: (value) =>
-                              toggleModal("projectEdit", value as boolean),
-                            setSaveTemplate: (value) =>
-                              toggleModal("saveTemplate", value as boolean),
-                            setImportFromCSV: (value) =>
-                              toggleModal(
-                                "showImportFromCSV",
-                                value as boolean
-                              ),
-                            setExportAsCSV: (value) =>
-                              toggleModal("showExportAsCSV", value as boolean),
-                            setShowArchiveConfirm: (value) =>
-                              toggleModal(
-                                "showArchiveConfirm",
-                                value as boolean
-                              ),
-                            setShowDeleteConfirm: (value) =>
-                              toggleModal(
-                                "showDeleteConfirm",
-                                value as boolean
-                              ),
-                            setShowCommentOrActivity: (value) =>
-                              toggleModal(
-                                "showCommentOrActivity",
-                                value as null
-                              ),
-                          }}
-                        />
-                      )}
-                    </li>
-                  )}
-                </ul>
+                    {headline !== "My Tasks" && (
+                      <li>
+                        {project && (
+                          <ActiveProjectMoreOptions
+                            project={project}
+                            stateActions={{
+                              setProjectEdit: (value) =>
+                                toggleModal("projectEdit", value as boolean),
+                              setSaveTemplate: (value) =>
+                                toggleModal("saveTemplate", value as boolean),
+                              setImportFromCSV: (value) =>
+                                toggleModal(
+                                  "showImportFromCSV",
+                                  value as boolean
+                                ),
+                              setExportAsCSV: (value) =>
+                                toggleModal(
+                                  "showExportAsCSV",
+                                  value as boolean
+                                ),
+                              setShowArchiveConfirm: (value) =>
+                                toggleModal(
+                                  "showArchiveConfirm",
+                                  value as boolean
+                                ),
+                              setShowDeleteConfirm: (value) =>
+                                toggleModal(
+                                  "showDeleteConfirm",
+                                  value as boolean
+                                ),
+                              setShowCommentOrActivity: (value) =>
+                                toggleModal(
+                                  "showCommentOrActivity",
+                                  value as null
+                                ),
+                            }}
+                          />
+                        )}
+                      </li>
+                    )}
+                  </ul>
+                </div>
               </div>
-            </div>
+            )}
 
             <div className={`flex-1`}>
               <div className="flex flex-col h-full">
-                <div className={`${screenWidth > 768 ? "px-6" : "px-4"}`}>
+                <div
+                  className={`${
+                    screenWidth > 768 ? "px-6" : "px-4 border-b border-text-100"
+                  }`}
+                >
                   {project ? (
                     <>
                       {screenWidth > 768 && (
@@ -360,7 +364,7 @@ const LayoutWrapper = ({
                           />
                           <input
                             type="text"
-                            className="text-3xl font-bold border-none rounded-lg focus-visible:outline-none p-1.5 bg-transparent w-full"
+                            className="text-3xl font-bold border-none rounded-lg focus-visible:outline-none p-1.5 py-7 bg-transparent w-full"
                             value={projectTitle}
                             onBlur={handleEditTitle}
                             onChange={(ev) => setProjectTitle(ev.target.value)}
@@ -380,7 +384,9 @@ const LayoutWrapper = ({
                       )}
                     </>
                   ) : (
-                    <h1 className={`text-3xl font-bold p-1 py-[14px]`}>
+                    <h1
+                      className={`md:text-3xl font-bold p-1 h-[54px] md:h-24 flex items-center`}
+                    >
                       {headline}
                     </h1>
                   )}

@@ -11,13 +11,15 @@ export interface TemplateProjectType {
   id?: number;
   name: string;
   slug: string;
-  color: string;
   description: string;
   preview_image: string;
-  view: ViewTypes["view"];
   template_creator: TemplateCreatorInfo;
   created_at?: string;
   updated_at?: string;
+  settings: {
+    color: string;
+    view: ViewTypes["view"];
+  };
 }
 
 export interface TemplateSectionType {
@@ -36,8 +38,15 @@ export interface TemplateTaskType {
   parent_template_task_id: string | number | null;
   title: string;
   description: string;
-  priority: TaskPriority
+  priority: TaskPriority;
   order: number;
   created_at?: string;
   updated_at?: string;
+  // dates: {
+  //   start_date: string | null; // ISO date (e.g., "2024-09-05")
+  //   start_time: string | null; // Time (e.g., "15:30")
+  //   end_date: string | null; // ISO date (e.g., "2024-09-05")
+  //   end_time: string | null; // Time (e.g., "17:00")
+  //   reminder: string | null; // 0, 5, 10, 15, 30, 60, 120, 1440, 2880, null
+  // };
 }

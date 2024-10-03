@@ -12,4 +12,11 @@ export interface ProfileType {
   metadata?: {
     last_active_contact_profile_id?: string;
   };
+  linked_accounts?: {
+    profile_id: string;
+    username?: string;
+    full_name?: string;
+    email?: string;
+    avatar_url?: string;
+  }[];
 }

@@ -93,7 +93,7 @@ const ProjectItem = ({
           onTouchEnd={(ev) =>
             ev.currentTarget.classList.remove("bg-primary-50")
           }
-          className={`sidebar_project_item flex items-center transition-colors duration-150 font-medium md:font-normal w-full border-l-4 ${
+          className={`sidebar_project_item flex items-center transition-colors duration-150 font-medium md:font-normal w-full border-l-4 relative ${
             isDragging
               ? "bg-surface shadow-[1px_1px_8px_1px_rgba(0,0,0,0.1)]"
               : pathname === `/app/project/${project.slug}`
@@ -108,44 +108,45 @@ const ProjectItem = ({
           >
             <div className="flex items-center gap-2">
               <CheckCircle
-                className={`w-4 h-4 text-${project.settings.color}`}
+                className={`w-4 h-4 min-w-4 min-h-4 text-${project.settings.color}`}
                 strokeWidth={2}
               />
 
-              {project.name}
+              <span className="truncate">{project.name}</span>
 
               {thisProjectAllMembers?.length! > 1 && (
-                <Users strokeWidth={1.5} className="w-4 h-4 ml-2" />
+                <Users
+                  strokeWidth={1.5}
+                  className="w-4 h-4 min-w-4 min-h-4"
+                />
               )}
             </div>
           </Link>
 
-          <div className="relative mr-1">
-            <div className="w-7 h-7 flex items-center justify-center">
-              {tasks.filter((task) => task.project_id == project.id).length >
-                0 && (
-                <p className="text-text-500">
-                  {tasks.filter((task) => task.project_id == project.id).length}
-                </p>
-              )}
+          <div className="w-7 h-7 flex items-center justify-center absolute right-1">
+            {tasks.filter((task) => task.project_id == project.id).length >
+              0 && (
+              <p className="text-text-500">
+                {tasks.filter((task) => task.project_id == project.id).length}
+              </p>
+            )}
 
-              {screenWidth > 768 && (
-                <SidebarProjectMoreOptions
-                  project={project}
-                  stateActions={{
-                    setShowDeleteConfirm,
-                    setShowLeaveConfirm,
-                    setShowArchiveConfirm,
-                    setShowCommentOrActivity,
-                    setExportAsCSV,
-                    setImportFromCSV,
-                    setProjectEdit,
-                    setAboveBellow,
-                  }}
-                  setIsDragDisabled={setIsDragDisabled}
-                />
-              )}
-            </div>
+            {screenWidth > 768 && (
+              <SidebarProjectMoreOptions
+                project={project}
+                stateActions={{
+                  setShowDeleteConfirm,
+                  setShowLeaveConfirm,
+                  setShowArchiveConfirm,
+                  setShowCommentOrActivity,
+                  setExportAsCSV,
+                  setImportFromCSV,
+                  setProjectEdit,
+                  setAboveBellow,
+                }}
+                setIsDragDisabled={setIsDragDisabled}
+              />
+            )}
           </div>
         </div>
       )}

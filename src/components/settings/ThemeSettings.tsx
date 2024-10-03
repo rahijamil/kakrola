@@ -1,5 +1,6 @@
 "use client";
 import useTheme from "@/hooks/useTheme";
+import { Theme } from "@/lib/theme.types";
 import React from "react";
 
 const ThemeSettingsPage = () => {
@@ -8,15 +9,7 @@ const ThemeSettingsPage = () => {
   const ThemeSwitcher = () => {
     const themes: {
       name: string;
-      value:
-        | "kakrola"
-        | "dark"
-        | "moonstone"
-        | "tangerine"
-        | "kale"
-        | "blueberry"
-        | "lavender"
-        | "raspberry";
+      value: Theme;
       primaryColor: string;
       sidebarBg: string;
       sidebarAccentColor1: string;
@@ -26,7 +19,7 @@ const ThemeSettingsPage = () => {
     }[] = [
       {
         name: "Kakrola",
-        value: "kakrola",
+        value: Theme.KAKROLA,
         primaryColor: "#005c83",
         sidebarBg: "#f0f7fa",
         sidebarAccentColor1: "#c3dfeb",
@@ -36,7 +29,7 @@ const ThemeSettingsPage = () => {
       },
       {
         name: "Dark",
-        value: "dark",
+        value: Theme.DARK,
         primaryColor: "#8698c2",
         sidebarBg: "#1e1e1e",
         sidebarAccentColor1: "#2d3642",
@@ -46,7 +39,7 @@ const ThemeSettingsPage = () => {
       },
       {
         name: "Moonstone",
-        value: "moonstone",
+        value: Theme.MOONSTONE,
         primaryColor: "#39485e",
         sidebarBg: "#e6e9ef",
         sidebarAccentColor1: "#99a7bf",
@@ -56,7 +49,7 @@ const ThemeSettingsPage = () => {
       },
       {
         name: "Tangerine",
-        value: "tangerine",
+        value: Theme.TANGERINE,
         primaryColor: "#d17c00",
         sidebarBg: "#faf2e6",
         sidebarAccentColor1: "#ebcb9b",
@@ -66,7 +59,7 @@ const ThemeSettingsPage = () => {
       },
       {
         name: "Kale",
-        value: "kale",
+        value: Theme.KALE,
         primaryColor: "#297b2d",
         sidebarBg: "#e8efe8",
         sidebarAccentColor1: "#a3bfa3",
@@ -76,7 +69,7 @@ const ThemeSettingsPage = () => {
       },
       {
         name: "Blueberry",
-        value: "blueberry",
+        value: Theme.BLUEBERRY,
         primaryColor: "#1e88e5",
         sidebarBg: "#e7f3fb",
         sidebarAccentColor1: "#9fcfef",
@@ -86,7 +79,7 @@ const ThemeSettingsPage = () => {
       },
       {
         name: "Lavender",
-        value: "lavender",
+        value: Theme.LAVENDER,
         primaryColor: "#6c40ff",
         sidebarBg: "#f1edff",
         sidebarAccentColor1: "#c7b7ff",
@@ -96,7 +89,7 @@ const ThemeSettingsPage = () => {
       },
       {
         name: "Raspberry",
-        value: "raspberry",
+        value: Theme.RASPBERRY,
         primaryColor: "#d1003b",
         sidebarBg: "#fce6eb",
         sidebarAccentColor1: "#f39bb0",

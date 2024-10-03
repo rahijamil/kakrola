@@ -191,7 +191,7 @@ const MobileHomePage = () => {
                     <span
                       className={`font-medium text-xs transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis`}
                     >
-                      Workspaces
+                      Teamspaces
                     </span>
                   </div>
                 </div>

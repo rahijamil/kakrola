@@ -9,7 +9,6 @@ import {
 } from "@/types/team";
 import { ProfileType } from "@/types/user";
 import { differenceInDays } from "date-fns";
-import { cookies } from "next/headers";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -191,9 +190,9 @@ async function handleInviteAcceptance(
     if (updateError) {
       throw new Error(`Failed to update invite: ${updateError.message}`);
     }
+
   } catch (error) {
     console.error("Error accepting invite:", error);
-
     throw error;
   }
 }

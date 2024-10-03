@@ -120,7 +120,7 @@ const SidebarProjectMoreOptions = ({
           className={`flex items-center justify-center absolute inset-0 z-10 cursor-pointer ${
             pathname === `/app/project/${project.slug}`
               ? "bg-primary-200 hover:bg-primary-200"
-              : "hover:bg-primary-100"
+              : "bg-primary-50 hover:bg-primary-100"
           } rounded-lg sidebar_project_item_options w-7 h-7 ${
             isOpen ? "bg-primary-200" : "opacity-0"
           }`}

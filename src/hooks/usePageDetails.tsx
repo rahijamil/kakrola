@@ -34,7 +34,7 @@ const usePageDetails = (page_slug: string) => {
 
   const queryClient = useQueryClient();
 
-  const { data, error, isPending, isError } = useQuery({
+  const { data, error, isLoading, isError } = useQuery({
     queryKey: ["pageDetails", page_slug, profile?.id],
     queryFn: () => {
       if (page_slug === null || !profile?.id) {
@@ -61,7 +61,7 @@ const usePageDetails = (page_slug: string) => {
   return {
     page: data?.page || null,
     setPage,
-    isPending,
+    isLoading,
     error,
     isError,
   };

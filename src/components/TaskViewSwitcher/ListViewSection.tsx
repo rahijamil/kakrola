@@ -257,6 +257,7 @@ const ListViewSection = ({
                   project={project}
                   setTasks={setTasks}
                   tasks={tasks}
+                  view={"List"}
                 />
               )}
             </div>

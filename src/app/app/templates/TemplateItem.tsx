@@ -14,15 +14,15 @@ const TemplateItem = ({ project }: { project: TemplateProjectType }) => {
     >
       <div
         className={`w-full flex-1 aspect-video relative flex justify-center items-center bg-${
-          project.color.split("-")[0]
+          project.settings.color.split("-")[0]
         }-50`}
       >
         {/* <Image src={project.preview_image} alt={project.name} fill /> */}
 
         <span
           className={`text-5xl rounded-lg w-20 h-20 flex items-center justify-center bg-${
-            project.color.split("-")[0]
-          }-200 text-${project.color}`}
+            project.settings.color.split("-")[0]
+          }-200 text-${project.settings.color}`}
           style={{ fontFamily: "fantasy" }}
         >
           #
@@ -40,7 +40,7 @@ const TemplateItem = ({ project }: { project: TemplateProjectType }) => {
 
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">
-            {project.view == "List" ? (
+            {project.settings.view == "List" ? (
               <>
                 <SquareKanban
                   size={20}
@@ -50,7 +50,7 @@ const TemplateItem = ({ project }: { project: TemplateProjectType }) => {
                 <span>List</span>
               </>
             ) : (
-              project.view == "Board" && (
+              project.settings.view == "Board" && (
                 <>
                   <SquareKanban size={20} strokeWidth={1.5} />
 

@@ -5,7 +5,7 @@ const TemplateDetails = ({
 }: {
   params: { template_slug: string };
 }) => {
-  return <div>TemplateDetails</div>;
+  return <div>TemplateDetails: {template_slug}</div>;
 };
 
 export default TemplateDetails;

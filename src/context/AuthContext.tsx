@@ -1,19 +1,26 @@
 "use client";
+import { fetchSidebarData, getNotifications } from "@/lib/queries";
 import { ProfileType } from "@/types/user";
-import { useQuery } from "@tanstack/react-query";
+import { supabaseBrowser } from "@/utils/supabase/client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import React, { createContext, ReactNode, useContext, useEffect } from "react";
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
-const fetchProfile = async () => {
+const fetchProfile = async (profile_id: string | null) => {
   try {
-    const response = await axios.get("/api/profile");
-
-    if (response.data) {
-      return response.data;
+    if (!profile_id) {
+      return null;
     }
 
-    return null;
+    const response = await axios.get(`/api/profile?profile_id=${profile_id}`);
+    return response.data || null;
   } catch (error) {
     console.error("Error loading user data:", error);
     return null;
@@ -30,66 +37,73 @@ const AuthContext = createContext<{
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
+  const [userId, setUserId] = useState<ProfileType["id"] | null>(null);
+  const queryClient = useQueryClient();
 
-  const { data, error, isPending } = useQuery({
-    queryKey: ["profile"],
-    queryFn: fetchProfile,
-    staleTime: 60000, // Cache data for 1 minute
-    refetchOnWindowFocus: false, // Disable refetching on window focus
-    // refetchInterval: 60000, // Refetch every 1 minute
+  useEffect(() => {
+    const { data: authListener } = supabaseBrowser.auth.onAuthStateChange(
+      (event, session) => {
+        if (session?.user?.id) {
+          setUserId(session.user.id);
+
+          queryClient.prefetchQuery({
+            queryKey: ["profile", session.user.id],
+            queryFn: async () => await fetchProfile(session.user.id),
+            staleTime: 1000 * 60 * 15, // Cache data for 15 minutes
+          });
+        } else {
+          setUserId(null);
+        }
+      }
+    );
+
+    // Cleanup the listener on unmount
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, []);
+
+  // Fetch profile data only if userId exists
+  const { data, error } = useQuery({
+    queryKey: ["profile", userId],
+    queryFn: () => fetchProfile(userId),
+    enabled: !!userId, // Ensures query only runs if userId exists
+    staleTime: 1000 * 60 * 15,
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
     if (error) {
-      console.error("Error loading user data:", error);
+      console.error("Error fetching profile:", error);
     }
 
-    if (data) {
-      if (!data.is_onboarded) {
-        router.push("/app/onboard/create-profile");
-      }
+    if (data && !data.is_onboarded) {
+      router.push("/app/onboard/create-profile");
     }
+  }, [data, error]);
 
-    // Subscribe to real-time changes for projects
-    // const profileSubscription = supabaseBrowser
-    //   .channel("profiles-all-channel")
-    //   .on(
-    //     "postgres_changes",
-    //     {
-    //       event: "*",
-    //       schema: "public",
-    //       table: "profiles",
-    //       filter: `id=eq.${data?.id}`,
-    //     },
-    //     (payload) => {
-    //       if (payload.eventType === "UPDATE" && payload.new.id === data?.id) {
-    //         queryClient.setQueryData(["profile"], payload.new);
-    //       } else if (
-    //         payload.eventType === "DELETE" &&
-    //         payload.old.id === data?.id
-    //       ) {
-    //         queryClient.setQueryData(["profile"], null);
-    //       }
-    //     }
-    //   )
-    //   .subscribe();
-
-    // return () => {
-    //   supabaseBrowser.removeChannel(profileSubscription);
-    // };
-  }, [data]);
+  useEffect(() => {
+    if (userId) {
+      queryClient.prefetchQuery({
+        queryKey: ["sidebar_data", userId],
+        queryFn: () => fetchSidebarData(userId),
+        staleTime: 1000 * 60 * 60,
+      });
+    }
+  }, [userId]);
 
   return (
     <AuthContext.Provider
-      value={{ profile: data as ProfileType | null, loading: isPending }}
+      value={{
+        profile: data as ProfileType | null,
+        loading: !data?.id,
+      }}
     >
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuthProvider = () => {
-  return useContext(AuthContext);
-};
+export const useAuthProvider = () => useContext(AuthContext);
 
 export default AuthProvider;

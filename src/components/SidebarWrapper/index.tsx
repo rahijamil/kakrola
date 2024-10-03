@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import useScreen from "@/hooks/useScreen";
 import MobileSidebar from "./MobileSidebar";
@@ -9,6 +9,7 @@ import AddTeam from "../AddTeam";
 import AddTaskModal from "../AddTask/AddTaskModal";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
 import axios from "axios";
+import AddAnotherAccount from "./AddAnotherAccount";
 
 const SidebarWrapper = ({
   props: {
@@ -31,10 +32,8 @@ const SidebarWrapper = ({
   };
 }) => {
   const pathname = usePathname();
-
-  if (pathname.startsWith("/app/onboard")) {
-    return null;
-  }
+  const searchParams = useSearchParams();
+  const authType = (searchParams.get("auth") as "signup" | "login") || "signup";
 
   const [quickActions, setQuickActions] = useState({
     showAddTaskModal: false,
@@ -47,7 +46,7 @@ const SidebarWrapper = ({
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [showAddTeam, setShowAddTeam] = useState<boolean | number>(false);
-
+  const [showAddAnotherAccount, setShowAddAnotherAccount] = useState(false);
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const activeElement = document.activeElement;
@@ -120,6 +119,7 @@ const SidebarWrapper = ({
                   setShowLogoutConfirm={setShowLogoutConfirm}
                   setQuickActions={setQuickActions}
                   quickActions={quickActions}
+                  setShowAddAnotherAccount={setShowAddAnotherAccount}
                 />
               </div>
 
@@ -200,6 +200,13 @@ const SidebarWrapper = ({
       )}
 
       {showAddTeam && <AddTeam onClose={() => setShowAddTeam(false)} />}
+
+      {showAddAnotherAccount && (
+        <AddAnotherAccount
+          onClose={() => setShowAddAnotherAccount(false)}
+          type={authType}
+        />
+      )}
     </div>
   );
 };

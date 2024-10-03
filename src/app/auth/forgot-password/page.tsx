@@ -2,9 +2,16 @@ import React, { Suspense } from "react";
 import AuthForm from "@/components/AuthForm";
 import { forgotPassword } from "@/app/auth/action";
 import Link from "next/link";
+import Spinner from "@/components/ui/Spinner";
 
 const ForgotPassword = () => (
-  <Suspense fallback={<div>Loading...</div>}>
+  <Suspense
+    fallback={
+      <div className="flex items-center justify-center w-full h-screen text-primary-500">
+        <Spinner color="current" size="md" />
+      </div>
+    }
+  >
     <AuthForm
       type="forgotPassword"
       onSubmit={async ({ email, captchaToken }) => {

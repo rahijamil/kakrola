@@ -77,7 +77,7 @@ const ChannelItem = ({
           onTouchEnd={(ev) =>
             ev.currentTarget.classList.remove("bg-primary-50")
           }
-          className={`sidebar_project_item flex items-center transition-colors duration-150 font-medium md:font-normal w-full border-l-4 ${
+          className={`sidebar_project_item flex items-center transition-colors duration-150 font-medium md:font-normal w-full border-l-4 relative ${
             isDragging
               ? "bg-surface shadow-[1px_1px_8px_1px_rgba(0,0,0,0.1)]"
               : pathname === `/app/ch/${channel.slug}`
@@ -92,33 +92,31 @@ const ChannelItem = ({
           >
             <div className="flex items-center gap-2">
               <Hash
-                className={`w-4 h-4 text-${channel.settings.color}`}
+                className={`w-4 h-4 min-w-4 min-h-4 text-${channel.settings.color}`}
                 strokeWidth={2}
               />
 
-              {channel.name}
+              <span className="truncate">{channel.name}</span>
             </div>
           </Link>
 
-          <div className="relative mr-1">
-            <div className="w-7 h-7 flex items-center justify-center">
-              {screenWidth > 768 && (
-                <SidebarChannelMoreOptions
-                  channel={channel}
-                  stateActions={{
-                    setShowDeleteConfirm,
-                    setShowLeaveConfirm,
-                    setShowArchiveConfirm,
-                    setShowCommentOrActivity,
-                    setExportAsCSV,
-                    setImportFromCSV,
-                    setProjectEdit,
-                    setAboveBellow,
-                  }}
-                  setIsDragDisabled={setIsDragDisabled}
-                />
-              )}
-            </div>
+          <div className="w-7 h-7 flex items-center justify-center absolute right-1">
+            {screenWidth > 768 && (
+              <SidebarChannelMoreOptions
+                channel={channel}
+                stateActions={{
+                  setShowDeleteConfirm,
+                  setShowLeaveConfirm,
+                  setShowArchiveConfirm,
+                  setShowCommentOrActivity,
+                  setExportAsCSV,
+                  setImportFromCSV,
+                  setProjectEdit,
+                  setAboveBellow,
+                }}
+                setIsDragDisabled={setIsDragDisabled}
+              />
+            )}
           </div>
         </div>
       )}

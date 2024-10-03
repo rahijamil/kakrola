@@ -3,7 +3,7 @@ import AddTask from "../AddTask";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { ProjectType, SectionType, TaskType } from "@/types/project";
 import AddTaskFormForProject from "../AddTask/AddTaskFormForProject";
-import { useSidebarDataProvider } from "@/context/SidebarDataContext";
+import { ViewTypes } from "@/types/viewTypes";
 
 const SectionAddTask = ({
   showAddTask,
@@ -15,6 +15,7 @@ const SectionAddTask = ({
   project,
   setTasks,
   tasks,
+  view,
 }: {
   showAddTask?: string | number | null;
   setShowAddTask?: Dispatch<SetStateAction<string | number | null>>;
@@ -25,6 +26,7 @@ const SectionAddTask = ({
   project: ProjectType | null;
   setTasks: (tasks: TaskType[]) => void;
   tasks: TaskType[];
+  view: ViewTypes["view"];
 }) => {
   const isAddTaskVisible = section
     ? showAddTask !== section.id
@@ -34,14 +36,12 @@ const SectionAddTask = ({
     ? showAddTask === section.id
     : showUngroupedAddTask;
 
-  const { activeProject } = useSidebarDataProvider();
-
   return (
     <>
       {isAddTaskVisible && (
         <button
           className={`px-2 text-text-500 hover:text-primary-500 hover:bg-text-50d flex items-center gap-2 w-full group py-2.5 ${
-            activeProject?.settings.view == "List" && "pl-8"
+            view == "List" && "pl-8"
           }`}
           onClick={() => {
             section
@@ -54,7 +54,7 @@ const SectionAddTask = ({
         </button>
       )}
       {isAddTaskFormVisible &&
-        (activeProject?.settings.view == "Board" ? (
+        (view == "Board" ? (
           <div className="pt-1">
             <AddTask
               onClose={() =>

@@ -24,6 +24,8 @@ import { useRole } from "@/context/RoleContext";
 import { canDeleteTask, canEditTask } from "@/types/hasPermission";
 import useCheckClick from "@/hooks/useCheckClick";
 import LocationSelector from "@/components/AddTask/LocationSelector";
+import { NotificationTypeEnum, RelatedEntityTypeEnum } from "@/types/notification";
+import { createNotification } from "@/types/notification";
 
 const TaskItemForListView = ({
   task,
@@ -188,6 +190,23 @@ const TaskItemForListView = ({
               assignees: taskData.assignees,
             }
           );
+
+          createNotification({
+            type: NotificationTypeEnum.ASSIGNMENT,
+            recipients: taskData.assignees.map((a) => a.id.toString()),
+            triggered_by: {
+              id: profile.id,
+              first_name: profile.full_name,
+              avatar_url: profile.avatar_url,
+            },
+            related_entity_type: RelatedEntityTypeEnum.TASK,
+            redirect_url: `/tasks/${taskData.id}`,
+            api_url: `/tasks/${taskData.id}`,
+            data: {
+              assigner: profile.full_name,
+              entityName: taskData.title,
+            },
+          });
         }
 
         if (

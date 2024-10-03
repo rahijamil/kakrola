@@ -18,13 +18,13 @@ const PageDetails = ({
 }) => {
   const [notFound, setNotFound] = useState<boolean>(false);
 
-  const { page, setPage, isPending, isError } = usePageDetails(page_slug);
+  const { page, setPage, isLoading, isError } = usePageDetails(page_slug);
 
   useEffect(() => {
-    if (!isPending && !page?.id) {
+    if (!isLoading && !page?.id) {
       setNotFound(true);
     }
-  }, [isPending, page]);
+  }, [isLoading, page]);
 
   useEffect(() => {
     if (page?.id) {
@@ -34,7 +34,7 @@ const PageDetails = ({
     }
   }, [page]);
 
-  if (isPending) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center w-full h-screen text-primary-500">
         <Spinner color="current" size="md" />

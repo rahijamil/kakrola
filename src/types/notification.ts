@@ -1,10 +1,11 @@
-import { v4 as uuid4 } from "uuid";
+import { supabaseBrowser } from "@/utils/supabase/client";
 
 // Enum for all possible notification types
 export enum NotificationTypeEnum {
-  MENTION = "mention",
+  INVITE = "invite",
   ASSIGNMENT = "assignment",
-  DUE_DATE = "due_date",
+  MENTION = "mention",
+  END_DATE = "end_date",
   COMMENT = "comment",
   PROJECT_UPDATE = "project_update",
   TEAM_UPDATE = "team_update",
@@ -18,78 +19,109 @@ export enum RelatedEntityTypeEnum {
   COMMENT = "comment",
   LABEL = "label",
   TEAM = "team",
-  INVITE = "invite",
 }
 
-// Notification interface type
+// Notification templates for each type
+const notificationTemplates = {
+  [NotificationTypeEnum.INVITE]:
+    "<b>{inviter}</b> invited you to the <b>{entityName}</b>",
+  [NotificationTypeEnum.ASSIGNMENT]:
+    "<b>{assigner}</b> assigned you to the task <b>{entityName}</b>",
+  [NotificationTypeEnum.MENTION]:
+    "<b>{mentioner}</b> mentioned you in <b>{entityName}</b>",
+  [NotificationTypeEnum.END_DATE]:
+    "<b>{assigner}</b> set a new due date for the task <b>{entityName}</b>",
+  [NotificationTypeEnum.COMMENT]:
+    "<b>{commenter}</b> commented on your task <b>{entityName}</b>",
+  [NotificationTypeEnum.PROJECT_UPDATE]:
+    "<b>{updater}</b> updated the project <b>{entityName}</b>",
+  [NotificationTypeEnum.TEAM_UPDATE]:
+    "<b>{updater}</b> updated the team <b>{entityName}</b>",
+};
+
+// Notification interface
 export interface NotificationType {
-  id: string; // UUID for the notification
-  recipient_id: string; // UUID of the user receiving the notification
-  type: NotificationTypeEnum;
-  content: string; // Text content of the notification
-  related_entity_type: RelatedEntityTypeEnum;
-  related_entity_id: number | string;
-  is_read: boolean;
+  id: string;
   created_at: string;
-}
-
-// Function to create a notification entry
-export function createNotification(
-  recipient_id: string,
-  type: NotificationTypeEnum,
-  content: string,
-  related_entity_type: RelatedEntityTypeEnum,
-  related_entity_id: number | string
-): NotificationType {
-  const notification: NotificationType = {
-    id: uuid4(), // Generate a unique ID for the notification
-    recipient_id,
-    type,
-    content,
-    related_entity_type,
-    related_entity_id,
-    is_read: false, // New notifications are unread by default
-    created_at: new Date().toISOString(),
+  recipients: string[];
+  triggered_by: {
+    id: string;
+    first_name: string;
+    avatar_url: string;
   };
-
-  // Here, you would save this to your database
-  // For example: await supabase.from('notifications').insert(notification);
-
-  return notification;
+  content: string;
+  type: NotificationTypeEnum;
+  related_entity_type: RelatedEntityTypeEnum;
+  redirect_url: string | null;
+  api_url: string | null;
+  is_read: boolean;
 }
 
-// Function to get notifications for a specific user
-export async function getNotifications(
-  recipient_id: string,
-  page: number = 1,
-  limit: number = 50
-): Promise<NotificationType[]> {
-  // Example query (replace with actual database logic):
-  // const { data, error } = await supabase
-  //   .from('notifications')
-  //   .select('*')
-  //   .eq('recipient_id', recipient_id)
-  //   .order('created_at', { ascending: false })
-  //   .range((page - 1) * limit, page * limit - 1);
+// Utility function to format notification content
+function formatNotification(
+  type: NotificationTypeEnum,
+  data: Record<string, string>
+): string {
+  let template = notificationTemplates[type];
+  if (!template) return ""; // Fallback if template doesn't exist
 
-  // if (error) throw error;
-  // return data;
+  Object.keys(data).forEach((key) => {
+    const regex = new RegExp(`{${key}}`, "g");
+    template = template.replace(regex, data[key]);
+  });
 
-  // Placeholder return:
-  return [];
+  return template;
 }
 
-// Example function to log a task assignment notification
-export function logTaskAssignmentNotification(
-  recipient_id: string,
-  task_id: number | string,
-  content: string
-) {
-  return createNotification(
-    recipient_id,
-    NotificationTypeEnum.ASSIGNMENT,
-    content,
-    RelatedEntityTypeEnum.TASK,
-    task_id
-  );
+export async function createNotification({
+  recipients,
+  triggered_by,
+  type,
+  related_entity_type,
+  redirect_url,
+  api_url,
+  data, // Dynamic data to be used for formatting the content
+}: {
+  recipients: string[];
+  triggered_by: {
+    id: string;
+    first_name: string;
+    avatar_url: string;
+  };
+  type: NotificationTypeEnum;
+  related_entity_type: RelatedEntityTypeEnum;
+  redirect_url: string | null;
+  api_url: string | null;
+  data: Record<string, string>; // Dynamic data for content formatting
+}): Promise<Omit<NotificationType, "id"> | null> {
+  try {
+    // Format the content based on the notification type and provided data
+    const content = formatNotification(type, data);
+
+    const newNotification: Omit<NotificationType, "id"> = {
+      recipients,
+      triggered_by,
+      type,
+      content, // The formatted content
+      related_entity_type,
+      redirect_url,
+      api_url,
+      is_read: false,
+      created_at: new Date().toISOString(),
+    };
+
+    const { error } = await supabaseBrowser
+      .from("notifications")
+      .insert(newNotification);
+
+    if (error) {
+      console.error(error);
+      return null;
+    }
+
+    return newNotification;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 }

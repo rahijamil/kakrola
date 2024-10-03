@@ -363,6 +363,7 @@ const BoardViewColumn = ({
                       project={project}
                       setTasks={setTasks}
                       tasks={tasks}
+                      view={"Board"}
                     />
                   </div>
                 )}

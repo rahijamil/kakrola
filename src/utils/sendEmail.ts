@@ -3,12 +3,27 @@ import fs from "fs/promises";
 import path from "path";
 import { ProjectType } from "@/types/project";
 import { TeamType } from "@/types/team";
+import { createClient } from "./supabase/server";
+import {
+  NotificationTypeEnum,
+  RelatedEntityTypeEnum,
+} from "@/types/notification";
+import { createNotification } from "@/types/notification";
 
 type InviteEmailParams = {
   to: string;
   token: string;
-  inviter: { first_name: string; email: string };
-  project_data: ProjectType | null;
+  inviter: {
+    id: string;
+    first_name: string;
+    email: string;
+    avatar_url: string;
+  };
+  project_data: {
+    id: number;
+    name: string;
+    slug: string;
+  } | null;
   team_data: TeamType | null;
 };
 
@@ -19,7 +34,15 @@ export default async function sendInviteEmail({
   project_data,
   team_data,
 }: InviteEmailParams) {
+  const supabase = createClient();
+
   try {
+    const { data: recipientExistData, error: recipientError } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("email", to)
+      .single();
+
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: parseInt(process.env.SMTP_PORT || "587", 10),
@@ -46,7 +69,7 @@ export default async function sendInviteEmail({
       emailTemplate = emailTemplate
         .replaceAll("{{inviter_first_name}}", inviter.first_name)
         .replaceAll("{{inviter_email}}", inviter.email)
-        .replaceAll("{{invite_link}}", inviteLink)
+        .replaceAll("{{invite_link}}", inviteLink);
 
       // Email content
       const mailOptions = {
@@ -59,6 +82,26 @@ export default async function sendInviteEmail({
 
       await transporter.sendMail(mailOptions);
       console.log("Invite email sent successfully");
+
+      if (recipientExistData) {
+        // Create a notification
+        await createNotification({
+          recipients: [recipientExistData.id],
+          triggered_by: {
+            id: inviter.id,
+            first_name: inviter.first_name,
+            avatar_url: inviter.avatar_url,
+          },
+          type: NotificationTypeEnum.INVITE,
+          related_entity_type: RelatedEntityTypeEnum.PROJECT,
+          redirect_url: `/app/project/${project_data.slug}`,
+          api_url: inviteLink,
+          data: {
+            inviter: inviter.first_name,
+            entityName: project_data.name,
+          },
+        });
+      }
     } else if (team_data?.id) {
       const templatePath = path.join(
         process.cwd(),
@@ -88,6 +131,26 @@ export default async function sendInviteEmail({
 
       await transporter.sendMail(mailOptions);
       console.log("Invite email sent successfully");
+
+      if (recipientExistData) {
+        // Create a notification
+        await createNotification({
+          recipients: [recipientExistData.id],
+          triggered_by: {
+            id: inviter.id,
+            first_name: inviter.first_name,
+            avatar_url: inviter.avatar_url,
+          },
+          type: NotificationTypeEnum.INVITE,
+          related_entity_type: RelatedEntityTypeEnum.TEAM,
+          redirect_url: `/app/${team_data.id}`,
+          api_url: inviteLink,
+          data: {
+            inviter: inviter.first_name,
+            entityName: team_data.name,
+          },
+        });
+      }
     }
   } catch (error) {
     console.error("Failed to send invite email", error);

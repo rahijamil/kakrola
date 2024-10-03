@@ -17,7 +17,7 @@ import {
   Smartphone,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useAuthProvider } from "@/context/AuthContext";
 import Image from "next/image";
 import Dropdown from "@/components/ui/Dropdown";
@@ -25,8 +25,6 @@ import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import useScreen from "@/hooks/useScreen";
-import { usePaddleCheckout } from "@/components/Paddle/usePaddleCheckout";
-import { PricingTier } from "@/lib/constants/pricing-tier";
 
 type IconType = React.ForwardRefExoticComponent<
   React.SVGProps<SVGSVGElement> & { title?: string; titleId?: string }
@@ -119,18 +117,22 @@ const MenuItem: React.FC<MenuItemProps> = ({
 );
 
 interface ProfileMoreOptionsProps {
-  setShowAddTeam?: React.Dispatch<React.SetStateAction<boolean | number>>;
-  setShowLogoutConfirm?: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowAddTeam: React.Dispatch<React.SetStateAction<boolean | number>>;
+  setShowLogoutConfirm: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowAddAnotherAccount: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
   setShowAddTeam,
   setShowLogoutConfirm,
+  setShowAddAnotherAccount,
 }) => {
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
   const { profile } = useAuthProvider();
   const { sidebarLoading } = useSidebarDataProvider();
   const pathname = usePathname();
+
+  const linkedAccounts = profile?.linked_accounts || [];
 
   const menuItems: MenuGroup[] = [
     {
@@ -147,7 +149,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
         {
           icon: Plus,
           label: "Add a team",
-          onClick: () => setShowAddTeam && setShowAddTeam(true),
+          onClick: () => setShowAddTeam(true),
         },
       ],
     },
@@ -177,18 +179,33 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
       type: "group",
       items: [
         {
-          icon: () => <Rocket strokeWidth={1.5} className="w-4 h-4 text-primary-500" />,
+          icon: () => (
+            <Rocket strokeWidth={1.5} className="w-4 h-4 text-primary-500" />
+          ),
           label: "Upgrade to Pro",
+          onClick: () => {
+            window.history.pushState(
+              null,
+              "",
+              `${pathname}?settings=subscription`
+            );
+            window.dispatchEvent(new Event("popstate"));
+          },
         },
       ],
     },
     {
       type: "group",
       items: [
+        // {
+        //   icon: Plus,
+        //   label: "Add another account",
+        //   onClick: () => setShowAddAnotherAccount(true),
+        // },
         {
           icon: LogOut,
           label: "Log out",
-          onClick: () => setShowLogoutConfirm && setShowLogoutConfirm(true),
+          onClick: () => setShowLogoutConfirm(true),
         },
       ],
     },
@@ -230,10 +247,11 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
                 alt={profile?.full_name || profile?.username || ""}
                 width={20}
                 height={20}
-                className="rounded-md object-cover max-w-5 max-h-5"
+                className="rounded-md object-cover max-w-5 max-h-5 min-w-5 min-h-5"
               />
-
-              <p className="font-medium">{profile?.full_name.split(" ")[0]}</p>
+              <p className="font-medium">
+                {profile?.full_name?.split(" ")[0] || profile?.username}
+              </p>
             </div>
 
             <ChevronDown strokeWidth={1.5} size={16} />
@@ -249,13 +267,40 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
               alt="profile"
               width={32}
               height={32}
-              className="rounded-md object-cover max-w-[32px] max-h-[32px]"
+              className="rounded-md object-cover max-w-[32px] max-h-[32px] min-w-[32px] min-h-[32px]"
             />
 
-            <h2 className="font-bold">{profile?.full_name}</h2>
+            <div>
+              <h2 className="font-bold">{profile?.full_name}</h2>
+              <p className="text-xs text-text-500 line-clamp-1">
+                {profile?.email}
+              </p>
+            </div>
           </div>
 
           <div className="h-[1px] bg-text-100 my-1"></div>
+
+          {linkedAccounts.length > 0 && (
+            <div className="p-2">
+              <h3 className="font-semibold text-sm mb-1">Linked Accounts:</h3>
+              {linkedAccounts.map((account) => (
+                <div
+                  key={account.profile_id}
+                  className="flex items-center gap-2 py-1"
+                >
+                  <Image
+                    src={account.avatar_url || "/default_avatar.png"}
+                    alt="linked account avatar"
+                    width={20}
+                    height={20}
+                    className="rounded-md object-cover max-w-5 max-h-5"
+                  />
+                  <p className="text-sm">Account {account.profile_id}</p>
+                </div>
+              ))}
+              <div className="h-[1px] bg-text-100 my-2"></div>
+            </div>
+          )}
         </>
       }
       items={[]}

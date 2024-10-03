@@ -121,7 +121,11 @@ const ShareOption = ({
         </div>
       )}
       content={
-        <div className={`${screenWidth > 768 ? "p-4 space-y-4" : "space-y-2 p-2"}`}>
+        <div
+          className={`${
+            screenWidth > 768 ? "py-4 space-y-4" : "space-y-2 p-2"
+          }`}
+        >
           <InviteEmailInput
             projectId={projectId}
             teamId={teamId}
@@ -136,14 +140,19 @@ const ShareOption = ({
 
           {membersData.length > 0 || pendingUsers.length > 0 ? (
             <div className="space-y-2">
-              <h3 className="font-semibold">In this project</h3>
-              {membersData.map((member) => (
-                <MemberItem key={member.id} member={member} />
-              ))}
+              <h3 className="font-semibold px-4 text-text-700">
+                In this project
+              </h3>
 
-              {pendingUsers.map((invite) => (
-                <PendingItem key={invite.id} invite={invite} />
-              ))}
+              <div>
+                {membersData.map((member) => (
+                  <MemberItem key={member.id} member={member} />
+                ))}
+
+                {pendingUsers.map((invite) => (
+                  <PendingItem key={invite.id} invite={invite} />
+                ))}
+              </div>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center gap-4 py-4">

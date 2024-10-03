@@ -51,14 +51,16 @@ const SaveTemplateModal = ({
         const templateProject: TemplateProjectType = {
           name: project.name,
           slug: generateSlug(project.name, true),
-          color: templateData.color,
           description: templateData.description,
           preview_image: "", // You might want to add an image upload feature
-          view: project.settings.view,
           template_creator: {
             id: profile.id,
             name: profile.full_name,
             avatar_url: profile?.avatar_url || "/default_avatar.png",
+          },
+          settings: {
+            color: templateData.color,
+            view: project.settings.view,
           },
         };
 
@@ -124,8 +126,8 @@ const SaveTemplateModal = ({
                   title: task.title,
                   description: task.description,
                   priority: task.priority,
-                  
                   order: task.order,
+                  // dates: task.dates,
                 };
 
                 const { data: templateTaskData, error: taskError } =

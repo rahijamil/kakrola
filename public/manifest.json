@@ -1,52 +1,74 @@
 {
-    "name": "Kakrola",
-    "description": "Kakrola is a project management tool that helps you organize your projects and tasks with ease.",
-    "lang": "en",
-    "short_name": "Kakrola",
-    "start_url": "/",
-    "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#ffffff",
-    "orientation": "portrait",
-    "screenshots": [
-      {
-        "src": "path/to/your/screenshot.png",
-        "sizes": "2880x1800",
-        "type": "image/png",
-        "description": "A screenshot of the Kakrola app."
-      }
-    ],
-    "shortcuts": [
-      {
-        "name": "Quick Access",
-        "url": "/shortcut",
-        "description": "Quick access to a specific feature.",
-        "icons": [
-          {
-            "src": "/icons/icon-96x96.png",
-            "type": "image/png",
-            "sizes": "96x96"
-          }
-        ]
-      }
-    ],
-    "icons": [
-      {
-        "src": "/icons/icon-192x192.png",
-        "sizes": "192x192",
-        "type": "image/png"
-      },
-      {
-        "src": "/icons/icon-512x512.png",
-        "sizes": "512x512",
-        "type": "image/png"
-      }
-    ],
-    "protocol_handlers": [
-      {
-        "protocol": "web+task",
-        "url": "/tasks?query=%s"
-      }
-    ]
+  "id": "/",
+  "scope": "/",
+  "lang": "en",
+  "name": "Kakrola: One tool for your entire workflow",
+  "display": "standalone",
+  "start_url": "/",
+  "short_name": "Kakrola",
+  "theme_color": "#ffffff",
+  "description": "Kakrola is a project management tool that helps you organize your projects and tasks with ease.",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "display_override": ["window-controls-overlay"],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "icons": [
+    {
+      "src": "/icons/kakrola-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/kakrola-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/48x48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/24x24.png",
+      "sizes": "24x24",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "path/to/your/screenshot.png",
+      "sizes": "2880x1800",
+      "type": "image/png",
+      "description": "A screenshot of the Kakrola app."
+    }
+  ],
+  "features": ["task_management", "project_management", "collaboration"],
+  "categories": ["productivity"],
+  "shortcuts": [
+    {
+      "name": "Add task",
+      "url": "/tasks/new",
+      "description": "Add a new task to your project.",
+      "icons": [
+        {
+          "src": "/icons/kakrola-96x96.png",
+          "type": "image/png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+task",
+      "url": "/tasks?query=%s"
+    }
+  ],
+  "window_controls_overlay": {
+    "enabled": true
   }
-  
+}

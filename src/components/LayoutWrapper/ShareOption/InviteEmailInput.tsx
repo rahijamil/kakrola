@@ -55,6 +55,7 @@ const InviteEmailInput = ({
           id: profile.id,
           first_name: profile.full_name.split(" ")[0] || "Unknown User",
           email: profile.email,
+          avatar_url: profile.avatar_url,
         },
       });
 
@@ -139,7 +140,7 @@ const InviteEmailInput = ({
   };
 
   return (
-    <div className="relative">
+    <div className="relative px-4">
       <div className="flex gap-2">
         <div className="rounded-lg border border-text-300 hover:border-text-400 focus-within:border-text-400 bg-transparent focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-300 overflow-hidden w-full">
           <div className="flex flex-col p-1">

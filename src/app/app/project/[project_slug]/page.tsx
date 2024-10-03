@@ -39,7 +39,7 @@ const ProjectDetails = ({
   const [showNoDateTasks, setShowNoDateTasks] = useState(false);
 
   const projectId = currentProject?.id || null;
-  const { tasks, sections, setSections, setTasks, error, isPending, isError } =
+  const { tasks, sections, setSections, setTasks, error, isLoading, isError } =
     useProjectDetails(projectId);
 
   const { profile } = useAuthProvider();
@@ -121,7 +121,7 @@ const ProjectDetails = ({
     [currentProject?.id, setProjects]
   );
 
-  if (isPending) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center w-full h-screen text-primary-500">
         <Spinner color="current" />

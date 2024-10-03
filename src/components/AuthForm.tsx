@@ -15,13 +15,34 @@ import axios from "axios";
 import KakrolaLogo from "@/app/kakrolaLogo";
 import useScreen from "@/hooks/useScreen";
 import AuthWrapper from "./AuthWrapper";
+import { useAuthProvider } from "@/context/AuthContext";
+import { linkAccountsAfterAuth } from "@/app/auth/action";
+
+// Helper function to get cookie value by name
+function getCookie(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
+  return null;
+}
+
+// Helper function to compare two arrays of objects (linked accounts)
+function arraysEqual(
+  arr1: { profile_id: string }[],
+  arr2: { profile_id: string }[]
+) {
+  if (arr1.length !== arr2.length) return false;
+  return arr1.every(
+    (item, index) => arr2[index].profile_id === item.profile_id
+  );
+}
 
 interface AuthFormProps {
   type: "signup" | "login" | "forgotPassword" | "updatePassword";
   onSubmit: (data: {
     email: string;
     password: string;
-    captchaToken: string;
+    captchaToken?: string;
   }) => Promise<{
     success: boolean;
     error: string;
@@ -29,6 +50,7 @@ interface AuthFormProps {
   socialButtons?: JSX.Element;
   additionalInfo?: JSX.Element;
   additionalFooter?: JSX.Element;
+  onClose?: () => void;
 }
 
 const passwordCriteria = [
@@ -48,6 +70,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
   socialButtons,
   additionalInfo,
   additionalFooter,
+  onClose,
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -60,13 +83,15 @@ const AuthForm: React.FC<AuthFormProps> = ({
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Hcaptcha
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const captcha = useRef<HCaptcha | null>(null);
+  const { profile } = useAuthProvider();
 
-  const handleVerify = (token: string) => {
-    setCaptchaToken(token);
-  };
+  // Hcaptcha
+  // const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // const captcha = useRef<HCaptcha | null>(null);
+
+  // const handleVerify = (token: string) => {
+  //   setCaptchaToken(token);
+  // };
 
   useEffect(() => {
     // Pre-fill the email field if the email is present in the query params
@@ -112,23 +137,59 @@ const AuthForm: React.FC<AuthFormProps> = ({
     }
   }, [password, type]);
 
+  // useEffect(() => {
+  //   if (profile) {
+  //     // Retrieve the previously set profile ID and linked accounts from cookies
+  //     const previousProfileId = getCookie("previousProfileId");
+  //     const previousLinkedAccountsCookie = getCookie("previousLinkedAccounts");
+
+  //     let previousLinkedAccounts = [];
+  //     if (previousLinkedAccountsCookie) {
+  //       try {
+  //         previousLinkedAccounts = JSON.parse(
+  //           decodeURIComponent(previousLinkedAccountsCookie)
+  //         );
+  //       } catch (error) {
+  //         console.error("Error parsing linked accounts from cookies:", error);
+  //       }
+  //     }
+
+  //     // Avoid overwriting the previous profile ID if it already exists
+  //     if (!previousProfileId || previousProfileId !== profile.id) {
+  //       document.cookie = `previousProfileId=${profile.id}; path=/; max-age=${
+  //         60 * 60 * 24
+  //       }; secure; SameSite=Strict`;
+  //     }
+
+  //     // Ensure linked accounts are not empty before setting the cookie
+  //     if (profile.linked_accounts && profile.linked_accounts.length > 0) {
+  //       document.cookie = `previousLinkedAccounts=${encodeURIComponent(
+  //         JSON.stringify(profile.linked_accounts)
+  //       )}; path=/; max-age=${60 * 60 * 24}; secure; SameSite=Strict`;
+  //     } else {
+  //       // If linked accounts are empty, delete the cookie
+  //       document.cookie = `previousLinkedAccounts=; path=/; max-age=0; secure; SameSite=Strict`;
+  //     }
+  //   }
+  // }, [profile]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setMessage(null);
     setLoading(true);
 
-    if (!captchaToken) {
-      setError("Please complete the hCaptcha");
-      captcha.current?.resetCaptcha();
-      setLoading(false);
-      return;
-    }
+    // if (!captchaToken) {
+    //   setError("Please complete the hCaptcha");
+    //   captcha.current?.resetCaptcha();
+    //   setLoading(false);
+    //   return;
+    // }
 
     // Basic validation
     if (!email && type !== "updatePassword") {
       setError("Please enter your email address.");
-      captcha.current?.resetCaptcha();
+      // captcha.current?.resetCaptcha();
       setLoading(false);
       return;
     }
@@ -137,14 +198,14 @@ const AuthForm: React.FC<AuthFormProps> = ({
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email) && type !== "updatePassword") {
       setError("Please enter a valid email address.");
-      captcha.current?.resetCaptcha();
+      // captcha.current?.resetCaptcha();
       setLoading(false);
       return;
     }
 
     if (type !== "forgotPassword" && !password) {
       setError("Please enter your password.");
-      captcha.current?.resetCaptcha();
+      // captcha.current?.resetCaptcha();
       setLoading(false);
       return;
     }
@@ -156,7 +217,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
       );
 
       if (failedCriteria.length > 0) {
-        captcha.current?.resetCaptcha();
+        // captcha.current?.resetCaptcha();
         setError(
           <div className="text-left text-sm">
             <p className="font-semibold mb-2">Password must:</p>
@@ -181,18 +242,18 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
     if (type === "updatePassword" && password !== confirmPassword) {
       setError("Passwords do not match.");
-      captcha.current?.resetCaptcha();
+      // captcha.current?.resetCaptcha();
       setLoading(false);
       return;
     }
 
     try {
-      const result = await onSubmit({ email, password, captchaToken });
+      const result = await onSubmit({ email, password });
 
       if (result?.error) {
         setError(result?.error);
         setLoading(false);
-        captcha.current?.resetCaptcha();
+        // captcha.current?.resetCaptcha();
         return;
       }
 
@@ -213,24 +274,29 @@ const AuthForm: React.FC<AuthFormProps> = ({
           ? `${error.message}`
           : "An unexpected error occurred. Please try again later."
       );
-      captcha.current?.resetCaptcha();
+      // captcha.current?.resetCaptcha();
       setLoading(false);
     } finally {
       setLoading(false);
-      captcha.current?.resetCaptcha();
+      // captcha.current?.resetCaptcha();
     }
   };
 
-  const { screenWidth } = useScreen();
-
   return (
     <AuthWrapper
+      onClose={onClose}
       content={
-        <div className="w-full space-y-6 md:space-y-8 max-w-sm md:mt-12 px-6 md:px-4">
-          <div className="max-w-xs">
-            <h2 className="text-2xl md:text-3xl font-bold text-text-900">
-              {type === "signup" && "Join Kakrola Today!"}
-              {type === "login" && "Welcome Back!"}
+        <div className={`w-full space-y-6 md:space-y-8 max-w-sm p-6 py-12`}>
+          <div className={`max-w-xs ${onClose ? "text-center" : ""}`}>
+            <h2
+              className={`${
+                onClose ? "text-xl md:text-2xl" : "text-2xl md:text-3xl"
+              } font-bold text-text-900`}
+            >
+              {type === "signup" &&
+                (onClose ? "Add an Account" : "Join Kakrola Today!")}
+              {type === "login" &&
+                (onClose ? "Log In to Another Account" : "Welcome Back!")}
               {type === "forgotPassword" && "Forgot Your Password?"}
               {type === "updatePassword" && "Update Your Password"}
             </h2>
@@ -255,7 +321,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
             <div className="text-green-600 text-center">{message}</div>
           )}
 
-          <form className="space-y-6 mt-6" onSubmit={handleSubmit}>
+          {/* <form className="space-y-6 mt-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
               {type !== "updatePassword" &&
                 message !==
@@ -345,10 +411,27 @@ const AuthForm: React.FC<AuthFormProps> = ({
                 </Button>
               </div>
             )}
-          </form>
+          </form> */}
 
           {additionalInfo}
-          {additionalFooter}
+          {/* {additionalFooter} */}
+
+          <p className="text-center text-xs text-text-600">
+            By continuing, you acknowledge that you understand and agree to the{" "}
+            <Link
+              href="/terms-and-conditions"
+              className="text-text-500 hover:text-primary-500 transition"
+            >
+              Terms & Conditions
+            </Link>{" "}
+            and{" "}
+            <Link
+              href="/privacy-policy"
+              className="text-text-500 hover:text-primary-500 transition"
+            >
+              Privacy Policy
+            </Link>
+          </p>
         </div>
       }
       type={type}

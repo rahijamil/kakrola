@@ -68,11 +68,11 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
         htmlFor={"workspace"}
         className="block font-semibold text-text-700 mb-2 pl-4 md:pl-0"
       >
-        Workspace
+        Teamspace
       </label>
 
       <Dropdown
-        title="Workspace"
+        title="Teamspace"
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         triggerRef={triggerRef}

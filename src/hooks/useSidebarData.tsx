@@ -1,10 +1,10 @@
 import { useAuthProvider } from "@/context/AuthContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabaseBrowser } from "@/utils/supabase/client";
 import { ProjectType, SectionType } from "@/types/project";
 import { PersonalMemberType, TeamMemberType, TeamType } from "@/types/team";
 import { PageType } from "@/types/pageTypes";
 import { ChannelType } from "@/types/channel";
+import { fetchSidebarData } from "@/lib/queries";
 
 interface SidebarData {
   personal_members: PersonalMemberType[];
@@ -16,36 +16,14 @@ interface SidebarData {
   channels: ChannelType[];
 }
 
-// Fetching merged data for projects, teams, sections, and pages
-const fetchSidebarData = async (profileId?: string) => {
-  try {
-    if (!profileId) throw new Error("No profile ID provided");
-
-    const { data, error } = await supabaseBrowser.rpc(
-      "fetch_sidebar_data_for_profile",
-      { _profile_id: profileId }
-    );
-
-    if (error) {
-      console.error("RPC Fetch Error:", error.message);
-      throw error;
-    }
-
-    return data || {};
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return {};
-  }
-};
-
 const useSidebarData = () => {
   const { profile } = useAuthProvider();
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["sidebar_data", profile?.id],
     queryFn: () => fetchSidebarData(profile?.id),
-    staleTime: 300000, // 5 minutes
+    staleTime: 1800000, // 30 minutes
     refetchOnWindowFocus: false,
     enabled: !!profile?.id,
   });
@@ -133,6 +111,7 @@ const useSidebarData = () => {
     isLoading,
     isError,
     error,
+    refetchSidebarData: refetch,
   };
 };
 

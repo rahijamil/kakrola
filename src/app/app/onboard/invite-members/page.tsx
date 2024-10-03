@@ -61,6 +61,7 @@ const Step5InviteMembers = () => {
           id: profile.id,
           first_name: profile.full_name.split(" ")[0] || "User",
           email: profile.email,
+          avatar_url: profile.avatar_url,
         },
       });
 

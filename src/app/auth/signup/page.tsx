@@ -3,9 +3,16 @@ import AuthForm from "@/components/AuthForm";
 import { signup } from "@/app/auth/action";
 import SocialLogin from "../SocialLogin";
 import Link from "next/link";
+import Spinner from "@/components/ui/Spinner";
 
 const SignUpPage = () => (
-  <Suspense fallback={<div>Loading...</div>}>
+  <Suspense
+    fallback={
+      <div className="flex items-center justify-center w-full h-screen text-primary-500">
+        <Spinner color="current" size="md" />
+      </div>
+    }
+  >
     <AuthForm
       type="signup"
       onSubmit={async ({ email, password, captchaToken }) => {

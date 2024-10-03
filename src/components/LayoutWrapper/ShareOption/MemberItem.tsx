@@ -33,7 +33,7 @@ const MemberItem = ({ member }: { member: MemberData }) => {
   };
 
   return (
-    <div className="flex items-center gap-2 w-full p-2 hover:bg-text-50 cursor-default rounded-lg transition">
+    <div className="flex items-center gap-2 w-full p-2 px-4 hover:bg-primary-50 border-l-4 border-transparent hover:border-primary-200 cursor-default transition">
       <Image
         src={member.profile.avatar_url || "/default_avatar.png"}
         alt="Avatar"

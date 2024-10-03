@@ -93,6 +93,7 @@ const UngroupedTasks: React.FC<UngroupedTasksProps> = ({
           project={project}
           setTasks={setTasks}
           tasks={tasks}
+          view={"Board"}
         />
       )}
     </>

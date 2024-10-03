@@ -1,34 +1,31 @@
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const profile_id = searchParams.get("profile_id");
+
   const supabase = createClient();
 
   try {
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
+    if (!profile_id) {
+      return NextResponse.json(
+        { error: "Profile ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const { data, error } = await supabase
+      .rpc("get_profile_with_linked_accounts", {
+        _profile_id: profile_id,
+      })
+      .single();
 
     if (error) throw error;
 
-    if (user) {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select(
-          "id, username, email, full_name, avatar_url, is_onboarded, metadata"
-        )
-        .eq("id", user.id)
-        .single();
-      if (error) throw error;
-
-      return NextResponse.json(data);
-    } else {
-      throw new Error("User not found");
-    }
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Error fetching profile:", error);
-
     return NextResponse.json(
       { error: "Error fetching profile" },
       { status: 500 }

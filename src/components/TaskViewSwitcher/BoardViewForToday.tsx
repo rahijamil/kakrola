@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import TaskItem from "./TaskItem";
 import SectionAddTask from "./SectionAddTask";
+import useFoundFixedDropdown from "@/hooks/useFoundFixedDropdown";
 
 const BoardViewForToday = ({
   tasks,
@@ -20,13 +21,17 @@ const BoardViewForToday = ({
     null
   );
 
+  const { foundFixedDropdown } = useFoundFixedDropdown();
+
   return (
-    <div className="flex space-x-2 p-8 pt-0 h-full">
+    <div className="flex gap-1 h-full overflow-x-auto px-4 md:px-6 md:pt-4 scroll-smooth">
       <div
-        className={`bg-text-50 rounded-lg min-w-72 md:min-w-80 w-80 h-fit max-h-[calc(100vh-150px)] overflow-y-auto transition-colors cursor-default `}
+        className={`rounded-lg w-[calc(100vw-50px)] min-w-[calc(100vw-50px)] md:w-[300px] md:min-w-[300px] h-fit max-h-[calc(100vh-150px)] md:max-h-[calc(100vh-150px)] overflow-y-auto cursor-default bg-text-25 dark:bg-surface`}
       >
         <div
-          className={`flex justify-between sticky top-0 z-10 bg-text-100 p-2 pb-1`}
+          className={`flex justify-between ${
+            !foundFixedDropdown && "sticky"
+          } top-0 z-10 p-2 pb-1`}
         >
           <div className={`flex items-center gap-2 w-full`}>
             <h3 className="font-bold pl-[6px]">
@@ -42,7 +47,7 @@ const BoardViewForToday = ({
               key={"today"}
               ref={provided.innerRef}
               {...provided.droppableProps}
-              className="space-y-2 min-h-1 p-2 pt-1"
+              className={`space-y-2 min-h-1 p-2 pt-1`}
             >
               {tasks
                 .filter((t) => !t.parent_task_id)
@@ -58,7 +63,7 @@ const BoardViewForToday = ({
                   <>
                     <div
                       key={task.id}
-                      className={`rounded shadow-sm hover:ring-2 hover:ring-primary-300 transition ring-1 ring-text-200`}
+                      className={`rounded-lg hover:ring-2 hover:ring-primary-300 hover:transition ring-1 ring-text-200`}
                     >
                       <TaskItem
                         key={task.id}
@@ -85,7 +90,7 @@ const BoardViewForToday = ({
           )}
         </Droppable>
 
-        <div className={`sticky bottom-0 bg-text-100 p-2 pt-0`}>
+        <div className={`${!foundFixedDropdown && "sticky"} bottom-0 p-2 pt-0`}>
           <SectionAddTask
             isSmall
             project={null}
@@ -93,6 +98,7 @@ const BoardViewForToday = ({
             tasks={tasks}
             showUngroupedAddTask={showUngroupedAddTask}
             setShowUngroupedAddTask={setShowUngroupedAddTask}
+            view={"Board"}
           />
         </div>
       </div>

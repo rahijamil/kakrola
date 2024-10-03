@@ -273,7 +273,7 @@ const SubscriptionSettings = ({
   const product = subscription?.data?.items[0].product;
   const activeSubscription = subscription?.data;
 
-  const loading = isSubscriptionLoading || isTransactionsLoading;
+  const loading = isSubscriptionLoading;
 
   if (isShowBilling && subscription && transactions) {
     return (
@@ -362,9 +362,7 @@ const SubscriptionSettings = ({
                 {loading ? (
                   <Skeleton width={300} borderRadius={8} className="mt-2" />
                 ) : (
-                  <p className="text-text-500">
-                    {product?.description}
-                  </p>
+                  <p className="text-text-500">{product?.description}</p>
                 )}
 
                 {/* <p className="mt-4 flex flex-col">

@@ -23,6 +23,9 @@ import "react-loading-skeleton/dist/skeleton.css";
 import useScreen from "@/hooks/useScreen";
 import { motion } from "framer-motion";
 import SidebarCreateMore from "./SidebarCreateMore";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAuthProvider } from "@/context/AuthContext";
+import { getNotifications } from "@/lib/queries";
 
 const menuItems: {
   id: number;
@@ -43,12 +46,14 @@ const Sidebar = ({
   sidebarWidth,
   setShowAddTeam,
   setShowLogoutConfirm,
+  setShowAddAnotherAccount,
   quickActions,
   setQuickActions,
 }: {
   sidebarWidth: number;
   setShowAddTeam: React.Dispatch<React.SetStateAction<boolean | number>>;
   setShowLogoutConfirm: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowAddAnotherAccount: React.Dispatch<React.SetStateAction<boolean>>;
   quickActions: {
     showAddTaskModal: boolean;
     showAddSectionModal: boolean;
@@ -76,12 +81,17 @@ const Sidebar = ({
   const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);
   const [showWorkspaces, setShowWorkspaces] = useState(true);
 
+  const queryClient = useQueryClient();
+
+  const { profile } = useAuthProvider();
+
   return (
     <aside className="h-full flex flex-col group w-full">
       <div className="pb-4 p-2 flex items-center justify-between">
         <ProfileMoreOptions
           setShowAddTeam={setShowAddTeam}
           setShowLogoutConfirm={setShowLogoutConfirm}
+          setShowAddAnotherAccount={setShowAddAnotherAccount}
         />
 
         {sidebarLoading ? (
@@ -96,11 +106,26 @@ const Sidebar = ({
               sidebarWidth > 220 ? "gap-2" : "gap-1"
             }`}
           >
-            <button
-              className={`text-text-700 hover:bg-primary-50 rounded-lg transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
+            <Link
+              onClick={() => {
+                if (profile?.id) {
+                  queryClient.prefetchQuery({
+                    queryKey: ["notifications", profile.id],
+                    queryFn: () =>
+                      getNotifications({ recipient_id: profile.id }),
+                    staleTime: 1000 * 60 * 15, // 15 minutes
+                  });
+                }
+              }}
+              href={"/app/notifications"}
+              className={`${
+                pathname == "/app/notifications"
+                  ? "bg-primary-100 text-primary-500"
+                  : "hover:bg-primary-50 text-text-700"
+              } rounded-lg transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center`}
             >
               <Bell strokeWidth={1.5} width={20} />
-            </button>
+            </Link>
 
             <SidebarCreateMore
               quickActions={quickActions}
@@ -198,7 +223,7 @@ const Sidebar = ({
                   <span
                     className={`font-medium text-xs transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis`}
                   >
-                    Workspaces
+                    Teamspaces
                   </span>
                 </div>
               </div>

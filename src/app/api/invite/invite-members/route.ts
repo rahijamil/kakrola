@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from "uuid";
 import { InviteStatus, InviteType, TeamType } from "@/types/team";
 import { ProjectType } from "@/types/project";
 import { RoleType } from "@/types/role";
-import { cookies } from "next/headers";
 
 export async function POST(req: NextRequest) {
   const supabase = createClient();
@@ -13,7 +12,12 @@ export async function POST(req: NextRequest) {
     emails: string[];
     team_id: number | null;
     project_id: number | null;
-    inviter: { id: string; first_name: string; email: string }; // Include inviter's profile ID
+    inviter: {
+      id: string;
+      first_name: string;
+      email: string;
+      avatar_url: string;
+    };
     role?: RoleType;
   };
 
@@ -179,7 +183,13 @@ export async function POST(req: NextRequest) {
         to: email,
         token: inviteData.token,
         inviter,
-        project_data,
+        project_data: project_data
+          ? {
+              id: project_data.id,
+              name: project_data.name,
+              slug: project_data.slug,
+            }
+          : null,
         team_data,
       });
     } catch (error) {
