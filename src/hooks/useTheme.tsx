@@ -2,24 +2,30 @@ import { Theme } from "@/lib/theme.types";
 import React, { useEffect, useState } from "react";
 
 const useTheme = () => {
-  const getInitialTheme: () => Theme = () => {
-    return (localStorage.getItem("data-theme") as Theme) || Theme.KAKROLA;
+  const getInitialTheme = (): Theme => {
+    // Check if window and localStorage are available (browser environment)
+    if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
+      return (localStorage.getItem("data-theme") as Theme) || Theme.KAKROLA;
+    }
+
+    // Return default theme during SSR
+    return Theme.KAKROLA;
   };
 
-  const [theme, setTheme] = useState(getInitialTheme());
+  const [theme, setTheme] = useState<Theme>(getInitialTheme());
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("data-theme", theme);
+    // Ensure this runs only in the browser
+    if (typeof window !== "undefined") {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem("data-theme", theme);
 
-    if (theme === "dark") {
-      document
-        .querySelector('meta[name="theme-color"]')
-        ?.setAttribute("content", "#151515");
-    } else {
-      document
-        .querySelector('meta[name="theme-color"]')
-        ?.setAttribute("content", "#ffffff");
+      const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+      if (theme === "dark") {
+        themeColorMeta?.setAttribute("content", "#151515");
+      } else {
+        themeColorMeta?.setAttribute("content", "#ffffff");
+      }
     }
   }, [theme]);
 
