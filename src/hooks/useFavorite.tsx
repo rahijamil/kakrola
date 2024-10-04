@@ -5,7 +5,7 @@ import {
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
-import { PersonalMemberType } from "@/types/team";
+import { PersonalMemberForProjectType } from "@/types/team";
 import { supabaseBrowser } from "@/utils/supabase/client";
 
 const useFavorite = ({
@@ -35,7 +35,7 @@ const useFavorite = ({
       return;
     }
 
-    const updateProjectMemberSettings: PersonalMemberType = {
+    const updateProjectMemberSettings: PersonalMemberForProjectType = {
       ...currentProjectMemberSettings,
       settings: {
         ...currentProjectMemberSettings.settings,

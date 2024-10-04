@@ -8,25 +8,26 @@ import { ProfileType } from "@/types/user";
 import { useGlobalOption } from "@/context/GlobalOptionContext";
 import MemberItem from "./MemberItem";
 import InviteEmailInput from "./InviteEmailInput";
-import { InviteStatus, InviteType, PersonalMemberType } from "@/types/team";
+import { InviteStatus, InviteType, PersonalMemberForProjectType } from "@/types/team";
 import PendingItem from "./PendingItem";
 import ShareAvatar from "./ShareAvatar";
 import useScreen from "@/hooks/useScreen";
 
-interface MemberData extends PersonalMemberType {
+interface MemberData extends PersonalMemberForProjectType {
   profile: ProfileType;
 }
 
 const ShareOption = ({
   projectId,
   teamId,
+  triggerRef,
 }: {
   projectId?: number | null;
   teamId?: number | null;
+  triggerRef: React.RefObject<HTMLDivElement>;
 }) => {
   const { profile } = useAuthProvider();
   const { setShowShareOption, showShareOption } = useGlobalOption();
-  const triggerRef = useRef(null);
   const [membersData, setMembersData] = useState<MemberData[]>([]);
   const [pendingUsers, setPendingUsers] = useState<InviteType[]>([]);
   const [emails, setEmails] = useState<string[]>([]);
@@ -109,7 +110,6 @@ const ShareOption = ({
             </div>
           )}
           <button
-            ref={triggerRef}
             className={`${
               showShareOption ? "bg-text-100" : "hover:bg-text-100"
             } transition p-1 px-3 pr-2 rounded-lg cursor-pointer flex items-center gap-1 text-text-500`}

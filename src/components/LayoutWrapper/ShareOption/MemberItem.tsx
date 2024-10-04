@@ -1,11 +1,11 @@
-import { PersonalMemberType } from "@/types/team";
+import { PersonalMemberForProjectType } from "@/types/team";
 import { ProfileType } from "@/types/user";
 import Image from "next/image";
 import React, { useRef, useState } from "react";
 import RoleItem from "./RoleItem";
 import { RoleType } from "@/types/role";
 
-interface MemberData extends PersonalMemberType {
+interface MemberData extends PersonalMemberForProjectType {
   profile: ProfileType;
 }
 

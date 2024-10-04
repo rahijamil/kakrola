@@ -1,3 +1,8 @@
+import Dropdown from "@/components/ui/Dropdown";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
+import useFavorite from "@/hooks/useFavorite";
+import useScreen from "@/hooks/useScreen";
+import { PageType } from "@/types/pageTypes";
 import {
   Archive,
   ArrowDownToLine,
@@ -9,32 +14,25 @@ import {
   Link,
   Logs,
   PencilLine,
-  SlidersHorizontal,
   SwatchBook,
   Trash2,
 } from "lucide-react";
-import React, { Dispatch, SetStateAction, useRef, useState } from "react";
-import { ProjectType } from "@/types/project";
-import Dropdown from "../ui/Dropdown";
-import useFavorite from "@/hooks/useFavorite";
+import { Dispatch, SetStateAction, RefObject, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSidebarDataProvider } from "@/context/SidebarDataContext";
-import useScreen from "@/hooks/useScreen";
-
-const ActiveProjectMoreOptions = ({
-  project,
+const ActivePageMoreOptions = ({
+  page,
   stateActions: {
-    setShowDeleteConfirm,
-    setShowArchiveConfirm,
-    setShowCommentOrActivity,
     setExportAsCSV,
     setImportFromCSV,
     setProjectEdit,
     setSaveTemplate,
+    setShowArchiveConfirm,
+    setShowDeleteConfirm,
+    setShowCommentOrActivity,
   },
   triggerRef,
 }: {
-  project: ProjectType;
+  page: PageType;
   stateActions: {
     setShowDeleteConfirm: Dispatch<SetStateAction<boolean>>;
     setShowArchiveConfirm: Dispatch<SetStateAction<boolean>>;
@@ -46,36 +44,34 @@ const ActiveProjectMoreOptions = ({
     setProjectEdit: Dispatch<SetStateAction<boolean>>;
     setSaveTemplate: Dispatch<SetStateAction<boolean>>;
   };
-  triggerRef: React.RefObject<HTMLButtonElement>;
+  triggerRef: RefObject<HTMLDivElement>;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const router = useRouter();
 
+  const { screenWidth } = useScreen();
+
   const { handleFavorite } = useFavorite({
-    column_value: project.id,
-    column_name: "project_id",
+    column_value: Number(page.id),
+    column_name: "page_id",
   });
 
   const { personalMembers, setIsShowViewModal } = useSidebarDataProvider();
 
   // Find the current user project settings for the given project
-  const currentProjectMember = personalMembers.find(
-    (member) => member.project_id === project.id
+  const currentPageMember = personalMembers.find(
+    (member) => member.page_id === page.id
   );
 
   // Determine the current favorite status
-  const isFavorite = currentProjectMember
-    ? currentProjectMember.settings.is_favorite
+  const isFavorite = currentPageMember
+    ? currentPageMember.settings.is_favorite
     : false;
 
   const handleCopyProjectLink = () => {
-    navigator.clipboard.writeText(
-      `https://kakrola.com/app/project/${project.slug}`
-    );
+    navigator.clipboard.writeText(`https://kakrola.com/app/page/${page.slug}`);
   };
-
-  const { screenWidth } = useScreen();
 
   return (
     <Dropdown
@@ -102,20 +98,7 @@ const ActiveProjectMoreOptions = ({
             setProjectEdit(true);
           },
         },
-        ...(screenWidth <= 768
-          ? [
-              {
-                id: 2,
-                label: "View",
-                icon: (
-                  <SlidersHorizontal strokeWidth={1.5} className="w-4 h-4" />
-                ),
-                onClick: () => {
-                  setIsShowViewModal(true);
-                },
-              },
-            ]
-          : []),
+        ...(screenWidth <= 768 ? [] : []),
         {
           id: 4,
           label: isFavorite ? "Remove from favorites" : "Add to favorites",
@@ -224,4 +207,4 @@ const ActiveProjectMoreOptions = ({
   );
 };
 
-export default ActiveProjectMoreOptions;
+export default ActivePageMoreOptions;

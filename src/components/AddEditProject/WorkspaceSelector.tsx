@@ -28,21 +28,21 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
 
   const triggerRef = useRef(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        selectRef.current &&
-        !selectRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
+  // useEffect(() => {
+  //   const handleClickOutside = (event: MouseEvent) => {
+  //     if (
+  //       selectRef.current &&
+  //       !selectRef.current.contains(event.target as Node)
+  //     ) {
+  //       setIsOpen(false);
+  //     }
+  //   };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
@@ -63,7 +63,7 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
   };
 
   return (
-    <div className="relative" ref={selectRef}>
+    <div ref={selectRef}>
       <label
         htmlFor={"workspace"}
         className="block font-semibold text-text-700 mb-2 pl-4 md:pl-0"
@@ -110,7 +110,7 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
                         className="rounded-md object-cover max-w-[20px] max-h-[20px]"
                       />
                     ) : (
-                      <span className="text-white text-[10px] font-medium">
+                      <span className="text-surface text-[10px] font-medium">
                         {currentWorkspace?.name.slice(0, 1).toUpperCase()}
                       </span>
                     )}
@@ -152,7 +152,7 @@ const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
                       className="rounded-md object-cover max-w-[20px] max-h-[20px]"
                     />
                   ) : (
-                    <span className="text-white text-[10px] font-medium">
+                    <span className="text-surface text-[10px] font-medium">
                       {workspace?.name.slice(0, 1).toUpperCase()}
                     </span>
                   )}

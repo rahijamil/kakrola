@@ -27,7 +27,9 @@ const ProjectDeleteConfirm = ({
   const handleProjectDelete = async () => {
     if (!profile?.id) return;
 
-    const userRole = role(project.id);
+    const userRole = role({
+      _project_id: project.id,
+    });
     const canUpdateSection = userRole ? canDeleteProject(userRole) : false;
     if (!canUpdateSection) return;
 

@@ -1,7 +1,7 @@
 import { JSONContent } from "novel";
 
 export interface PageType {
-  id: number;
+  id: number | string;
   created_at?: string;
   updated_at?: string;
   team_id: number | null;
@@ -12,5 +12,6 @@ export interface PageType {
   is_archived: boolean;
   settings: {
     color: string;
+    banner_url?: string;
   };
 }

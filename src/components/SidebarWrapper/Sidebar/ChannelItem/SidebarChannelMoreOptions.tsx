@@ -80,7 +80,9 @@ const SidebarPageMoreOptions = ({
 
   const { role } = useRole();
 
-  const projectRole = role(channel.id);
+  const projectRole = role({
+    _project_id: channel.id,
+  });
 
   const canCreate = projectRole ? canCreateProject(projectRole) : false;
   const canEdit = projectRole ? canEditProject(projectRole) : false;
@@ -147,7 +149,7 @@ const SidebarPageMoreOptions = ({
           ? [
               {
                 id: 1,
-                label: "Add project above",
+                label: "Add channel above",
                 icon: <ArrowUp strokeWidth={1.5} className="w-4 h-4" />,
                 onClick: () => {
                   setAboveBellow("above");
@@ -155,8 +157,8 @@ const SidebarPageMoreOptions = ({
               },
               {
                 id: 2,
-                label: "Add project below",
-                icon: <ArrowUp strokeWidth={1.5} className="w-4 h-4" />,
+                label: "Add channel below",
+                icon: <ArrowDown strokeWidth={1.5} className="w-4 h-4" />,
                 onClick: () => {
                   setAboveBellow("below");
                 },
@@ -196,7 +198,7 @@ const SidebarPageMoreOptions = ({
         },
         {
           id: 6,
-          label: "Copy project link",
+          label: "Copy channel link",
           icon: <Link strokeWidth={1.5} className="w-4 h-4" />,
           onClick: handleCopyProjectLink,
           divide: true,

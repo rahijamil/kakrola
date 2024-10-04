@@ -6,11 +6,17 @@ import { useRole } from "@/context/RoleContext";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import useScreen from "@/hooks/useScreen";
 import { PageType } from "@/types/pageTypes";
-import { ChevronLeft, FileText } from "lucide-react";
+import {
+  ChevronLeft,
+  FileText,
+  ImageIcon,
+  MessageSquareText,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useRef, useState } from "react";
+import ActivePageMoreOptions from "./ActivePageMoreOptions";
 
 const PageWrapper = ({
   children,
@@ -80,25 +86,28 @@ const PageWrapper = ({
   const toggleModal = (key: keyof typeof modalState, value: boolean | null) =>
     setModalState((prev) => ({ ...prev, [key]: value }));
 
+  const triggerRef = useRef(null);
+
   return (
-    <div
-      className={`flex flex-col h-full w-full flex-1 transition-all duration-300`}
-    >
+    <>
       <div
-        className={`flex items-center justify-between ${
-          screenWidth > 768 ? "py-3 px-6" : "p-3"
-        }`}
+        className={`flex flex-col h-full w-full flex-1 transition-all duration-300`}
       >
-        {screenWidth > 768 ? (
-          <div className="flex items-center w-64 whitespace-nowrap">
-            <Link
-              href={`/app/projects`}
-              className="hover:bg-text-100 p-1 py-0.5 rounded-lg transition-colors"
-            >
-              {teams.find((t) => t.id === page.team_id)?.name ?? "Personal"}
-            </Link>
-            <span className="text-text-400">/</span>
-            {/* {project ? (
+        <div
+          className={`flex items-center justify-between ${
+            screenWidth > 768 ? "py-3 px-6" : "p-3"
+          }`}
+        >
+          {screenWidth > 768 ? (
+            <div className="flex items-center w-64 whitespace-nowrap">
+              <Link
+                href={`/app/projects`}
+                className="hover:bg-text-100 p-1 py-0.5 rounded-lg transition-colors"
+              >
+                {teams.find((t) => t.id === page.team_id)?.name ?? "Personal"}
+              </Link>
+              <span className="text-text-400">/</span>
+              {/* {project ? (
                         modalState.editTitle ? (
                           <input
                             type="text"
@@ -130,112 +139,132 @@ const PageWrapper = ({
                           {headline}
                         </h1>
                       )} */}
-          </div>
-        ) : (
-          <div className="flex items-center gap-3">
-            <button onClick={() => router.back()} className="w-6 h-6">
-              <ChevronLeft strokeWidth={1.5} size={24} />
-            </button>
-            <div className="flex items-center gap-1">
-              <FileText size={24} className={`text-${page?.settings.color}`} />
-              {modalState.editTitle ? (
-                <input
-                  type="text"
-                  className="font-semibold border border-text-300 rounded-lg p-1 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 bg-transparent"
-                  value={pageTitle}
-                  onBlur={handleEditTitle}
-                  autoFocus
-                  onChange={(ev) => setPageTitle(ev.target.value)}
-                  onKeyDown={(ev) => ev.key === "Enter" && handleEditTitle()}
-                />
-              ) : (
-                <h1
-                  className="font-semibold border border-transparent hover:border-text-100 rounded-lg w-full p-1 py-0.5 cursor-text inline-block overflow-hidden text-ellipsis"
-                  onClick={() => toggleModal("editTitle", true)}
-                >
-                  {page.title}
-                </h1>
-              )}
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="flex items-center gap-3">
+              <button onClick={() => router.back()} className="w-6 h-6">
+                <ChevronLeft strokeWidth={1.5} size={24} />
+              </button>
+              <div className="flex items-center gap-1">
+                <FileText
+                  size={24}
+                  className={`text-${page?.settings.color}`}
+                />
+                {modalState.editTitle ? (
+                  <input
+                    type="text"
+                    className="font-semibold border border-text-300 rounded-lg p-1 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 bg-transparent"
+                    value={pageTitle}
+                    onBlur={handleEditTitle}
+                    autoFocus
+                    onChange={(ev) => setPageTitle(ev.target.value)}
+                    onKeyDown={(ev) => ev.key === "Enter" && handleEditTitle()}
+                  />
+                ) : (
+                  <h1
+                    className="font-semibold border border-transparent hover:border-text-100 rounded-lg w-full p-1 py-0.5 cursor-text inline-block overflow-hidden text-ellipsis"
+                    onClick={() => toggleModal("editTitle", true)}
+                  >
+                    {page.title}
+                  </h1>
+                )}
+              </div>
+            </div>
+          )}
 
-        <div className={`flex items-center justify-end flex-1`}>
-          <ul className="flex items-center">
-            <li>
-              <ShareOption projectId={null} />
-            </li>
+          <div className={`flex items-center justify-end flex-1`}>
+            <ul className="flex items-center" ref={triggerRef}>
+              <li>
+                <ShareOption projectId={null} triggerRef={triggerRef} />
+              </li>
+
+              {screenWidth > 768 && (
+                <li>
+                  <FilterOptions
+                    hideCalendarView={true}
+                    // setTasks={setTasks}
+                    // tasks={tasks}
+                    triggerRef={triggerRef}
+                  />
+                </li>
+              )}
+
+              {page && (
+                <li>
+                  <ActivePageMoreOptions
+                    triggerRef={triggerRef}
+                    page={page}
+                    stateActions={{
+                      setProjectEdit: (value) =>
+                        toggleModal("projectEdit", value as boolean),
+                      setSaveTemplate: (value) =>
+                        toggleModal("saveTemplate", value as boolean),
+                      setImportFromCSV: (value) =>
+                        toggleModal("showImportFromCSV", value as boolean),
+                      setExportAsCSV: (value) =>
+                        toggleModal("showExportAsCSV", value as boolean),
+                      setShowArchiveConfirm: (value) =>
+                        toggleModal("showArchiveConfirm", value as boolean),
+                      setShowDeleteConfirm: (value) =>
+                        toggleModal("showDeleteConfirm", value as boolean),
+                      setShowCommentOrActivity: (value) =>
+                        toggleModal("showCommentOrActivity", value as null),
+                    }}
+                  />
+                </li>
+              )}
+            </ul>
+          </div>
+        </div>
+
+        <div className="flex-1 flex flex-col h-full w-full overflow-y-auto">
+          <div className="group">
+            {/* unplash free api for banner image */}
+            {/* <div className="w-full h-60 min-h-60 bg-text-50 relative">
+              <Image
+                src="/images/page_banner.jpg"
+                alt="page banner"
+                fill
+                className="object-cover"
+              />
+            </div> */}
 
             {screenWidth > 768 && (
-              <li>
-                <FilterOptions
-                  hideCalendarView={true}
-                  // setTasks={setTasks}
-                  // tasks={tasks}
-                />
-              </li>
+              <div className="relative px-80">
+                {/* <div className="absolute -top-1/2 translate-y-1/3">
+                  <FileText
+                    size={60}
+                    className={`text-${page?.settings.color} bg-background rounded-lg shadow-lg`}
+                  />
+                </div> */}
+                <div className="pt-16_if_icon pt-12 relative">
+                  {/* <div className="absolute top-4 items-center hidden group-hover:flex select-none">
+                    <button className="flex items-center gap-1 text-text-500 p-1 px-1.5 rounded-lg hover:bg-text-100 transition">
+                      <ImageIcon strokeWidth={1.5} size={16} />
+                      Add banner
+                    </button>
+                    <button className="flex items-center gap-1 text-text-500 p-1 px-1.5 rounded-lg hover:bg-text-100 transition">
+                      <MessageSquareText strokeWidth={1.5} size={16} />
+                      Add comment
+                    </button>
+                  </div> */}
+
+                  <input
+                    type="text"
+                    className="text-3xl font-bold border-none rounded-lg focus-visible:outline-none p-1.5 bg-transparent w-full"
+                    value={pageTitle}
+                    onBlur={handleEditTitle}
+                    onChange={(ev) => setPageTitle(ev.target.value)}
+                    onKeyDown={(ev) => ev.key === "Enter" && handleEditTitle()}
+                  />
+                </div>
+              </div>
             )}
-            {/* <li>
-              {project && (
-                <ActiveProjectMoreOptions
-                  project={project}
-                  stateActions={{
-                    setProjectEdit: (value) =>
-                      toggleModal("projectEdit", value as boolean),
-                    setSaveTemplate: (value) =>
-                      toggleModal("saveTemplate", value as boolean),
-                    setImportFromCSV: (value) =>
-                      toggleModal("showImportFromCSV", value as boolean),
-                    setExportAsCSV: (value) =>
-                      toggleModal("showExportAsCSV", value as boolean),
-                    setShowArchiveConfirm: (value) =>
-                      toggleModal("showArchiveConfirm", value as boolean),
-                    setShowDeleteConfirm: (value) =>
-                      toggleModal("showDeleteConfirm", value as boolean),
-                    setShowCommentOrActivity: (value) =>
-                      toggleModal("showCommentOrActivity", value as null),
-                  }}
-                />
-              )}
-            </li> */}
-          </ul>
-        </div>
-      </div>
-
-      <div className="flex-1 flex flex-col h-full w-full overflow-y-auto">
-        <div className="w-full h-60 min-h-60 bg-text-50 relative">
-          <Image
-            src="/images/page_banner.jpg"
-            alt="page banner"
-            fill
-            className="object-cover"
-          />
-        </div>
-
-        {screenWidth > 768 && (
-          <div className="relative px-80">
-            <div className="absolute -top-1/2 translate-y-1/3">
-              <FileText
-                size={60}
-                className={`text-${page?.settings.color} bg-background rounded-lg shadow-lg`}
-              />
-            </div>
-            <div className="mt-16">
-              <input
-                type="text"
-                className="text-3xl font-bold border-none rounded-lg focus-visible:outline-none p-1.5 bg-transparent w-full"
-                value={pageTitle}
-                onBlur={handleEditTitle}
-                onChange={(ev) => setPageTitle(ev.target.value)}
-                onKeyDown={(ev) => ev.key === "Enter" && handleEditTitle()}
-              />
-            </div>
           </div>
-        )}
-
-        <div className={`flex-1`}>{children}</div>
+          <div className={`flex-1`}>{children}</div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

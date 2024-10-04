@@ -110,7 +110,7 @@ const BoardViewColumn = ({
     const findSection = sections.find((s) => s.id == column.id);
 
     if (!findSection?.is_inbox && findSection?.project_id) {
-      const userRole = role(findSection.project_id);
+      const userRole = role({ _project_id: findSection.project_id });
       const canEdit = userRole ? canEditSection(userRole) : false;
 
       if (!canEdit) return;

@@ -72,19 +72,21 @@ const SidebarPageMoreOptions = ({
 
   const { handleFavorite } = useFavorite({
     column_name: "page_id",
-    column_value: page.id,
+    column_value: page.id as number,
   });
 
   const { personalMembers } = useSidebarDataProvider();
 
   const { role } = useRole();
 
-  const projectRole = role(page.id);
+  const pageRole = role({
+    _page_id: page.id,
+  });
 
-  const canCreate = projectRole ? canCreateProject(projectRole) : false;
-  const canEdit = projectRole ? canEditProject(projectRole) : false;
-  const canDelete = projectRole ? canDeleteProject(projectRole) : false;
-  const canArchive = projectRole ? canArchiveProject(projectRole) : false;
+  const canCreate = pageRole ? canCreateProject(pageRole) : false;
+  const canEdit = pageRole ? canEditProject(pageRole) : false;
+  const canDelete = pageRole ? canDeleteProject(pageRole) : false;
+  const canArchive = pageRole ? canArchiveProject(pageRole) : false;
 
   // Find the current user project settings for the given project
   const currentUserPage = personalMembers.find(
@@ -128,8 +130,8 @@ const SidebarPageMoreOptions = ({
       )}
       beforeItemsContent={
         currentUserPage?.role != RoleType.ADMIN ? (
-          <p className="text-xs mb-1 p-2 whitespace-normal bg-text-100 rounded-lg">
-            Some features are not available to project
+          <p className="text-xs mb-1 p-2 whitespace-normal bg-text-100 px-6 text-text-700">
+            Some features are not available to page
             {currentUserPage?.role == RoleType.MEMBER
               ? " members"
               : currentUserPage?.role == RoleType.COMMENTER
@@ -144,7 +146,7 @@ const SidebarPageMoreOptions = ({
           ? [
               {
                 id: 1,
-                label: "Add project above",
+                label: "Add page above",
                 icon: <ArrowUp strokeWidth={1.5} className="w-4 h-4" />,
                 onClick: () => {
                   setAboveBellow("above");
@@ -152,8 +154,8 @@ const SidebarPageMoreOptions = ({
               },
               {
                 id: 2,
-                label: "Add project below",
-                icon: <ArrowUp strokeWidth={1.5} className="w-4 h-4" />,
+                label: "Add page below",
+                icon: <ArrowDown strokeWidth={1.5} className="w-4 h-4" />,
                 onClick: () => {
                   setAboveBellow("below");
                 },
@@ -193,7 +195,7 @@ const SidebarPageMoreOptions = ({
         },
         {
           id: 6,
-          label: "Copy project link",
+          label: "Copy page link",
           icon: <Link strokeWidth={1.5} className="w-4 h-4" />,
           onClick: handleCopyProjectLink,
           divide: true,

@@ -12,7 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import React from "react";
+import React, { useRef } from "react";
 import AddNewThread from "./new/AddNewThread";
 import useAddThread from "./new/useAddThread";
 import Spinner from "@/components/ui/Spinner";
@@ -67,6 +67,8 @@ const ThreadWrapper = ({
       damping: 10,
     },
   };
+
+  const triggerRef = useRef(null);
 
   return (
     <motion.div
@@ -205,8 +207,10 @@ const ThreadWrapper = ({
 
           {thread && (
             <div className={`flex items-center justify-end  h-full`}>
-              <div className="flex items-center h-full">
-                {screenWidth > 768 && <ShareOption projectId={null} />}
+              <div className="flex items-center h-full" ref={triggerRef}>
+                {screenWidth > 768 && (
+                  <ShareOption projectId={null} triggerRef={triggerRef} />
+                )}
 
                 <button className="text-text-500 md:hover:bg-text-100 md:px-2 p-1 justify-center md:rounded-lg transition flex items-center gap-1">
                   <Headphones

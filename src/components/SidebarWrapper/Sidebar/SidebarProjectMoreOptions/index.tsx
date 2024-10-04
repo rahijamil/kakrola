@@ -79,7 +79,7 @@ const SidebarProjectMoreOptions = ({
 
   const { role } = useRole();
 
-  const projectRole = role(project.id);
+  const projectRole = role({_project_id: project.id});
 
   const canCreate = projectRole ? canCreateProject(projectRole) : false;
   const canEdit = projectRole ? canEditProject(projectRole) : false;
@@ -155,7 +155,7 @@ const SidebarProjectMoreOptions = ({
               {
                 id: 2,
                 label: "Add project below",
-                icon: <ArrowUp strokeWidth={1.5} className="w-4 h-4" />,
+                icon: <ArrowDown strokeWidth={1.5} className="w-4 h-4" />,
                 onClick: () => {
                   setAboveBellow("below");
                 },

@@ -4,7 +4,7 @@ import { getUser } from "@/utils/auth";
 import {
   InviteStatus,
   InviteType,
-  PersonalMemberType,
+  PersonalMemberForProjectType,
   TeamMemberType,
 } from "@/types/team";
 import { ProfileType } from "@/types/user";
@@ -123,9 +123,8 @@ async function handleInviteAcceptance(
       const newOrder =
         existingMembers.length > 0 ? Number(existingMembers[0].order) + 1 : 1;
 
-      const projectMemberData: Omit<PersonalMemberType, "id"> = {
+      const projectMemberData: Omit<PersonalMemberForProjectType, "id"> = {
         project_id: invite.project_id,
-        page_id: null,
         profile_id: profile.id,
         role: invite.role,
         settings: {

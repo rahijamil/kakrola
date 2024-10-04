@@ -139,7 +139,7 @@ const ListView: React.FC<ListViewProps> = ({
     async (result: DropResult) => {
       if (!profile?.id || !project?.id) return;
 
-      const userRole = role(project.id);
+      const userRole = role({_project_id: project.id});
       const canUpdateSection = userRole ? canEditSection(userRole) : false;
       if (!canUpdateSection) return;
 
@@ -266,7 +266,7 @@ const ListView: React.FC<ListViewProps> = ({
 
         // Update tasks in the database with correct orders within their sections
         try {
-          const userRole = role(project.id);
+          const userRole = role({_project_id: project.id});
 
           const canUpdateTask = userRole ? canEditTask(userRole) : false;
           if (!canUpdateTask) return;
@@ -379,7 +379,9 @@ const ListView: React.FC<ListViewProps> = ({
 
     try {
       if (!project?.id) return;
-      const userRole = role(project.id);
+      const userRole = role({
+        _project_id: project.id,
+      });
       const canCreate = userRole ? canCreateSection(userRole) : false;
       if (!canCreate) return;
 

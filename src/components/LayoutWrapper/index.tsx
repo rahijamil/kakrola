@@ -1,5 +1,5 @@
 "use client";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { CheckCircle, ChevronLeft, SlidersHorizontal } from "lucide-react";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
@@ -88,7 +88,9 @@ const LayoutWrapper = ({
         )
       );
 
-      const userRole = role(project.id);
+      const userRole = role({
+        _project_id: project.id,
+      });
       const canUpdateSection = userRole ? canEditProject(userRole) : false;
       if (!canUpdateSection) return;
 
@@ -168,6 +170,7 @@ const LayoutWrapper = ({
 
   const { screenWidth } = useScreen();
   const router = useRouter();
+  const triggerRef = useRef(null);
 
   return (
     <>
@@ -283,13 +286,14 @@ const LayoutWrapper = ({
                 )}
 
                 <div className={`flex items-center justify-end flex-1`}>
-                  <ul className="flex items-center">
+                  <ul className="flex items-center" ref={triggerRef}>
                     {typeof setShowShareOption === "function" &&
                       headline !== "My Tasks" && (
                         <li>
                           <ShareOption
                             projectId={project?.id}
                             teamId={project?.team_id}
+                            triggerRef={triggerRef}
                           />
                         </li>
                       )}
@@ -299,6 +303,7 @@ const LayoutWrapper = ({
                           hideCalendarView={hideCalendarView}
                           setTasks={setTasks}
                           tasks={tasks}
+                           triggerRef={triggerRef}
                         />
                       </li>
                     )}
@@ -306,6 +311,7 @@ const LayoutWrapper = ({
                       <li>
                         {project && (
                           <ActiveProjectMoreOptions
+                            triggerRef={triggerRef}
                             project={project}
                             stateActions={{
                               setProjectEdit: (value) =>

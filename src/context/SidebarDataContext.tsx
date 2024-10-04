@@ -1,7 +1,7 @@
 "use client";
 import { ProjectType, SectionType } from "@/types/project";
 import React, { createContext, ReactNode, useContext, useState } from "react";
-import { TeamType, TeamMemberType, PersonalMemberType } from "@/types/team";
+import { TeamType, TeamMemberType, PersonalMemberForProjectType } from "@/types/team";
 import { PageType } from "@/types/pageTypes";
 import useSidebarData from "@/hooks/useSidebarData";
 import { ChannelType } from "@/types/channel";
@@ -25,8 +25,8 @@ const SidebarDataContext = createContext<{
   teamMembers: TeamMemberType[];
   activeProject: ProjectType | null;
   setActiveProject: React.Dispatch<React.SetStateAction<ProjectType | null>>;
-  personalMembers: PersonalMemberType[];
-  setProjectMembers: (members: PersonalMemberType[]) => void;
+  personalMembers: PersonalMemberForProjectType[];
+  setProjectMembers: (members: PersonalMemberForProjectType[]) => void;
   isShowViewModal: boolean;
   setIsShowViewModal: React.Dispatch<React.SetStateAction<boolean>>;
   isError: boolean;

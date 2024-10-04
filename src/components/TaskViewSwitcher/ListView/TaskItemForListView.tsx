@@ -80,7 +80,7 @@ const TaskItemForListView = ({
     if (!profile?.id) return;
 
     if (!task.is_inbox && task.project_id) {
-      const userRole = role(task.project_id);
+      const userRole = role({ _project_id: task.project_id });
 
       const canDelTask = userRole ? canDeleteTask(userRole) : false;
       if (!canDelTask) return;
@@ -159,7 +159,7 @@ const TaskItemForListView = ({
         if (!profile?.id) return;
 
         if (!taskData.is_inbox && taskData.project_id) {
-          const userRole = role(taskData.project_id);
+          const userRole = role({ _project_id: taskData.project_id });
           const canEdit = userRole ? canEditTask(userRole) : false;
 
           if (!canEdit) return;

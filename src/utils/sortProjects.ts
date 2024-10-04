@@ -1,14 +1,14 @@
 import { ProjectType } from "@/types/project";
-import { PersonalMemberType } from "@/types/team";
+import { PersonalMemberForProjectType } from "@/types/team";
 
 export const sortProjects = (
   projects: ProjectType[],
-  personalMembers: PersonalMemberType[]
+  personalMembers: PersonalMemberForProjectType[]
 ): ProjectType[] => {
   // Create a map from user settings for quick lookup
   const members = personalMembers.filter((member) => member.project_id != null);
 
-  const settingsMap = new Map<number, PersonalMemberType>(
+  const settingsMap = new Map<number, PersonalMemberForProjectType>(
     members.map((member) => [member.project_id!, member])
   );
 

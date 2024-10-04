@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
@@ -84,14 +84,22 @@ const Sidebar = ({
   const queryClient = useQueryClient();
 
   const { profile } = useAuthProvider();
+  const triggerRef = useRef(null);
+
+  const [isProfileMoreOpen, setIsProfileOpen] = useState(false);
 
   return (
     <aside className="h-full flex flex-col group w-full">
-      <div className="pb-4 p-2 flex items-center justify-between">
+      <div
+        className={`mb-4 mt-2 py-1 pl-2 pr-1 flex items-center justify-between border-transparent hover:bg-primary-50 hover:border-primary-200 border-l-4 transition cursor-pointer`}
+        onClick={() => setIsProfileOpen(!isProfileMoreOpen)}
+      >
         <ProfileMoreOptions
           setShowAddTeam={setShowAddTeam}
           setShowLogoutConfirm={setShowLogoutConfirm}
           setShowAddAnotherAccount={setShowAddAnotherAccount}
+          isOpen={isProfileMoreOpen}
+          setIsOpen={setIsProfileOpen}
         />
 
         {sidebarLoading ? (
@@ -105,9 +113,12 @@ const Sidebar = ({
             className={`flex items-center justify-end w-full transition duration-150 ${
               sidebarWidth > 220 ? "gap-2" : "gap-1"
             }`}
+            ref={triggerRef}
           >
             <Link
-              onClick={() => {
+              onClick={(ev) => {
+                ev.stopPropagation();
+
                 if (profile?.id) {
                   queryClient.prefetchQuery({
                     queryKey: ["notifications", profile.id],
@@ -121,8 +132,8 @@ const Sidebar = ({
               className={`${
                 pathname == "/app/notifications"
                   ? "bg-primary-100 text-primary-500"
-                  : "hover:bg-primary-50 text-text-700"
-              } rounded-lg transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center`}
+                  : "hover:bg-primary-100 text-text-700"
+              } rounded-lg transition-colors duration-150 z-10 w-7 h-7 flex items-center justify-center`}
             >
               <Bell strokeWidth={1.5} width={20} />
             </Link>
@@ -130,6 +141,7 @@ const Sidebar = ({
             <SidebarCreateMore
               quickActions={quickActions}
               setQuickActions={setQuickActions}
+              triggerRef={triggerRef}
             />
           </div>
         )}

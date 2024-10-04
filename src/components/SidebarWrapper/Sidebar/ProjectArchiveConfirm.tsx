@@ -26,7 +26,9 @@ const ProjectArchiveConfirm = ({
   const handleArchive = async () => {
     if (!profile?.id) return;
 
-    const userRole = role(project.id);
+    const userRole = role({
+      _project_id: project.id,
+    });
     const canUpdateSection = userRole ? canEditProject(userRole) : false;
     if (!canUpdateSection) return;
 

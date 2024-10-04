@@ -141,7 +141,7 @@ const AddTaskFormForProject = ({
         setTasks(updatedTasks);
         setLoading(false);
 
-        const userRole = role(taskData.project_id);
+        const userRole = role({ _project_id: taskData.project_id });
         const canUpdateSection = userRole ? canEditTask(userRole) : false;
         if (!canUpdateSection) return;
 
@@ -204,7 +204,7 @@ const AddTaskFormForProject = ({
         resetTaskData();
 
         if (!taskData.project_id) return;
-        const userRole = role(taskData.project_id);
+        const userRole = role({ _project_id: taskData.project_id });
         const canUpdateSection = userRole ? canCreateTask(userRole) : false;
         if (!canUpdateSection) return;
 

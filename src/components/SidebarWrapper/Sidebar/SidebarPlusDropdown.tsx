@@ -2,8 +2,11 @@ import AddEditChannel from "@/components/AddEditChannel";
 import AddEditProject from "@/components/AddEditProject";
 import Dropdown from "@/components/ui/Dropdown";
 import { useAuthProvider } from "@/context/AuthContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import useSidebarData from "@/hooks/useSidebarData";
 import { PageType } from "@/types/pageTypes";
+import { RoleType } from "@/types/role";
+import { PersonalMemberForPageType } from "@/types/team";
 import { generateSlug } from "@/utils/generateSlug";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { AnimatePresence } from "framer-motion";
@@ -36,7 +39,7 @@ const SidebarPlusDropdown = ({
   const triggerRef = useRef(null);
 
   const { profile } = useAuthProvider();
-  const { setPages, pages } = useSidebarData();
+  const { setPages, pages } = useSidebarDataProvider();
   const router = useRouter();
 
   const handleCreatePage = async () => {
@@ -59,7 +62,7 @@ const SidebarPlusDropdown = ({
       };
 
       // Optimistically add the new page to the state
-      const allPages = [...pages, { ...newPage, id: tempId }];
+      const allPages = [...pages, { ...newPage, id: tempId } as PageType];
       setPages(allPages);
 
       // Redirect to the newly created page
@@ -87,6 +90,29 @@ const SidebarPlusDropdown = ({
           return page;
         });
         setPages(updatedPages);
+
+        const MemberData: Omit<PersonalMemberForPageType, "id"> = {
+          page_id: data.id,
+          profile_id: profile.id,
+          role: RoleType.ADMIN,
+          settings: {
+            is_favorite: false,
+            order: 0,
+          },
+        };
+
+        const { data: personalMemberData, error: personalMemberError } =
+          await supabaseBrowser
+            .from("personal_members")
+            .insert(MemberData)
+            .select("id")
+            .single();
+
+        if (personalMemberError) {
+          console.error(
+            `Error creating personal member: ${personalMemberError}`
+          );
+        }
       }
     } catch (error) {
       console.error(`Error creating page: ${error}`);

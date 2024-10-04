@@ -1,4 +1,11 @@
-import React, { useEffect, useState, useCallback, useRef, Dispatch, SetStateAction } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import LayoutView from "../LayoutView";
 import { ViewTypes } from "@/types/viewTypes";
 import { ToggleSwitch } from "../ui/ToggleSwitch";
@@ -11,10 +18,12 @@ const FilterOptions = React.memo(
     hideCalendarView,
     tasks = [],
     setTasks,
+    triggerRef,
   }: {
     hideCalendarView?: boolean;
-    setTasks?: (tasks: TaskType[]) => void
+    setTasks?: (tasks: TaskType[]) => void;
     tasks?: TaskType[];
+    triggerRef: React.RefObject<HTMLButtonElement>;
   }) => {
     const [showCompletedTasks, setShowCompletedTasks] = useState(false);
 
@@ -40,23 +49,17 @@ const FilterOptions = React.memo(
 
     const [isOpen, setIsOpen] = useState(false);
 
-    const triggerRef = useRef(null);
-
     return (
       <Dropdown
         triggerRef={triggerRef}
         Label={({ onClick }) => (
           <button
-            ref={triggerRef}
             className={`${
-              isOpen ? "bg-text-50" : "hover:bg-text-100"
+              isOpen ? "bg-text-100" : "hover:bg-text-100"
             } transition px-3 p-1 pr-2 rounded-lg cursor-pointer flex items-center gap-1 text-text-500`}
             onClick={onClick}
           >
-            <SlidersHorizontal
-              strokeWidth={1.5}
-              className="w-4 h-4"
-            />
+            <SlidersHorizontal strokeWidth={1.5} className="w-4 h-4" />
             <span className="hidden md:inline-block">Filters</span>
           </button>
         )}

@@ -95,7 +95,7 @@ const TaskItem = ({
     if (!profile?.id) return;
 
     if (!task.is_inbox && task.project_id) {
-      const userRole = role(task.project_id);
+      const userRole = role({ _project_id: task.project_id });
       const canEdit = userRole ? canDeleteTask(userRole) : false;
 
       if (!canEdit) return;
@@ -130,7 +130,7 @@ const TaskItem = ({
       if (!profile?.id) return;
 
       if (!task.is_inbox && task.project_id) {
-        const userRole = role(task.project_id);
+        const userRole = role({ _project_id: task.project_id });
         const canEdit = userRole ? canEditTask(userRole) : false;
 
         if (!canEdit) return;

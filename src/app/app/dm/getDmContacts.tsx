@@ -1,4 +1,4 @@
-import { PersonalMemberType, TeamMemberType } from "@/types/team";
+import { PersonalMemberForProjectType, TeamMemberType } from "@/types/team";
 import { DmContactType } from "@/types/channel";
 import { supabaseBrowser } from "@/utils/supabase/client";
 
@@ -7,7 +7,7 @@ export const getDmContacts = async ({
   teamMembers,
   currentUserId,
 }: {
-  personalMembers: PersonalMemberType[];
+  personalMembers: PersonalMemberForProjectType[];
   teamMembers: TeamMemberType[];
   currentUserId: string;
 }): Promise<DmContactType[]> => {

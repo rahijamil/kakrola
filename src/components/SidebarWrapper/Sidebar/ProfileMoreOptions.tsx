@@ -120,12 +120,16 @@ interface ProfileMoreOptionsProps {
   setShowAddTeam: React.Dispatch<React.SetStateAction<boolean | number>>;
   setShowLogoutConfirm: React.Dispatch<React.SetStateAction<boolean>>;
   setShowAddAnotherAccount: React.Dispatch<React.SetStateAction<boolean>>;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
   setShowAddTeam,
   setShowLogoutConfirm,
   setShowAddAnotherAccount,
+  isOpen,
+  setIsOpen,
 }) => {
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
   const { profile } = useAuthProvider();
@@ -218,8 +222,6 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
       setActiveSubmenu(null);
     }
   };
-
-  const [isOpen, setIsOpen] = useState(false);
 
   const onClose = () => {
     setIsOpen(false);

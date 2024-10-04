@@ -19,7 +19,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useRef, useState } from "react";
 
 const ChannelWrapper = ({
   children,
@@ -94,6 +94,7 @@ const ChannelWrapper = ({
     setModalState((prev) => ({ ...prev, [key]: value }));
 
   const team = teams.find((t) => t.id === channel.team_id);
+  const triggerRef = useRef(null);
 
   return (
     <>
@@ -108,14 +109,14 @@ const ChannelWrapper = ({
           
 
           <div className={`flex items-center justify-end md:flex-1`}>
-            <ul className="flex items-center">
+            <ul className="flex items-center" ref={triggerRef}>
               {/* <li>
               <Button icon={Edit} size="xs" onClick={() => router.push(`/app/ch/${channel.slug}/th/new`)}>
                 New Thread
               </Button>
             </li> */}
               <li>
-                <ShareOption projectId={null} />
+                <ShareOption projectId={null} triggerRef={triggerRef} />
               </li>
 
               <li>

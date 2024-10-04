@@ -25,7 +25,7 @@ import {
 } from "@/types/project";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import Spinner from "@/components/ui/Spinner";
-import { PersonalMemberType } from "@/types/team";
+import { PersonalMemberForProjectType } from "@/types/team";
 import { RoleType } from "@/types/role";
 
 interface UseCase {
@@ -135,9 +135,8 @@ const Step2UseCase = () => {
           );
           const newOrder = maxOrder + 1;
 
-          const projectMemberData: Omit<PersonalMemberType, "id"> = {
+          const projectMemberData: Omit<PersonalMemberForProjectType, "id"> = {
             profile_id: profile.id,
-            page_id: null,
             project_id: newProject.id,
             role: RoleType.ADMIN,
             settings: {

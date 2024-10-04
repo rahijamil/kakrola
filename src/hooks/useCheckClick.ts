@@ -30,7 +30,7 @@ const useCheckClick = ({
 
     try {
       if (!task.is_inbox && task.project_id) {
-        const userRole = role(task.project_id);
+        const userRole = role({ _project_id: task.project_id });
 
         const canUpdateTask = userRole ? canEditTask(userRole) : false;
         if (!canUpdateTask) return;

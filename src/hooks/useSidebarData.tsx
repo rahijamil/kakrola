@@ -1,13 +1,13 @@
 import { useAuthProvider } from "@/context/AuthContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ProjectType, SectionType } from "@/types/project";
-import { PersonalMemberType, TeamMemberType, TeamType } from "@/types/team";
+import { PersonalMemberForProjectType, TeamMemberType, TeamType } from "@/types/team";
 import { PageType } from "@/types/pageTypes";
 import { ChannelType } from "@/types/channel";
 import { fetchSidebarData } from "@/lib/queries";
 
 interface SidebarData {
-  personal_members: PersonalMemberType[];
+  personal_members: PersonalMemberForProjectType[];
   projects: ProjectType[];
   sections: SectionType[];
   team_members: TeamMemberType[];
@@ -49,7 +49,7 @@ const useSidebarData = () => {
         })
       ),
     personalMembers: data?.personal_members || [],
-    setProjectMembers: (members: PersonalMemberType[]) =>
+    setProjectMembers: (members: PersonalMemberForProjectType[]) =>
       queryClient.setQueryData(
         ["sidebar_data", profile?.id],
         (

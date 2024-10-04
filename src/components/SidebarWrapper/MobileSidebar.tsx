@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useState,
   useEffect,
+  useRef,
 } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
@@ -78,6 +79,8 @@ function MobileSidebar({
     }
   }, [isPending]);
 
+  const triggerRef = useRef(null);
+
   return (
     <motion.nav
       initial={{ y: "100%" }}
@@ -144,6 +147,7 @@ function MobileSidebar({
         <SidebarCreateMore
           quickActions={quickActions}
           setQuickActions={setQuickActions}
+          triggerRef={triggerRef}
         />
       </div>
     </motion.nav>

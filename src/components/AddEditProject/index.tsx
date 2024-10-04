@@ -1,5 +1,11 @@
 "use client";
-import React, { FormEvent, useCallback, useMemo, useState } from "react";
+import React, {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { ProjectType, TaskPriority } from "@/types/project";
 import { ChevronLeft, SquareGanttChart, X } from "lucide-react";
 import { ToggleSwitch } from "../ui/ToggleSwitch";
@@ -12,7 +18,7 @@ import WorkspaceSelector from "./WorkspaceSelector";
 import ColorSelector from "./ColorSelector";
 import { generateSlug } from "@/utils/generateSlug";
 import AnimatedCircleCheck from "@/components/TaskViewSwitcher/AnimatedCircleCheck";
-import { PersonalMemberType } from "@/types/team";
+import { PersonalMemberForProjectType } from "@/types/team";
 import { RoleType } from "@/types/role";
 import {
   ActivityAction,
@@ -27,6 +33,7 @@ import ViewSkeleton from "../ViewSkeleton";
 import { projectViewsToSelect } from "@/data/project_views";
 import useScreen from "@/hooks/useScreen";
 import { motion } from "framer-motion";
+import { createPortal } from "react-dom";
 
 const AddEditProject = ({
   workspaceId,
@@ -43,6 +50,14 @@ const AddEditProject = ({
   const { projects, setProjects, teams, personalMembers } =
     useSidebarDataProvider();
   const { screenWidth } = useScreen();
+
+  const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(
+    null
+  );
+
+  useEffect(() => {
+    setPortalContainer(document.body);
+  }, []);
 
   const initialProjectData: Omit<ProjectType, "id"> = useMemo(
     () =>
@@ -124,12 +139,13 @@ const AddEditProject = ({
         ...prevData,
         [field]: value,
       }));
+
     },
     []
   );
 
   const handleProjectMembersDataChange = useCallback(
-    (field: keyof PersonalMemberType, value: any) => {
+    (field: keyof PersonalMemberForProjectType, value: any) => {
       setProjectMembersData((prevData) => ({
         ...prevData,
         settings: {
@@ -157,7 +173,9 @@ const AddEditProject = ({
     setError(null);
 
     if (project?.id) {
-      const userRole = role(project.id);
+      const userRole = role({
+        _project_id: project.id,
+      });
       const canUpdateSection = userRole ? canEditProject(userRole) : false;
       if (!canUpdateSection) return;
 
@@ -365,244 +383,249 @@ const AddEditProject = ({
   };
 
   return (
-    <motion.div
-      initial={{
-        opacity: 0,
-        y: 20,
-        scale: 0.95,
-      }}
-      animate={{
-        opacity: 1,
-         y: 0,
-        scale: 1,
-      }}
-      exit={{
-        opacity: 0,
-        y: 20,
-        scale: 0.95,
-      }}
-      transition={{ duration: 0.2, ease: "easeInOut" }}
-      className="bg-surface md:bg-background fixed inset-0 z-50 flex flex-col"
-    >
-      {screenWidth > 768 && (
-        <div className="flex justify-end p-4 md:pr-6">
-          <button
-            className="p-1 rounded-lg hover:bg-text-100 transition"
-            onClick={onClose}
-          >
-            <X size={20} strokeWidth={1.5} />
-          </button>
-        </div>
-      )}
+    portalContainer &&
+    createPortal(
+      <motion.div
+        initial={{
+          opacity: 0,
+          y: -10,
+          scale: 0.95,
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+          scale: 1,
+        }}
+        exit={{
+          opacity: 0,
+          y: -10,
+          scale: 0.95,
+        }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+        className="bg-surface md:bg-background fixed inset-0 z-20 flex flex-col"
+      >
+        {screenWidth > 768 && (
+          <div className="flex justify-end p-4 md:pr-6">
+            <button
+              className="p-1 rounded-lg hover:bg-text-100 transition"
+              onClick={onClose}
+            >
+              <X size={20} strokeWidth={1.5} />
+            </button>
+          </div>
+        )}
 
-      <div className="w-full md:w-11/12 mx-auto flex flex-1 gap-16">
-        <div className="w-full space-y-6 md:space-y-8 max-w-sm">
-          {screenWidth > 768 ? (
-            <h1 className="font-medium text-xl md:text-3xl">
-              {project && !aboveBellow ? "Edit project" : "New Project"}
-            </h1>
-          ) : (
-            <div className="flex justify-between items-center px-4 py-2 border-b border-text-100">
-              <div className="flex items-center gap-3">
-                <button onClick={onClose} className="w-6 h-6">
-                  <ChevronLeft strokeWidth={1.5} size={24} />
-                </button>
-                <h1 className="font-semibold">
-                  {project && !aboveBellow ? "Edit project" : "New Project"}
-                </h1>
-              </div>
+        <div className="w-full md:w-11/12 mx-auto flex flex-1 gap-16">
+          <div className="w-full space-y-6 md:space-y-8 max-w-sm">
+            {screenWidth > 768 ? (
+              <h1 className="font-medium text-xl md:text-3xl">
+                {project && !aboveBellow ? "Edit project" : "New Project"}
+              </h1>
+            ) : (
+              <div className="flex justify-between items-center px-4 py-2 border-b border-text-100">
+                <div className="flex items-center gap-3">
+                  <button onClick={onClose} className="w-6 h-6">
+                    <ChevronLeft strokeWidth={1.5} size={24} />
+                  </button>
+                  <h1 className="font-semibold">
+                    {project && !aboveBellow ? "Edit project" : "New Project"}
+                  </h1>
+                </div>
 
-              <Button
-                type="submit"
-                size="xs"
-                disabled={loading || !projectData.name.trim()}
-                variant="ghost"
-              >
-                {loading ? (
-                  <div className="flex items-center gap-2">
-                    <Spinner color="white" />
-
-                    {project && !aboveBellow ? (
-                      <span>Editing...</span>
-                    ) : (
-                      <span>Creating...</span>
-                    )}
-                  </div>
-                ) : project && !aboveBellow ? (
-                  "Edit"
-                ) : (
-                  "Create"
-                )}
-              </Button>
-            </div>
-          )}
-
-          <form
-            onSubmit={(ev) => {
-              if (aboveBellow) {
-                handleAddProjectAboveBellow(ev, aboveBellow);
-              } else {
-                handleAddProject(ev);
-              }
-            }}
-            className="space-y-6 md:space-y-8"
-          >
-            <Input
-              type="text"
-              value={projectData?.name}
-              onChange={(e) => {
-                handleProjectDataChange("name", e.target.value);
-                handleProjectDataChange("slug", generateSlug(e.target.value));
-              }}
-              required
-              autoFocus
-              label="Name"
-              Icon={SquareGanttChart}
-              placeholder="Project name"
-            />
-
-            <ColorSelector
-              value={projectData.settings.color}
-              onChange={(color) =>
-                handleProjectDataChange("settings", {
-                  ...projectData.settings,
-                  color,
-                })
-              }
-            />
-
-            <WorkspaceSelector
-              currentWorkspace={currentWorkspace}
-              workspaces={workspaces}
-              onSelect={(workspace) =>
-                handleProjectDataChange("team_id", workspace.team_id)
-              }
-            />
-
-            <div className="space-y-6 md:space-y-8 px-4 md:px-0">
-              <div>
-                <button
-                  className="flex items-center space-x-2 w-full"
-                  type="button"
-                  onClick={() =>
-                    setProjectMembersData((prev) => ({
-                      ...prev,
-                      settings: {
-                        ...projectMembersData?.settings,
-                        is_favorite: !projectMembersData?.settings.is_favorite,
-                      },
-                    }))
-                  }
+                <Button
+                  type="submit"
+                  size="xs"
+                  disabled={loading || !projectData.name.trim()}
+                  variant="ghost"
                 >
-                  <ToggleSwitch
-                    checked={projectMembersData.settings.is_favorite}
-                    onCheckedChange={(value) =>
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <Spinner color="white" />
+
+                      {project && !aboveBellow ? (
+                        <span>Editing...</span>
+                      ) : (
+                        <span>Creating...</span>
+                      )}
+                    </div>
+                  ) : project && !aboveBellow ? (
+                    "Edit"
+                  ) : (
+                    "Create"
+                  )}
+                </Button>
+              </div>
+            )}
+
+            <form
+              onSubmit={(ev) => {
+                if (aboveBellow) {
+                  handleAddProjectAboveBellow(ev, aboveBellow);
+                } else {
+                  handleAddProject(ev);
+                }
+              }}
+              className="space-y-6 md:space-y-8"
+            >
+              <Input
+                type="text"
+                value={projectData?.name}
+                onChange={(e) => {
+                  handleProjectDataChange("name", e.target.value);
+                  handleProjectDataChange("slug", generateSlug(e.target.value));
+                }}
+                required
+                autoFocus
+                label="Name"
+                Icon={SquareGanttChart}
+                placeholder="Project name"
+              />
+
+              <ColorSelector
+                value={projectData.settings.color}
+                onChange={(color) =>
+                  handleProjectDataChange("settings", {
+                    ...projectData.settings,
+                    color,
+                  })
+                }
+              />
+
+              <WorkspaceSelector
+                currentWorkspace={currentWorkspace}
+                workspaces={workspaces}
+                onSelect={(workspace) =>
+                  handleProjectDataChange("team_id", workspace.team_id)
+                }
+              />
+
+              <div className="space-y-6 md:space-y-8 px-4 md:px-0">
+                <div>
+                  <button
+                    className="flex items-center space-x-2 w-full"
+                    type="button"
+                    onClick={() =>
                       setProjectMembersData((prev) => ({
                         ...prev,
                         settings: {
-                          ...projectMembersData.settings,
-                          is_favorite: value,
+                          ...projectMembersData?.settings,
+                          is_favorite:
+                            !projectMembersData?.settings.is_favorite,
                         },
                       }))
                     }
-                  />
-
-                  <label className="block font-semibold text-text-700">
-                    Add to favorites
-                  </label>
-                </button>
-              </div>
-
-              <div className="space-y-1">
-                <p className="block font-bold text-text-700">View</p>
-                <ul className="flex gap-4 items-center">
-                  {projectViewsToSelect.map((v) => (
-                    <li
-                      key={v.id}
-                      tabIndex={0}
-                      className={`flex items-center justify-center cursor-pointer rounded-lg px-4 border w-full aspect-square relative ${
-                        projectData.settings.view === v.name
-                          ? "border-primary-500 bg-primary-25"
-                          : "border-text-100 hover:bg-text-50"
-                      } focus:outline-none`}
-                      onClick={() =>
-                        setProjectData({
-                          ...projectData,
+                  >
+                    <ToggleSwitch
+                      checked={projectMembersData.settings.is_favorite}
+                      onCheckedChange={(value) =>
+                        setProjectMembersData((prev) => ({
+                          ...prev,
                           settings: {
-                            ...projectData.settings,
-                            view: v.name,
+                            ...projectMembersData.settings,
+                            is_favorite: value,
                           },
-                        })
+                        }))
                       }
-                    >
-                      <div className="flex flex-col items-center gap-1">
-                        {v.icon}
-                        <span className="text-text-700">{v.name}</span>
-                      </div>
+                    />
 
-                      <div className="absolute top-1.5 right-1.5">
-                        <AnimatedCircleCheck
-                          handleCheckSubmit={() =>
-                            setProjectData({
-                              ...projectData,
-                              settings: {
-                                ...projectData.settings,
-                                view: v.name,
-                              },
-                            })
-                          }
-                          priority={TaskPriority.P3}
-                          is_completed={projectData.settings.view === v.name}
-                          playSound={false}
-                          disabled
-                        />
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+                    <label className="block font-semibold text-text-700">
+                      Add to favorites
+                    </label>
+                  </button>
+                </div>
+
+                <div className="space-y-1">
+                  <p className="block font-bold text-text-700">View</p>
+                  <ul className="flex gap-4 items-center">
+                    {projectViewsToSelect.map((v) => (
+                      <li
+                        key={v.id}
+                        tabIndex={0}
+                        className={`flex items-center justify-center cursor-pointer rounded-lg px-4 border w-full aspect-square relative ${
+                          projectData.settings.view === v.name
+                            ? "border-primary-500 bg-primary-25"
+                            : "border-text-100 hover:bg-text-50"
+                        } focus:outline-none`}
+                        onClick={() =>
+                          setProjectData({
+                            ...projectData,
+                            settings: {
+                              ...projectData.settings,
+                              view: v.name,
+                            },
+                          })
+                        }
+                      >
+                        <div className="flex flex-col items-center gap-1">
+                          {v.icon}
+                          <span className="text-text-700">{v.name}</span>
+                        </div>
+
+                        <div className="absolute top-1.5 right-1.5">
+                          <AnimatedCircleCheck
+                            handleCheckSubmit={() =>
+                              setProjectData({
+                                ...projectData,
+                                settings: {
+                                  ...projectData.settings,
+                                  view: v.name,
+                                },
+                              })
+                            }
+                            priority={TaskPriority.P3}
+                            is_completed={projectData.settings.view === v.name}
+                            playSound={false}
+                            disabled
+                          />
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            </div>
 
-            {error && (
-              <p className="text-red-500 p-4 pt-0 text-center text-xs whitespace-normal">
-                {error}
-              </p>
-            )}
+              {error && (
+                <p className="text-red-500 p-4 pt-0 text-center text-xs whitespace-normal">
+                  {error}
+                </p>
+              )}
 
-            {screenWidth > 768 && (
-              <Button
-                type="submit"
-                fullWidth
-                disabled={loading || !projectData.name.trim()}
-              >
-                {loading ? (
-                  <div className="flex items-center gap-2">
-                    <Spinner color="white" />
+              {screenWidth > 768 && (
+                <Button
+                  type="submit"
+                  fullWidth
+                  disabled={loading || !projectData.name.trim()}
+                >
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <Spinner color="white" />
 
-                    {project && !aboveBellow ? (
-                      <span>Editing...</span>
-                    ) : (
-                      <span>Creating...</span>
-                    )}
-                  </div>
-                ) : project && !aboveBellow ? (
-                  "Edit project"
-                ) : (
-                  "Create Project"
-                )}
-              </Button>
-            )}
-          </form>
+                      {project && !aboveBellow ? (
+                        <span>Editing...</span>
+                      ) : (
+                        <span>Creating...</span>
+                      )}
+                    </div>
+                  ) : project && !aboveBellow ? (
+                    "Edit project"
+                  ) : (
+                    "Create Project"
+                  )}
+                </Button>
+              )}
+            </form>
+          </div>
+
+          {screenWidth > 768 && (
+            <ViewSkeleton
+              projectData={projectData}
+              activeView={projectData.settings.view}
+            />
+          )}
         </div>
-
-        {screenWidth > 768 && (
-          <ViewSkeleton
-            projectData={projectData}
-            activeView={projectData.settings.view}
-          />
-        )}
-      </div>
-    </motion.div>
+      </motion.div>,
+      portalContainer
+    )
   );
 };
 

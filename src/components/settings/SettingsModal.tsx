@@ -432,7 +432,7 @@ const SettingsModal = () => {
           </div>
 
           <div
-            className={`flex-1 bg-background rounded-lg shadow-[1px_1px_.5rem_0_rgba(0,0,0,0.1)] border border-text-100 overflow-y-auto ${
+            className={`flex-1 bg-background md:rounded-lg shadow-[1px_1px_.5rem_0_rgba(0,0,0,0.1)] md:border border-text-100 overflow-y-auto ${
               settings !== "mobile"
                 ? "md:m-1 md:ml-0"
                 : "hidden md:m-2 md:ml-0 md:block"
