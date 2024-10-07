@@ -9,6 +9,8 @@ import { PageType } from "@/types/pageTypes";
 import {
   ChevronLeft,
   FileText,
+  Heart,
+  HeartOff,
   ImageIcon,
   MessageSquareText,
 } from "lucide-react";
@@ -17,6 +19,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { ReactNode, useRef, useState } from "react";
 import ActivePageMoreOptions from "./ActivePageMoreOptions";
+import LeaveConfirm from "@/components/SidebarWrapper/Sidebar/LeaveConfirm";
+import DeleteConfirm from "@/components/SidebarWrapper/Sidebar/DeleteConfirm";
+import ArchiveConfirm from "@/components/SidebarWrapper/Sidebar/ArchiveConfirm";
+import CommentOrActivityModal from "@/components/LayoutWrapper/CommentOrActivityModal";
+import useFavorite from "@/hooks/useFavorite";
 
 const PageWrapper = ({
   children,
@@ -26,7 +33,7 @@ const PageWrapper = ({
   page: PageType;
 }) => {
   const { screenWidth } = useScreen();
-  const { teams, setPages, pages } = useSidebarDataProvider();
+  const { teams, setPages, pages, personalMembers } = useSidebarDataProvider();
   const router = useRouter();
   const { profile } = useAuthProvider();
   const { role } = useRole();
@@ -40,6 +47,7 @@ const PageWrapper = ({
     showArchiveConfirm: false,
     showDeleteConfirm: false,
     editTitle: false,
+    leaveConfirm: false,
   });
 
   const [pageTitle, setPageTitle] = useState<string>(page.title);
@@ -87,6 +95,11 @@ const PageWrapper = ({
     setModalState((prev) => ({ ...prev, [key]: value }));
 
   const triggerRef = useRef(null);
+
+  const { handleFavorite } = useFavorite({
+    column_value: Number(page.id),
+    column_name: "page_id",
+  });
 
   return (
     <>
@@ -175,17 +188,26 @@ const PageWrapper = ({
           <div className={`flex items-center justify-end flex-1`}>
             <ul className="flex items-center" ref={triggerRef}>
               <li>
-                <ShareOption projectId={null} triggerRef={triggerRef} />
+                <ShareOption pageId={Number(page.id)} triggerRef={triggerRef} />
               </li>
 
               {screenWidth > 768 && (
                 <li>
-                  <FilterOptions
-                    hideCalendarView={true}
-                    // setTasks={setTasks}
-                    // tasks={tasks}
-                    triggerRef={triggerRef}
-                  />
+                  <button
+                    onClick={handleFavorite}
+                    className={`hover:bg-text-100 transition p-1.5 rounded-lg cursor-pointer flex items-center gap-1 text-text-500`}
+                  >
+                    {personalMembers.find((m) => m.page_id === page.id)
+                      ?.settings.is_favorite ? (
+                      <Heart
+                        strokeWidth={1.5}
+                        fill="currentColor"
+                        className="w-4 h-4 text-raspberry-500"
+                      />
+                    ) : (
+                      <Heart strokeWidth={1.5} className="w-4 h-4" />
+                    )}
+                  </button>
                 </li>
               )}
 
@@ -209,6 +231,8 @@ const PageWrapper = ({
                         toggleModal("showDeleteConfirm", value as boolean),
                       setShowCommentOrActivity: (value) =>
                         toggleModal("showCommentOrActivity", value as null),
+                      setShowLeaveConfirm: (value) =>
+                        toggleModal("leaveConfirm", value as boolean),
                     }}
                   />
                 </li>
@@ -264,6 +288,46 @@ const PageWrapper = ({
           <div className={`flex-1`}>{children}</div>
         </div>
       </div>
+
+      {modalState.leaveConfirm && (
+        <LeaveConfirm
+          setShowLeaveConfirm={() =>
+            setModalState((prev) => ({ ...prev, leaveConfirm: false }))
+          }
+          page={page}
+        />
+      )}
+
+      {modalState.showDeleteConfirm && (
+        <DeleteConfirm
+          setShowDeleteConfirm={() =>
+            setModalState((prev) => ({ ...prev, showDeleteConfirm: false }))
+          }
+          page={page}
+        />
+      )}
+
+      {modalState.showArchiveConfirm && (
+        <ArchiveConfirm
+          setShowArchiveConfirm={() =>
+            setModalState((prev) => ({ ...prev, showArchiveConfirm: false }))
+          }
+          page={page}
+        />
+      )}
+
+      {modalState.showCommentOrActivity && (
+        <CommentOrActivityModal
+          onClose={() =>
+            setModalState((prev) => ({ ...prev, showCommentOrActivity: null }))
+          }
+          showCommentOrActivity={modalState.showCommentOrActivity}
+          setShowCommentOrActivity={() =>
+            setModalState((prev) => ({ ...prev, showCommentOrActivity: null }))
+          }
+          page={page}
+        />
+      )}
     </>
   );
 };

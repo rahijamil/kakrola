@@ -16,9 +16,11 @@ const InviteEmailInput = ({
   setSearchQuery,
   emails,
   setEmails,
-  fetchPendingUsers
+  fetchPendingUsers,
+  pageId,
 }: {
   projectId?: number | null;
+  pageId?: number | null;
   teamId?: number | null;
   error: string | null;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
@@ -38,10 +40,7 @@ const InviteEmailInput = ({
   const { profile } = useAuthProvider();
 
   const handleInvite = async () => {
-    if (!profile || (!projectId && !teamId)) {
-      setError("Invalid project or team context.");
-      return;
-    }
+    if (!profile || (!projectId && !teamId && !pageId)) return;
 
     setIsLoading(true);
     setError(null);
@@ -51,6 +50,7 @@ const InviteEmailInput = ({
         emails,
         team_id: teamId,
         project_id: projectId,
+        page_id: pageId,
         inviter: {
           id: profile.id,
           first_name: profile.full_name.split(" ")[0] || "Unknown User",
@@ -69,7 +69,10 @@ const InviteEmailInput = ({
         throw new Error(response.data.message);
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to send invite. Please try again.");
+      setError(
+        err.response?.data?.message ||
+          "Failed to send invite. Please try again."
+      );
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -174,7 +177,7 @@ const InviteEmailInput = ({
                 />
               </div>
             )}
-            
+
             <input
               ref={inputRef}
               type="text"
@@ -188,7 +191,9 @@ const InviteEmailInput = ({
               }}
               onKeyDown={handleKeyDown}
               aria-label="Search or add email"
-              className={`flex-1 bg-transparent focus:outline-none border-none placeholder-gray-500 w-full pl-1 ${emails.length > 0 ? "pt-1" : "pt-0.5"}`}
+              className={`flex-1 bg-transparent focus:outline-none border-none placeholder-gray-500 w-full pl-1 ${
+                emails.length > 0 ? "pt-1" : "pt-0.5"
+              }`}
             />
           </div>
         </div>

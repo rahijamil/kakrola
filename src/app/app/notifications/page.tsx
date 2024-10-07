@@ -42,29 +42,6 @@ const AppNotifications = () => {
         </ul>
       </div>
 
-      {/* <div className="flex items-center flex-col gap-1 h-[30vh] select-none">
-        <Image
-          src="/notifications.png"
-          width={220}
-          height={200}
-          alt="Today"
-          className="rounded-md object-cover"
-          draggable={false}
-        />
-
-        <div className="text-center space-y-1 w-72">
-          {allUnread === "all" && (
-            <h3 className="font-medium text-base">Stay in the loop</h3>
-          )}
-          <p className="text-sm text-text-600">
-            {allUnread === "all"
-              ? `Here, you’ll find notifications for any changes that happen in
-              your shared projects.`
-              : "Nice work! You’re all caught up."}
-          </p>
-        </div>
-      </div> */}
-
       <div className="mt-4">
         {isLoading ? (
           <div className="divide-y divide-text-100 border-y border-text-100">

@@ -3,6 +3,7 @@ import { PageType } from "@/types/pageTypes";
 import dynamic from "next/dynamic";
 import { JSONContent } from "novel";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import useScreen from "@/hooks/useScreen";
 
 const NovelEditor = dynamic(() => import("@/components/NovelEditor"), {
   ssr: false,
@@ -30,8 +31,13 @@ const PageContent = ({
     }
   };
 
+  const { screenWidth } = useScreen();
+
   return (
-    <div className="page-content">
+    <div
+      className="page-content"
+      onContextMenu={(ev) => screenWidth <= 768 && ev.preventDefault()}
+    >
       {/* Notion-like Editor */}
       <NovelEditor content={page.content} handleSave={handleEditContent} />
     </div>

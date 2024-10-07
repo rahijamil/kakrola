@@ -21,6 +21,7 @@ interface CustomSelectProps {
   options: SelectorOption[];
   placeholder?: string;
   height?: string;
+  isShowLabel?: boolean;
   forListView?: boolean;
   showFocusInMobile?: boolean;
 }
@@ -34,6 +35,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   options,
   placeholder,
   height,
+  isShowLabel = true,
   forListView,
   showFocusInMobile = false,
 }) => {
@@ -87,7 +89,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       triggerRef={triggerRef}
       Label={({ onClick }) => (
         <>
-          {label && (
+          {label && isShowLabel && (
             <label
               htmlFor={id}
               className="block font-semibold text-text-700 mb-2 pl-4 md:pl-0"
@@ -160,24 +162,29 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
               aria-labelledby={id}
             >
               <div className="flex items-center gap-2 flex-1 min-w-0">
-                {selectedOption?.color && (
-                  <div
-                    className="w-3 h-3 rounded-lg flex-shrink-0"
-                    style={{ backgroundColor: selectedOption.color }}
-                  ></div>
-                )}
                 {Icon && (
-                  <Icon className="w-5 h-5 text-text-400 flex-shrink-0" />
+                  <Icon
+                    className={`w-5 h-5 flex-shrink-0`}
+                    style={{
+                      color: selectedOption?.color
+                        ? selectedOption.color
+                        : "var(--color-text-400)",
+                    }}
+                  />
                 )}
                 <span
                   className={`truncate ${
                     selectedOption ? "text-text-900" : "text-text-400"
                   }`}
                 >
-                  {selectedOption ? selectedOption.label : placeholder}
+                  {selectedOption
+                    ? isShowLabel && selectedOption.label
+                    : placeholder}
                 </span>
               </div>
-              <ChevronDown className="w-5 h-5 text-text-400 flex-shrink-0 ml-2" />
+              {isShowLabel && (
+                <ChevronDown className="w-5 h-5 text-text-400 flex-shrink-0 ml-2" />
+              )}
             </div>
           )}
         </>
@@ -204,7 +211,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           ></div>
         ),
       }))}
-      contentWidthClass="w-full max-w-sm py-1 max-h-72 overflow-y-auto"
+      contentWidthClass="w-full max-w-72 py-1 max-h-72 overflow-y-auto"
     />
   );
 };

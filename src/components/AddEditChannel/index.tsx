@@ -99,15 +99,9 @@ const AddEditChannel = ({
         onClick={onClose}
       >
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 20,
-          }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{
-            opacity: 0,
-            y: 20,
-          }}
+          initial={{ opacity: 0, scale: 0.99 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.99 }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
           className="bg-surface md:rounded-lg md:shadow-xl w-full space-y-6 md:space-y-8 max-w-md md:p-8 h-full md:h-auto"
           onClick={(e) => e.stopPropagation()}
@@ -301,7 +295,7 @@ const AddEditChannel = ({
                     >
                       {loading ? (
                         <div className="flex items-center gap-2">
-                          <Spinner color="white" size='sm' />
+                          <Spinner color="white" size="sm" />
 
                           {page && !aboveBellow ? (
                             <span>Editing...</span>

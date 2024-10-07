@@ -26,6 +26,8 @@ import SidebarCreateMore from "./SidebarCreateMore";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuthProvider } from "@/context/AuthContext";
 import { getNotifications } from "@/lib/queries";
+import SidebarNotifications from "./SidebarNotifications";
+import AddTeam from "@/components/AddTeam";
 
 const menuItems: {
   id: number;
@@ -80,6 +82,7 @@ const Sidebar = ({
 
   const [showFavoritesProjects, setShowFavoritesProjects] = useState(true);
   const [showWorkspaces, setShowWorkspaces] = useState(true);
+  const [addTeam, setAddTeam] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -89,7 +92,7 @@ const Sidebar = ({
   const [isProfileMoreOpen, setIsProfileOpen] = useState(false);
 
   return (
-    <aside className="h-full flex flex-col group w-full">
+    <aside className="h-full flex flex-col w-full">
       <div
         className={`mb-4 mt-2 py-1 pl-2 pr-1 flex items-center justify-between border-transparent hover:bg-primary-50 hover:border-primary-200 border-l-4 transition cursor-pointer`}
         onClick={() => setIsProfileOpen(!isProfileMoreOpen)}
@@ -115,28 +118,7 @@ const Sidebar = ({
             }`}
             ref={triggerRef}
           >
-            <Link
-              onClick={(ev) => {
-                ev.stopPropagation();
-
-                if (profile?.id) {
-                  queryClient.prefetchQuery({
-                    queryKey: ["notifications", profile.id],
-                    queryFn: () =>
-                      getNotifications({ recipient_id: profile.id }),
-                    staleTime: 1000 * 60 * 15, // 15 minutes
-                  });
-                }
-              }}
-              href={"/app/notifications"}
-              className={`${
-                pathname == "/app/notifications"
-                  ? "bg-primary-100 text-primary-500"
-                  : "hover:bg-primary-100 text-text-700"
-              } rounded-lg transition-colors duration-150 z-10 w-7 h-7 flex items-center justify-center`}
-            >
-              <Bell strokeWidth={1.5} width={20} />
-            </Link>
+            <SidebarNotifications triggerRef={triggerRef} />
 
             <SidebarCreateMore
               quickActions={quickActions}
@@ -211,7 +193,7 @@ const Sidebar = ({
               onTouchEnd={(ev) =>
                 ev.currentTarget.classList.remove("bg-primary-50")
               }
-              className={`flex items-center justify-between transition-colors duration-150 font-medium pr-1 md:font-normal w-full border-l-4 ${
+              className={`group flex items-center justify-between transition-colors duration-150 font-medium pr-1 md:font-normal w-full border-l-4 ${
                 pathname.startsWith("/app/projects")
                   ? "md:bg-primary-100 text-text-900 md:border-primary-200"
                   : "md:hover:bg-primary-50 border-transparent md:hover:border-primary-200 text-text-700"
@@ -256,6 +238,18 @@ const Sidebar = ({
                     }`}
                   />
                 </button>
+
+                <button
+                  className={`p-1 rounded-lg transition ${
+                    addTeam ? "bg-primary-100" : "hover:bg-primary-100"
+                  }`}
+                  onClick={() => setAddTeam(true)}
+                >
+                  <Plus
+                    strokeWidth={1.5}
+                    className={`w-[18px] h-[18px] transition-transform duration-150`}
+                  />
+                </button>
               </div>
             </div>
           )}
@@ -290,6 +284,8 @@ const Sidebar = ({
           Templates
         </Link>
       </div>
+
+      {addTeam && <AddTeam onClose={() => setAddTeam(false)} />}
     </aside>
   );
 };

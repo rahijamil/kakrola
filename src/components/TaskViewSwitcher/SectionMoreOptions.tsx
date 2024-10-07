@@ -6,7 +6,14 @@ import React, {
   useEffect,
 } from "react";
 import Dropdown from "../ui/Dropdown";
-import { Archive, Ellipsis, Palette, Pencil, Trash2 } from "lucide-react";
+import {
+  Archive,
+  Ellipsis,
+  Palette,
+  Pencil,
+  SquarePen,
+  Trash2,
+} from "lucide-react";
 import { SectionType, TaskType } from "@/types/project";
 import useTheme from "@/hooks/useTheme";
 
@@ -106,6 +113,7 @@ const SectionMoreOptions = ({
 
   return (
     <Dropdown
+      // title={column.title}
       triggerRef={triggerRef}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
@@ -123,12 +131,12 @@ const SectionMoreOptions = ({
       items={[
         {
           id: 1,
-          label: "Edit",
+          label: "Rename",
           onClick: () => {
             setEditColumnTitle(true);
             onClose();
           },
-          icon: <Pencil strokeWidth={1.5} size={16} />,
+          icon: <SquarePen strokeWidth={1.5} size={16} />,
           divide: true,
         },
         {

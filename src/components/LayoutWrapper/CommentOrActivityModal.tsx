@@ -4,21 +4,23 @@ import { HashtagIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import AddComentForm from "../TaskViewSwitcher/AddComentForm";
 import Image from "next/image";
 import { ProjectType } from "@/types/project";
+import { PageType } from "@/types/pageTypes";
 
 const CommentOrActivityModal = ({
   onClose,
   showCommentOrActivity,
   setShowCommentOrActivity,
-  project
+  project,
+  page,
 }: {
   onClose: () => void;
   showCommentOrActivity: "comment" | "activity" | null;
   setShowCommentOrActivity: Dispatch<
     SetStateAction<"comment" | "activity" | null>
   >;
-  project: ProjectType | null;
+  project?: ProjectType | null;
+  page?: PageType | null;
 }) => {
-
   return (
     <Dialog onClose={onClose} size="md">
       <div className="p-2 px-4 flex items-center justify-between">

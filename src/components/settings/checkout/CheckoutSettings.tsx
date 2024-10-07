@@ -1,10 +1,16 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Dialog, Label, RadioGroup, RadioGroupItem } from "../../ui";
 import { usePaddleCheckout } from "../../Paddle/usePaddleCheckout";
 import { PricingPlanForSettings } from "../pricing.types";
 import { ChevronDown, Rocket } from "lucide-react";
 import Link from "next/link";
-import CheckoutSuccess from "./CheckoutSuccess";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 
 const CheckoutSettings = ({
   selectedPlan,
@@ -18,38 +24,26 @@ const CheckoutSettings = ({
   const [billingCycle, setBillingCycle] = useState<"annually" | "monthly">(
     "monthly"
   );
-  const [teamSize, setTeamSize] = useState(2);
+  const { teamMembers } = useSidebarDataProvider();
   const [showDetails, setShowDetails] = useState(false);
+  const paddleFrameRef = useRef<HTMLDivElement>(null);
+
   const { checkoutData } = usePaddleCheckout({
     priceId:
       selectedPlan.priceId[billingCycle === "annually" ? "year" : "month"],
-    quantity: teamSize,
+    quantity: teamMembers.length,
     id: selectedPlan.id as "pro" | "business",
+    paddleFrameRef
   });
 
-  useEffect(() => {
-    const iframe = document.getElementById(
-      "paddle-checkout-frame"
-    ) as HTMLIFrameElement | null;
-    if (iframe) {
-      iframe.onload = function () {
-        const iframeDocument = iframe.contentDocument;
-        if (iframeDocument) {
-          // const style = iframeDocument.createElement("style");
-          // style.textContent = `
-          //   body { font-family: 'Poppins', sans-serif !important; }
-          //   h2 { color: red !important; }
-          // `;
-          // iframeDocument.head.appendChild(style);
-
-          console.log(iframeDocument.head);
-        }
-      };
-    }
-  }, [checkoutData]);
-
   return (
-    <Dialog onClose={() => setSelectedPlan(null)} size="md" bgWhite>
+    <Dialog
+      onClose={() => {
+        setSelectedPlan(null);
+      }}
+      size="md"
+      bgWhite
+    >
       <div className="overflow-y-auto text-[#111827]">
         <div className="space-y-1 p-6 pb-0">
           <Rocket className="w-8 h-8" strokeWidth={1.5} />
@@ -66,6 +60,7 @@ const CheckoutSettings = ({
         <div className="flex flex-col md:grid md:grid-cols-[55%_45%]">
           <div className="order-2 md:order-1 p-4 md:p-6 md:pr-3">
             <div
+              ref={paddleFrameRef}
               id="paddle-checkout-frame"
               className={"paddle-checkout-frame"}
             />
@@ -131,7 +126,7 @@ const CheckoutSettings = ({
                         </div>
 
                         <div className="text-xs text-green-700 font-semibold">
-                          Save 20%
+                          Save 30%
                         </div>
                       </div>
                     </Label>
@@ -168,7 +163,7 @@ const CheckoutSettings = ({
                           {checkoutData.items[0].billing_cycle?.interval ==
                             "year" && (
                             <span className="text-xs text-green-700 font-medium bg-green-500/10 px-1 rounded-md">
-                              ${(checkoutData.totals.subtotal * 0.2).toFixed(0)}{" "}
+                              ${(checkoutData.totals.subtotal * 0.3).toFixed(0)}{" "}
                               off
                             </span>
                           )}
@@ -237,12 +232,13 @@ const CheckoutSettings = ({
                             <span>Subtotal</span>
 
                             <div className="flex items-center gap-2">
-                              {checkoutData.items[0].billing_cycle?.interval == "year" && (
+                              {checkoutData.items[0].billing_cycle?.interval ==
+                                "year" && (
                                 <span className="text-[#666666] line-through">
                                   $
                                   {(
                                     checkoutData.totals.subtotal +
-                                    checkoutData.totals.subtotal * 0.2
+                                    checkoutData.totals.subtotal * 0.3
                                   ).toFixed(2)}
                                 </span>
                               )}

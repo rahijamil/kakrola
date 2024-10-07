@@ -5,7 +5,7 @@ import {
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
-import { PersonalMemberForProjectType } from "@/types/team";
+import { PersonalMemberForPageType, PersonalMemberForProjectType } from "@/types/team";
 import { supabaseBrowser } from "@/utils/supabase/client";
 
 const useFavorite = ({
@@ -15,7 +15,7 @@ const useFavorite = ({
   column_value: number;
   column_name: "page_id" | "project_id";
 }) => {
-  const { personalMembers, setProjectMembers } = useSidebarDataProvider();
+  const { personalMembers, setPersonalMembers } = useSidebarDataProvider();
   const { profile } = useAuthProvider();
 
   const handleFavorite = async () => {
@@ -35,7 +35,7 @@ const useFavorite = ({
       return;
     }
 
-    const updateProjectMemberSettings: PersonalMemberForProjectType = {
+    const updateProjectMemberSettings: PersonalMemberForProjectType | PersonalMemberForPageType = {
       ...currentProjectMemberSettings,
       settings: {
         ...currentProjectMemberSettings.settings,
@@ -44,7 +44,7 @@ const useFavorite = ({
     };
 
     // Update local state
-    setProjectMembers(
+    setPersonalMembers(
       personalMembers.map((member) =>
         (
           column_name == "project_id"

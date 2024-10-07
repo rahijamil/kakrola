@@ -1,38 +1,54 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import PageWrapper from "./PageWrapper";
-import { PageType } from "@/types/pageTypes";
-import { useAuthProvider } from "@/context/AuthContext";
-import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import Image from "next/image";
 import Spinner from "@/components/ui/Spinner";
 import { Link } from "@nextui-org/react";
 import { Button } from "@/components/ui/button";
 import usePageDetails from "@/hooks/usePageDetails";
 import PageContent from "./PageContent";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
+import { PageType } from "@/types/pageTypes";
 
 const PageDetails = ({
   params: { page_slug },
 }: {
   params: { page_slug: string };
 }) => {
+  const { pages, setPages, sidebarLoading, personalMembers } =
+    useSidebarDataProvider();
+  const [currentPage, setCurrentPage] = useState<PageType | null>(null);
+
   const [notFound, setNotFound] = useState<boolean>(false);
-
-  const { page, setPage, isLoading, isError } = usePageDetails(page_slug);
+  const pageId = currentPage?.id || null;
+  const { page, setPage, isLoading, isError } = usePageDetails(pageId);
 
   useEffect(() => {
-    if (!isLoading && !page?.id) {
+    if (sidebarLoading) return;
+
+    const page = pages.find((p) => p.slug === page_slug);
+
+    if (page) {
+      setCurrentPage(page);
+      setNotFound(false);
+    } else {
       setNotFound(true);
+      setCurrentPage(null);
     }
-  }, [isLoading, page]);
+
+    return () => {
+      setCurrentPage(null);
+      setNotFound(false);
+    };
+  }, [page_slug, pages, sidebarLoading]);
 
   useEffect(() => {
-    if (page?.id) {
-      document.title = `${page.title} - Kakrola`;
+    if (currentPage?.id) {
+      document.title = `${currentPage.title} - Kakrola`;
     } else {
       document.title = "Kakrola";
     }
-  }, [page]);
+  }, [currentPage]);
 
   if (isLoading) {
     return (

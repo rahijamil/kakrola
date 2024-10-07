@@ -8,12 +8,12 @@ import ImportCSVModal from "../SidebarProjectMoreOptions/ImportCSVModal";
 import AddEditProject from "../../../AddEditProject";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { CheckCircle, Ellipsis, Hash, Users } from "lucide-react";
-import ProjectDeleteConfirm from "../ProjectDeleteConfirm";
-import ProjectArchiveConfirm from "../ProjectArchiveConfirm";
+import DeleteConfirm from "../DeleteConfirm";
+import ArchiveConfirm from "../ArchiveConfirm";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useQuery } from "@tanstack/react-query";
-import ProjectLeaveConfirm from "../ProjectLeaveConfirm";
+import ProjectLeaveConfirm from "../LeaveConfirm";
 import useScreen from "@/hooks/useScreen";
 import { PageType } from "@/types/pageTypes";
 import SidebarChannelMoreOptions from "./SidebarChannelMoreOptions";
@@ -87,7 +87,7 @@ const ChannelItem = ({
         >
           <Link
             href={`/app/ch/${channel.slug}`}
-            className={`py-2 px-4 w-full`}
+            className={`w-full p-2 ${channel.team_id ? "pl-7 pr-4" : "px-4"}`}
             draggable={false}
           >
             <div className="flex items-center gap-2">
@@ -129,14 +129,14 @@ const ChannelItem = ({
       )}
 
       {showDeleteConfirm && (
-        <ProjectDeleteConfirm
+        <DeleteConfirm
           setShowDeleteConfirm={setShowDeleteConfirm}
           project={project}
         />
       )}
 
       {showArchiveConfirm && (
-        <ProjectArchiveConfirm
+        <ArchiveConfirm
           setShowArchiveConfirm={setShowArchiveConfirm}
           project={project}
         />

@@ -1,6 +1,6 @@
 import { ProjectType, TaskType } from "@/types/project";
 import TaskItemModal from "../TaskItemModal";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import TaskItemMoreDropdown from "../TaskItemMoreDropdown";
 import { Draggable } from "@hello-pangea/dnd";
 import ConfirmAlert from "../../AlertBox/ConfirmAlert";
@@ -24,7 +24,10 @@ import { useRole } from "@/context/RoleContext";
 import { canDeleteTask, canEditTask } from "@/types/hasPermission";
 import useCheckClick from "@/hooks/useCheckClick";
 import LocationSelector from "@/components/AddTask/LocationSelector";
-import { NotificationTypeEnum, RelatedEntityTypeEnum } from "@/types/notification";
+import {
+  NotificationTypeEnum,
+  RelatedEntityTypeEnum,
+} from "@/types/notification";
 import { createNotification } from "@/types/notification";
 
 const TaskItemForListView = ({
@@ -193,15 +196,15 @@ const TaskItemForListView = ({
 
           createNotification({
             type: NotificationTypeEnum.ASSIGNMENT,
-            recipients: taskData.assignees.map((a) => a.id.toString()),
+            recipients: taskData.assignees.map((a) => a.profile_id),
             triggered_by: {
               id: profile.id,
               first_name: profile.full_name,
               avatar_url: profile.avatar_url,
             },
             related_entity_type: RelatedEntityTypeEnum.TASK,
-            redirect_url: `/tasks/${taskData.id}`,
-            api_url: `/tasks/${taskData.id}`,
+            redirect_url: `/app/project/${project?.slug}`,
+            api_url: null,
             data: {
               assigner: profile.full_name,
               entityName: taskData.title,
@@ -273,6 +276,31 @@ const TaskItemForListView = ({
             }
           );
         }
+
+        if (
+          taskData.task_labels.flatMap((label) => label.id).join(",") !==
+          task.task_labels.flatMap((label) => label.id).join(",")
+        ) {
+          const { data, error } = await supabaseBrowser
+            .from("tasks")
+            .update({
+              task_labels: taskData.task_labels,
+            })
+            .eq("id", task.id);
+
+          if (error) {
+            throw error;
+          }
+
+          logActivity(
+            {
+              task_labels: taskData.task_labels,
+            },
+            {
+              task_labels: taskData.task_labels,
+            }
+          );
+        }
       } catch (error) {
         console.error(`Error updating task: ${error}`);
       }
@@ -280,6 +308,14 @@ const TaskItemForListView = ({
 
     updateTask();
   }, [taskData.assignees, taskData.dates, taskData.priority, task.id]);
+
+  const [showContextMenu, setShowContextMenu] = useState(false);
+  const [style, setStyle] = useState({
+    top: "auto",
+    left: "auto",
+  });
+
+  const triggerRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="w-full">
@@ -308,15 +344,30 @@ const TaskItemForListView = ({
         />
       ) : (
         <Draggable draggableId={task.id?.toString()} index={index}>
-          {(provided) => (
+          {(provided, snapshot) => (
             <tr
+              onContextMenu={(ev) => {
+                ev.preventDefault();
+                setShowContextMenu(true);
+                setStyle({
+                  top:
+                    window.innerHeight -
+                      (triggerRef.current?.getBoundingClientRect().bottom ||
+                        0) -
+                      50 >
+                    (triggerRef.current?.clientHeight || 0)
+                      ? ev.clientY + "px"
+                      : ev.clientY + "px",
+                  left: ev.clientX + "px",
+                });
+              }}
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
-              className={`group border-b border-text-100 cursor-pointer flex items-center justify-between h-10 ring-1 divide-x divide-text-200 relative ${
+              className={`group border-b border-text-100 cursor-pointer flex items-center justify-between h-10 ring-1 divide-x divide-text-200 relative ${snapshot.isDragging && "border-t"} ${
                 showModal === task.id.toString()
                   ? "ring-primary-300 bg-primary-10"
-                  : "ring-transparent bg-transparent"
+                  : "ring-transparent bg-background"
               }`}
             >
               <>
@@ -439,13 +490,13 @@ const TaskItemForListView = ({
                   />
                 </td>
 
-                <td className="w-[15%]">
+                {/* <td className="w-[15%]">
                   <LocationSelector
                     task={taskData}
                     setTask={setTaskData}
                     forListView
                   />
-                </td>
+                </td> */}
               </>
 
               <TaskItemMoreDropdown
@@ -454,6 +505,10 @@ const TaskItemForListView = ({
                 task={task}
                 column={column}
                 setEditTaskId={setEditTaskId}
+                showContextMenu={showContextMenu}
+                setShowContextMenu={setShowContextMenu}
+                style={style}
+                triggerRef={triggerRef}
               />
             </tr>
           )}

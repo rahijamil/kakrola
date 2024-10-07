@@ -38,4 +38,5 @@ export const getInitialTaskData = ({
   completed_at: null,
   updated_at: new Date().toISOString(),
   status: null,
+  task_labels: []
 });

@@ -12,8 +12,10 @@ import React, { useState } from "react";
 
 const NotificationItem = ({
   notification,
+  forModal,
 }: {
   notification: NotificationType;
+  forModal?: boolean;
 }) => {
   const router = useRouter();
   const { profile } = useAuthProvider();
@@ -68,10 +70,8 @@ const NotificationItem = ({
     <>
       <div
         onClick={handleNotificationClick}
-        className={`flex items-center p-4 cursor-pointer gap-2 border-l-4 transition relative rounded-lg ${
-          notification.is_read
-            ? "border-transparent hover:bg-text-100 dark:bg-surface"
-            : "border-primary-200 bg-primary-50"
+        className={`flex items-center cursor-pointer gap-2 border-l-4 transition relative border-transparent hover:border-primary-200 hover:bg-primary-50 ${
+          !forModal ? "rounded-lg p-4" : "px-4 py-2"
         }`}
       >
         <Image
@@ -82,7 +82,12 @@ const NotificationItem = ({
           className="rounded-lg w-10 h-10 min-w-10 min-h-10 max-w-10 max-h-10 object-cover"
         />
         <div className="flex flex-col">
-          <p dangerouslySetInnerHTML={{ __html: notification.content }} />
+          <p
+            className={`${
+              notification.is_read ? "text-text-700" : "text-primary-500"
+            } ${!forModal ? "text-sm" : "text-xs"}`}
+            dangerouslySetInnerHTML={{ __html: notification.content }}
+          />
           <small className="text-text-600 text-xs">
             {formatDistanceToNow(new Date(notification.created_at))} ago
           </small>

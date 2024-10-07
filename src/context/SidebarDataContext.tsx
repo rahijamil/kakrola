@@ -1,7 +1,7 @@
 "use client";
 import { ProjectType, SectionType } from "@/types/project";
 import React, { createContext, ReactNode, useContext, useState } from "react";
-import { TeamType, TeamMemberType, PersonalMemberForProjectType } from "@/types/team";
+import { TeamType, TeamMemberType, PersonalMemberForProjectType, PersonalMemberForPageType } from "@/types/team";
 import { PageType } from "@/types/pageTypes";
 import useSidebarData from "@/hooks/useSidebarData";
 import { ChannelType } from "@/types/channel";
@@ -25,8 +25,8 @@ const SidebarDataContext = createContext<{
   teamMembers: TeamMemberType[];
   activeProject: ProjectType | null;
   setActiveProject: React.Dispatch<React.SetStateAction<ProjectType | null>>;
-  personalMembers: PersonalMemberForProjectType[];
-  setProjectMembers: (members: PersonalMemberForProjectType[]) => void;
+  personalMembers: (PersonalMemberForProjectType | PersonalMemberForPageType)[];
+  setPersonalMembers: (members: (PersonalMemberForProjectType | PersonalMemberForPageType)[]) => void;
   isShowViewModal: boolean;
   setIsShowViewModal: React.Dispatch<React.SetStateAction<boolean>>;
   isError: boolean;
@@ -47,7 +47,7 @@ const SidebarDataContext = createContext<{
   activeProject: null,
   setActiveProject: () => {},
   personalMembers: [],
-  setProjectMembers: () => {},
+  setPersonalMembers: () => {},
   isShowViewModal: false,
   setIsShowViewModal: () => {},
   isError: false,
@@ -63,7 +63,7 @@ const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
     teams,
     setTeams,
     personalMembers,
-    setProjectMembers,
+    setPersonalMembers,
     teamMembers,
     isLoading,
     isError,
@@ -92,7 +92,7 @@ const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
         activeProject,
         setActiveProject,
         personalMembers,
-        setProjectMembers,
+        setPersonalMembers,
         isShowViewModal,
         setIsShowViewModal,
         isError,

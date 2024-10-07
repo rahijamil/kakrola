@@ -24,6 +24,11 @@ type InviteEmailParams = {
     name: string;
     slug: string;
   } | null;
+  page_data: {
+    id: number;
+    name: string;
+    slug: string;
+  } | null;
   team_data: TeamType | null;
 };
 
@@ -32,6 +37,7 @@ export default async function sendInviteEmail({
   token,
   inviter,
   project_data,
+  page_data,
   team_data,
 }: InviteEmailParams) {
   const supabase = createClient();
@@ -54,7 +60,7 @@ export default async function sendInviteEmail({
 
     const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/api/invite/accept-invite?token=${token}`;
 
-    if (project_data?.id) {
+    if (project_data?.id || page_data?.id) {
       const templatePath = path.join(
         process.cwd(),
         "public",
@@ -69,13 +75,15 @@ export default async function sendInviteEmail({
       emailTemplate = emailTemplate
         .replaceAll("{{inviter_first_name}}", inviter.first_name)
         .replaceAll("{{inviter_email}}", inviter.email)
-        .replaceAll("{{invite_link}}", inviteLink);
-
+        .replaceAll("{{invite_link}}", inviteLink)
+        .replaceAll("{{type}}", project_data ? "project" : "page");
       // Email content
       const mailOptions = {
         from: `"${inviter.first_name} via Kakrola" <notifications@kakrola.com>`,
         to,
-        subject: `${inviter.first_name} added you to "${project_data.name}" in Kakrola!`,
+        subject: `${inviter.first_name} added you to "${
+          project_data ? project_data.name : page_data?.name
+        }" in Kakrola!`,
         text: `Start collaborating on this project with ${inviter.first_name}. Please click the following link to accept your invitation: ${inviteLink}`,
         html: emailTemplate,
       };
@@ -94,11 +102,13 @@ export default async function sendInviteEmail({
           },
           type: NotificationTypeEnum.INVITE,
           related_entity_type: RelatedEntityTypeEnum.PROJECT,
-          redirect_url: `/app/project/${project_data.slug}`,
+          redirect_url: project_data
+            ? `/app/project/${project_data.slug}`
+            : `/app/page/${page_data?.slug}`,
           api_url: inviteLink,
           data: {
             inviter: inviter.first_name,
-            entityName: project_data.name,
+            entityName: project_data ? project_data.name : page_data?.name || "",
           },
         });
       }

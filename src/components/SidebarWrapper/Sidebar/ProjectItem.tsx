@@ -1,6 +1,6 @@
 import { ProjectType, TaskType } from "@/types/project";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import SidebarProjectMoreOptions from "./SidebarProjectMoreOptions";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import CommentOrActivityModal from "../../LayoutWrapper/CommentOrActivityModal";
@@ -8,15 +8,16 @@ import ExportCSVModal from "./SidebarProjectMoreOptions/ExportCSVModal";
 import ImportCSVModal from "./SidebarProjectMoreOptions/ImportCSVModal";
 import AddEditProject from "../../AddEditProject";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
-import { CheckCircle, Ellipsis, Hash, Users } from "lucide-react";
-import ProjectDeleteConfirm from "./ProjectDeleteConfirm";
-import ProjectArchiveConfirm from "./ProjectArchiveConfirm";
+import { CheckCircle, Users } from "lucide-react";
+import DeleteConfirm from "./DeleteConfirm";
+import ArchiveConfirm from "./ArchiveConfirm";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useQuery } from "@tanstack/react-query";
-import ProjectLeaveConfirm from "./ProjectLeaveConfirm";
+import ProjectLeaveConfirm from "./LeaveConfirm";
 import useScreen from "@/hooks/useScreen";
 import { AnimatePresence } from "framer-motion";
+import Rename from "./Rename";
 
 const ProjectItem = ({
   project,
@@ -29,7 +30,7 @@ const ProjectItem = ({
   isDragging?: boolean;
   setIsDragDisabled?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { sidebarLoading } = useSidebarDataProvider();
+  const { sidebarLoading, teams } = useSidebarDataProvider();
   const [tasks, setTasks] = useState<TaskType[]>([]);
 
   const { data: thisProjectAllMembers } = useQuery({
@@ -79,6 +80,7 @@ const ProjectItem = ({
   );
 
   const { screenWidth } = useScreen();
+  const triggerRef = useRef<HTMLDivElement>(null);
 
   return (
     <li>
@@ -101,9 +103,13 @@ const ProjectItem = ({
               : "md:hover:bg-primary-50 border-transparent hover:border-primary-200 text-text-700"
           }`}
         >
+          <div
+            ref={triggerRef}
+            className="absolute left-4 top-1/2 pointer-events-none opacity-0 -z-10"
+          ></div>
           <Link
             href={`/app/project/${project.slug}`}
-            className={`py-2 px-4 w-full`}
+            className={`w-full p-2 ${project.team_id ? "pl-7 pr-4" : "px-4"}`}
             draggable={false}
           >
             <div className="flex items-center gap-2">
@@ -115,10 +121,7 @@ const ProjectItem = ({
               <span className="truncate">{project.name}</span>
 
               {thisProjectAllMembers?.length! > 1 && (
-                <Users
-                  strokeWidth={1.5}
-                  className="w-4 h-4 min-w-4 min-h-4"
-                />
+                <Users strokeWidth={1.5} className="w-4 h-4 min-w-4 min-h-4" />
               )}
             </div>
           </Link>
@@ -151,6 +154,14 @@ const ProjectItem = ({
         </div>
       )}
 
+      <Rename
+        triggerRef={triggerRef}
+        project={project}
+        isOpen={projectEdit}
+        setIsOpen={setProjectEdit}
+        Icon={CheckCircle}
+      />
+
       {showLeaveConfirm && (
         <ProjectLeaveConfirm
           setShowLeaveConfirm={setShowLeaveConfirm}
@@ -159,14 +170,14 @@ const ProjectItem = ({
       )}
 
       {showDeleteConfirm && (
-        <ProjectDeleteConfirm
+        <DeleteConfirm
           setShowDeleteConfirm={setShowDeleteConfirm}
           project={project}
         />
       )}
 
       {showArchiveConfirm && (
-        <ProjectArchiveConfirm
+        <ArchiveConfirm
           setShowArchiveConfirm={setShowArchiveConfirm}
           project={project}
         />
@@ -187,13 +198,6 @@ const ProjectItem = ({
       )}
 
       <AnimatePresence>
-        {projectEdit && (
-          <AddEditProject
-            onClose={() => setProjectEdit(false)}
-            project={project}
-          />
-        )}
-
         {aboveBellow && (
           <AddEditProject
             onClose={() => setAboveBellow(null)}

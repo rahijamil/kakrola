@@ -47,7 +47,7 @@ const ListViewForToday = ({
           className="overflow-auto w-full h-[calc(100vh-110px)] md:px-6 md:mt-4"
         >
           <table className="w-full min-w-[1000px] border-collapse">
-            <tr className="border-y border-text-100 text-xs divide-x divide-text-200 whitespace-nowrap flex sticky top-0 z-10 bg-background">
+            <tr className="border-y border-text-100 text-xs divide-x divide-text-200 whitespace-nowrap flex sticky top-0 z-10 bg-background text-text-500">
               <th className="p-2 text-left w-[30%] md:w-[40%] font-medium flex items-center gap-2 pl-4 md:pl-8">
                 <AlignLeft strokeWidth={2} className="w-4 h-4" />
                 <span>Task name</span>
@@ -68,10 +68,10 @@ const ListViewForToday = ({
                 <Tag strokeWidth={2} className="w-4 h-4" />
                 <span>Labels</span>
               </th>
-              <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+              {/* <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
                 <MapPin strokeWidth={2} className="w-4 h-4" />
                 <span>Location</span>
-              </th>
+              </th> */}
             </tr>
 
             <tbody>

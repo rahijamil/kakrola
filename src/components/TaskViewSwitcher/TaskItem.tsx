@@ -6,6 +6,7 @@ import {
   MouseEvent,
   SetStateAction,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import TaskItemMoreDropdown from "./TaskItemMoreDropdown";
@@ -182,6 +183,14 @@ const TaskItem = ({
     return assigneeProfiles.find((profile) => profile.id === profileId);
   };
 
+  const [showContextMenu, setShowContextMenu] = useState(false);
+  const [style, setStyle] = useState({
+    top: "auto",
+    left: "auto",
+  });
+
+  const triggerRef = useRef<HTMLDivElement>(null);
+
   return (
     <div className="w-full">
       {addTaskAboveBellow?.position == "above" && (
@@ -217,6 +226,21 @@ const TaskItem = ({
               {...provided.dragHandleProps}
               className="transition w-full group relative bg-background rounded-lg cursor-pointer overflow-hidden"
               onClick={() => setShowModal && setShowModal(task.id.toString())}
+              onContextMenu={(ev) => {
+                ev.preventDefault();
+                setShowContextMenu(true);
+                setStyle({
+                  top:
+                    window.innerHeight -
+                      (triggerRef.current?.getBoundingClientRect().bottom ||
+                        0) -
+                      50 >
+                    (triggerRef.current?.clientHeight || 0)
+                      ? ev.clientY + "px"
+                      : ev.clientY + "px",
+                  left: ev.clientX + "px",
+                });
+              }}
             >
               {firstImage && (
                 <div className="relative aspect-square w-full overflow-hidden rounded-lg">
@@ -341,6 +365,10 @@ const TaskItem = ({
                 task={task}
                 column={column}
                 setEditTaskId={setEditTaskId}
+                showContextMenu={showContextMenu}
+                setShowContextMenu={setShowContextMenu}
+                style={style}
+                triggerRef={triggerRef}
               />
             </div>
           )}

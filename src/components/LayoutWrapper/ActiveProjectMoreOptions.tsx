@@ -10,6 +10,7 @@ import {
   Logs,
   PencilLine,
   SlidersHorizontal,
+  SquarePen,
   SwatchBook,
   Trash2,
 } from "lucide-react";
@@ -52,11 +53,6 @@ const ActiveProjectMoreOptions = ({
 
   const router = useRouter();
 
-  const { handleFavorite } = useFavorite({
-    column_value: project.id,
-    column_name: "project_id",
-  });
-
   const { personalMembers, setIsShowViewModal } = useSidebarDataProvider();
 
   // Find the current user project settings for the given project
@@ -94,14 +90,6 @@ const ActiveProjectMoreOptions = ({
       )}
       contentWidthClass="w-60 py-1"
       items={[
-        {
-          id: 1,
-          label: "Edit",
-          icon: <PencilLine strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: () => {
-            setProjectEdit(true);
-          },
-        },
         ...(screenWidth <= 768
           ? [
               {
@@ -116,20 +104,10 @@ const ActiveProjectMoreOptions = ({
               },
             ]
           : []),
-        {
-          id: 4,
-          label: isFavorite ? "Remove from favorites" : "Add to favorites",
-          icon: isFavorite ? (
-            <HeartOff className="w-4 h-4" />
-          ) : (
-            <Heart strokeWidth={1.5} className="w-4 h-4" />
-          ),
-          onClick: handleFavorite,
-          divide: true,
-        },
+
         {
           id: 3,
-          label: "Copy project link",
+          label: "Copy link",
           icon: <Link strokeWidth={1.5} className="w-4 h-4" />,
           onClick: handleCopyProjectLink,
           divide: true,

@@ -114,7 +114,7 @@ export interface TeamMemberType {
 
 // Personal member type
 interface PersonalMemberBaseType {
-  id: number;
+  id: number | string;
   profile_id: string;
   role: RoleType;
   created_at?: string;
@@ -123,11 +123,11 @@ interface PersonalMemberBaseType {
     order: number;
   };
   project_id?: number;
-  page_id?: number;
+  page_id?: number | string;
 }
 
 export interface PersonalMemberForPageType extends PersonalMemberBaseType {
-  page_id: number;
+  page_id: number | string;
 }
 
 export interface PersonalMemberForProjectType extends PersonalMemberBaseType {
@@ -141,13 +141,22 @@ export enum InviteStatus {
 }
 
 // Invite type
-export interface InviteType {
+interface InviteBaseType {
   id: number;
-  project_id: number | null;
   team_id: number | null;
   email: string | null;
   role: RoleType;
   status: InviteStatus;
   token: string;
+  project_id?: number;
+  page_id?: number;
   created_at?: string;
+}
+
+export interface ProjectInviteType extends InviteBaseType {
+  project_id: number;
+}
+
+export interface PageInviteType extends InviteBaseType {
+  page_id: number;
 }

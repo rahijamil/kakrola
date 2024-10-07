@@ -93,7 +93,7 @@ const SidebarWrapper = ({
             )}
 
             <div
-              className={`fixed md:relative flex transition-all duration-300 h-screen whitespace-nowrap origin-left z-10 group desktop_sidebar ${
+              className={`fixed md:relative flex transition-all duration-300 h-screen whitespace-nowrap origin-left z-10 desktop_sidebar ${
                 isCollapsed
                   ? "bg-primary-10 hover:bg-primary-50 is_collapsed"
                   : "bg-primary-10"

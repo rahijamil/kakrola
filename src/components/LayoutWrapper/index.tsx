@@ -8,8 +8,8 @@ import { ViewTypes } from "@/types/viewTypes";
 import ShareOption from "./ShareOption";
 import FilterOptions from "./FilterOptions";
 import ActiveProjectMoreOptions from "./ActiveProjectMoreOptions";
-import ProjectDeleteConfirm from "../SidebarWrapper/Sidebar/ProjectDeleteConfirm";
-import ProjectArchiveConfirm from "../SidebarWrapper/Sidebar/ProjectArchiveConfirm";
+import DeleteConfirm from "../SidebarWrapper/Sidebar/DeleteConfirm";
+import ArchiveConfirm from "../SidebarWrapper/Sidebar/ArchiveConfirm";
 import CommentOrActivityModal from "./CommentOrActivityModal";
 import ExportCSVModal from "../SidebarWrapper/Sidebar/SidebarProjectMoreOptions/ExportCSVModal";
 import ImportCSVModal from "../SidebarWrapper/Sidebar/SidebarProjectMoreOptions/ImportCSVModal";
@@ -415,7 +415,7 @@ const LayoutWrapper = ({
       </DragDropContext>
 
       {modalState.showDeleteConfirm && project && (
-        <ProjectDeleteConfirm
+        <DeleteConfirm
           project={project}
           setShowDeleteConfirm={(value) =>
             toggleModal("showDeleteConfirm", value as boolean)
@@ -424,7 +424,7 @@ const LayoutWrapper = ({
       )}
 
       {modalState.showArchiveConfirm && project && (
-        <ProjectArchiveConfirm
+        <ArchiveConfirm
           project={project}
           setShowArchiveConfirm={(value) =>
             toggleModal("showArchiveConfirm", value as boolean)

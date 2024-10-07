@@ -39,10 +39,10 @@ const pricingPlans: PricingPlanForSettings[] = [
   {
     id: "pro",
     name: "Pro",
-    price: (isAnnual: boolean) => (isAnnual ? "$10" : "$12"),
+    price: (isAnnual: boolean) => (isAnnual ? "$8" : "$12"),
     price1: (
       <>
-        $10 per member / month <br /> billed annually
+        $8 per member / month <br /> billed annually
       </>
     ),
     price2: "$12 billed monthly",
@@ -69,10 +69,10 @@ const pricingPlans: PricingPlanForSettings[] = [
   {
     id: "business",
     name: "Business",
-    price: (isAnnual: boolean) => (isAnnual ? "$15" : "$18"),
+    price: (isAnnual: boolean) => (isAnnual ? "$13" : "$18"),
     price1: (
       <>
-        $15 per member / month <br /> billed annually
+        $13 per member / month <br /> billed annually
       </>
     ),
     price2: "$18 billed monthly",

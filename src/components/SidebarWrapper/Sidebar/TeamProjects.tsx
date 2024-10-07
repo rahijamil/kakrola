@@ -32,7 +32,7 @@ const TeamProjects = ({
   team: TeamType;
   sidebarWidth: number;
 }) => {
-  const { projects, pages, channels, sidebarLoading } =
+  const { projects, pages, channels, sidebarLoading, teamMembers } =
     useSidebarDataProvider();
   const pathname = usePathname();
   const [showProjects, setShowProjects] = useState(true);
@@ -117,7 +117,7 @@ const TeamProjects = ({
             onTouchEnd={(ev) =>
               ev.currentTarget.classList.remove("bg-primary-50")
             }
-            className={`flex items-center transition-colors duration-150 font-medium pr-1 md:font-normal w-full border-l-4 ${
+            className={`flex items-center transition-colors duration-150 font-medium pr-1 md:font-normal w-full border-l-4 group ${
               isOpen
                 ? "md:bg-primary-100 text-text-900 md:border-primary-200"
                 : "md:hover:bg-primary-50 border-transparent md:hover:border-primary-200 text-text-700"
@@ -125,7 +125,7 @@ const TeamProjects = ({
           >
             <Link
               href={`/app/${team.id}`}
-              className={`w-full flex items-center justify-between pl-2 py-[7px] gap-1`}
+              className={`w-full flex items-center justify-between pl-4 py-[7px] gap-1`}
             >
               <div
                 className={`flex items-center ${
@@ -173,18 +173,6 @@ const TeamProjects = ({
                 "opacity-0 group-hover:opacity-100"
               } transition flex items-center`}
             >
-              <SidebarPlusDropdown
-                teamId={team.id}
-                modalStates={{
-                  setShowAddProjectModal,
-                  setShowAddChannel,
-                  showAddProjectModal,
-                  showAddChannel,
-                }}
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-              />
-
               <button
                 className="p-1 hover:bg-primary-100 rounded-lg transition duration-150"
                 onClick={() => setShowProjects(!showProjects)}
@@ -196,6 +184,17 @@ const TeamProjects = ({
                   }`}
                 />
               </button>
+              <SidebarPlusDropdown
+                teamId={team.id}
+                modalStates={{
+                  setShowAddProjectModal,
+                  setShowAddChannel,
+                  showAddProjectModal,
+                  showAddChannel,
+                }}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+              />
             </div>
           </div>
         )}

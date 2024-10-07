@@ -34,7 +34,7 @@ const ConfirmAlert = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
-        className="fixed inset-0 z-50 bg-black bg-opacity-70 dark:bg-opacity-90 pt-40"
+        className="fixed inset-0 z-[100] bg-black bg-opacity-70 dark:bg-opacity-90 pt-40"
         onClick={onCancel}
       >
         <motion.div

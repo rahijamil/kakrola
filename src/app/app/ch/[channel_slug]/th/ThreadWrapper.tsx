@@ -209,7 +209,7 @@ const ThreadWrapper = ({
             <div className={`flex items-center justify-end  h-full`}>
               <div className="flex items-center h-full" ref={triggerRef}>
                 {screenWidth > 768 && (
-                  <ShareOption projectId={null} triggerRef={triggerRef} />
+                  <ShareOption triggerRef={triggerRef} />
                 )}
 
                 <button className="text-text-500 md:hover:bg-text-100 md:px-2 p-1 justify-center md:rounded-lg transition flex items-center gap-1">

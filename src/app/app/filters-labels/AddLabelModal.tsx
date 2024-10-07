@@ -21,7 +21,7 @@ const AddLabelModal = ({ onClose }: { onClose: () => void }) => {
   const [labelData, setLabelData] = useState<Omit<TaskLabelType, "id">>({
     name: "",
     slug: "",
-    color: "gray",
+    color: "gray-500",
     profile_id: profile?.id || "",
     is_favorite: false,
   });

@@ -62,9 +62,9 @@ export default function LandingPageHeader({ forAuth }: { forAuth?: boolean }) {
                       Log in
                     </Link>
                     <Link href="/auth/signup">
-                      <Button className="uppercase shadow-lg hover:shadow-xl transition-all hero_button">
+                      <Button className="shadow-lg hover:shadow-xl transition-all hero_button">
                         <Rocket className="w-5 h-5" strokeWidth={1.5} />
-                        Get Started - It's Free
+                        Get Kakrola Free
                       </Button>
                     </Link>
                   </div>

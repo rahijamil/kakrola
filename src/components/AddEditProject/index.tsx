@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import { ProjectType, TaskPriority } from "@/types/project";
-import { ChevronLeft, SquareGanttChart, X } from "lucide-react";
+import { CheckCircle, ChevronLeft, SquareGanttChart, X } from "lucide-react";
 import { ToggleSwitch } from "../ui/ToggleSwitch";
 import { Input } from "../ui/input";
 import { useAuthProvider } from "@/context/AuthContext";
@@ -101,7 +101,7 @@ const AddEditProject = ({
 
   const [projectData, setProjectData] =
     useState<Omit<ProjectType, "id">>(initialProjectData);
-  const [projectMembersData, setProjectMembersData] = useState(
+  const [projectMembersData, setPersonalMembersData] = useState(
     initialProjectMembersData
   );
   const [loading, setLoading] = useState(false);
@@ -146,7 +146,7 @@ const AddEditProject = ({
 
   const handleProjectMembersDataChange = useCallback(
     (field: keyof PersonalMemberForProjectType, value: any) => {
-      setProjectMembersData((prevData) => ({
+      setPersonalMembersData((prevData) => ({
         ...prevData,
         settings: {
           ...prevData.settings,
@@ -489,6 +489,7 @@ const AddEditProject = ({
                     color,
                   })
                 }
+                Icon={CheckCircle}
               />
 
               <WorkspaceSelector
@@ -505,7 +506,7 @@ const AddEditProject = ({
                     className="flex items-center space-x-2 w-full"
                     type="button"
                     onClick={() =>
-                      setProjectMembersData((prev) => ({
+                      setPersonalMembersData((prev) => ({
                         ...prev,
                         settings: {
                           ...projectMembersData?.settings,
@@ -518,7 +519,7 @@ const AddEditProject = ({
                     <ToggleSwitch
                       checked={projectMembersData.settings.is_favorite}
                       onCheckedChange={(value) =>
-                        setProjectMembersData((prev) => ({
+                        setPersonalMembersData((prev) => ({
                           ...prev,
                           settings: {
                             ...projectMembersData.settings,

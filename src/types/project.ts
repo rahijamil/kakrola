@@ -90,5 +90,5 @@ export interface TaskType {
   order: number;
   updated_at?: string;
   created_at?: string;
-  task_labels?: TaskLabelType[];
+  task_labels: TaskLabelType[];
 }

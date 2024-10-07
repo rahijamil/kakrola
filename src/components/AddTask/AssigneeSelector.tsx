@@ -84,6 +84,7 @@ const AssigneeSelector = ({
 
   return (
     <Dropdown
+      title="Assignee"
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       triggerRef={triggerRef}
@@ -309,13 +310,14 @@ const AssigneeSelector = ({
           })),
       ]}
       beforeItemsContent={
-        <Input
-          placeholder="Search users..."
-          value={searchQuery}
-          onChange={handleSearchChange}
-          className="mb-2"
-          howBig="xs"
-        />
+        <div className="p-2">
+          <Input
+            placeholder="Search users..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            howBig="xs"
+          />
+        </div>
       }
     />
   );

@@ -136,9 +136,7 @@ const NovelEditor = ({
             handleDrop: (view, event, _slice, moved) =>
               handleImageDrop(view, event, moved, uploadFn),
             attributes: {
-              class: `prose prose-sm editor-content ${
-                theme == "dark" && "prose-invert"
-              } prose-headings:font-title font-default focus:outline-none max-w-full`,
+              class: `prose prose-sm editor-content dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
             },
           }}
           onUpdate={({ editor }) => {

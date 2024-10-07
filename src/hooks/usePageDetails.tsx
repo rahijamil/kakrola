@@ -3,8 +3,10 @@ import { PageType } from "@/types/pageTypes";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useAuthProvider } from "@/context/AuthContext";
 
-const fetchPageDetails = async (page_slug: string, profile_id: string) => {
-  if (!page_slug || !profile_id) return { page: null };
+const fetchPageDetails = async (
+  pageId: string | number | null,
+) => {
+  if (!pageId) return { page: null };
 
   try {
     const { data, error } = await supabaseBrowser
@@ -12,8 +14,7 @@ const fetchPageDetails = async (page_slug: string, profile_id: string) => {
       .select(
         "id, title, slug, content, team_id, profile_id, settings, is_archived"
       )
-      .eq("slug", page_slug)
-      .eq("profile_id", profile_id)
+      .eq("id", pageId)
       .single();
 
     if (error) throw error;
@@ -29,28 +30,26 @@ const fetchPageDetails = async (page_slug: string, profile_id: string) => {
   }
 };
 
-const usePageDetails = (page_slug: string) => {
-  const { profile } = useAuthProvider();
-
+const usePageDetails = (pageId: string | number | null) => {
   const queryClient = useQueryClient();
 
   const { data, error, isLoading, isError } = useQuery({
-    queryKey: ["pageDetails", page_slug, profile?.id],
+    queryKey: ["pageDetails", pageId],
     queryFn: () => {
-      if (page_slug === null || !profile?.id) {
+      if (pageId === null) {
         return { page: null };
       }
 
-      return fetchPageDetails(page_slug, profile?.id);
+      return fetchPageDetails(pageId);
     },
-    enabled: !!page_slug || !!profile?.id, // Only run the query if projectId is not null
+    enabled: !!pageId, // Only run the query if projectId is not null
     staleTime: 300000, // 5 minutes
     refetchOnWindowFocus: false, // Optional: adjust as needed
   });
 
   const setPage = (page: PageType) => {
     queryClient.setQueryData(
-      ["pageDetails", page_slug, profile?.id],
+      ["pageDetails", pageId],
       (oldData: { page: PageType | null }) => ({
         ...oldData,
         page,

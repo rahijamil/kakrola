@@ -172,7 +172,7 @@ const PricingPage = () => {
     },
     {
       name: "Pro",
-      price: isAnnual ? "$10" : "$12",
+      price: isAnnual ? "$8" : "$12",
       period: isAnnual ? "per user/month" : "per user/month",
       description: "For power users and small teams",
       features: [
@@ -192,7 +192,7 @@ const PricingPage = () => {
     },
     {
       name: "Business",
-      price: isAnnual ? "$15" : "$18",
+      price: isAnnual ? "$13" : "$18",
       period: isAnnual ? "per user/month" : "per user/ month",
       description: "For organizations that need more control and support",
       features: [
@@ -247,7 +247,7 @@ const PricingPage = () => {
                 }`}
               >
                 Pay Annually{" "}
-                <span className="text-primary-500 font-bold">(Save 20%)</span>
+                <span className="text-primary-500 font-bold">(Save 30%)</span>
               </span>
             </div>
 

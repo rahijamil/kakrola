@@ -25,7 +25,7 @@ const AddAnotherAccount = ({
   onClose,
   type,
 }: {
-  onClose: () => void;
+  onClose?: () => void;
   type: "signup" | "login";
 }) => {
   return (

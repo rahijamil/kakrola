@@ -27,12 +27,11 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
     setProjects,
     sidebarLoading,
     pages,
+    personalMembers,
   } = useSidebarDataProvider();
   const pathname = usePathname();
   const [showProjects, setShowProjects] = useState(true);
-  const projects = allProjects.filter(
-    (p) => !p.team_id && !p.slug.startsWith("test-")
-  );
+  const projects = allProjects.filter((p) => !p.team_id);
   const [isDragDisabled, setIsDragDisabled] = useState(false);
 
   const handleOnDragEnd = async (result: DropResult) => {
@@ -87,186 +86,196 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <>
-      <div>
-        {sidebarLoading ? (
-          <Skeleton height={16} width={150} borderRadius={9999} />
-        ) : (
-          <div
-            onTouchStart={(ev) =>
-              ev.currentTarget.classList.add("bg-primary-50")
-            }
-            onTouchEnd={(ev) =>
-              ev.currentTarget.classList.remove("bg-primary-50")
-            }
-            // className={`relative text-text-600 rounded-lg transition flex items-center justify-between pl-3 pr-1 ${
-            //   pathname.startsWith("/app/projects") && "bg-primary-100"
-            // } ${!isOpen ? "md:hover:bg-primary-50" : "md:bg-primary-50"}`}
-            className={`flex items-center transition-colors duration-150 font-medium pr-1 md:font-normal w-full border-l-4 ${
-              pathname.startsWith("/app/projects")
-               ? "md:bg-primary-100 text-text-900 md:border-primary-200"
-                : "md:hover:bg-primary-50 border-transparent md:hover:border-primary-200 text-text-700"
-            }`}
+    <div>
+      {sidebarLoading ? (
+        <Skeleton height={16} width={150} borderRadius={9999} />
+      ) : (
+        <div
+          onTouchStart={(ev) => ev.currentTarget.classList.add("bg-primary-50")}
+          onTouchEnd={(ev) =>
+            ev.currentTarget.classList.remove("bg-primary-50")
+          }
+          // className={`relative text-text-600 rounded-lg transition flex items-center justify-between pl-3 pr-1 ${
+          //   pathname.startsWith("/app/projects") && "bg-primary-100"
+          // } ${!isOpen ? "md:hover:bg-primary-50" : "md:bg-primary-50"}`}
+          className={`flex items-center transition-colors duration-150 font-medium pr-1 md:font-normal w-full border-l-4 group ${
+            pathname.startsWith("/app/projects")
+              ? "md:bg-primary-100 text-text-900 md:border-primary-200"
+              : "md:hover:bg-primary-50 border-transparent md:hover:border-primary-200 text-text-700"
+          }`}
+        >
+          <Link
+            href={`/app/projects`}
+            className={`w-full flex items-center justify-between pl-4 py-2 gap-1`}
           >
-            <Link
-              href={`/app/projects`}
-              className={`w-full flex items-center justify-between pl-4 py-2 gap-1`}
+            <div
+              className={`flex items-center ${
+                sidebarWidth > 220 ? "gap-2" : "gap-1"
+              }`}
             >
               <div
                 className={`flex items-center ${
                   sidebarWidth > 220 ? "gap-2" : "gap-1"
                 }`}
+                style={{
+                  maxWidth: `${
+                    sidebarWidth - (projects.length > 3 ? 150 : 80)
+                  }px`,
+                }}
               >
-                <div
-                  className={`flex items-center ${
-                    sidebarWidth > 220 ? "gap-2" : "gap-1"
-                  }`}
-                  style={{
-                    maxWidth: `${
-                      sidebarWidth - (projects.length > 3 ? 150 : 80)
-                    }px`,
-                  }}
+                <span
+                  className={`font-medium text-xs transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis`}
                 >
-                  <span
-                    className={`font-medium text-xs transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis`}
-                  >
-                    Personal
-                  </span>
-                </div>
-                {projects.length > 3 && (
-                  <span className="bg-text-300 text-text-700 px-1 py-[1px] rounded-lg uppercase text-[11px] whitespace-nowrap font-medium">
-                    Used: {projects.length}/{5}
-                  </span>
-                )}
+                  Personal
+                </span>
               </div>
-            </Link>
-
-            <div
-              className={`${
-                screenWidth > 768 &&
-                !showAddProjectModal &&
-                !isOpen &&
-                "opacity-0 group-hover:opacity-100"
-              } transition flex items-center`}
-            >
-              <SidebarPlusDropdown
-                modalStates={{
-                  setShowAddProjectModal,
-                  showAddProjectModal,
-                }}
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-              />
-
-              <button
-                className="p-1 hover:bg-primary-100 rounded-lg transition duration-150"
-                onClick={() => setShowProjects(!showProjects)}
-              >
-                <ChevronRight
-                  strokeWidth={1.5}
-                  className={`w-[18px] h-[18px] transition-transform duration-150 transform ${
-                    showProjects ? "rotate-90" : ""
-                  }`}
-                />
-              </button>
+              {projects.length > 3 && (
+                <span className="bg-text-300 text-text-700 px-1 py-[1px] rounded-lg uppercase text-[11px] whitespace-nowrap font-medium">
+                  Used: {projects.length}/{5}
+                </span>
+              )}
             </div>
-          </div>
-        )}
+          </Link>
 
-        {showProjects && (
-          <motion.div
-            initial={{ opacity: 0.5, height: 0, y: -10 }}
-            animate={{
-              opacity: 1,
-              height: "auto",
-              y: 0,
-              transition: { type: "spring" },
-            }}
-            exit={{ opacity: 0.5, height: 0, y: -10 }}
-            className="bg-text-100 dark:bg-surface md:bg-transparent md:dark:bg-transparent rounded-lg md:rounded-none overflow-hidden"
+          <div
+            className={`${
+              screenWidth > 768 &&
+              !showAddProjectModal &&
+              !isOpen &&
+              "opacity-0 group-hover:opacity-100"
+            } transition flex items-center`}
           >
-            <DragDropContext onDragEnd={handleOnDragEnd}>
-              <Droppable droppableId="projects">
-                {(provided) => {
-                  return (
-                    <ul ref={provided.innerRef} {...provided.droppableProps}>
-                      {projects.map((project, index) => (
-                        <Draggable
-                          key={project.id}
-                          draggableId={project.id.toString()}
-                          index={index}
-                          isDragDisabled={isDragDisabled}
-                        >
-                          {(provided, snapshot) => {
-                            return (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                className={`${
-                                  snapshot.isDragging && "bg-surface"
-                                }`}
-                              >
-                                <ProjectItem
-                                  project={project}
-                                  pathname={pathname}
-                                  isDragging={snapshot.isDragging}
-                                  setIsDragDisabled={setIsDragDisabled}
-                                />
-                              </div>
-                            );
-                          }}
-                        </Draggable>
-                      ))}
+            <button
+              className="p-1 hover:bg-primary-100 rounded-lg transition duration-150"
+              onClick={() => setShowProjects(!showProjects)}
+            >
+              <ChevronRight
+                strokeWidth={1.5}
+                className={`w-[18px] h-[18px] transition-transform duration-150 transform ${
+                  showProjects ? "rotate-90" : ""
+                }`}
+              />
+            </button>
 
-                      {pages.map((page, index) => (
-                        <Draggable
-                          key={page.id}
-                          draggableId={page.id.toString()}
-                          index={index}
-                          isDragDisabled={isDragDisabled}
-                        >
-                          {(provided, snapshot) => {
-                            return (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                className={`${
-                                  snapshot.isDragging && "bg-surface"
-                                }`}
-                              >
-                                <PageItem
-                                  page={page}
-                                  pathname={pathname}
-                                  isDragging={snapshot.isDragging}
-                                  setIsDragDisabled={setIsDragDisabled}
-                                />
-                              </div>
-                            );
-                          }}
-                        </Draggable>
-                      ))}
-                      {provided.placeholder}
-                    </ul>
-                  );
-                }}
-              </Droppable>
-            </DragDropContext>
-          </motion.div>
-        )}
-
-        <div className="space-y-2">
-          {sidebarLoading &&
-            [1, 2, 3, 4, 5].map((_i, index) => (
-              <div key={_i} className="flex items-center gap-2">
-                <Skeleton height={28} width={28} borderRadius={9999} />
-                <Skeleton height={16} borderRadius={9999} width={150} />
-              </div>
-            ))}
+            <SidebarPlusDropdown
+              modalStates={{
+                setShowAddProjectModal,
+                showAddProjectModal,
+              }}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+            />
+          </div>
         </div>
+      )}
+
+      {showProjects && (
+        <motion.div
+          initial={{ opacity: 0.5, height: 0, y: -10 }}
+          animate={{
+            opacity: 1,
+            height: "auto",
+            y: 0,
+            transition: { type: "spring" },
+          }}
+          exit={{ opacity: 0.5, height: 0, y: -10 }}
+          className="bg-text-100 dark:bg-surface md:bg-transparent md:dark:bg-transparent rounded-lg md:rounded-none overflow-hidden"
+        >
+          <DragDropContext onDragEnd={handleOnDragEnd}>
+            <Droppable droppableId="projects">
+              {(provided) => {
+                return (
+                  <ul ref={provided.innerRef} {...provided.droppableProps}>
+                    {personalMembers
+                      .sort((a, b) => a.settings.order - b.settings.order)
+                      .map((personalMember, index) => {
+                        const project = projects.find(
+                          (p) => p.id === personalMember.project_id
+                        );
+                        if (!project) return null;
+                        return (
+                          <Draggable
+                            key={project.id}
+                            draggableId={project.id?.toString()}
+                            index={index}
+                            isDragDisabled={isDragDisabled}
+                          >
+                            {(provided, snapshot) => {
+                              return (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  className={`${
+                                    snapshot.isDragging && "bg-surface"
+                                  }`}
+                                >
+                                  <ProjectItem
+                                    project={project}
+                                    pathname={pathname}
+                                    isDragging={snapshot.isDragging}
+                                    setIsDragDisabled={setIsDragDisabled}
+                                  />
+                                </div>
+                              );
+                            }}
+                          </Draggable>
+                        );
+                      })}
+
+                    {personalMembers
+                      .sort((a, b) => a.settings.order - b.settings.order)
+                      .map((personalMember, index) => {
+                        const page = pages.find(
+                          (p) => p.id === personalMember.page_id
+                        );
+                        if (!page) return null;
+                        return (
+                          <Draggable
+                            key={page.id}
+                            draggableId={page.id?.toString()}
+                            index={index}
+                            isDragDisabled={isDragDisabled}
+                          >
+                            {(provided, snapshot) => {
+                              return (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <PageItem
+                                    page={page}
+                                    pathname={pathname}
+                                    isDragging={snapshot.isDragging}
+                                    setIsDragDisabled={setIsDragDisabled}
+                                  />
+                                </div>
+                              );
+                            }}
+                          </Draggable>
+                        );
+                      })}
+
+                    {provided.placeholder}
+                  </ul>
+                );
+              }}
+            </Droppable>
+          </DragDropContext>
+        </motion.div>
+      )}
+
+      <div className="space-y-2">
+        {sidebarLoading &&
+          [1, 2, 3, 4, 5].map((_i, index) => (
+            <div key={_i} className="flex items-center gap-2">
+              <Skeleton height={28} width={28} borderRadius={9999} />
+              <Skeleton height={16} borderRadius={9999} width={150} />
+            </div>
+          ))}
       </div>
-    </>
+    </div>
   );
 };
 

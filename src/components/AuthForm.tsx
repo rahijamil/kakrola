@@ -83,8 +83,6 @@ const AuthForm: React.FC<AuthFormProps> = ({
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const { profile } = useAuthProvider();
-
   // Hcaptcha
   // const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   // const captcha = useRef<HCaptcha | null>(null);

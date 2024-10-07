@@ -10,8 +10,12 @@ import React, {
   createContext,
   useContext,
   useId,
+  useState,
+  useEffect,
 } from "react";
 import { motion } from "framer-motion";
+import { createPortal } from "react-dom";
+import PortalWrapper from "../PortalWrapper";
 
 // Dialog Component
 interface DialogProps {
@@ -29,34 +33,52 @@ export const Dialog: React.FC<DialogProps> = ({
   position = "center",
   bgWhite,
 }) => {
+  const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(
+    null
+  );
+
+  useEffect(() => {
+    setPortalContainer(document.body);
+  }, []);
+
   return (
-    <div
-      className={`fixed inset-0 z-50 cursor-default flex justify-center bg-black ${bgWhite ? "bg-opacity-70 backdrop-blur-sm" : "bg-opacity-80 dark:bg-opacity-90"} ${position == "center" ? "items-center" : "items-start pt-40"}`}
-      onClick={onClose}
-    >
+    <PortalWrapper>
       <motion.div
-        initial={{ opacity: 0, scale: 0.99 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.99 }}
-        transition={{ duration: 0.2 }}
-        className={`md:rounded-lg md:shadow-lg w-full md:w-11/12 flex flex-col ${
-          bgWhite ? "bg-white" : "bg-surface"
-        } ${
-          size === "xs"
-            ? "max-w-md"
-            : size === "sm"
-            ? "max-w-lg p-2"
-            : size === "md"
-            ? "max-w-[800px] h-full md:h-auto md:aspect-[4/2.5]"
-            : size === "lg"
-            ? "max-w-7xl h-full md:h-auto md:aspect-[4/2.5]"
-            : "max-w-3xl h-[90%]"
-        }`}
-        onClick={(ev) => ev.stopPropagation()}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+        className={`fixed inset-0 z-50 cursor-default flex justify-center bg-black ${
+          bgWhite
+            ? "bg-opacity-70 backdrop-blur-sm"
+            : "bg-opacity-80 dark:bg-opacity-90"
+        } ${position == "center" ? "items-center" : "items-start pt-40"}`}
+        onClick={onClose}
       >
-        {children}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.99 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.99 }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
+          className={`md:rounded-lg md:shadow-lg w-full md:w-11/12 flex flex-col ${
+            bgWhite ? "bg-white" : "bg-surface"
+          } ${
+            size === "xs"
+              ? "max-w-md"
+              : size === "sm"
+              ? "max-w-lg"
+              : size === "md"
+              ? "max-w-[800px] h-full md:h-auto md:aspect-[4/2.5]"
+              : size === "lg"
+              ? "max-w-7xl h-full md:h-auto md:aspect-[4/2.5]"
+              : "max-w-3xl h-[90%]"
+          }`}
+          onClick={(ev) => ev.stopPropagation()}
+        >
+          {children}
+        </motion.div>
       </motion.div>
-    </div>
+    </PortalWrapper>
   ); // Dialog Component
 };
 
@@ -150,7 +172,11 @@ export const RadioGroupItem: React.FC<RadioGroupItemProps> = ({
       value={value}
       checked={value === groupValue}
       onChange={() => onChange(value)}
-      className={`appearance-none w-4 h-4 min-w-4 min-h-4 rounded-full border border-text-300 checked:border-4 focus:outline-none checked:ring-2 ${theme === "light" ? "checked:ring-kakrola-500 checked:border-kakrola-500 checked:bg-kakrola-500" : "checked:ring-primary-500 checked:border-primary-500 checked:bg-primary-500"} checked:ring-offset-2 ${className}`}
+      className={`appearance-none w-4 h-4 min-w-4 min-h-4 rounded-full border border-text-300 checked:border-4 focus:outline-none checked:ring-2 ${
+        theme === "light"
+          ? "checked:ring-kakrola-500 checked:border-kakrola-500 checked:bg-kakrola-500"
+          : "checked:ring-primary-500 checked:border-primary-500 checked:bg-primary-500"
+      } checked:ring-offset-2 ${className}`}
     />
   );
 };

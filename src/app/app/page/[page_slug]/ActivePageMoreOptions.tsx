@@ -13,7 +13,7 @@ import {
   HeartOff,
   Link,
   Logs,
-  PencilLine,
+  SquarePen,
   SwatchBook,
   Trash2,
 } from "lucide-react";
@@ -29,6 +29,7 @@ const ActivePageMoreOptions = ({
     setShowArchiveConfirm,
     setShowDeleteConfirm,
     setShowCommentOrActivity,
+    setShowLeaveConfirm,
   },
   triggerRef,
 }: {
@@ -39,6 +40,7 @@ const ActivePageMoreOptions = ({
     setShowCommentOrActivity: Dispatch<
       SetStateAction<"comment" | "activity" | null>
     >;
+    setShowLeaveConfirm: Dispatch<SetStateAction<boolean>>;
     setExportAsCSV: Dispatch<SetStateAction<boolean>>;
     setImportFromCSV: Dispatch<SetStateAction<boolean>>;
     setProjectEdit: Dispatch<SetStateAction<boolean>>;
@@ -51,11 +53,6 @@ const ActivePageMoreOptions = ({
   const router = useRouter();
 
   const { screenWidth } = useScreen();
-
-  const { handleFavorite } = useFavorite({
-    column_value: Number(page.id),
-    column_name: "page_id",
-  });
 
   const { personalMembers, setIsShowViewModal } = useSidebarDataProvider();
 
@@ -90,67 +87,48 @@ const ActivePageMoreOptions = ({
       )}
       contentWidthClass="w-60 py-1"
       items={[
-        {
-          id: 1,
-          label: "Edit",
-          icon: <PencilLine strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: () => {
-            setProjectEdit(true);
-          },
-        },
         ...(screenWidth <= 768 ? [] : []),
         {
-          id: 4,
-          label: isFavorite ? "Remove from favorites" : "Add to favorites",
-          icon: isFavorite ? (
-            <HeartOff className="w-4 h-4" />
-          ) : (
-            <Heart strokeWidth={1.5} className="w-4 h-4" />
-          ),
-          onClick: handleFavorite,
-          divide: true,
-        },
-        {
           id: 3,
-          label: "Copy project link",
+          label: "Copy link",
           icon: <Link strokeWidth={1.5} className="w-4 h-4" />,
           onClick: handleCopyProjectLink,
           divide: true,
         },
-        {
-          id: 4,
-          label: "Save as template",
-          icon: <Copy strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: () => {
-            setSaveTemplate(true);
-          },
-        },
-        {
-          id: 5,
-          label: "Templates",
-          icon: <SwatchBook strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: () => {
-            router.push("/app/templates");
-          },
-          divide: true,
-        },
-        {
-          id: 6,
-          label: "Import from CSV",
-          icon: <ArrowDownToLine strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: () => {
-            setImportFromCSV(true);
-          },
-        },
-        {
-          id: 7,
-          label: "Export as CSV",
-          icon: <ArrowUpFromLine strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: () => {
-            setExportAsCSV(true);
-          },
-          divide: true,
-        },
+        // {
+        //   id: 4,
+        //   label: "Save as template",
+        //   icon: <Copy strokeWidth={1.5} className="w-4 h-4" />,
+        //   onClick: () => {
+        //     setSaveTemplate(true);
+        //   },
+        // },
+        // {
+        //   id: 5,
+        //   label: "Templates",
+        //   icon: <SwatchBook strokeWidth={1.5} className="w-4 h-4" />,
+        //   onClick: () => {
+        //     router.push("/app/templates");
+        //   },
+        //   divide: true,
+        // },
+        // {
+        //   id: 6,
+        //   label: "Import from CSV",
+        //   icon: <ArrowDownToLine strokeWidth={1.5} className="w-4 h-4" />,
+        //   onClick: () => {
+        //     setImportFromCSV(true);
+        //   },
+        // },
+        // {
+        //   id: 7,
+        //   label: "Export as CSV",
+        //   icon: <ArrowUpFromLine strokeWidth={1.5} className="w-4 h-4" />,
+        //   onClick: () => {
+        //     setExportAsCSV(true);
+        //   },
+        //   divide: true,
+        // },
         {
           id: 8,
           label: "Activity log",

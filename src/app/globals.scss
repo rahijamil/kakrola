@@ -15,7 +15,7 @@
     font-family: "Poppins", "Arial", sans-serif;
   }
   .wrapper {
-    @apply w-11/12 max-w-7xl mx-auto;
+    @apply w-11/12 max-w-7xl mx-auto px-2 md:px-0;
   }
   .sidebar_project_item:hover .sidebar_project_item_options {
     @apply opacity-100;

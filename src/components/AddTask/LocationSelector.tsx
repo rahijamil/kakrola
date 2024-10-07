@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Input } from "../ui/input";
 import Image from "next/image";
-import { Check, Plus, Tag, User, UserPlus, X } from "lucide-react";
+import { Check, MapPin, Plus, Tag, User, UserPlus, X } from "lucide-react";
 import { ProjectType, TaskType } from "@/types/project";
 import Dropdown from "../ui/Dropdown";
 import { debounce } from "lodash";
@@ -113,29 +113,15 @@ const LocationSelector = ({
             }`}
             onClick={onClick}
           >
-            {task.assignees.length > 0 ? (
-              task.assignees.map((assignee) => (
-                <div key={assignee.id} className="flex items-center gap-1">
-                  <Image
-                    src={"/default_avatar.png"}
-                    width={20}
-                    height={20}
-                    alt={"avatar"}
-                    className="rounded-md object-cover max-w-5 max-h-5"
-                  />
-                  {/* {getProfileById(assignee.profile_id)?.full_name.split(" ")[0]}
-                  {getProfileById(assignee.profile_id)?.full_name.split(" ")[1] // Check if the second name exists
-                    ? " " +
-                      getProfileById(assignee.profile_id)?.full_name.split(
-                        " "
-                      )[1][0] +
-                      "." // Display the initial of the second name
-                    : ""} */}
+            {task.task_labels && task.task_labels.length > 0 ? (
+              task.task_labels.map((label) => (
+                <div key={label.id} className="flex items-center gap-1">
+                 
                 </div>
               ))
             ) : (
-              <div className="flex items-center gap-1">
-                <Tag strokeWidth={1.5} className="w-4 h-4 text-text-500" />
+              <div>
+                <MapPin strokeWidth={1.5} className="w-4 h-4 text-text-500" />
               </div>
             )}
           </div>

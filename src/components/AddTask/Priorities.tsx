@@ -71,6 +71,7 @@ const Priorities = ({
 
   return (
     <Dropdown
+      title="Priority"
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       triggerRef={triggerRef}
@@ -140,7 +141,10 @@ const Priorities = ({
                   type="button"
                   onClick={(ev) => {
                     ev.stopPropagation();
-                    setTaskData({ ...taskData, priority: TaskPriority.Priority });
+                    setTaskData({
+                      ...taskData,
+                      priority: TaskPriority.Priority,
+                    });
                   }}
                   className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-lg hidden group-data-[state=priority]:group-hover:inline-block absolute top-1/2 -translate-y-1/2 right-2"
                 >
@@ -180,7 +184,10 @@ const Priorities = ({
                   type="button"
                   onClick={(ev) => {
                     ev.stopPropagation();
-                    setTaskData({ ...taskData, priority: TaskPriority.Priority });
+                    setTaskData({
+                      ...taskData,
+                      priority: TaskPriority.Priority,
+                    });
                   }}
                   className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-lg"
                 >

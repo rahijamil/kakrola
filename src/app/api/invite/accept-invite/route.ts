@@ -3,9 +3,11 @@ import { createClient } from "@/utils/supabase/server";
 import { getUser } from "@/utils/auth";
 import {
   InviteStatus,
-  InviteType,
+  ProjectInviteType,
+  PageInviteType,
   PersonalMemberForProjectType,
   TeamMemberType,
+  PersonalMemberForPageType,
 } from "@/types/team";
 import { ProfileType } from "@/types/user";
 import { differenceInDays } from "date-fns";
@@ -81,25 +83,26 @@ export async function GET(request: Request) {
 
 // Centralized function to handle invite acceptance
 async function handleInviteAcceptance(
-  invite: InviteType,
+  invite: ProjectInviteType | PageInviteType,
   profile: ProfileType
 ) {
   try {
     const supabase = createClient();
 
-    // Insert into the appropriate members table
-    if (invite.project_id) {
+    const id = invite.project_id || invite.page_id;
+    const column_name = invite.project_id ? "project_id" : "page_id";
+
+    // Insert into the appropriate members table for project
+    if (id) {
       // check if the member is already in the project
-      const { data: projectMember, error: projectMemberError } = await supabase
+      const { data: member, error: memberError } = await supabase
         .from("personal_members")
         .select("id")
-        .eq("project_id", invite.project_id)
+        .eq(column_name, id)
         .eq("profile_id", profile.id)
         .single();
 
-      // if (projectMemberError) throw new Error(`Failed to fetch project member: ${projectMemberError.message}`);
-
-      if (projectMember) {
+      if (member) {
         return;
       }
 
@@ -107,7 +110,7 @@ async function handleInviteAcceptance(
       const { data: existingAllMembers, error: fetchError } = await supabase
         .from("personal_members")
         .select("settings->order")
-        .eq("project_id", invite.project_id)
+        .eq(column_name, id)
         .order("settings->order", { ascending: false }); // Order by existing order values
 
       if (fetchError)
@@ -123,8 +126,11 @@ async function handleInviteAcceptance(
       const newOrder =
         existingMembers.length > 0 ? Number(existingMembers[0].order) + 1 : 1;
 
-      const projectMemberData: Omit<PersonalMemberForProjectType, "id"> = {
-        project_id: invite.project_id,
+      const memberData: Omit<
+        PersonalMemberForProjectType | PersonalMemberForPageType,
+        "id"
+      > = {
+        [column_name]: id,
         profile_id: profile.id,
         role: invite.role,
         settings: {
@@ -133,13 +139,13 @@ async function handleInviteAcceptance(
         },
       };
 
-      const { error: projectInsertError } = await supabase
+      const { error: insertError } = await supabase
         .from("personal_members")
-        .insert(projectMemberData);
+        .insert(memberData);
 
-      if (projectInsertError) {
+      if (insertError) {
         throw new Error(
-          `Failed to add to project members: ${projectInsertError.message}`
+          `Failed to add to project members: ${insertError.message}`
         );
       }
     }
@@ -189,7 +195,6 @@ async function handleInviteAcceptance(
     if (updateError) {
       throw new Error(`Failed to update invite: ${updateError.message}`);
     }
-
   } catch (error) {
     console.error("Error accepting invite:", error);
     throw error;

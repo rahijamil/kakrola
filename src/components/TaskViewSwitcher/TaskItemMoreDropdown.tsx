@@ -1,6 +1,19 @@
 import { TaskType } from "@/types/project";
-import { ArrowUp, ArrowDown, Pencil, Trash2, Ellipsis } from "lucide-react";
-import React, { Dispatch, SetStateAction, useRef, useState } from "react";
+import {
+  ArrowUp,
+  ArrowDown,
+  Pencil,
+  Trash2,
+  Ellipsis,
+  SquarePen,
+} from "lucide-react";
+import React, {
+  Dispatch,
+  RefObject,
+  SetStateAction,
+  useRef,
+  useState,
+} from "react";
 import Dropdown from "../ui/Dropdown";
 
 const TaskItemMoreDropdown = ({
@@ -9,6 +22,10 @@ const TaskItemMoreDropdown = ({
   task,
   column,
   setEditTaskId,
+  showContextMenu,
+  setShowContextMenu,
+  style,
+  triggerRef,
 }: {
   setShowDeleteConfirm: Dispatch<SetStateAction<string | null>>;
   setAddTaskAboveBellow: Dispatch<
@@ -25,31 +42,25 @@ const TaskItemMoreDropdown = ({
     is_archived?: boolean;
   };
   setEditTaskId: Dispatch<SetStateAction<TaskType["id"] | null>>;
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const onClose = () => {
-    setIsOpen(false);
+  showContextMenu: boolean;
+  setShowContextMenu: Dispatch<SetStateAction<boolean>>;
+  style: {
+    top: string;
+    left: string;
   };
-
-  const triggerRef = useRef(null);
+  triggerRef: RefObject<HTMLDivElement>;
+}) => {
+  const onClose = () => {
+    setShowContextMenu(false);
+  };
 
   return (
     <Dropdown
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
+      isOpen={showContextMenu}
+      setIsOpen={setShowContextMenu}
       triggerRef={triggerRef}
-      Label={({ onClick }) => (
-        <button
-          ref={triggerRef}
-          className={`p-1 transition rounded-lg hidden group-hover:inline-block absolute right-1 top-1 ${
-            isOpen ? "bg-text-100" : "bg-text-100 hover:bg-text-100"
-          }`}
-          onClick={onClick}
-        >
-          <Ellipsis strokeWidth={1.5} className="w-4 h-4" />
-        </button>
-      )}
+      Label={() => <></>}
+      style={style}
       items={[
         {
           id: 1,
@@ -72,8 +83,8 @@ const TaskItemMoreDropdown = ({
         },
         {
           id: 3,
-          label: "Edit",
-          icon: <Pencil strokeWidth={1.5} className="w-4 h-4" />,
+          label: "Rename",
+          icon: <SquarePen strokeWidth={1.5} className="w-4 h-4" />,
           onClick: () => {
             setEditTaskId(task.id);
             onClose();

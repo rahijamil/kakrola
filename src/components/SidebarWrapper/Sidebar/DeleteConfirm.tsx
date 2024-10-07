@@ -11,36 +11,48 @@ import {
 import { useAuthProvider } from "@/context/AuthContext";
 import { useRole } from "@/context/RoleContext";
 import { canDeleteProject } from "@/types/hasPermission";
+import { PageType } from "@/types/pageTypes";
 
-const ProjectDeleteConfirm = ({
+const DeleteConfirm = ({
   project,
+  page,
   setShowDeleteConfirm,
 }: {
-  project: ProjectType;
+  project?: ProjectType;
+  page?: PageType;
   setShowDeleteConfirm: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { projects, setProjects } = useSidebarDataProvider();
+  const { projects, setProjects, pages, setPages } = useSidebarDataProvider();
   const { profile } = useAuthProvider();
 
-  const {role} = useRole()
+  const { role } = useRole();
+
+  const table = project ? "projects" : "pages";
+  const id = project ? project.id : page?.id;
 
   const handleProjectDelete = async () => {
     if (!profile?.id) return;
 
     const userRole = role({
-      _project_id: project.id,
+      _project_id: project?.id,
+      _page_id: page?.id,
     });
     const canUpdateSection = userRole ? canDeleteProject(userRole) : false;
-    if (!canUpdateSection) return;
+    if (!canUpdateSection || !id) return;
 
-    const updatedProjects = projects.filter((proj) => proj.id !== project.id);
-    setProjects(updatedProjects);
+    if (project) {
+      const updatedProjects = projects.filter((proj) => proj.id !== project.id);
+      setProjects(updatedProjects);
+    } else {
+      const updatedPages = pages.filter((pg) => pg.id !== page?.id);
+      setPages(updatedPages);
+    }
 
     // Delete project
     const { error: projectError } = await supabaseBrowser
-      .from("projects")
+      .from(table)
       .delete()
-      .eq("id", project.id);
+      .eq("id", id);
     if (projectError) {
       console.error(projectError);
     }
@@ -48,7 +60,7 @@ const ProjectDeleteConfirm = ({
     createActivityLog({
       actor_id: profile.id,
       action: ActivityAction.DELETED_PROJECT,
-      entity_id: project.id,
+      entity_id: id,
       entity_type: EntityType.PROJECT,
       metadata: {
         old_data: project,
@@ -58,13 +70,23 @@ const ProjectDeleteConfirm = ({
 
   return (
     <ConfirmAlert
-      title="Delete project?"
+      title={project ? "Delete project?" : "Delete page?"}
       description={
-        <>
-          This will permanently delete{" "}
-          <span className="font-semibold">&quot;{project.name}&quot;</span> and
-          all its tasks. This can&apos;t be undone.
-        </>
+        project ? (
+          <>
+            This will permanently delete{" "}
+            <span className="font-semibold">{project.name}</span>{" "}
+            and all its tasks. This can&apos;t be undone.
+          </>
+        ) : (
+          page && (
+            <>
+              This will permanently delete{" "}
+              <span className="font-semibold">{page.title}</span>.
+              This can&apos;t be undone.
+            </>
+          )
+        )
       }
       submitBtnText="Delete"
       onCancel={() => setShowDeleteConfirm(false)}
@@ -73,4 +95,4 @@ const ProjectDeleteConfirm = ({
   );
 };
 
-export default ProjectDeleteConfirm;
+export default DeleteConfirm;

@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import useScreen from "@/hooks/useScreen";
+import PageItem from "./PageItem";
 
 const FavoriteProjects = ({
   setShowFavoritesProjects,
@@ -15,7 +16,7 @@ const FavoriteProjects = ({
   setShowFavoritesProjects: any;
   showFavoritesProjects: boolean;
 }) => {
-  const { projects, sidebarLoading, personalMembers } =
+  const { projects, pages, sidebarLoading, personalMembers } =
     useSidebarDataProvider();
   const pathname = usePathname();
 
@@ -43,6 +44,18 @@ const FavoriteProjects = ({
     (project) => favoritesMap.get(project.id) === true
   );
 
+  // Create a map of project ID to favorite status from userProjectSettings
+  const favoritePagesMap = new Map(
+    personalMembers.map((member) => [
+      member.page_id,
+      member.settings.is_favorite,
+    ])
+  );
+
+  const favoritePages = pages.filter(
+    (page) => favoritePagesMap.get(page.id) === true
+  );
+
   const { screenWidth } = useScreen();
 
   return (
@@ -52,7 +65,7 @@ const FavoriteProjects = ({
       ) : (
         <>
           {hasFavoriteProjects && (
-            <div className="w-full flex items-center justify-between p-1 pl-4 text-text-600 rounded-lg transition-colors">
+            <div className="w-full flex items-center justify-between p-1 pl-4 text-text-600 rounded-lg transition-colors group">
               <div className="flex items-center gap-2 pl-1">
                 {/* <Heart strokeWidth={1.5} size={20} /> */}
                 <span className="font-medium text-xs">Favorites</span>
@@ -101,6 +114,10 @@ const FavoriteProjects = ({
                 project={project}
                 pathname={pathname}
               />
+            ))}
+
+            {favoritePages.map((page) => (
+              <PageItem key={page.id} page={page} pathname={pathname} />
             ))}
           </ul>
         </motion.div>

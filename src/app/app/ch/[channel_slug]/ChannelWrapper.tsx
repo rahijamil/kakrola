@@ -116,7 +116,7 @@ const ChannelWrapper = ({
               </Button>
             </li> */}
               <li>
-                <ShareOption projectId={null} triggerRef={triggerRef} />
+                <ShareOption triggerRef={triggerRef} />
               </li>
 
               <li>

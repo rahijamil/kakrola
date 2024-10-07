@@ -33,7 +33,7 @@ const ProjectsSelector = ({
   const personalProjects = projects.filter(
     (project) =>
       !project.team_id &&
-      project.name.toLowerCase().includes(searchQuery.toLowerCase())
+      project.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const teamProjects = teams.map((team) => ({

@@ -1,6 +1,6 @@
 import { ProjectType, TaskType } from "@/types/project";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import CommentOrActivityModal from "../../../LayoutWrapper/CommentOrActivityModal";
 import ExportCSVModal from "../SidebarProjectMoreOptions/ExportCSVModal";
@@ -15,15 +15,16 @@ import {
   Hash,
   Users,
 } from "lucide-react";
-import ProjectDeleteConfirm from "../ProjectDeleteConfirm";
-import ProjectArchiveConfirm from "../ProjectArchiveConfirm";
+import DeleteConfirm from "../DeleteConfirm";
+import ArchiveConfirm from "../ArchiveConfirm";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useQuery } from "@tanstack/react-query";
-import ProjectLeaveConfirm from "../ProjectLeaveConfirm";
+import LeaveConfirm from "../LeaveConfirm";
 import useScreen from "@/hooks/useScreen";
 import { PageType } from "@/types/pageTypes";
 import SidebarPageMoreOptions from "./SidebarPageMoreOptions";
+import Rename from "../Rename";
 
 const PageItem = ({
   page,
@@ -80,11 +81,9 @@ const PageItem = ({
   const [exportAsCSV, setExportAsCSV] = useState<boolean>(false);
   const [importFromCSV, setImportFromCSV] = useState<boolean>(false);
   const [projectEdit, setProjectEdit] = useState<boolean>(false);
-  const [aboveBellow, setAboveBellow] = useState<"above" | "below" | null>(
-    null
-  );
 
   const { screenWidth } = useScreen();
+  const triggerRef = useRef<HTMLDivElement>(null);
 
   return (
     <li>
@@ -107,9 +106,13 @@ const PageItem = ({
               : "md:hover:bg-primary-50 border-transparent hover:border-primary-200 text-text-700"
           }`}
         >
+          <div
+            ref={triggerRef}
+            className="absolute left-4 top-1/2 pointer-events-none opacity-0 -z-10"
+          ></div>
           <Link
             href={`/app/page/${page.slug}`}
-            className={`w-full p-2 px-4`}
+            className={`w-full p-2 ${page.team_id ? "pl-7 pr-4" : "px-4"}`}
             draggable={false}
           >
             <div className="flex items-center gap-2">
@@ -141,7 +144,6 @@ const PageItem = ({
                   setExportAsCSV,
                   setImportFromCSV,
                   setProjectEdit,
-                  setAboveBellow,
                 }}
                 setIsDragDisabled={setIsDragDisabled}
               />
@@ -150,24 +152,29 @@ const PageItem = ({
         </div>
       )}
 
-      {/* {showLeaveConfirm && (
-        <ProjectLeaveConfirm
-          setShowLeaveConfirm={setShowLeaveConfirm}
-          project={project}
-        />
+      <Rename
+        triggerRef={triggerRef}
+        page={page}
+        isOpen={projectEdit}
+        setIsOpen={setProjectEdit}
+        Icon={FileText}
+      />
+
+      {showLeaveConfirm && (
+        <LeaveConfirm setShowLeaveConfirm={setShowLeaveConfirm} page={page} />
       )}
 
       {showDeleteConfirm && (
-        <ProjectDeleteConfirm
+        <DeleteConfirm
           setShowDeleteConfirm={setShowDeleteConfirm}
-          project={project}
+          page={page}
         />
       )}
 
       {showArchiveConfirm && (
-        <ProjectArchiveConfirm
+        <ArchiveConfirm
           setShowArchiveConfirm={setShowArchiveConfirm}
-          project={project}
+          page={page}
         />
       )}
 
@@ -176,28 +183,19 @@ const PageItem = ({
           onClose={() => setShowCommentOrActivity(null)}
           showCommentOrActivity={showCommentOrActivity}
           setShowCommentOrActivity={setShowCommentOrActivity}
-          project={project}
+          page={page}
         />
       )}
 
-      {exportAsCSV && <ExportCSVModal onClose={() => setExportAsCSV(false)} />}
+      {/* {exportAsCSV && <ExportCSVModal onClose={() => setExportAsCSV(false)} />}
       {importFromCSV && (
         <ImportCSVModal onClose={() => setImportFromCSV(false)} />
-      )}
+      )} */}
 
-      {projectEdit && (
+      {/* {projectEdit && (
         <AddEditProject
           onClose={() => setProjectEdit(false)}
           project={project}
-        />
-      )}
-
-      {aboveBellow && (
-        <AddEditProject
-          onClose={() => setAboveBellow(null)}
-          aboveBellow={aboveBellow}
-          project={project}
-          workspaceId={page.team_id}
         />
       )} */}
     </li>

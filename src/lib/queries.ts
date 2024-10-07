@@ -55,12 +55,11 @@ export async function getNotifications({
   limit?: number;
 }): Promise<NotificationType[]> {
   try {
-    const { data, error } = await supabaseBrowser
-      .from("notifications")
-      .select("*")
-      .in("recipients", [recipient_id])
-      .order("created_at", { ascending: false })
-      .range((page - 1) * limit, page * limit - 1);
+    const { data, error } = await supabaseBrowser.rpc('get_notifications_for_recipient', {
+      _recipient_id: recipient_id,
+      _page: page,
+      _limit: limit
+    });
 
     if (error) throw error;
     return data;

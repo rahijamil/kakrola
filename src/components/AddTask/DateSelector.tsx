@@ -107,7 +107,9 @@ const DateSelector = ({
   const [focusedInput, setFocusedInput] = useState<"start" | "end">("start");
 
   const [dates, setDates] = useState<TaskType["dates"]>({
-    start_date: task.dates.start_date || formatISO(new Date(), {representation: "date"}),
+    start_date:
+      task.dates.start_date ||
+      formatISO(new Date(), { representation: "date" }),
     start_time: task.dates.start_time || null,
     end_date: task.dates.end_date || null,
     end_time: task.dates.end_time || null,
@@ -138,8 +140,8 @@ const DateSelector = ({
         ...prev,
         dates: {
           ...prev.dates,
-          start_date: formatISO(new Date(), {representation: "date"}),
-          end_date: formatISO(endDate, {representation: "date"}),
+          start_date: formatISO(new Date(), { representation: "date" }),
+          end_date: formatISO(endDate, { representation: "date" }),
         },
       }));
 
@@ -328,6 +330,7 @@ const DateSelector = ({
 
   return (
     <Dropdown
+      title="Dates"
       triggerRef={triggerRef}
       isOpen={isOpen}
       setIsOpen={setIsOpen}

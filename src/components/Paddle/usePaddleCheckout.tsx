@@ -13,12 +13,14 @@ export const usePaddleCheckout = ({
   id,
   priceId,
   quantity,
+  paddleFrameRef,
 }: {
   priceId: string;
   quantity: number;
   id: "pro" | "business";
+  paddleFrameRef: React.RefObject<HTMLDivElement>;
 }) => {
-  const [paddle, setPaddle] = useState<Paddle>();
+  const [paddle, setPaddle] = useState<Paddle | null>(null);
   const [checkoutData, setCheckoutData] = useState<CheckoutEventsData | null>(
     null
   );

@@ -19,6 +19,7 @@ import {
   LogOut,
   Logs,
   Pencil,
+  SquarePen,
   Trash2,
   UserPlus,
 } from "lucide-react";
@@ -170,8 +171,8 @@ const SidebarPageMoreOptions = ({
           ? [
               {
                 id: 3,
-                label: "Edit",
-                icon: <Pencil strokeWidth={1.5} className="w-4 h-4" />,
+                label: "Rename",
+                icon: <SquarePen strokeWidth={1.5} className="w-4 h-4" />,
                 onClick: () => {
                   setProjectEdit(true);
                 },
@@ -189,37 +190,37 @@ const SidebarPageMoreOptions = ({
           onClick: handleFavorite,
           divide: true,
         },
-        {
-          id: 65,
-          label: "Share",
-          icon: <UserPlus strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: () => {},
-          divide: true,
-        },
+        // {
+        //   id: 65,
+        //   label: "Share",
+        //   icon: <UserPlus strokeWidth={1.5} className="w-4 h-4" />,
+        //   onClick: () => {},
+        //   divide: true,
+        // },
         {
           id: 6,
-          label: "Copy channel link",
+          label: "Copy link",
           icon: <Link strokeWidth={1.5} className="w-4 h-4" />,
           onClick: handleCopyProjectLink,
           divide: true,
         },
-        {
-          id: 7,
-          label: "Import from CSV",
-          icon: <ArrowDownToLine strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: () => {
-            setImportFromCSV(true);
-          },
-        },
-        {
-          id: 8,
-          label: "Export as CSV",
-          icon: <ArrowUpFromLine strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: () => {
-            setExportAsCSV(true);
-          },
-          divide: true,
-        },
+        // {
+        //   id: 7,
+        //   label: "Import from CSV",
+        //   icon: <ArrowDownToLine strokeWidth={1.5} className="w-4 h-4" />,
+        //   onClick: () => {
+        //     setImportFromCSV(true);
+        //   },
+        // },
+        // {
+        //   id: 8,
+        //   label: "Export as CSV",
+        //   icon: <ArrowUpFromLine strokeWidth={1.5} className="w-4 h-4" />,
+        //   onClick: () => {
+        //     setExportAsCSV(true);
+        //   },
+        //   divide: true,
+        // },
         {
           id: 9,
           label: "Activity log",

@@ -83,13 +83,13 @@ const HeroCarousel = () => {
                 opacity: currentSlide === index ? 1 : 0,
               }}
             >
-              <div className="relative aspect-[4/2.5] w-full rounded-lg overflow-hidden">
+              <div className="relative aspect-square md:aspect-[4/2.5] w-full rounded-lg overflow-hidden">
                 <Image
                   src={item.image}
-                  objectFit="cover"
                   fill
                   alt={item.alt}
                   priority={index === 0}
+                  className={`object-cover ${index === 0 ? "object-left-top" : "object-center"}`}
                 />
               </div>
             </div>
@@ -112,7 +112,7 @@ const HeroCarousel = () => {
         </button>
       </div>
 
-      <div className="flex items-center justify-center gap-4">
+      <div className="flex items-center justify-center gap-4 flex-wrap">
         {heroItems.map((item, index) => (
           <Button
             key={index}

@@ -1,28 +1,25 @@
 import AnimatedTaskCheckbox from "@/components/TaskViewSwitcher/AnimatedCircleCheck";
 import Dropdown from "@/components/ui/Dropdown";
-import { PersonalMemberForProjectType } from "@/types/team";
-import { ProfileType } from "@/types/user";
 import React, { useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { RoleType } from "@/types/role";
 import { TaskPriority } from "@/types/project";
 
-interface MemberData extends PersonalMemberForProjectType {
-  profile: ProfileType;
-}
-
 const RoleItem = ({
   onChange,
   value,
+  handleRemove,
 }: {
   value: RoleType;
   onChange: (newRole: RoleType) => void;
+  handleRemove?: () => void;
 }) => {
   const triggerRef = useRef(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <Dropdown
+      title="Role"
       triggerRef={triggerRef}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
@@ -31,7 +28,13 @@ const RoleItem = ({
           ref={triggerRef}
           onClick={onClick}
           className={`text-xs text-text-500 transition pl-2 p-1 rounded-lg flex items-center gap-1 whitespace-nowrap ${
-            isOpen ? "bg-text-100" : "hover:bg-text-100"
+            isOpen
+              ? handleRemove
+                ? "bg-primary-100"
+                : "bg-text-100"
+              : handleRemove
+              ? "hover:bg-primary-100"
+              : "hover:bg-text-100"
           }`}
         >
           {value === RoleType.ADMIN
@@ -113,7 +116,18 @@ const RoleItem = ({
               is_completed={value === RoleType.VIEWER}
             />
           ),
+          divide: handleRemove ? true : false,
         },
+        ...(handleRemove
+          ? [
+              {
+                id: 5,
+                label: "Remove from project",
+                textColor: "text-red-500",
+                onClick: handleRemove,
+              },
+            ]
+          : []),
       ]}
       contentWidthClass="w-72 py-1"
     />

@@ -139,7 +139,7 @@ const ListView: React.FC<ListViewProps> = ({
     async (result: DropResult) => {
       if (!profile?.id || !project?.id) return;
 
-      const userRole = role({_project_id: project.id});
+      const userRole = role({ _project_id: project.id });
       const canUpdateSection = userRole ? canEditSection(userRole) : false;
       if (!canUpdateSection) return;
 
@@ -266,7 +266,7 @@ const ListView: React.FC<ListViewProps> = ({
 
         // Update tasks in the database with correct orders within their sections
         try {
-          const userRole = role({_project_id: project.id});
+          const userRole = role({ _project_id: project.id });
 
           const canUpdateTask = userRole ? canEditTask(userRole) : false;
           if (!canUpdateTask) return;
@@ -528,6 +528,7 @@ const ListView: React.FC<ListViewProps> = ({
   };
 
   const { screenWidth } = useScreen();
+  const tableRef = useRef<HTMLTableElement>(null);
 
   return (
     <>
@@ -535,12 +536,15 @@ const ListView: React.FC<ListViewProps> = ({
         <Droppable droppableId="list" type="column" direction="vertical">
           {(listProvided) => (
             <div
-              className="overflow-auto w-full h-[calc(100vh-110px)] md:px-6 md:mt-4"
+              className="overflow-auto w-full h-[calc(100vh-202px)] md:px-6 md:mt-4"
               ref={listProvided.innerRef}
               {...listProvided.droppableProps}
             >
-              <table className="w-full min-w-[1000px] border-collapse">
-                <tr className="border-y border-text-100 text-xs divide-x divide-text-200 whitespace-nowrap flex sticky top-0 z-10 bg-background">
+              <table
+                className="w-full min-w-[1000px] border-collapse"
+                ref={tableRef}
+              >
+                <tr className="border-y border-text-100 text-xs divide-x divide-text-200 whitespace-nowrap flex sticky top-0 z-10 bg-background text-text-500">
                   <th className="p-2 text-left w-[30%] md:w-[40%] font-medium flex items-center gap-2 pl-4 md:pl-8">
                     <AlignLeft strokeWidth={2} className="w-4 h-4" />
                     <span>Task name</span>
@@ -561,10 +565,10 @@ const ListView: React.FC<ListViewProps> = ({
                     <Tag strokeWidth={2} className="w-4 h-4" />
                     <span>Labels</span>
                   </th>
-                  <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+                  {/* <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
                     <MapPin strokeWidth={2} className="w-4 h-4" />
                     <span>Location</span>
-                  </th>
+                  </th> */}
                 </tr>
 
                 <tbody>
@@ -616,7 +620,13 @@ const ListView: React.FC<ListViewProps> = ({
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                           >
-                            <td colSpan={5} className="p-0 pb-4 md:pb-0">
+                            <td
+                              colSpan={5}
+                              className={`p-0 pb-4 md:pb-0 bg-background`}
+                              style={{
+                                minWidth: tableRef.current?.scrollWidth + "px",
+                              }}
+                            >
                               <ListViewSection
                                 section={
                                   sections.find(

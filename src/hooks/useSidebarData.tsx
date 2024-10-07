@@ -1,7 +1,7 @@
 import { useAuthProvider } from "@/context/AuthContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ProjectType, SectionType } from "@/types/project";
-import { PersonalMemberForProjectType, TeamMemberType, TeamType } from "@/types/team";
+import { PersonalMemberForPageType, PersonalMemberForProjectType, TeamMemberType, TeamType } from "@/types/team";
 import { PageType } from "@/types/pageTypes";
 import { ChannelType } from "@/types/channel";
 import { fetchSidebarData } from "@/lib/queries";
@@ -49,7 +49,7 @@ const useSidebarData = () => {
         })
       ),
     personalMembers: data?.personal_members || [],
-    setProjectMembers: (members: PersonalMemberForProjectType[]) =>
+    setPersonalMembers: (members: (PersonalMemberForProjectType | PersonalMemberForPageType)[]) =>
       queryClient.setQueryData(
         ["sidebar_data", profile?.id],
         (

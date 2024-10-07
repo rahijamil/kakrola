@@ -9,28 +9,39 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
+import { PageType } from "@/types/pageTypes";
 
-const ProjectLeaveConfirm = ({
+const LeaveConfirm = ({
   project,
+  page,
   setShowLeaveConfirm,
 }: {
-  project: ProjectType;
+  project?: ProjectType;
+  page?: PageType;
   setShowLeaveConfirm: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { projects, setProjects } = useSidebarDataProvider();
+  const { projects, setProjects, pages, setPages } = useSidebarDataProvider();
   const { profile } = useAuthProvider();
 
-  const handleProjectLeave = async () => {
-    if (!profile?.id) return;
+  const column_name = project ? "project_id" : "page_id";
+  const id = project ? project.id : page?.id;
 
-    const updatedProjects = projects.filter((proj) => proj.id !== project.id);
-    setProjects(updatedProjects);
+  const handleProjectLeave = async () => {
+    if (!profile?.id || !id) return;
+
+    if (project) {
+      const updatedProjects = projects.filter((proj) => proj.id !== project.id);
+      setProjects(updatedProjects);
+    } else {
+      const updatedPages = pages.filter((pg) => pg.id !== page?.id);
+      setPages(updatedPages);
+    }
 
     // Delete project
     const { error: projectError } = await supabaseBrowser
       .from("personal_members")
       .delete()
-      .eq("project_id", project.id)
+      .eq(column_name, id)
       .eq("profile_id", profile.id);
     if (projectError) {
       console.error(projectError);
@@ -39,7 +50,7 @@ const ProjectLeaveConfirm = ({
     createActivityLog({
       actor_id: profile.id,
       action: ActivityAction.LEAVED_PROJECT,
-      entity_id: project.id,
+      entity_id: id,
       entity_type: EntityType.PROJECT,
       metadata: {
         old_data: {
@@ -52,12 +63,21 @@ const ProjectLeaveConfirm = ({
 
   return (
     <ConfirmAlert
-      title="Leave?"
+      title={project ? "Leave project?" : "Leave page?"}
       description={
-        <>
-          Are you sure you want to leave{" "}
-          <span className="font-semibold">&quot;{project.name}&quot;</span>?
-        </>
+        project ? (
+          <>
+            Are you sure you want to leave{" "}
+            <span className="font-semibold">&quot;{project.name}&quot;</span>?
+          </>
+        ) : (
+          page && (
+            <>
+              Are you sure you want to leave{" "}
+              <span className="font-semibold">&quot;{page.title}&quot;</span>?
+            </>
+          )
+        )
       }
       submitBtnText="Leave"
       onCancel={() => setShowLeaveConfirm(false)}
@@ -66,4 +86,4 @@ const ProjectLeaveConfirm = ({
   );
 };
 
-export default ProjectLeaveConfirm;
+export default LeaveConfirm;

@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { v4 as uuidv4 } from "uuid";
-import { InviteStatus, InviteType } from "@/types/team";
+import { InviteStatus, PageInviteType, ProjectInviteType } from "@/types/team";
 import { RoleType } from "@/types/role";
-import { cookies } from "next/headers";
 
 export async function POST(req: NextRequest) {
   const supabase = createClient();
@@ -20,9 +19,8 @@ export async function POST(req: NextRequest) {
   const token = uuidv4();
 
   try {
-    const inviteData: Omit<InviteType, "id"> = {
+    const inviteData: Omit<ProjectInviteType | PageInviteType, "id"> = {
       team_id,
-      project_id: null,
       email: null,
       role: RoleType["MEMBER"],
       status: InviteStatus.PENDING,

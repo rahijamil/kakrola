@@ -34,6 +34,8 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import { AnimatePresence, motion } from "framer-motion";
+import PortalWrapper from "./PortalWrapper";
+import { Dialog } from "./ui";
 
 // Updated TeamData type
 interface TeamData extends BaseTeamType {
@@ -158,154 +160,140 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2, ease: "easeInOut" }}
-        className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center"
-        onClick={onClose}
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="bg-surface rounded-lg shadow-xl w-11/12 md:w-full mx-auto space-y-6 md:space-y-8 max-w-md p-6 md:p-8"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="flex justify-between items-center text-text-700">
-            <h1 className="font-semibold text-lg md:text-xl">
-              {step === 1
-                ? "Add a team"
-                : step == 2
-                ? "Tell us about your team"
-                : "Invite your teammates"}
-            </h1>
+    <PortalWrapper>
+      <Dialog onClose={onClose} size="xs">
+        <div className="space-y-6 p-6 relative">
+        <div className="flex justify-between items-center text-text-700">
+          <h1 className="font-semibold text-lg">
+            {step === 1
+              ? "Create a new teamspace"
+              : step == 2
+              ? "Tell us about your team"
+              : "Invite your teammates"}
+          </h1>
 
-            <button
-              onClick={onClose}
-              className="text-text-500 hover:text-text-700 hover:bg-text-100 transition p-1 rounded-lg"
-            >
-              <X size={20} />
-            </button>
-          </div>
-
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-6 md:space-y-8 px-2 sm:p-0"
+          <button
+            onClick={onClose}
+            className="text-text-500 hover:text-text-700 hover:bg-text-100 transition p-1 rounded-lg absolute top-2 right-2"
           >
-            {step === 1 ? (
-              <div className="space-y-2">
-                <Input
-                  type="text"
-                  id="name"
-                  label="Team name"
-                  Icon={Users}
-                  value={teamData.name}
-                  onChange={handleInputChange}
-                  placeholder="The name of your team or company"
-                  required
-                  autoComplete="off"
-                  autoFocus
-                />
-                <p className="text-text-500 text-[13px]">
-                  Keep it something simple your teammates will recognize.
-                </p>
-              </div>
-            ) : step == 2 ? (
-              <>
-                <CustomSelect
-                  id="industry"
-                  label="What industry do you work in?"
-                  Icon={Briefcase}
-                  value={teamData.industry?.value}
-                  onChange={(data) => handleInputChange(data)}
-                  options={industryOptions}
-                  placeholder="Select your answer"
-                />
-                <CustomSelect
-                  id="work_type"
-                  label="What work do you do?"
-                  Icon={Building}
-                  value={teamData.work_type?.value}
-                  onChange={(data) => handleInputChange(data)}
-                  options={workTypeOptions}
-                  placeholder="Select your answer"
-                />
-                <CustomSelect
-                  id="work_role"
-                  label="What's your role?"
-                  Icon={UserCircle}
-                  value={teamData.work_role?.value}
-                  onChange={(data) => handleInputChange(data)}
-                  options={roleOptions}
-                  placeholder="Select your answer"
-                />
-                <CustomSelect
-                  id="organization_size"
-                  label="How big is your organization"
-                  Icon={Users}
-                  value={teamData.organization_size?.value}
-                  onChange={(data) => handleInputChange(data)}
-                  options={organizationSizeOptions}
-                  placeholder="Select your answer"
-                />
-              </>
-            ) : (
-              <div className="space-y-2">
-                <Textarea
-                  label="Invite members"
-                  placeholder="Seperate multiple emails with commas"
-                  rows={3}
-                />
+            <X size={20} />
+          </button>
+        </div>
 
-                <p className="text-text-500 text-[13px]">
-                  Gather your team and dive into collaboration together!
-                </p>
-              </div>
-            )}
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6 md:space-y-8 px-2 sm:p-0"
+        >
+          {step === 1 ? (
+            <div className="space-y-2">
+              <Input
+                type="text"
+                id="name"
+                label="Team name"
+                Icon={Users}
+                value={teamData.name}
+                onChange={handleInputChange}
+                placeholder="The name of your team or company"
+                required
+                autoComplete="off"
+                autoFocus
+              />
+              <p className="text-text-500 text-[13px]">
+                Keep it something simple your teammates will recognize.
+              </p>
+            </div>
+          ) : step == 2 ? (
+            <>
+              <CustomSelect
+                id="industry"
+                label="What industry do you work in?"
+                Icon={Briefcase}
+                value={teamData.industry?.value}
+                onChange={(data) => handleInputChange(data)}
+                options={industryOptions}
+                placeholder="Select your answer"
+              />
+              <CustomSelect
+                id="work_type"
+                label="What work do you do?"
+                Icon={Building}
+                value={teamData.work_type?.value}
+                onChange={(data) => handleInputChange(data)}
+                options={workTypeOptions}
+                placeholder="Select your answer"
+              />
+              <CustomSelect
+                id="work_role"
+                label="What's your role?"
+                Icon={UserCircle}
+                value={teamData.work_role?.value}
+                onChange={(data) => handleInputChange(data)}
+                options={roleOptions}
+                placeholder="Select your answer"
+              />
+              <CustomSelect
+                id="organization_size"
+                label="How big is your organization"
+                Icon={Users}
+                value={teamData.organization_size?.value}
+                onChange={(data) => handleInputChange(data)}
+                options={organizationSizeOptions}
+                placeholder="Select your answer"
+              />
+            </>
+          ) : (
+            <div className="space-y-2">
+              <Textarea
+                label="Invite members"
+                placeholder="Seperate multiple emails with commas"
+                rows={3}
+              />
 
-            <Button
-              type="submit"
-              fullWidth
-              disabled={
-                step == 1
-                  ? teamData.name.trim().length == 0
-                  : step == 2
-                  ? !teamData.industry ||
-                    !teamData.work_type ||
-                    !teamData.work_role ||
-                    !teamData.organization_size
-                    ? true
-                    : false
-                  : false
-              }
-            >
-              {step === 1
-                ? "Get started"
+              <p className="text-text-500 text-[13px]">
+                Gather your team and dive into collaboration together!
+              </p>
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            fullWidth
+            disabled={
+              step == 1
+                ? teamData.name.trim().length == 0
                 : step == 2
-                ? "Setup and continue"
-                : "Create team"}
-              {step !== 3 && <ChevronRight size={16} className="ml-2" />}
-            </Button>
-          </form>
+                ? !teamData.industry ||
+                  !teamData.work_type ||
+                  !teamData.work_role ||
+                  !teamData.organization_size
+                  ? true
+                  : false
+                : false
+            }
+          >
+            {step === 1
+              ? "Get started"
+              : step == 2
+              ? "Setup and continue"
+              : "Create team"}
+            {step !== 3 && <ChevronRight size={16} className="ml-2" />}
+          </Button>
+        </form>
 
-          <div className="text-xs text-text-500 whitespace-normal">
-            By creating a team, you agree to our{" "}
-            <Link href="#" className="text-blue-600 hover:underline">
-              Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link href="#" className="text-blue-600 hover:underline">
-              Privacy Policy
-            </Link>
-            .
-          </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+        <div className="text-xs text-text-500 whitespace-normal">
+          By creating a team, you agree to our{" "}
+          <Link href="#" className="text-primary-600 hover:underline">
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link href="#" className="text-primary-600 hover:underline">
+            Privacy Policy
+          </Link>
+          .
+        </div>
+        </div>
+      </Dialog>
+    </PortalWrapper>
   );
 };
 
