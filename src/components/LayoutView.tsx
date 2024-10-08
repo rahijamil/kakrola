@@ -1,19 +1,14 @@
 import { ViewTypes } from "@/types/viewTypes";
 import {
   CalendarDays,
-  ChevronDown,
-  File,
   FileText,
   LayoutDashboard,
   MapPin,
-  Plus,
   SquareKanban,
 } from "lucide-react";
-import Image from "next/image";
 import React, { useRef, useState } from "react";
 import Dropdown from "./ui/Dropdown";
 import AnimatedTaskCheckbox from "./TaskViewSwitcher/AnimatedCircleCheck";
-import { supabaseBrowser } from "@/utils/supabase/client";
 import { ProjectType, TaskPriority } from "@/types/project";
 import useScreen from "@/hooks/useScreen";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";

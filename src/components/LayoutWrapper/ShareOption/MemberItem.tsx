@@ -168,10 +168,19 @@ const MemberItem = ({ member, isCurrentUserAdmin }: MemberItemProps) => {
         <ConfirmAlert
           onCancel={() => setConfirmRemove(false)}
           onConfirm={handleRemove}
-          title={`Remove ${member.role}?`}
+          title={`Remove ${
+            member.role == RoleType.ADMIN
+              ? "Admin"
+              : member.role == RoleType.MEMBER
+              ? "Member"
+              : member.role == RoleType.COMMENTER
+              ? "Commenter"
+              : member.role == RoleType.VIEWER && "Viewer"
+          }?`}
           description={
             <>
-              {member.profile.full_name} will be removed from the{" "}
+              <span className="font-semibold">{member.profile.full_name}</span>{" "}
+              will be removed from the{" "}
               <span className="font-semibold">
                 {member.project_id
                   ? projects.find((project) => project.id === member.project_id)

@@ -184,7 +184,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
       items: [
         {
           icon: () => (
-            <Rocket strokeWidth={1.5} className="w-4 h-4 text-primary-500" />
+            <Rocket strokeWidth={1.5} className="w-4 h-4 text-tangerine-500" />
           ),
           label: "Upgrade to Pro",
           onClick: () => {
