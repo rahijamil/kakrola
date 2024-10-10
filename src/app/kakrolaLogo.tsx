@@ -112,7 +112,7 @@ const KakrolaLogo = ({
 
       {isTitle && (
         <span
-          className={`font-semibold text-primary-600 ${
+          className={`font-semibold text-kakrola-600 ${
             size === "sm" ? "text-xl" : size === "md" ? "text-2xl" : "text-3xl"
           }`}
         >

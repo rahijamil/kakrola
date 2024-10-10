@@ -26,7 +26,7 @@ export type SelectorItem = {
   isActive: (editor: ReturnType<typeof useEditor>["editor"]) => boolean;
 };
 
-const headingItems: SelectorItem[] = document.querySelector(".reply-editor")
+const headingItems: SelectorItem[] = document.querySelector(".hide-some-command")
   ? []
   : [
       {

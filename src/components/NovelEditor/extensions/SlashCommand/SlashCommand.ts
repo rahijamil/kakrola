@@ -1,3 +1,5 @@
+"use client";
+
 import { Editor, Extension } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
 import Suggestion, {

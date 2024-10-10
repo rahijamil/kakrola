@@ -94,7 +94,20 @@
   }
 }
 
-.reply-editor {
+.description-editor {
+  .ProseMirror {
+    @apply min-h-64;
+  }
+}
+
+.comment-editor {
+  .ProseMirror {
+    @apply min-h-20 max-h-[200px] overflow-y-auto px-4 md:px-3 py-2.5 md:py-2;
+  }
+}
+
+.reply-editor,
+.description-editor {
   .ProseMirror {
     @apply max-h-[500px] overflow-y-auto px-4 md:px-3 py-2.5 md:py-2;
   }

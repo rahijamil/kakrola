@@ -18,9 +18,7 @@ const ReplyEditor = ({
     charsCount,
     ProseMirror,
   }: {
-    ev:
-      | React.MouseEvent<HTMLButtonElement, MouseEvent>
-      | KeyboardEvent;
+    ev: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent;
     replyContent: JSONContent;
     setReplyContent: (content: JSONContent | null) => void;
     charsCount: number;
@@ -43,7 +41,7 @@ const ReplyEditor = ({
       }`}
       onClick={() => ProseMirror?.focus()}
     >
-      <div className="flex-1 reply-editor relative">
+      <div className="flex-1 reply-editor hide-some-command relative">
         <NovelEditor
           editorRef={editorRef}
           content={replyContent}

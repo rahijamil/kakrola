@@ -198,7 +198,7 @@ const ReplyCard: React.FC<ReplyCardProps> = ({
                 </div>
               </div>
 
-              {screenWidth > 768 ? (
+              {/* {screenWidth > 768 ? (
                 <div className="absolute -top-6 right-6 hidden group-hover:block">
                   {renderOptions(reply.id.toString())}
                 </div>
@@ -214,7 +214,7 @@ const ReplyCard: React.FC<ReplyCardProps> = ({
                     </div>
                   }
                 />
-              )}
+              )} */}
             </motion.div>
           ))}
       </div>

@@ -31,41 +31,41 @@ const allViews: {
     icon: <SquareKanban size={16} strokeWidth={1.5} />,
     visible: true,
   },
-  {
-    id: 3,
-    name: "Calendar",
-    icon: (
-      <div className="relative">
-        <CalendarDays strokeWidth={1.5} size={16} />
-        {/* <Image
-          src="/ProIcon.svg"
-          width={12}
-          height={12}
-          alt="List"
-          className="absolute bottom-0 right-0"
-        /> */}
-      </div>
-    ),
-    visible: true,
-  },
+  // {
+  //   id: 3,
+  //   name: "Calendar",
+  //   icon: (
+  //     <div className="relative">
+  //       <CalendarDays strokeWidth={1.5} size={16} />
+  //       {/* <Image
+  //         src="/ProIcon.svg"
+  //         width={12}
+  //         height={12}
+  //         alt="List"
+  //         className="absolute bottom-0 right-0"
+  //       /> */}
+  //     </div>
+  //   ),
+  //   visible: true,
+  // },
   {
     id: 4,
     name: "Dashboard",
     icon: <LayoutDashboard size={16} strokeWidth={1.5} />,
     visible: true,
   },
-  {
-    id: 5,
-    name: "Map",
-    icon: <MapPin strokeWidth={1.5} size={16} />,
-    visible: true,
-  },
-  {
-    id: 6,
-    name: "Page",
-    icon: <FileText size={16} strokeWidth={1.5} />,
-    visible: true,
-  },
+  // {
+  //   id: 5,
+  //   name: "Map",
+  //   icon: <MapPin strokeWidth={1.5} size={16} />,
+  //   visible: true,
+  // },
+  // {
+  //   id: 6,
+  //   name: "Page",
+  //   icon: <FileText size={16} strokeWidth={1.5} />,
+  //   visible: true,
+  // },
 ];
 
 const LayoutView = ({
@@ -123,7 +123,7 @@ const LayoutView = ({
   return screenWidth > 768 ? (
     <div
       className={`flex items-center gap-1 ${
-        view !== "List" && "border-b border-text-100"
+       ( view !== "List" && project) && "border-b border-text-100"
       }`}
     >
       <ul className={`flex items-center gap-1`}>

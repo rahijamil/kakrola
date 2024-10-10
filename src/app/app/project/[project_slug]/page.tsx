@@ -106,8 +106,11 @@ const ProjectDetails = ({
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.UPDATED_PROJECT,
-        entity_type: EntityType.PROJECT,
-        entity_id: currentProject?.id,
+        entity: {
+          type: EntityType.PROJECT,
+          id: currentProject.id,
+          name: currentProject.name,
+        },
         metadata: {
           old_data: {
             settings: currentProject?.settings,

@@ -1,3 +1,5 @@
+import { TaskCommentType } from "./comment";
+
 export interface ChannelType {
   id: number;
   created_at?: string;
@@ -19,10 +21,11 @@ export interface ReactionType {
   createdAt?: string;
   profile_id: string;
   emoji: string;
-  type: "thread" | "thread_reply" | "dm";
+  type: "thread" | "thread_reply" | "dm" | "task_comment";
   thread_id?: number;
   thread_reply_id?: number;
-  dm_id?: DmType['id'];
+  dm_id?: DmType["id"];
+  task_comment_id?: TaskCommentType["id"];
 }
 
 export interface ThreadReactionType extends ReactionType {
@@ -32,6 +35,10 @@ export interface ThreadReactionType extends ReactionType {
 export interface ThreadReplyReactionType extends ReactionType {
   thread_id: number;
   thread_reply_id: number;
+}
+
+export interface TaskCommentReactionType extends ReactionType {
+  task_comment_id: TaskCommentType["id"];
 }
 
 export interface ThreadType {
@@ -67,7 +74,7 @@ export interface DmType {
 }
 
 export interface DmReactionType extends ReactionType {
-  dm_id: DmType['id'];
+  dm_id: DmType["id"];
 }
 
 export interface DmContactType {

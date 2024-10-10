@@ -73,7 +73,7 @@ const ThreadWrapper = ({
   return (
     <motion.div
       {...(screenWidth > 768 ? motionProps : motionPropsForMobile)}
-      className={`flex flex-col h-full w-full flex-1 transition-all duration-300 fixed inset-0 bg-background z-10 md:inset-auto md:static ${
+      className={`flex flex-col h-full w-full flex-1 transition-all duration-300 fixed inset-0 bg-background z-10 md:z-auto md:inset-auto md:static ${
         !thread
           ? "thread-wrapper"
           : ""
@@ -212,13 +212,13 @@ const ThreadWrapper = ({
                   <ShareOption triggerRef={triggerRef} />
                 )}
 
-                <button className="text-text-500 md:hover:bg-text-100 md:px-2 p-1 justify-center md:rounded-lg transition flex items-center gap-1">
+                {/* <button className="text-text-500 md:hover:bg-text-100 md:px-2 p-1 justify-center md:rounded-lg transition flex items-center gap-1">
                   <Headphones
                     strokeWidth={1.5}
                     size={screenWidth > 768 ? 16 : 20}
                   />
                   <span className="hidden md:inline-block">Huddle</span>
-                </button>
+                </button> */}
 
                 {screenWidth > 768 && (
                   <button className="text-text-500 hover:bg-text-100 px-2 p-1 md:rounded-lg transition flex items-center gap-1">

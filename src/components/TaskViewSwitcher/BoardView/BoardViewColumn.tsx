@@ -143,8 +143,11 @@ const BoardViewColumn = ({
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.UPDATED_SECTION,
-        entity_id: column.id,
-        entity_type: EntityType.SECTION,
+        entity: {
+          id: column.id,
+          type: EntityType.SECTION,
+          name: columnTitle.trim(),
+        },
         metadata: {
           old_data: column,
           new_data: {
@@ -222,7 +225,7 @@ const BoardViewColumn = ({
                 ref={boardDraggaleProvided.innerRef}
                 {...boardDraggaleProvided.draggableProps}
                 {...boardDraggaleProvided.dragHandleProps}
-                className={`rounded-lg w-[calc(100vw-50px)] min-w-[calc(100vw-50px)] md:w-[300px] md:min-w-[300px] h-fit max-h-[calc(100vh-150px)] md:max-h-[calc(100vh-150px)] overflow-y-auto cursor-default ${
+                className={`rounded-lg w-[calc(100vw-50px)] min-w-[calc(100vw-50px)] md:w-[300px] md:min-w-[300px] h-fit max-h-[calc(100vh-150px)] md:max-h-[calc(100vh-150px)] overflow-auto cursor-default ${
                   column.is_archived && "opacity-70"
                 }`}
               >

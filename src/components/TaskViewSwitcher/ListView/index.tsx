@@ -415,8 +415,11 @@ const ListView: React.FC<ListViewProps> = ({
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.CREATED_SECTION,
-        entity_id: data.id,
-        entity_type: EntityType.SECTION,
+        entity: {
+          id: data.id,
+          type: EntityType.SECTION,
+          name: data.name,
+        },
         metadata: {},
       });
     } catch (error) {
@@ -431,7 +434,9 @@ const ListView: React.FC<ListViewProps> = ({
     }
   };
 
-  const handleSectionDelete = async (section: { id: number } | null) => {
+  const handleSectionDelete = async (
+    section: { id: number; name: string } | null
+  ) => {
     if (section && profile?.id) {
       setTasks(tasks.filter((task) => task.section_id !== section.id));
       setSections(sections.filter((s) => s.id !== section.id));
@@ -447,8 +452,11 @@ const ListView: React.FC<ListViewProps> = ({
         createActivityLog({
           actor_id: profile.id,
           action: ActivityAction.DELETED_SECTION,
-          entity_id: section.id,
-          entity_type: EntityType.SECTION,
+          entity: {
+            id: section.id,
+            type: EntityType.SECTION,
+            name: section.name,
+          },
           metadata: {
             old_data: section,
           },
@@ -462,7 +470,9 @@ const ListView: React.FC<ListViewProps> = ({
     }
   };
 
-  const handleSectionArchive = async (section: { id: number } | null) => {
+  const handleSectionArchive = async (
+    section: { id: number; name: string } | null
+  ) => {
     if (section && profile?.id) {
       if (showArchiveConfirm?.is_archived) {
         setSections(
@@ -481,8 +491,11 @@ const ListView: React.FC<ListViewProps> = ({
         createActivityLog({
           actor_id: profile.id,
           action: ActivityAction.UNARCHIVED_SECTION,
-          entity_id: section.id,
-          entity_type: EntityType.SECTION,
+          entity: {
+            id: section.id,
+            type: EntityType.SECTION,
+            name: section.name,
+          },
           metadata: {
             old_data: section,
             new_data: { ...section, is_archived: false },
@@ -516,8 +529,11 @@ const ListView: React.FC<ListViewProps> = ({
         createActivityLog({
           actor_id: profile.id,
           action: ActivityAction.ARCHIVED_SECTION,
-          entity_id: section.id,
-          entity_type: EntityType.SECTION,
+          entity: {
+            id: section.id,
+            type: EntityType.SECTION,
+            name: section.name,
+          },
           metadata: {
             old_data: section,
             new_data: { ...section, is_archived: true },
@@ -536,142 +552,148 @@ const ListView: React.FC<ListViewProps> = ({
         <Droppable droppableId="list" type="column" direction="vertical">
           {(listProvided) => (
             <div
-              className="overflow-auto w-full h-[calc(100vh-202px)] md:px-6 md:mt-4"
+              className="overflow-auto h-[calc(100vh-186px)] md:px-6 pb-4"
               ref={listProvided.innerRef}
               {...listProvided.droppableProps}
             >
-              <table
-                className="w-full min-w-[1000px] border-collapse"
-                ref={tableRef}
-              >
-                <tr className="border-y border-text-100 text-xs divide-x divide-text-200 whitespace-nowrap flex sticky top-0 z-10 bg-background text-text-500">
-                  <th className="p-2 text-left w-[30%] md:w-[40%] font-medium flex items-center gap-2 pl-4 md:pl-8">
-                    <AlignLeft strokeWidth={2} className="w-4 h-4" />
-                    <span>Task name</span>
-                  </th>
-                  <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
-                    <UserPlus strokeWidth={2} className="w-4 h-4" />
-                    <span>Assignee</span>
-                  </th>
-                  <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
-                    <CalendarRange strokeWidth={2} className="w-4 h-4" />
-                    <span>Dates</span>
-                  </th>
-                  <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
-                    <CircleChevronUp strokeWidth={2} className="w-4 h-4" />
-                    <span>Priority</span>
-                  </th>
-                  <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
-                    <Tag strokeWidth={2} className="w-4 h-4" />
-                    <span>Labels</span>
-                  </th>
-                  {/* <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+              <div>
+                <table
+                  className="w-full min-w-[1000px] border-collapse"
+                  ref={tableRef}
+                >
+                  <tr className="border-y border-text-100 text-xs divide-x divide-text-200 whitespace-nowrap flex sticky top-0 z-10 bg-background text-text-500">
+                    <th className="p-2 text-left w-[30%] md:w-[40%] font-medium flex items-center gap-2 pl-4 md:pl-8">
+                      <AlignLeft strokeWidth={2} className="w-4 h-4" />
+                      <span>Task name</span>
+                    </th>
+                    <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+                      <UserPlus strokeWidth={2} className="w-4 h-4" />
+                      <span>Assignee</span>
+                    </th>
+                    <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+                      <CalendarRange strokeWidth={2} className="w-4 h-4" />
+                      <span>Dates</span>
+                    </th>
+                    <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+                      <CircleChevronUp strokeWidth={2} className="w-4 h-4" />
+                      <span>Priority</span>
+                    </th>
+                    <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+                      <Tag strokeWidth={2} className="w-4 h-4" />
+                      <span>Labels</span>
+                    </th>
+                    {/* <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
                     <MapPin strokeWidth={2} className="w-4 h-4" />
                     <span>Location</span>
                   </th> */}
-                </tr>
+                  </tr>
 
-                <tbody>
-                  {columns.filter((c) => c.id !== "ungrouped").length == 0 && (
-                    <tr>
-                      <td colSpan={5} className="p-0">
-                        <UngroupedTasks
-                          tasks={unGroupedTasks}
-                          showUngroupedAddTask={showUngroupedAddTask}
-                          setShowUngroupedAddTask={setShowUngroupedAddTask}
-                          project={project}
-                          setTasks={setTasks}
-                          showTaskItemModal={showTaskItemModal}
-                          setShowTaskItemModal={setShowTaskItemModal}
-                        />
-
-                        {screenWidth > 768 && (
-                          <AddNewSectionListView
-                            section={{
-                              id: "ungrouped",
-                              title: "Ungrouped",
-                              tasks: [],
-                            }}
-                            index={0}
-                            newSectionName={newSectionName}
-                            setNewSectionName={setNewSectionName}
-                            handleAddSection={handleAddSection}
-                            setShowAddSection={setShowAddSection}
-                            showAddSection={showAddSection}
-                            sectionAddLoading={sectionAddLoading}
+                  <tbody>
+                    {columns.filter((c) => c.id !== "ungrouped").length ==
+                      0 && (
+                      <tr>
+                        <td colSpan={5} className="p-0">
+                          <UngroupedTasks
+                            tasks={unGroupedTasks}
+                            showUngroupedAddTask={showUngroupedAddTask}
+                            setShowUngroupedAddTask={setShowUngroupedAddTask}
+                            project={project}
+                            setTasks={setTasks}
+                            showTaskItemModal={showTaskItemModal}
+                            setShowTaskItemModal={setShowTaskItemModal}
                           />
-                        )}
-                      </td>
-                    </tr>
-                  )}
 
-                  {columns
-                    .filter((c) => c.id !== "ungrouped")
-                    .map((column, columnIndex) => (
-                      <Draggable
-                        key={column.id}
-                        draggableId={column.id}
-                        index={columnIndex}
-                        isDragDisabled={!!showTaskItemModal}
-                      >
-                        {(provided) => (
-                          <tr
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                          >
-                            <td
-                              colSpan={5}
-                              className={`p-0 pb-4 md:pb-0 bg-background`}
-                              style={{
-                                minWidth: tableRef.current?.scrollWidth + "px",
+                          {screenWidth > 768 && (
+                            <AddNewSectionListView
+                              section={{
+                                id: "ungrouped",
+                                title: "Ungrouped",
+                                tasks: [],
                               }}
-                            >
-                              <ListViewSection
-                                section={
-                                  sections.find(
-                                    (s) => s.id.toString() === column.id
-                                  )!
-                                }
-                                sections={sections}
-                                setSections={setSections}
-                                toggleSection={toggleSection}
-                                groupedTasks={groupedTasks}
-                                showSectionMoreOptions={showSectionMoreOptions}
-                                setShowSectionMoreOptions={
-                                  setShowSectionMoreOptions
-                                }
-                                setShowDeleteConfirm={setShowDeleteConfirm}
-                                setShowArchiveConfirm={setShowArchiveConfirm}
-                                setShowAddTask={setShowAddTask}
-                                setTasks={setTasks}
-                                showAddTask={showAddTask}
-                                tasks={tasks}
-                                project={project}
-                                showTaskItemModal={showTaskItemModal}
-                                setShowTaskItemModal={setShowTaskItemModal}
-                              />
-                              {screenWidth > 768 && (
-                                <AddNewSectionListView
-                                  section={column}
-                                  index={columnIndex}
-                                  newSectionName={newSectionName}
-                                  setNewSectionName={setNewSectionName}
-                                  handleAddSection={handleAddSection}
-                                  setShowAddSection={setShowAddSection}
-                                  showAddSection={showAddSection}
-                                  sectionAddLoading={sectionAddLoading}
-                                />
-                              )}
-                            </td>
-                          </tr>
-                        )}
-                      </Draggable>
-                    ))}
+                              index={0}
+                              newSectionName={newSectionName}
+                              setNewSectionName={setNewSectionName}
+                              handleAddSection={handleAddSection}
+                              setShowAddSection={setShowAddSection}
+                              showAddSection={showAddSection}
+                              sectionAddLoading={sectionAddLoading}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                    )}
 
-                  {listProvided.placeholder}
-                </tbody>
-              </table>
+                    {columns
+                      .filter((c) => c.id !== "ungrouped")
+                      .map((column, columnIndex) => (
+                        <Draggable
+                          key={column.id}
+                          draggableId={column.id}
+                          index={columnIndex}
+                          isDragDisabled={!!showTaskItemModal}
+                        >
+                          {(provided) => (
+                            <tr
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                            >
+                              <td
+                                colSpan={5}
+                                className={`p-0 pb-4 md:pb-0 bg-background`}
+                                style={{
+                                  minWidth:
+                                    tableRef.current?.scrollWidth + "px",
+                                }}
+                              >
+                                <ListViewSection
+                                  section={
+                                    sections.find(
+                                      (s) => s.id.toString() === column.id
+                                    )!
+                                  }
+                                  sections={sections}
+                                  setSections={setSections}
+                                  toggleSection={toggleSection}
+                                  groupedTasks={groupedTasks}
+                                  showSectionMoreOptions={
+                                    showSectionMoreOptions
+                                  }
+                                  setShowSectionMoreOptions={
+                                    setShowSectionMoreOptions
+                                  }
+                                  setShowDeleteConfirm={setShowDeleteConfirm}
+                                  setShowArchiveConfirm={setShowArchiveConfirm}
+                                  setShowAddTask={setShowAddTask}
+                                  setTasks={setTasks}
+                                  showAddTask={showAddTask}
+                                  tasks={tasks}
+                                  project={project}
+                                  showTaskItemModal={showTaskItemModal}
+                                  setShowTaskItemModal={setShowTaskItemModal}
+                                />
+                                {screenWidth > 768 && (
+                                  <AddNewSectionListView
+                                    section={column}
+                                    index={columnIndex}
+                                    newSectionName={newSectionName}
+                                    setNewSectionName={setNewSectionName}
+                                    handleAddSection={handleAddSection}
+                                    setShowAddSection={setShowAddSection}
+                                    showAddSection={showAddSection}
+                                    sectionAddLoading={sectionAddLoading}
+                                  />
+                                )}
+                              </td>
+                            </tr>
+                          )}
+                        </Draggable>
+                      ))}
+
+                    {listProvided.placeholder}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </Droppable>
@@ -696,7 +718,7 @@ const ListView: React.FC<ListViewProps> = ({
             handleSectionDelete(
               showDeleteConfirm.id == "ungrouped"
                 ? null
-                : { id: parseInt(showDeleteConfirm.id) }
+                : { id: parseInt(showDeleteConfirm.id), name: showDeleteConfirm.title }
             )
           }
         />
@@ -747,7 +769,7 @@ const ListView: React.FC<ListViewProps> = ({
             handleSectionArchive(
               showArchiveConfirm.id == "ungrouped"
                 ? null
-                : { id: parseInt(showArchiveConfirm.id) }
+                : { id: parseInt(showArchiveConfirm.id), name: showArchiveConfirm.title }
             )
           }
         />

@@ -7,11 +7,11 @@ import React from "react";
 const DmWrapper = ({
   contact,
   children,
-  setActiveContact,
+  closeActiveContact,
 }: {
-  setActiveContact: (contact: DmContactType | null) => void;
   contact: DmContactType;
   children: React.ReactNode;
+  closeActiveContact: () => void;
 }) => {
   const { screenWidth } = useScreen();
 
@@ -38,10 +38,7 @@ const DmWrapper = ({
         ) : (
           <div className="flex items-center gap-3">
             <button
-              onClick={() => {
-                setActiveContact(null);
-                window.history.pushState(null, "", "/app/dm");
-              }}
+              onClick={closeActiveContact}
               className="flex items-center text-text-700 transition p-1"
             >
               <ChevronLeft
@@ -89,10 +86,7 @@ const DmWrapper = ({
 
               {screenWidth > 768 && (
                 <button
-                  onClick={() => {
-                    setActiveContact(null);
-                    window.history.pushState(null, "", "/app/dm");
-                  }}
+                  onClick={closeActiveContact}
                   className="text-text-500 hover:bg-text-100 w-7 h-7 md:rounded-lg transition flex items-center justify-center"
                 >
                   <X strokeWidth={2} size={16} className="min-w-4 min-h-4" />

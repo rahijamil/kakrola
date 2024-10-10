@@ -47,25 +47,23 @@ const fetchMembersData = async (projectId?: number, pageId?: number) => {
 
   const { data: members, error: membersError } = await supabaseBrowser
     .from("personal_members")
-    .select()
+    .select("id, role, settings, profiles(id, avatar_url, full_name, email)")
     .eq(`${column_name}`, id);
 
   if (membersError) throw new Error("Failed to fetch members");
 
-  const profileIds = members.map((member) => member.profile_id);
-  const { data: profiles, error: profilesError } = await supabaseBrowser
-    .from("profiles")
-    .select()
-    .in("id", profileIds);
-
-  if (profilesError) throw new Error("Failed to fetch profiles");
-
-  return members.map((member) => ({
-    ...member,
-    profile: profiles.find(
-      (profile) => profile.id === member.profile_id
-    ) as ProfileType,
-  })) as MemberData[];
+  return members.map((member) => {
+    const { profiles, ...restMember } = member;
+    return {
+      ...restMember,
+      profile: profiles as unknown as {
+        id: any;
+        avatar_url: any;
+        full_name: any;
+        email: any;
+      },
+    };
+  }) as MemberData[];
 };
 
 // ShareOption component

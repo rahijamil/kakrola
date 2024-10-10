@@ -17,6 +17,7 @@ import useScreen from "@/hooks/useScreen";
 import AuthWrapper from "./AuthWrapper";
 import { useAuthProvider } from "@/context/AuthContext";
 import { linkAccountsAfterAuth } from "@/app/auth/action";
+import { Theme } from "@/lib/theme.types";
 
 // Helper function to get cookie value by name
 function getCookie(name: string): string | null {
@@ -82,6 +83,11 @@ const AuthForm: React.FC<AuthFormProps> = ({
   const [error, setError] = useState<ReactNode | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', Theme.KAKROLA)
+  }, [])
+  
 
   // Hcaptcha
   // const [captchaToken, setCaptchaToken] = useState<string | null>(null);

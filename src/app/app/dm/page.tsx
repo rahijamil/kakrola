@@ -248,6 +248,27 @@ const DmPage: React.FC = () => {
     }
   };
 
+  const closeActiveContact = async () => {
+    if (profile) {
+      setActiveContact(null);
+      window.history.pushState(null, "", "/app/dm");
+
+      const { error } = await supabaseBrowser
+        .from("profiles")
+        .update({
+          metadata: {
+            ...profile.metadata,
+            last_active_contact_profile_id: null,
+          },
+        })
+        .eq("id", profile.id);
+
+      if (error) {
+        console.error("Error updating last active contact:", error);
+      }
+    }
+  };
+
   return (
     <div className="flex h-screen bg-background">
       <DmSidebar
@@ -280,7 +301,7 @@ const DmPage: React.FC = () => {
             >
               <DmWrapper
                 contact={activeContact}
-                setActiveContact={setActiveContact}
+                closeActiveContact={closeActiveContact}
               >
                 <div className="flex flex-col justify-end h-full">
                   {/* Messages */}
@@ -378,7 +399,7 @@ const DmPage: React.FC = () => {
             >
               <DmWrapper
                 contact={activeContact}
-                setActiveContact={setActiveContact}
+                closeActiveContact={closeActiveContact}
               >
                 <div className="flex flex-col justify-end h-full">
                   {/* Messages */}

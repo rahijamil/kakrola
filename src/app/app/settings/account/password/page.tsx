@@ -122,8 +122,11 @@ const Password = () => {
         createActivityLog({
           actor_id: profile.id,
           action: ActivityAction.UPDATED_PROFILE,
-          entity_type: EntityType.USER,
-          entity_id: profile.id,
+          entity: {
+            type: EntityType.USER,
+            id: profile.id,
+            name: profile.full_name,
+          },
           metadata: {},
         });
 

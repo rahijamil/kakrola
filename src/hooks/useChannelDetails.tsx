@@ -2,14 +2,35 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChannelType, ThreadType } from "@/types/channel";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useAuthProvider } from "@/context/AuthContext";
+import { ProfileType } from "@/types/user";
 
-const fetchChannelDetails = async (channel_slug: string, profile_id: string) => {
+interface ThreadWithProfile extends ThreadType {
+  profiles: {
+    id: ProfileType["id"];
+    avatar_url: ProfileType["avatar_url"];
+    full_name: ProfileType["full_name"];
+    email: ProfileType["email"];
+  };
+}
+
+const fetchChannelDetails = async (
+  channel_slug: string,
+  profile_id: string
+) => {
   if (!channel_slug || !profile_id) return { channel: null };
 
   try {
     const { data, error } = await supabaseBrowser
       .from("channels")
-      .select("id, name, slug, description, team_id, profile_id, settings")
+      .select(
+        `id, name, slug, description, team_id, settings,
+        threads (
+          id, title, slug, content, created_at, is_edited, 
+            profiles (
+              id, avatar_url, full_name, email
+            )
+        )`
+      )
       .eq("slug", channel_slug)
       .eq("profile_id", profile_id)
       .single();
@@ -17,16 +38,15 @@ const fetchChannelDetails = async (channel_slug: string, profile_id: string) => 
     if (error) throw error;
 
     if (data) {
-      const { data: threads, error: threadsError } = await supabaseBrowser
-        .from("threads")
-        .select(
-          "id, title, slug, content, created_at, is_edited, profile_id"
-        )
-        .eq("channel_id", data.id);
+      const { threads, ...dataWithoutThreads } = data;
 
-      if (threadsError) throw threadsError;
-
-      return { channel: data, threads };
+      return {
+        channel: { ...dataWithoutThreads, profile_id },
+        threads,
+      } as unknown as {
+        channel: ChannelType;
+        threads: ThreadWithProfile[];
+      };
     } else {
       return { channel: null, threads: [] };
     }

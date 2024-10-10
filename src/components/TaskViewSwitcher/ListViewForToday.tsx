@@ -44,7 +44,7 @@ const ListViewForToday = ({
         <div
           ref={provided.innerRef}
           {...provided.droppableProps}
-          className="overflow-auto w-full h-[calc(100vh-110px)] md:px-6 md:mt-4"
+          className="overflow-auto h-[calc(100vh-186px)] md:px-6 pb-4"
         >
           <table className="w-full min-w-[1000px] border-collapse">
             <tr className="border-y border-text-100 text-xs divide-x divide-text-200 whitespace-nowrap flex sticky top-0 z-10 bg-background text-text-500">

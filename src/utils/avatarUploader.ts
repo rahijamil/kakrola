@@ -1,4 +1,8 @@
-import { ActivityAction, createActivityLog, EntityType } from "@/types/activitylog";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
 import { supabaseBrowser } from "./supabase/client";
 
 export const avatarUploader: (
@@ -36,15 +40,18 @@ export const avatarUploader: (
     createActivityLog({
       actor_id: proifleId,
       action: ActivityAction.UPDATED_PROFILE,
-      entity_id: proifleId,
-      entity_type: EntityType.USER,
+      entity: {
+        id: proifleId,
+        type: EntityType.USER,
+        name: "avatar"
+      },
       metadata: {
         old_data: null,
         new_data: {
           avatar_url: publicUrl,
         },
       },
-    })
+    });
 
     return publicUrl;
   } catch (error) {

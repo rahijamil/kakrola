@@ -91,15 +91,34 @@ const Dropdown: React.FC<DropdownProps> = ({
   const [dragStartY, setDragStartY] = useState(0);
   const [dragOffsetY, setDragOffsetY] = useState(0);
 
-  const [overlayOpen, setOverlayOpen] = useState(isOpen);
+  const [overlayOpen, setOverlayOpen] = useState(false);
 
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(
     null
   );
 
   useEffect(() => {
-    setPortalContainer(document.body);
-  }, []);
+    const handlePopState = (ev: PopStateEvent) => {
+      ev.preventDefault();
+      // Close the dropdown when the back button is pressed
+      setIsOpen(false);
+    };
+
+    if (isOpen && screenWidth <= 768) {
+      // Add a new history entry only when opening the dropdown
+      window.history.pushState(null, "", window.location.href);
+
+      // Listen for the popstate event to handle the back button
+      window.addEventListener("popstate", handlePopState);
+
+      setOverlayOpen(isOpen);
+    }
+
+    return () => {
+      // Clean up the event listener when the dropdown is closed
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [isOpen, screenWidth]);
 
   useEffect(() => {
     const updatePosition = () => {
@@ -158,6 +177,13 @@ const Dropdown: React.FC<DropdownProps> = ({
       updatePosition();
       window.addEventListener("resize", updatePosition);
       window.addEventListener("scroll", updatePosition, true);
+
+      document.body.classList.add("overflow-y-hidden");
+
+      setPortalContainer(document.body);
+    } else {
+      document.body.classList.remove("overflow-y-hidden");
+      setPortalContainer(null);
     }
 
     return () => {
@@ -165,37 +191,6 @@ const Dropdown: React.FC<DropdownProps> = ({
       window.removeEventListener("scroll", updatePosition, true);
     };
   }, [isOpen, triggerRef, portalContainer]);
-
-  useEffect(() => {
-    if (isOpen) {
-      document.body.classList.add("overflow-y-hidden");
-    } else {
-      document.body.classList.remove("overflow-y-hidden");
-    }
-
-    setOverlayOpen(isOpen);
-  }, [isOpen]);
-
-  useEffect(() => {
-    const handlePopState = (ev: PopStateEvent) => {
-      ev.preventDefault();
-      // Close the dropdown when the back button is pressed
-      setIsOpen(false);
-    };
-
-    if (isOpen && screenWidth <= 768) {
-      // Add a new history entry only when opening the dropdown
-      window.history.pushState(null, "", window.location.href);
-
-      // Listen for the popstate event to handle the back button
-      window.addEventListener("popstate", handlePopState);
-    }
-
-    return () => {
-      // Clean up the event listener when the dropdown is closed
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, [isOpen, screenWidth]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -236,7 +231,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       if (offsetY > 0 && scrollTop === 0) {
         setDragOffsetY(offsetY);
 
-        if (offsetY > 100) {
+        if (offsetY > (menuRef.current?.clientHeight || 200) / 2) {
           setOverlayOpen(false);
         } else {
           setOverlayOpen(true);
@@ -249,7 +244,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   const handleTouchEnd = () => {
     if (isDragging) {
-      if (dragOffsetY > 100) {
+      if (dragOffsetY > (menuRef.current?.clientHeight || 200) / 2) {
         setIsOpen(false);
       }
       setIsDragging(false);
@@ -266,39 +261,28 @@ const Dropdown: React.FC<DropdownProps> = ({
         }}
       />
 
-      {isOpen &&
-        portalContainer &&
+      {portalContainer &&
         createPortal(
-          <>
-            <AnimatePresence>
-              {overlayOpen && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{
-                    duration: screenWidth > 768 ? 0.12 : 0.2,
-                    ease: "easeInOut",
-                  }}
-                  data-form-element="true"
-                  className={`fixed inset-0 z-[60] ${
-                    screenWidth <= 768 &&
-                    mobileBottomSheet &&
-                    "bg-black bg-opacity-60"
-                  }`}
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    setIsOpen(false);
-                    setOverlayOpen(false);
-                  }}
-                />
-              )}
-            </AnimatePresence>
-
-            <AnimatePresence>
-              {isOpen && (
-                <>
-                  {screenWidth > 768 || !mobileBottomSheet ? (
+          <AnimatePresence mode="wait">
+            {isOpen && (
+              <>
+                {screenWidth > 768 || !mobileBottomSheet ? (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{
+                      duration: 0.12,
+                      ease: "easeInOut",
+                    }}
+                    data-form-element="true"
+                    className={`fixed inset-0 z-[60]`}
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      setIsOpen(false);
+                      setOverlayOpen(false);
+                    }}
+                  >
                     <motion.div
                       initial={{
                         y: isTopRight ? -10 : 10, // Slight directional entry (up or down)
@@ -436,7 +420,9 @@ const Dropdown: React.FC<DropdownProps> = ({
                         {content}
                       </div>
                     </motion.div>
-                  ) : (
+                  </motion.div>
+                ) : (
+                  <>
                     <motion.div
                       initial={{ y: "100%", opacity: 0 }}
                       animate={{
@@ -603,11 +589,36 @@ const Dropdown: React.FC<DropdownProps> = ({
                         </div>
                       )}
                     </motion.div>
-                  )}
-                </>
-              )}
-            </AnimatePresence>
-          </>,
+
+                    <AnimatePresence>
+                      {overlayOpen && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{
+                            duration: 0.2,
+                            ease: "easeInOut",
+                          }}
+                          data-form-element="true"
+                          className={`fixed inset-0 z-[60] ${
+                            screenWidth <= 768 &&
+                            mobileBottomSheet &&
+                            "bg-black bg-opacity-60"
+                          }`}
+                          onClick={(ev) => {
+                            ev.stopPropagation();
+                            setIsOpen(false);
+                            setOverlayOpen(false);
+                          }}
+                        />
+                      )}
+                    </AnimatePresence>
+                  </>
+                )}
+              </>
+            )}
+          </AnimatePresence>,
           portalContainer
         )}
     </div>

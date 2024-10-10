@@ -47,11 +47,15 @@ const LeaveConfirm = ({
       console.error(projectError);
     }
 
+   if(project){
     createActivityLog({
       actor_id: profile.id,
       action: ActivityAction.LEAVED_PROJECT,
-      entity_id: id,
-      entity_type: EntityType.PROJECT,
+      entity: {
+        id,
+        type: EntityType.PROJECT,
+        name: project.name
+      },
       metadata: {
         old_data: {
           profile,
@@ -59,6 +63,24 @@ const LeaveConfirm = ({
         },
       },
     });
+   }
+   else if(page) {
+    createActivityLog({
+      actor_id: profile.id,
+      action: ActivityAction.LEAVED_PAGE,
+      entity: {
+        id,
+        type: EntityType.PAGE,
+        name: page.title
+      },
+      metadata: {
+        old_data: {
+          profile,
+          page,
+        },
+      },
+    });
+   }
   };
 
   return (

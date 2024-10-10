@@ -12,9 +12,21 @@ import useScreen from "@/hooks/useScreen";
 import { usePathname, useRouter } from "next/navigation";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { AnimatePresence, motion } from "framer-motion";
+import { ProfileType } from "@/types/user";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+
+interface ThreadWithProfile extends ThreadType {
+  profiles: {
+    id: ProfileType["id"];
+    avatar_url: ProfileType["avatar_url"];
+    full_name: ProfileType["full_name"];
+    email: ProfileType["email"];
+  };
+}
 
 const ThreadSidebar = ({ channel_slug }: { channel_slug: string }) => {
-  const { threads } = useChannelDetails(channel_slug);
+  const { threads, isLoading } = useChannelDetails(channel_slug);
   const { channels, teams } = useSidebarDataProvider();
   const { screenWidth } = useScreen();
   const router = useRouter();
@@ -144,7 +156,32 @@ const ThreadSidebar = ({ channel_slug }: { channel_slug: string }) => {
           )}
         </div>
 
-        {threads.length > 0 ? (
+        {isLoading ? (
+          <div>
+            <div className="flex items-center justify-between border-b border-text-100 p-2 px-4">
+              <h2 className="font-semibold">
+                <Skeleton width={100} height={20} />
+              </h2>
+
+              <div className="px-2 py-1">
+                <Skeleton width={100} height={20} />
+              </div>
+            </div>
+
+            <div>
+              {Array.from({ length: 10 }).map((_, index) => (
+                <div key={index} className="flex items-center p-4 gap-3">
+                  <div className="w-9 h-9 min-w-9 min-h-9 rounded-lg object-cover">
+                    <Skeleton className="w-full h-full" />
+                  </div>
+                  <div className="flex-1">
+                    <Skeleton className="w-full h-4" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : threads.length > 0 ? (
           <div>
             <div className="flex items-center justify-between border-b border-text-100 p-2 px-4">
               <h2 className="font-semibold">Threads</h2>
@@ -171,7 +208,7 @@ const ThreadSidebar = ({ channel_slug }: { channel_slug: string }) => {
                 <div key={thread.id}>
                   <ThreadCard
                     channel_slug={channel_slug}
-                    thread={thread as ThreadType}
+                    thread={thread as ThreadWithProfile}
                   />
                 </div>
               ))}
@@ -192,7 +229,17 @@ const ThreadSidebar = ({ channel_slug }: { channel_slug: string }) => {
               <p className="text-sm text-text-600 pb-4">
                 Every discussion is a thread
               </p>
-              <Link href={`/app/ch/${channel_slug}/th/new`}>
+              <Link
+                onClick={(ev) => {
+                  ev.preventDefault();
+                  window.history.pushState(
+                    null,
+                    "",
+                    `/app/ch/${channel_slug}/th/new`
+                  );
+                }}
+                href={`/app/ch/${channel_slug}/th/new`}
+              >
                 <Button>
                   <Edit size={16} strokeWidth={2} />
                   Create Thread

@@ -40,7 +40,7 @@ const moreMenuItems: {
   onClick?: () => void;
 }[] = [{ id: 1, icon: Inbox, text: "Inbox", path: "/app/inbox" }];
 
-const MobileHomePage = () => {
+const MobileHome = () => {
   const { screenWidth } = useScreen();
   const sidebarWidth = screenWidth;
 
@@ -50,6 +50,7 @@ const MobileHomePage = () => {
   const [showWorkspaces, setShowWorkspaces] = useState(true);
 
   const pathname = usePathname();
+  const router = useRouter()
 
   if (screenWidth > 768) {
     return null;
@@ -82,6 +83,7 @@ const MobileHomePage = () => {
               </button>
 
               <button
+              onClick={() => router.push('/app/notifications')}
                 className={`text-text-700 hover:bg-primary-50 rounded-lg transition-colors duration-150 z-10 w-8 h-8 flex items-center justify-center `}
               >
                 <Bell strokeWidth={1.5} width={20} />
@@ -248,4 +250,4 @@ const MobileHomePage = () => {
   );
 };
 
-export default MobileHomePage;
+export default MobileHome;

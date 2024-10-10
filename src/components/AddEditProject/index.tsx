@@ -139,7 +139,6 @@ const AddEditProject = ({
         ...prevData,
         [field]: value,
       }));
-
     },
     []
   );
@@ -208,8 +207,11 @@ const AddEditProject = ({
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.UPDATED_PROJECT,
-        entity_type: EntityType.PROJECT,
-        entity_id: project.id,
+        entity: {
+          type: EntityType.PROJECT,
+          id: project.id,
+          name: project.name,
+        },
         metadata: {
           old_data: project,
           new_data: data,
@@ -246,8 +248,11 @@ const AddEditProject = ({
         createActivityLog({
           actor_id: profile.id,
           action: ActivityAction.UPDATED_PROJECT,
-          entity_type: EntityType.PROJECT,
-          entity_id: project.id,
+          entity: {
+            type: EntityType.PROJECT,
+            id: project.id,
+            name: project.name
+          },
           metadata: {
             old_data: initialProjectMembersData,
             new_data: projectMembersData,
@@ -278,8 +283,11 @@ const AddEditProject = ({
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.CREATED_PROJECT,
-        entity_type: EntityType.PROJECT,
-        entity_id: data.project_id,
+        entity: {
+          type: EntityType.PROJECT,
+          id: data.project_id,
+          name: projectData.name
+        },
         metadata: {},
       });
 
@@ -363,8 +371,11 @@ const AddEditProject = ({
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.CREATED_PROJECT,
-        entity_type: EntityType.PROJECT,
-        entity_id: data.project_id,
+        entity: {
+          type: EntityType.PROJECT,
+          id: data.project_id,
+          name: projectData.name
+        },
         metadata: {},
       });
 

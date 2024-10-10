@@ -57,16 +57,22 @@ const useCheckClick = ({
           createActivityLog({
             actor_id: profile.id,
             action: ActivityAction.REOPENED_TASK,
-            entity_id: task.id,
-            entity_type: EntityType.TASK,
+            entity: {
+              id: task.id,
+              type: EntityType.TASK,
+              name: task.title
+            },
             metadata: {},
           });
         } else {
           createActivityLog({
             actor_id: profile.id,
             action: ActivityAction.COMPLETED_TASK,
-            entity_id: task.id,
-            entity_type: EntityType.TASK,
+            entity: {
+              id: task.id,
+              type: EntityType.TASK,
+              name: task.title
+            },
             metadata: {},
           });
         }
@@ -93,16 +99,22 @@ const useCheckClick = ({
           createActivityLog({
             actor_id: profile.id,
             action: ActivityAction.REOPENED_TASK,
-            entity_id: task.id,
-            entity_type: EntityType.TASK,
+            entity: {
+              id: task.id,
+              type: EntityType.TASK,
+              name: task.title
+            },
             metadata: {},
           });
         } else {
           createActivityLog({
             actor_id: profile.id,
             action: ActivityAction.COMPLETED_TASK,
-            entity_id: task.id,
-            entity_type: EntityType.TASK,
+            entity: {
+              id: task.id,
+              type: EntityType.TASK,
+              name: task.title
+            },
             metadata: {},
           });
         }

@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import LayoutWrapper from "../../components/LayoutWrapper";
 import Image from "next/image";
 import { ViewTypes } from "@/types/viewTypes";
 import ListViewForToday from "@/components/TaskViewSwitcher/ListViewForToday";
@@ -12,19 +11,29 @@ import { CalendarCheck, CalendarDays } from "lucide-react";
 import { motion } from "framer-motion";
 import { fetchTodayUpcomingTasks } from "@/utils/fetchTodayUpcomingTasks";
 import useScreen from "@/hooks/useScreen";
-import MobileHome from "@/components/MobileHome";
+import LayoutWrapper from "@/components/LayoutWrapper";
+import { redirect } from "next/navigation";
 
 const TabsComponent = ({
   tabs,
   setTabs,
+  hoverItem,
+  setHoverItem,
 }: {
   tabs: "today" | "upcoming";
-  setTabs: React.Dispatch<React.SetStateAction<"today" | "upcoming">>;
+  setTabs: (tab: "today" | "upcoming") => void;
+  hoverItem: string | null;
+  setHoverItem: (item: string | null) => void;
 }) => {
   return (
     <ul className="flex items-center gap-1 relative">
       {["today", "upcoming"].map((tab) => (
-        <li key={tab} className="relative">
+        <li
+          key={tab}
+          className="relative"
+          onMouseEnter={() => setHoverItem(tab)}
+          onMouseLeave={() => setHoverItem(null)}
+        >
           <button
             className={`flex items-center justify-center gap-1 rounded-lg cursor-pointer flex-1 transition px-2 p-1 hover:bg-text-100 hover:text-primary-500 ${
               tabs === tab ? "text-primary-500" : "text-text-500"
@@ -39,7 +48,7 @@ const TabsComponent = ({
             <span className="capitalize">{tab}</span>
           </button>
 
-          {tabs === tab && (
+          {(hoverItem === tab || tabs === tab) && (
             <motion.span
               layoutId="activeIndicator"
               className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-500"
@@ -63,6 +72,7 @@ const MyTasksPage = () => {
   const [todayTasks, setTodayTasks] = useState<TaskType[]>([]);
   const [upcomingTasks, setUpcomingTasks] = useState<TaskType[]>([]);
   const { profile } = useAuthProvider();
+  const [hoverItem, setHoverItem] = useState<string | null>(null);
 
   const { screenWidth } = useScreen();
 
@@ -97,23 +107,28 @@ const MyTasksPage = () => {
     }
   };
 
-  return screenWidth > 768 ? (
+  if (screenWidth > 768) {
+    redirect("/app");
+  }
+
+  return (
     <LayoutWrapper
       headline="My Tasks"
       view={view}
       setView={setView}
       hideCalendarView
     >
-      <div
-        className={`flex items-center justify-between gap-8 px-4 md:px-8 ${
-          view !== "List" && "border-b border-text-100"
-        }`}
-      >
+      <div className="flex items-center justify-between gap-8 px-4 md:px-8 border-b border-text-100">
         {view && setView && screenWidth > 768 && (
           <LayoutView view={view} setView={setView} />
         )}
 
-        <TabsComponent tabs={tabs} setTabs={setTabs} />
+        <TabsComponent
+          tabs={tabs}
+          setTabs={setTabs}
+          hoverItem={hoverItem}
+          setHoverItem={setHoverItem}
+        />
       </div>
 
       {renderTaskViewSwitcher()}
@@ -137,8 +152,6 @@ const MyTasksPage = () => {
         </div>
       )}
     </LayoutWrapper>
-  ) : (
-    <MobileHome />
   );
 };
 

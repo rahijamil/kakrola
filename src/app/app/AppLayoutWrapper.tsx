@@ -12,13 +12,13 @@ const AppLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   const { loading } = useAuthProvider();
   const pathname = usePathname();
 
-  const { isCollapsed, ...sidebarProps } = useSidebarCollapse();
+  const { isCollapsed, sidebarWidth, ...sidebarProps } = useSidebarCollapse();
 
   if (!loading) {
     return (
       <main className="fixed inset-0 flex h-full bg-primary-10">
         {pathname.startsWith("/app/onboard") ? null : (
-          <SidebarWrapper props={{ isCollapsed, ...sidebarProps }} />
+          <SidebarWrapper props={{ isCollapsed, sidebarWidth, ...sidebarProps }} />
         )}
         <MainContent isCollapsed={isCollapsed}>{children}</MainContent>
         <SettingsModal />

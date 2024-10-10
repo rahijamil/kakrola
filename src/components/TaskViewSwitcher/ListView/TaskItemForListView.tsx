@@ -17,6 +17,8 @@ import LabelSelector from "@/components/AddTask/LabelSelector";
 import { useAuthProvider } from "@/context/AuthContext";
 import {
   ActivityAction,
+  ActivityLogType,
+  ActivityWithProfile,
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
@@ -29,6 +31,9 @@ import {
   RelatedEntityTypeEnum,
 } from "@/types/notification";
 import { createNotification } from "@/types/notification";
+import { usePathname, useSearchParams } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
+import { useQueryClient } from "@tanstack/react-query";
 
 const TaskItemForListView = ({
   task,
@@ -104,8 +109,11 @@ const TaskItemForListView = ({
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.DELETED_TASK,
-        entity_id: task.id,
-        entity_type: EntityType.TASK,
+        entity: {
+          id: task.id,
+          type: EntityType.TASK,
+          name: task.title,
+        },
         metadata: {
           old_data: task,
         },
@@ -127,8 +135,11 @@ const TaskItemForListView = ({
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.DELETED_TASK,
-        entity_id: task.id,
-        entity_type: EntityType.TASK,
+        entity: {
+          id: task.id,
+          type: EntityType.TASK,
+          name: task.title,
+        },
         metadata: {
           old_data: task,
         },
@@ -139,21 +150,51 @@ const TaskItemForListView = ({
   const [editTaskId, setEditTaskId] = useState<TaskType["id"] | null>(null);
 
   const [editTaskTitle, setEditTaskTitle] = useState(false);
+  const queryClient = useQueryClient();
 
   const handleUpdateTaskTitle = () => {
     setEditTaskTitle(false);
   };
 
-  const logActivity = (oldData?: any, newData?: any) => {
+  const logActivity = (
+    action: ActivityAction,
+    oldData?: any,
+    newData?: any
+  ) => {
     if (!profile?.id) return;
 
-    createActivityLog({
+    const newLog: ActivityLogType = {
+      id: uuidv4(),
       actor_id: profile.id,
-      action: ActivityAction.UPDATED_TASK,
-      entity_id: taskData.id,
-      entity_type: EntityType.TASK,
+      action,
+      entity: {
+        id: task.id,
+        type: EntityType.TASK,
+        name: task.title,
+      },
+      created_at: new Date().toISOString(),
       metadata: { old_data: oldData, new_data: newData },
-    });
+    };
+
+    queryClient.setQueryData(
+      ["task_activities", task.id],
+      (oldLogs: ActivityWithProfile[]) => [
+        ...oldLogs,
+        {
+          ...newLog,
+          actor: {
+            id: profile.id,
+            full_name: profile.full_name,
+            avatar_url: profile.avatar_url,
+            email: profile.email,
+          },
+        },
+      ]
+    );
+
+    const { id, created_at, ...restLog } = newLog;
+
+    createActivityLog(restLog);
   };
 
   useEffect(() => {
@@ -168,12 +209,23 @@ const TaskItemForListView = ({
           if (!canEdit) return;
         }
 
-        setTasks(tasks.map((t) => (t.id === taskData.id ? taskData : t)));
+        setTasks(tasks.map((t) => (t.id === task.id ? taskData : t)));
 
         if (
           taskData.assignees.flatMap((a) => a.id).join(",") !==
           task.assignees.flatMap((a) => a.id).join(",")
         ) {
+          const oldAssignees = task.assignees.map((a) => a.id);
+          const newAssignees = taskData.assignees.map((a) => a.id);
+
+          // Find added and removed assignees
+          const addedAssignees = taskData.assignees.filter(
+            (a) => !oldAssignees.includes(a.id)
+          );
+          const removedAssignees = task.assignees.filter(
+            (a) => !newAssignees.includes(a.id)
+          );
+
           const { data, error } = await supabaseBrowser
             .from("tasks")
             .update({
@@ -185,31 +237,23 @@ const TaskItemForListView = ({
             throw error;
           }
 
-          logActivity(
-            {
-              assignees: taskData.assignees,
-            },
-            {
-              assignees: taskData.assignees,
-            }
-          );
+          // Log activity for added assignees
+          if (addedAssignees.length > 0) {
+            logActivity(
+              ActivityAction.ASSIGNED_TASK,
+              { assignees: task.assignees },
+              { assignees: addedAssignees }
+            );
+          }
 
-          createNotification({
-            type: NotificationTypeEnum.ASSIGNMENT,
-            recipients: taskData.assignees.map((a) => a.profile_id),
-            triggered_by: {
-              id: profile.id,
-              first_name: profile.full_name,
-              avatar_url: profile.avatar_url,
-            },
-            related_entity_type: RelatedEntityTypeEnum.TASK,
-            redirect_url: `/app/project/${project?.slug}`,
-            api_url: null,
-            data: {
-              assigner: profile.full_name,
-              entityName: taskData.title,
-            },
-          });
+          // Log activity for removed assignees
+          if (removedAssignees.length > 0) {
+            logActivity(
+              ActivityAction.UNASSIGNED_TASK,
+              { assignees: task.assignees },
+              { assignees: removedAssignees }
+            );
+          }
         }
 
         if (
@@ -230,24 +274,10 @@ const TaskItemForListView = ({
             throw error;
           }
 
-          createActivityLog({
-            actor_id: profile.id,
-            action: ActivityAction.UPDATED_TASK,
-            entity_id: taskData.id,
-            entity_type: EntityType.TASK,
-            metadata: {
-              old_data: {
-                dates: taskData.dates,
-              },
-              new_data: {
-                dates: taskData.dates,
-              },
-            },
-          });
-
           logActivity(
+            ActivityAction.UPDATED_TASK_DATES,
             {
-              dates: taskData.dates,
+              dates: task.dates,
             },
             {
               dates: taskData.dates,
@@ -268,8 +298,9 @@ const TaskItemForListView = ({
           }
 
           logActivity(
+            ActivityAction.UPDATED_TASK_PRIORITY,
             {
-              priority: taskData.priority,
+              priority: task.priority,
             },
             {
               priority: taskData.priority,
@@ -292,14 +323,34 @@ const TaskItemForListView = ({
             throw error;
           }
 
-          logActivity(
-            {
-              task_labels: taskData.task_labels,
-            },
-            {
-              task_labels: taskData.task_labels,
-            }
+          const oldLabels = task.task_labels.map((l) => l.id);
+          const newLabels = taskData.task_labels.map((l) => l.id);
+
+          // Find added and removed labels
+          const addedLabels = taskData.task_labels.filter(
+            (l) => !oldLabels.includes(l.id)
           );
+          const removedLabels = task.task_labels.filter(
+            (l) => !newLabels.includes(l.id)
+          );
+
+          // Log activity for added labels
+          if (addedLabels.length > 0) {
+            logActivity(
+              ActivityAction.ADDED_TASK_LABELS,
+              { task_labels: task.task_labels },
+              { task_labels: addedLabels }
+            );
+          }
+
+          // Log activity for removed assignees
+          if (removedLabels.length > 0) {
+            logActivity(
+              ActivityAction.REMOVED_TASK_LABELS,
+              { task_labels: task.task_labels },
+              { task_labels: removedLabels }
+            );
+          }
         }
       } catch (error) {
         console.error(`Error updating task: ${error}`);
@@ -307,7 +358,13 @@ const TaskItemForListView = ({
     };
 
     updateTask();
-  }, [taskData.assignees, taskData.dates, taskData.priority, task.id]);
+  }, [
+    taskData.assignees,
+    taskData.dates,
+    taskData.priority,
+    taskData.task_labels,
+    task.id,
+  ]);
 
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [style, setStyle] = useState({
@@ -316,6 +373,15 @@ const TaskItemForListView = ({
   });
 
   const triggerRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const searchTask = searchParams.get("task");
+
+  useEffect(() => {
+    if (searchTask && setShowModal) {
+      setShowModal(searchTask);
+    }
+  }, [searchTask]);
 
   return (
     <div className="w-full">
@@ -364,7 +430,9 @@ const TaskItemForListView = ({
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
-              className={`group border-b border-text-100 cursor-pointer flex items-center justify-between h-10 ring-1 divide-x divide-text-200 relative ${snapshot.isDragging && "border-t"} ${
+              className={`group border-b border-text-100 cursor-pointer flex items-center justify-between h-10 ring-1 divide-x divide-text-200 relative ${
+                snapshot.isDragging && "border-t"
+              } ${
                 showModal === task.id.toString()
                   ? "ring-primary-300 bg-primary-10"
                   : "ring-transparent bg-background"
@@ -413,7 +481,7 @@ const TaskItemForListView = ({
                                 title: ev.target.value,
                               })
                             }
-                            className="outline-none w-full bg-surface rounded-lg px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 h-7"
+                            className="outline-none w-full bg-background rounded-lg px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 h-7"
                             onKeyDown={(ev) => {
                               if (ev.key === "Enter") {
                                 handleUpdateTaskTitle();
@@ -444,9 +512,14 @@ const TaskItemForListView = ({
 
                   <div className="pr-1">
                     <button
-                      onClick={() =>
-                        setShowModal && setShowModal(task.id.toString())
-                      }
+                      onClick={() => {
+                        setShowModal && setShowModal(task.id.toString());
+                        window.history.pushState(
+                          null,
+                          "",
+                          `${pathname}?task=${task.id}`
+                        );
+                      }}
                       className={`px-2 py-1 transition rounded-lg hover:bg-text-100 items-center gap-1 text-text-500 ${
                         !editTaskTitle ? "hidden group-hover:flex" : "flex"
                       }`}
@@ -533,7 +606,10 @@ const TaskItemForListView = ({
           subTasks={subTasks}
           setTasks={setTasks}
           tasks={tasks}
-          onClose={() => setShowModal(null)}
+          onClose={() => {
+            setShowModal(null);
+            window.history.pushState(null, "", pathname);
+          }}
           onCheckClick={handleCheckClickDebounced}
           project={project}
         />

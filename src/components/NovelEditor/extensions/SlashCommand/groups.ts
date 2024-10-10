@@ -47,7 +47,7 @@ export const GROUPS: Group[] = [
           editor.chain().focus().setHeading({ level: 1 }).run();
         },
         shouldBeHidden: (editor) =>
-          document.querySelector(".reply-editor") ? true : false,
+          document.querySelector(".hide-some-command") ? true : false,
       },
       {
         name: "heading2",
@@ -59,7 +59,7 @@ export const GROUPS: Group[] = [
           editor.chain().focus().setHeading({ level: 2 }).run();
         },
         shouldBeHidden: (editor) =>
-          document.querySelector(".reply-editor") ? true : false,
+          document.querySelector(".hide-some-command") ? true : false,
       },
       {
         name: "heading3",
@@ -71,7 +71,7 @@ export const GROUPS: Group[] = [
           editor.chain().focus().setHeading({ level: 3 }).run();
         },
         shouldBeHidden: (editor) =>
-          document.querySelector(".reply-editor") ? true : false,
+          document.querySelector(".hide-some-command") ? true : false,
       },
       {
         name: "bulletList",
@@ -196,7 +196,7 @@ export const GROUPS: Group[] = [
         description: "Show an outline of your page.",
         shouldBeHidden: (editor) =>
           editor.isActive("columns") ||
-          (document.querySelector(".reply-editor") ? true : false),
+          (document.querySelector(".hide-some-command") ? true : false),
         action: (editor) => {
           editor.chain().focus().insertTableOfContents().run();
         },

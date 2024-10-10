@@ -5,7 +5,10 @@ import {
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
-import { PersonalMemberForPageType, PersonalMemberForProjectType } from "@/types/team";
+import {
+  PersonalMemberForPageType,
+  PersonalMemberForProjectType,
+} from "@/types/team";
 import { supabaseBrowser } from "@/utils/supabase/client";
 
 const useFavorite = ({
@@ -35,7 +38,9 @@ const useFavorite = ({
       return;
     }
 
-    const updateProjectMemberSettings: PersonalMemberForProjectType | PersonalMemberForPageType = {
+    const updateProjectMemberSettings:
+      | PersonalMemberForProjectType
+      | PersonalMemberForPageType = {
       ...currentProjectMemberSettings,
       settings: {
         ...currentProjectMemberSettings.settings,
@@ -68,19 +73,6 @@ const useFavorite = ({
     if (error) {
       console.error("Error updating user project settings:", error);
     }
-
-    createActivityLog({
-      actor_id: profile.id,
-      action: ActivityAction.UPDATED_PROJECT,
-      entity_id: column_value,
-      entity_type: EntityType.PROJECT,
-      metadata: {
-        old_data: currentProjectMemberSettings,
-        new_data: {
-          ...updateProjectMemberSettings,
-        },
-      },
-    });
   };
 
   return {

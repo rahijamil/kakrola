@@ -7,7 +7,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import moment from "moment";
 import useScreen from "@/hooks/useScreen";
-import { DmContactType, DmType } from "@/types/channel";
+import { DmContactType } from "@/types/channel";
 import { AnimatePresence, motion } from "framer-motion";
 
 interface DmSidebarProps {
@@ -15,6 +15,7 @@ interface DmSidebarProps {
   setActiveContact: (contact: DmContactType | null) => void;
   dmContacts: DmContactType[];
   isLoadingContacts: boolean;
+  forDropdown?: boolean;
 }
 
 const DmSidebar: React.FC<DmSidebarProps> = ({
@@ -22,6 +23,7 @@ const DmSidebar: React.FC<DmSidebarProps> = ({
   setActiveContact,
   dmContacts,
   isLoadingContacts,
+  forDropdown,
 }) => {
   const { screenWidth } = useScreen();
 
@@ -182,11 +184,17 @@ const DmSidebar: React.FC<DmSidebarProps> = ({
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeInOut", type: "spring" }}
-          className={`flex-1 md:flex-none min-w-full md:min-w-[25%] md:w-1/4 max-w-[400px] md:border-r border-text-100 shadow-[inset_-1rem_0_1rem_-1rem_rgba(0,0,0,0.1),inset_1rem_0_1rem_-1rem_rgba(0,0,0,0.1)]`}
+          className={`flex-1 md:flex-none min-w-full ${
+            !forDropdown && "md:min-w-[25%] md:border-r "
+          } md:w-1/4 max-w-[400px] border-text-100 shadow-[inset_-1rem_0_1rem_-1rem_rgba(0,0,0,0.1),inset_1rem_0_1rem_-1rem_rgba(0,0,0,0.1)]`}
         >
-          <div className="flex items-center justify-between border-b border-text-100 p-4 h-[53px]">
+          {
+            !forDropdown && (
+              <div className="flex items-center justify-between border-b border-text-100 p-4 h-[53px]">
             <h2 className="font-semibold">Direct Messages</h2>
           </div>
+            )
+          }
 
           {screenWidth <= 768 && (
             <>
@@ -239,7 +247,11 @@ const DmSidebar: React.FC<DmSidebarProps> = ({
             </>
           )}
 
-          <div className="h-[calc(100vh-5rem)] overflow-y-auto">
+          <div
+            className={`${
+              !forDropdown ? "h-[calc(100vh-5rem)]" : "h-[500px]"
+            } overflow-y-auto`}
+          >
             {sidebarLoading || isLoadingContacts
               ? Array.from({ length: 10 }).map((_, index) => (
                   <div key={index} className="flex items-center p-4 gap-3">

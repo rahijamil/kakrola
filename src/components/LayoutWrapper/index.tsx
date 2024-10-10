@@ -104,8 +104,11 @@ const LayoutWrapper = ({
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.UPDATED_PROJECT,
-        entity_type: EntityType.PROJECT,
-        entity_id: project.id,
+        entity: {
+          id: project.id,
+          type: EntityType.PROJECT,
+          name: project.name,
+        },
         metadata: {
           old_data: project,
           new_data: { ...project, name: projectTitle.trim() },
@@ -175,9 +178,7 @@ const LayoutWrapper = ({
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
-        <div
-          className={`${view == "Calendar" && "flex overflow-x-hidden"} h-full`}
-        >
+        <div className="flex">
           <div
             className={`flex flex-col h-full w-full flex-1 transition-all duration-300`}
           >
@@ -303,7 +304,7 @@ const LayoutWrapper = ({
                           hideCalendarView={hideCalendarView}
                           setTasks={setTasks}
                           tasks={tasks}
-                           triggerRef={triggerRef}
+                          triggerRef={triggerRef}
                         />
                       </li>
                     )}

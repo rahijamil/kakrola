@@ -1,16 +1,17 @@
-import React, { useState, useRef, useEffect } from "react";
-import hljs from "highlight.js";
-import ReactQuill, { Quill } from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import "highlight.js/styles/github.css";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  MutableRefObject,
+  useMemo,
+} from "react";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
-import useAssignee from "@/hooks/useAssignee";
 import { TaskType } from "@/types/project";
 import { ProfileType } from "@/types/user";
 import { useAuthProvider } from "@/context/AuthContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import { CommentType } from "@/types/comment";
+import { TaskCommentType } from "@/types/comment";
 import {
   ActivityAction,
   createActivityLog,
@@ -18,83 +19,28 @@ import {
 } from "@/types/activitylog";
 import Spinner from "../ui/Spinner";
 import { useRole } from "@/context/RoleContext";
-
-const icons = Quill.import("ui/icons");
-// Link icons
-icons[
-  "link"
-] = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
-
-// Image icons
-icons[
-  "image"
-] = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>`;
-
-// Video icons
-icons[
-  "video"
-] = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-play"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>`;
-
-// Blockquote icons
-icons[
-  "blockquote"
-] = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-quote"><path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/><path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/></svg>`;
-
-// Code icons
-icons[
-  "code"
-] = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-code"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`;
-
-// Code Block icons
-icons[
-  "code-block"
-] = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-code"><path d="M10 9.5 8 12l2 2.5"/><path d="m14 9.5 2 2.5-2 2.5"/><rect width="18" height="18" x="3" y="3" rx="2"/></svg>`;
-
-const modules = {
-  toolbar: [
-    [{ header: "1" }, { header: "2" }],
-    [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
-    ["bold", "italic", "underline", "strike"],
-    ["link", "image", "video"],
-    [{ align: [] }],
-    ["blockquote", "code", "code-block"],
-    ["clean"], // remove formatting button
-  ],
-  syntax: {
-    highlight: (text: string) => hljs.highlightAuto(text).value,
-  },
-};
-
-const formats = [
-  "header",
-  "list",
-  "bold",
-  "italic",
-  "underline",
-  "strike",
-  "link",
-  "image",
-  "video",
-  "align",
-  "blockquote",
-  "code",
-  "code-block",
-];
+import NovelEditor from "../NovelEditor";
+import { v4 as uuidv4 } from "uuid";
+import { useQueryClient } from "@tanstack/react-query";
+import { PersonalMemberForProjectType } from "@/types/team";
 
 const MentionInput = ({
   content,
   setContent,
   assigneeProfiles,
+  editorRef,
 }: {
-  content: string;
-  setContent: React.Dispatch<React.SetStateAction<string>>;
+  content: string | null;
+  setContent: React.Dispatch<React.SetStateAction<string | null>>;
   assigneeProfiles: ProfileType[];
+  editorRef: MutableRefObject<HTMLDivElement | null>;
 }) => {
   const [mentionQuery, setMentionQuery] = useState<string | null>(null);
   const [filteredProfiles, setFilteredProfiles] = useState<ProfileType[]>([]);
   const [showMentionList, setShowMentionList] = useState<boolean>(false);
 
-  const quillRef = useRef<any>(null);
+  const [charsCount, setCharsCount] = useState(0);
+  const ProseMirror = (editorRef.current as any)?.querySelector(".ProseMirror");
 
   // Extract text content from HTML content
   const getTextContent = (htmlContent: string) => {
@@ -102,12 +48,6 @@ const MentionInput = ({
     tempElement.innerHTML = htmlContent;
     return tempElement.innerText;
   };
-
-  useEffect(() => {
-    if (quillRef.current) {
-      console.log(quillRef.current.editor.root.focus());
-    }
-  }, []);
 
   useEffect(() => {
     if (mentionQuery) {
@@ -144,24 +84,23 @@ const MentionInput = ({
   };
 
   const handleMentionClick = (profile: ProfileType) => {
-    const newContent = content.replace(/@\w*$/, `@${profile.full_name} `);
-    setContent(newContent);
+    const newContent = content?.replace(/@\w*$/, `@${profile.full_name} `);
+    setContent(newContent || null);
     setMentionQuery(null);
     setShowMentionList(false);
   };
 
   return (
     <div className="relative">
-      <ReactQuill
-        ref={quillRef}
-        theme="snow"
-        modules={modules}
-        value={content}
-        onChange={handleEditorChange}
-        formats={formats}
-        placeholder="Write a comment..."
-        className="custom-quill-editor bg-background"
-      />
+      <div className="comment-editor hide-some-command relative rounded-lg transition cursor-text border border-text-200 focus-within:border-text-300 focus-within:shadow bg-background">
+        <NovelEditor
+          editorRef={editorRef}
+          content={content ? JSON.parse(content) : null}
+          handleSave={(saveContent) => setContent(JSON.stringify(saveContent))}
+          setCharsCount={setCharsCount}
+          hideContentItemMenu
+        />
+      </div>
 
       {showMentionList && filteredProfiles.length > 0 && (
         <ul className="absolute bg-background border border-text-100 shadow-md mb-2 max-h-40 overflow-y-auto w-full z-10 rounded-lg bottom-full">
@@ -190,6 +129,19 @@ const MentionInput = ({
   );
 };
 
+interface CommentWithProfile extends TaskCommentType {
+  profiles: {
+    id: ProfileType["id"];
+    avatar_url: ProfileType["avatar_url"];
+    full_name: ProfileType["full_name"];
+    email: ProfileType["email"];
+  };
+}
+
+interface MemberData extends PersonalMemberForProjectType {
+  profile: ProfileType;
+}
+
 const AddComentForm = ({
   onCancelClick,
   task,
@@ -197,13 +149,13 @@ const AddComentForm = ({
   onCancelClick?: () => void;
   task: TaskType;
 }) => {
-  const { assigneeProfiles } = useAssignee({
-    project_id: task.project_id,
-  });
   const { profile } = useAuthProvider();
 
-  const [content, setContent] = useState<string>("");
+  const [content, setContent] = useState<string | null>(null);
   const [isCommenting, setIsCommenting] = useState<boolean>(false);
+  const queryClient = useQueryClient();
+  const editorRef = useRef<HTMLDivElement>(null);
+  const ProseMirror = (editorRef.current as any)?.querySelector(".ProseMirror");
 
   const handleComment = async () => {
     if (!content || !profile) return;
@@ -211,37 +163,82 @@ const AddComentForm = ({
     setIsCommenting(true);
 
     try {
-      const commentData: Omit<CommentType, "id"> = {
+      const tempId = uuidv4();
+      const createdAt = new Date().toISOString();
+      const commentData: Omit<TaskCommentType, "id"> = {
         task_id: task.id,
-        author_id: profile.id,
+        profile_id: profile.id,
         content,
-        mentions: [],
         parent_comment_id: null,
-        reactions: [],
         is_edited: false,
       };
 
+      queryClient.setQueryData(
+        ["task_comments", task.id],
+        (oldData: CommentWithProfile[]) => [
+          ...oldData,
+          {
+            ...commentData,
+            id: tempId,
+            created_at: createdAt,
+            profiles: {
+              id: profile.id,
+              avatar_url: profile.avatar_url,
+              full_name: profile.full_name,
+              email: profile.email,
+            },
+          },
+        ]
+      );
+
+      ProseMirror.innerHTML = `<p data-placeholder="Press '/' for commands" class="is-empty is-editor-empty"><br class="ProseMirror-trailingBreak"></p>`;
+
       const { data, error } = await supabaseBrowser
-        .from("comments")
+        .from("task_comments")
         .insert(commentData)
         .select()
         .single();
 
       if (error) throw error;
 
-      createActivityLog({
-        actor_id: profile.id,
-        action: ActivityAction.ADDED_COMMENT,
-        entity_id: data.id,
-        entity_type: EntityType.COMMENT,
-        metadata: {},
-      });
+      queryClient.setQueryData(
+        ["task_comments", task.id],
+        (oldData: CommentWithProfile[]) =>
+          oldData.map((item) =>
+            item.id == tempId
+              ? {
+                  ...item,
+                  id: data.id,
+                  created_at: data.created_at,
+                }
+              : item
+          )
+      );
+
+      // createActivityLog({
+      //   actor_id: profile.id,
+      //   action: ActivityAction.ADDED_COMMENT,
+      //   entity_id: data.id,
+      //   entity_type: EntityType.COMMENT,
+      //   metadata: {},
+      // });
     } catch (error) {
-      console.error(`Error adding comment: ${error}`);
+      console.error(`Error adding comment: `, error);
     } finally {
       setIsCommenting(false);
     }
   };
+
+  const assignees: MemberData[] =
+    queryClient.getQueryData(["membersData", task.project_id, undefined]) || [];
+
+  const assigneeProfiles = useMemo(() => {
+    if (assignees) {
+      return assignees.map((item) => item.profile);
+    } else {
+      return [];
+    }
+  }, [assignees]);
 
   return (
     <motion.div
@@ -280,6 +277,7 @@ const AddComentForm = ({
       <MentionInput
         content={content}
         setContent={setContent}
+        editorRef={editorRef}
         assigneeProfiles={assigneeProfiles}
       />
 

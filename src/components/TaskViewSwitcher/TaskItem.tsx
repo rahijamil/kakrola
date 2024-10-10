@@ -37,7 +37,6 @@ import { useRole } from "@/context/RoleContext";
 import { canDeleteTask, canEditTask } from "@/types/hasPermission";
 import useTheme from "@/hooks/useTheme";
 import { format } from "date-fns";
-import useAssignee from "@/hooks/useAssignee";
 import Image from "next/image";
 
 const TaskItem = ({
@@ -83,14 +82,14 @@ const TaskItem = ({
   const { role } = useRole();
   const [firstImage, setFirstImage] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (task.description) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(task.description, "text/html");
-      const firstImage = doc.querySelector("img");
-      setFirstImage(firstImage?.src || null);
-    }
-  }, [task]);
+  // useEffect(() => {
+  //   if (task.description) {
+  //     const parser = new DOMParser();
+  //     const doc = parser.parseFromString(task.description, "text/html");
+  //     const firstImage = doc.querySelector("img");
+  //     setFirstImage(firstImage?.src || null);
+  //   }
+  // }, [task]);
 
   const handleTaskDelete = async () => {
     if (!profile?.id) return;
@@ -118,8 +117,11 @@ const TaskItem = ({
     createActivityLog({
       actor_id: profile.id,
       action: ActivityAction.DELETED_TASK,
-      entity_id: task.id,
-      entity_type: EntityType.TASK,
+      entity: {
+        id: task.id,
+        type: EntityType.TASK,
+        name: task.title,
+      },
       metadata: {
         old_data: task,
       },
@@ -158,8 +160,11 @@ const TaskItem = ({
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.UPDATED_TASK,
-        entity_id: task.id,
-        entity_type: EntityType.TASK,
+        entity: {
+          id: task.id,
+          type: EntityType.TASK,
+          name: task.title,
+        },
         metadata: {
           old_data: task,
           new_data: {
@@ -174,14 +179,6 @@ const TaskItem = ({
   }, 300);
 
   const [editTaskId, setEditTaskId] = useState<TaskType["id"] | null>(null);
-
-  const { assigneeProfiles } = useAssignee({
-    project_id: project?.id || task.project_id,
-  });
-
-  const getAssigneeProfileById = (profileId: string | null) => {
-    return assigneeProfiles.find((profile) => profile.id === profileId);
-  };
 
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [style, setStyle] = useState({
@@ -336,20 +333,11 @@ const TaskItem = ({
                         {task.assignees.map((assignee) => (
                           <Image
                             key={assignee.id}
-                            src={
-                              getAssigneeProfileById(assignee.profile_id)
-                                ?.avatar_url || "/default_avatar.png"
-                            }
+                            src={assignee.avatar_url || "/default_avatar.png"}
                             width={20}
                             height={20}
-                            alt={
-                              getAssigneeProfileById(assignee.profile_id)
-                                ?.full_name || "assignee"
-                            }
-                            title={
-                              getAssigneeProfileById(assignee.profile_id)
-                                ?.full_name || ""
-                            }
+                            alt={assignee.name || "assignee"}
+                            title={assignee.name}
                             className="rounded-lg object-cover max-w-5 max-h-5"
                           />
                         ))}

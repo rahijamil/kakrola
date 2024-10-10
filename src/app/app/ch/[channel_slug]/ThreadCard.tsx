@@ -7,37 +7,39 @@ import Spinner from "@/components/ui/Spinner";
 import { JSONContent } from "novel";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { getTextFromContent } from "@/lib/getTextFromContent";
 
-const getTextFromContent = (content: JSONContent): string => {
-  let text = "";
-  if (content.text) {
-    text += content.text;
-  }
-  if (content.content) {
-    content.content.forEach((element) => {
-      text += getTextFromContent(element);
-    });
-  }
-  return text;
-};
+interface ThreadWithProfile extends ThreadType {
+  profiles: {
+    id: ProfileType["id"];
+    avatar_url: ProfileType["avatar_url"];
+    full_name: ProfileType["full_name"];
+    email: ProfileType["email"];
+  };
+}
 
 const ThreadCard = ({
   thread,
   channel_slug,
 }: {
-  thread: ThreadType;
+  thread: ThreadWithProfile;
   channel_slug: string;
 }) => {
-  const [threadProfile, setThreadProfile] = useState<ProfileType | null>(null);
+  const [threadProfile, setThreadProfile] = useState<{
+    id: ProfileType["id"];
+    avatar_url: ProfileType["avatar_url"];
+    full_name: ProfileType["full_name"];
+    email: ProfileType["email"];
+  } | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
-    const fetchThreadProfile = async () => {
-      const profile = await getProfileById(thread.profile_id);
-      setThreadProfile(profile);
-    };
-    fetchThreadProfile();
-  }, [thread.profile_id]);
+    if (thread.profiles) {
+      setThreadProfile(thread.profiles);
+    } else {
+      setThreadProfile(null);
+    }
+  }, [thread.profiles]);
 
   if (!threadProfile) {
     return <Spinner color="current" size="sm" />;

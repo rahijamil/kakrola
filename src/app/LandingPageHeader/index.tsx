@@ -21,7 +21,7 @@ export default function LandingPageHeader({ forAuth }: { forAuth?: boolean }) {
 
   return (
     <header>
-      <nav className={`fixed top-0 left-0 right-0 bg-background z-30`}>
+      <nav className={`fixed top-0 left-0 right-0 bg-white z-30`}>
         <div className="wrapper">
           <div className="flex justify-between items-center h-12 md:h-16">
             <Link href="/" className="flex-shrink-0 flex items-center">
@@ -42,7 +42,7 @@ export default function LandingPageHeader({ forAuth }: { forAuth?: boolean }) {
                   <div className="hidden lg:flex items-center space-x-2">
                     <Link
                       href="/app"
-                      className="text-sm font-medium text-text-700 hover:bg-primary-50 transition px-4 py-2 rounded-lg"
+                      className="text-sm font-medium text-text-700 hover:bg-kakrola-50 transition px-4 py-2 rounded-lg"
                     >
                       Open Kakrola
                     </Link>
@@ -57,7 +57,7 @@ export default function LandingPageHeader({ forAuth }: { forAuth?: boolean }) {
                   <div className="hidden lg:flex items-center space-x-2">
                     <Link
                       href="/auth/login"
-                      className="text-sm font-medium text-text-700 hover:bg-primary-50 transition px-4 py-2 rounded-lg"
+                      className="text-sm font-medium text-text-700 hover:bg-kakrola-50 transition px-4 py-2 rounded-lg"
                     >
                       Log in
                     </Link>

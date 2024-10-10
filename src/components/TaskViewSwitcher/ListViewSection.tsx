@@ -116,8 +116,11 @@ const ListViewSection = ({
     createActivityLog({
       actor_id: profile.id,
       action: ActivityAction.UPDATED_SECTION,
-      entity_id: section.id,
-      entity_type: EntityType.SECTION,
+      entity: {
+        id: section.id,
+        type: EntityType.SECTION,
+        name: section.name,
+      },
       metadata: {
         old_data: section,
         new_data: {

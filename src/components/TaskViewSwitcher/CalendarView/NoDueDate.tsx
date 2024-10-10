@@ -16,9 +16,7 @@ const NoDueDate = ({
 }) => {
   return (
     <div
-      className={`h-screen overflow-y-auto bg-surface transition-all duration-300 sticky top-0 flex flex-col ${
-        showNoDateTasks ? "w-80" : "w-0"
-      }`}
+      className={`h-screen overflow-y-auto bg-surface transition-all duration-300 sticky top-0 flex flex-col w-80 ${!showNoDateTasks && "-mr-80"}`}
     >
       <div className="p-4 flex items-center gap-2">
         <h3 className="font-bold">No date</h3>

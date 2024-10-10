@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { Input } from "../ui/input";
 import Image from "next/image";
-import { Plus, SquarePen, Tag, UserPlus, X } from "lucide-react";
+import { ChevronDown, Plus, SquarePen, Tag, UserPlus, X } from "lucide-react";
 import { TaskLabelType, TaskPriority, TaskType } from "@/types/project";
 import Dropdown from "../ui/Dropdown";
 import { debounce } from "lodash";
@@ -25,6 +25,11 @@ import { colors } from "@/utils/colors";
 import useTheme from "@/hooks/useTheme";
 import { Theme } from "@/lib/theme.types";
 import { v4 as uuidv4 } from "uuid";
+import {
+  ActivityAction,
+  createActivityLog,
+  EntityType,
+} from "@/types/activitylog";
 
 const fetchTaskLabels = async (
   profile_id?: ProfileType["id"]
@@ -158,6 +163,19 @@ const LabelSelector = ({
             .single();
 
           if (error) throw error;
+
+          createActivityLog({
+            actor_id: profile.id,
+            action: ActivityAction.UPDATED_LABEL,
+            entity: {
+              type: EntityType.LABEL,
+              id: data.id,
+              name: labelData.name
+            },
+            metadata: {
+              new_data: data,
+            },
+          });
         } else {
           const tempId = uuidv4();
           const dataToInsert: Omit<TaskLabelType, "id"> = {
@@ -191,17 +209,20 @@ const LabelSelector = ({
                 item.id == tempId ? { ...item, id: data.id } : item
               )
           );
-        }
 
-        // createActivityLog({
-        //   actor_id: profile.id,
-        //   action: ActivityAction.CREATED_LABEL,
-        //   entity_type: EntityType.LABEL,
-        //   entity_id: data.id,
-        //   metadata: {
-        //     new_data: data,
-        //   },
-        // });
+          createActivityLog({
+            actor_id: profile.id,
+            action: ActivityAction.UPDATED_LABEL,
+            entity: {
+              type: EntityType.LABEL,
+              id: data.id,
+              name: labelData.name
+            },
+            metadata: {
+              new_data: data,
+            },
+          });
+        }
       }
     } catch (error: any) {
       console.error(`Error: ${error.message}`);
@@ -232,70 +253,46 @@ const LabelSelector = ({
       triggerRef={triggerRef}
       Label={({ onClick }) =>
         forTaskModal ? (
-          <div>
-            <button
-              ref={triggerRef}
-              onClick={onClick}
-              className={`flex items-center justify-between rounded-lg transition p-[6px] px-2 group w-full ${
-                task.assignees.length === 0
-                  ? isOpen
-                    ? "bg-primary-100 cursor-pointer"
-                    : "hover:bg-text-100 cursor-pointer"
-                  : "cursor-default"
-              }`}
-            >
-              <p
-                className={`font-semibold text-xs ${
-                  task.assignees.length > 0 && "cursor-text"
-                }`}
-              >
-                Assignee
-              </p>
-
-              {task.assignees.length === 0 && (
-                <Plus strokeWidth={1.5} className="w-4 h-4" />
+          <div
+            onClick={onClick}
+            className={`rounded-lg transition p-2 px-4 group w-full flex items-center justify-between ${
+              isOpen
+                ? "bg-primary-50 cursor-pointer"
+                : "hover:bg-text-100 cursor-pointer"
+            }`}
+          >
+            <button ref={triggerRef} className={`flex items-center gap-2`}>
+              {task.task_labels.length === 0 ? (
+                <span className="text-text-500">No Labels</span>
+              ) : (
+                task.task_labels.map((label) => (
+                  <div
+                    key={label.id}
+                    style={{
+                      backgroundColor:
+                        colors.find((c) => c.value == label.color)?.color +
+                        (theme == Theme.DARK ? "80" : "a0"),
+                    }}
+                    className="px-1 rounded-md font-medium text-text-900"
+                  >
+                    {label.name}
+                  </div>
+                ))
               )}
             </button>
 
-            {task.assignees.map((assignee) => (
-              <button
-                key={assignee.id}
-                onClick={() => setIsOpen(true)}
-                className={`flex items-center relative rounded-lg transition py-[6px] px-2 group w-full text-xs ${
-                  task.assignees.length > 0
-                    ? isOpen
-                      ? "bg-primary-100 cursor-pointer"
-                      : "hover:bg-text-100 cursor-pointer"
-                    : "cursor-default"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Image
-                    src={"/default_avatar.png"}
-                    width={18}
-                    height={18}
-                    alt={"avatar"}
-                    className="rounded-md object-cover max-w-[18px] max-h-[18px]"
-                  />
-                </div>
-
-                <div
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    setTask({ ...task, assignees: [] });
-                  }}
-                  className="p-1 rounded-lg hover:bg-surface absolute top-1/2 -translate-y-1/2 right-1"
-                >
-                  <X strokeWidth={1.5} size={16} />
-                </div>
-              </button>
-            ))}
+            <ChevronDown
+              strokeWidth={1.5}
+              className={`w-4 h-4 transition text-text-500 ${
+                !isOpen && "opacity-0 group-hover:opacity-100"
+              }`}
+            />
           </div>
         ) : forListView ? (
           <div
             data-form-element={dataFromElement}
             ref={triggerRef}
-            data-state={"assignee"}
+            data-state={"labels"}
             className={`flex items-center gap-1 cursor-pointer text-xs px-2 h-10 group relative ring-1 ${
               isOpen
                 ? "ring-primary-300 bg-primary-10"
@@ -327,31 +324,31 @@ const LabelSelector = ({
           <div
             data-form-element={dataFromElement}
             ref={triggerRef}
-            data-state={"assignee"}
-            className={`flex items-center justify-between gap-1 cursor-pointer text-xs px-2 h-10 group relative ${
+            data-state={"labels"}
+            className={`flex items-center gap-1 cursor-pointer p-1 px-2 rounded-lg border border-text-100 text-[11px] ${
               isOpen ? "bg-text-50" : "hover:bg-text-100"
             }`}
             onClick={onClick}
           >
-            {task.assignees.length > 0 ? (
-              task.assignees.map((assignee) => (
-                <div key={assignee.id} className="flex items-center gap-1">
-                  <Image
-                    src={"/default_avatar.png"}
-                    width={20}
-                    height={20}
-                    alt={"avatar"}
-                    className="rounded-md object-cover max-w-5 max-h-5"
-                  />
+            {task.task_labels && task.task_labels.length > 0 ? (
+              task.task_labels.map((label) => (
+                <div
+                  key={label.id}
+                  style={{
+                    backgroundColor:
+                      colors.find((c) => c.value == label.color)?.color +
+                      (theme == Theme.DARK ? "80" : "a0"),
+                  }}
+                  className="px-1 rounded-md font-medium text-text-900"
+                >
+                  {label.name}
                 </div>
               ))
             ) : (
-              <div className="flex items-center gap-1">
-                <div className="rounded-lg w-5 h-5 flex items-center justify-center bg-surface text-text-500">
-                  <UserPlus size={16} />
-                </div>
-                <p className="text-xs">Assign</p>
-              </div>
+              <>
+                <Tag strokeWidth={1.5} className="w-4 h-4 text-text-500" />
+                {!isSmall && <span className="text-text-500">Labels</span>}
+              </>
             )}
           </div>
         )
@@ -478,7 +475,7 @@ const LabelSelector = ({
           <div className="p-2 px-4">
             <Button
               onClick={() => setCreateLabel(true)}
-              variant="ghost"
+              variant="secondary"
               size="sm"
               fullWidth
             >

@@ -54,7 +54,7 @@ const AddTaskModal = ({ onClose, endDate }: AddTaskModalProps) => {
 
   return screenWidth > 768 ? (
     <div
-      className="fixed top-0 left-0 right-0 bottom-0 flex items-start pt-40 z-20 justify-center"
+      className="fixed top-0 left-0 right-0 bottom-0 flex items-start pt-40 z-50 justify-center"
       onClick={onClose}
     >
       <AnimatePresence>

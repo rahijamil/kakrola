@@ -28,6 +28,9 @@ import { useAuthProvider } from "@/context/AuthContext";
 import { getNotifications } from "@/lib/queries";
 import SidebarNotifications from "./SidebarNotifications";
 import AddTeam from "@/components/AddTeam";
+import Dropdown from "@/components/ui/Dropdown";
+import DmSidebar from "@/app/app/dm/DmSidebar";
+import DmDropdown from "./DmDropdown";
 
 const menuItems: {
   id: number;
@@ -91,6 +94,7 @@ const Sidebar = ({
 
   const [isProfileMoreOpen, setIsProfileOpen] = useState(false);
 
+
   return (
     <aside className="h-full flex flex-col w-full">
       <div
@@ -143,20 +147,24 @@ const Sidebar = ({
             ) : (
               <li key={item.id}>
                 {item.path ? (
-                  <Link
-                    href={item.path}
-                    className={`flex items-center p-2 px-4 transition-colors duration-150 font-medium md:font-normal w-full border-l-4 ${
-                      item.path === pathname
-                        ? "bg-primary-100 text-text-900 border-primary-300"
-                        : "md:hover:bg-primary-50 border-transparent hover:border-primary-200 text-text-700"
-                    }`}
-                  >
-                    <item.icon
-                      strokeWidth={1.5}
-                      className="w-5 h-5 mr-3 text-primary-500"
-                    />
-                    {item.text}
-                  </Link>
+                  item.path == "/app/dm" ? (
+                    <DmDropdown item={item} />
+                  ) : (
+                    <Link
+                      href={item.path}
+                      className={`flex items-center p-2 px-4 transition-colors duration-150 font-medium md:font-normal w-full border-l-4 ${
+                        item.path === pathname
+                          ? "bg-primary-100 text-text-900 border-primary-300"
+                          : "md:hover:bg-primary-50 border-transparent hover:border-primary-200 text-text-700"
+                      }`}
+                    >
+                      <item.icon
+                        strokeWidth={1.5}
+                        className="w-5 h-5 mr-3 text-primary-500"
+                      />
+                      {item.text}
+                    </Link>
+                  )
                 ) : (
                   <button
                     className={`flex items-center p-2 rounded-lg transition-colors duration-150 w-full ${

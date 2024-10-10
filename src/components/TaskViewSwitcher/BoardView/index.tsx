@@ -131,8 +131,11 @@ const BoardView: React.FC<{
           createActivityLog({
             actor_id: profile.id,
             action: ActivityAction.UPDATED_SECTION,
-            entity_id: section.id,
-            entity_type: EntityType.SECTION,
+            entity: {
+              id: section.id,
+              type: EntityType.SECTION,
+              name: section.name,
+            },
             metadata: {
               old_data: section,
               new_data: {
@@ -250,7 +253,9 @@ const BoardView: React.FC<{
     }
   };
 
-  const handleSectionDelete = async (section: { id: number } | null) => {
+  const handleSectionDelete = async (
+    section: { id: number; name: string } | null
+  ) => {
     if (!profile?.id) return;
 
     if (section) {
@@ -273,8 +278,11 @@ const BoardView: React.FC<{
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.DELETED_SECTION,
-        entity_id: section.id,
-        entity_type: EntityType.SECTION,
+        entity: {
+          id: section.id,
+          type: EntityType.SECTION,
+          name: section.name,
+        },
         metadata: {
           old_data: section,
         },
@@ -296,7 +304,9 @@ const BoardView: React.FC<{
     }
   };
 
-  const handleSectionArchive = async (section: { id: number } | null) => {
+  const handleSectionArchive = async (
+    section: { id: number; name: string } | null
+  ) => {
     if (!profile?.id) return;
 
     if (section) {
@@ -321,8 +331,11 @@ const BoardView: React.FC<{
         createActivityLog({
           actor_id: profile?.id,
           action: ActivityAction.UNARCHIVED_SECTION,
-          entity_id: section.id,
-          entity_type: EntityType.SECTION,
+          entity: {
+            id: section.id,
+            type: EntityType.SECTION,
+            name: section.name,
+          },
           metadata: {
             old_data: section,
             new_data: { ...section, is_archived: false },
@@ -367,8 +380,11 @@ const BoardView: React.FC<{
         createActivityLog({
           actor_id: profile?.id,
           action: ActivityAction.ARCHIVED_SECTION,
-          entity_id: section.id,
-          entity_type: EntityType.SECTION,
+          entity: {
+            id: section.id,
+            type: EntityType.SECTION,
+            name: section.name,
+          },
           metadata: {
             old_data: section,
             new_data: { ...section, is_archived: true },
@@ -401,7 +417,7 @@ const BoardView: React.FC<{
             <div
               ref={boardProvided.innerRef}
               {...boardProvided.droppableProps}
-              className="flex gap-1 h-full overflow-x-auto px-4 md:px-6 md:pt-4 scroll-smooth"
+              className="flex gap-1 h-full overflow-auto px-4 md:px-6 md:pt-4 scroll-smooth"
             >
               {columns.map((column, columnIndex) => (
                 <BoardViewColumn
@@ -476,7 +492,10 @@ const BoardView: React.FC<{
             handleSectionDelete(
               showDeleteConfirm.id == "ungrouped"
                 ? null
-                : { id: parseInt(showDeleteConfirm.id) }
+                : {
+                    id: parseInt(showDeleteConfirm.id),
+                    name: showDeleteConfirm.title,
+                  }
             )
           }
         />
@@ -527,7 +546,10 @@ const BoardView: React.FC<{
             handleSectionArchive(
               showArchiveConfirm.id == "ungrouped"
                 ? null
-                : { id: parseInt(showArchiveConfirm.id) }
+                : {
+                    id: parseInt(showArchiveConfirm.id),
+                    name: showArchiveConfirm.title,
+                  }
             )
           }
         />

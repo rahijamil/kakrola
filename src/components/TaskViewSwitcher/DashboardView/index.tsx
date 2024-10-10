@@ -32,7 +32,6 @@ import {
   Users,
   Calendar,
 } from "lucide-react";
-import useAssignee from "@/hooks/useAssignee";
 import useScreen from "@/hooks/useScreen";
 import useTheme from "@/hooks/useTheme";
 
@@ -60,12 +59,6 @@ const DashboardView: React.FC<DashboardViewProps> = ({
   tasks,
   sections,
 }) => {
-  const { assigneeProfiles } = useAssignee({ project_id: project?.id });
-
-  const getAssigneeProfileById = (profileId: string | null) => {
-    return assigneeProfiles.find((profile) => profile.id === profileId);
-  };
-
   const analytics = useMemo(() => {
     const tasksPerSection = sections.map((section) => ({
       name: section.name,
@@ -117,10 +110,9 @@ const DashboardView: React.FC<DashboardViewProps> = ({
     const topContributors = Object.entries(
       tasks.reduce((acc, task) => {
         task.assignees.forEach((assignee) => {
-          const assigneeProfile = getAssigneeProfileById(assignee.profile_id);
-          const fullName = assigneeProfile?.full_name || "Unknown";
+          const name = assignee.name || "Unknown";
 
-          acc[fullName] = (acc[fullName] || 0) + 1;
+          acc[name] = (acc[name] || 0) + 1;
         });
         return acc;
       }, {} as Record<string, number>) // Ensure type is string -> number map

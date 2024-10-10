@@ -57,15 +57,34 @@ const DeleteConfirm = ({
       console.error(projectError);
     }
 
-    createActivityLog({
-      actor_id: profile.id,
-      action: ActivityAction.DELETED_PROJECT,
-      entity_id: id,
-      entity_type: EntityType.PROJECT,
-      metadata: {
-        old_data: project,
-      },
-    });
+    if(project){
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.DELETED_PROJECT,
+        entity: {
+          id,
+          type: EntityType.PROJECT,
+          name: project.name,
+        },
+        metadata: {
+          old_data: project,
+        },
+      });
+    }
+    else if(page) {
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.DELETED_PAGE,
+        entity: {
+          id,
+          type: EntityType.PAGE,
+          name: page.title,
+        },
+        metadata: {
+          old_data: page,
+        },
+      });
+    }
   };
 
   return (
@@ -75,15 +94,15 @@ const DeleteConfirm = ({
         project ? (
           <>
             This will permanently delete{" "}
-            <span className="font-semibold">{project.name}</span>{" "}
-            and all its tasks. This can&apos;t be undone.
+            <span className="font-semibold">{project.name}</span> and all its
+            tasks. This can&apos;t be undone.
           </>
         ) : (
           page && (
             <>
               This will permanently delete{" "}
-              <span className="font-semibold">{page.title}</span>.
-              This can&apos;t be undone.
+              <span className="font-semibold">{page.title}</span>. This
+              can&apos;t be undone.
             </>
           )
         )

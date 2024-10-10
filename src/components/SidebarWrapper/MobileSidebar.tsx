@@ -58,8 +58,8 @@ function MobileSidebar({
 
   const menuItems: MenuItem[] = useMemo(
     () => [
-      { id: 1, icon: Home, text: "Home", path: "/app/home" },
-      { id: 2, icon: CheckSquare, text: "Tasks", path: "/app" },
+      { id: 1, icon: Home, text: "Home", path: "/app" },
+      { id: 2, icon: CheckSquare, text: "Tasks", path: "/app/tasks" },
       { id: 3, icon: MessagesSquare, text: "DMs", path: "/app/dm" },
       { id: 4, icon: User, text: "Profile", path: "/app/more" },
     ],

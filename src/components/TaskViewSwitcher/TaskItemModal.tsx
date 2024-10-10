@@ -4,9 +4,13 @@ import { ProjectType, TaskType } from "@/types/project";
 import Priorities from "../AddTask/Priorities";
 import AddComentForm from "./AddComentForm";
 import {
+  AlignLeft,
   CalendarRange,
   CheckCircle,
   ChevronUpCircle,
+  LockKeyhole,
+  Plus,
+  Tag,
   User,
   X,
 } from "lucide-react";
@@ -22,12 +26,19 @@ import SubTasks from "./SubTasks";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import {
   ActivityAction,
+  ActivityLogType,
+  ActivityWithProfile,
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
 import { useRole } from "@/context/RoleContext";
 import { canEditTask } from "@/types/hasPermission";
 import useScreen from "@/hooks/useScreen";
+import LabelSelector from "../AddTask/LabelSelector";
+import TaskModalComment from "./TaskModalComment";
+import { ProfileType } from "@/types/user";
+import { useQueryClient } from "@tanstack/react-query";
+import { v4 as uuidv4 } from "uuid";
 
 const TaskItemModal = ({
   task,
@@ -47,27 +58,56 @@ const TaskItemModal = ({
   tasks: TaskType[];
 }) => {
   const { profile } = useAuthProvider();
-  const [showCommentForm, setShowCommentForm] = useState<boolean>(false);
   const [taskData, setTaskData] = useState<TaskType>(task);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    document.body.classList.add("overflow-y-hidden");
+    document.body.classList.add("overflow-hidden");
 
     return () => {
-      document.body.classList.remove("overflow-y-hidden");
+      document.body.classList.remove("overflow-hidden");
     };
   }, []);
 
-  const logActivity = (oldData?: any, newData?: any) => {
+  const logActivity = (
+    action: ActivityAction,
+    oldData?: any,
+    newData?: any
+  ) => {
     if (!profile?.id) return;
 
-    createActivityLog({
+    const newLog: ActivityLogType = {
+      id: uuidv4(),
       actor_id: profile.id,
-      action: ActivityAction.UPDATED_TASK,
-      entity_id: task.id,
-      entity_type: EntityType.TASK,
+      action,
+      entity: {
+        id: task.id,
+        type: EntityType.TASK,
+        name: task.title,
+      },
+      created_at: new Date().toISOString(),
       metadata: { old_data: oldData, new_data: newData },
-    });
+    };
+
+    queryClient.setQueryData(
+      ["task_activities", task.id],
+      (oldLogs: ActivityWithProfile[]) => [
+        ...oldLogs,
+        {
+          ...newLog,
+          actor: {
+            id: profile.id,
+            full_name: profile.full_name,
+            avatar_url: profile.avatar_url,
+            email: profile.email,
+          },
+        },
+      ]
+    );
+
+    const { id, created_at, ...restLog } = newLog;
+
+    createActivityLog(restLog);
   };
 
   const { role } = useRole();
@@ -103,6 +143,7 @@ const TaskItemModal = ({
           }
 
           logActivity(
+            ActivityAction.UPDATED_TASK,
             {
               project_id: task.project_id,
               section_id: task.section_id,
@@ -129,14 +170,34 @@ const TaskItemModal = ({
             throw error;
           }
 
-          logActivity(
-            {
-              assignees: task.assignees,
-            },
-            {
-              assignees: taskData.assignees,
-            }
+          const oldAssignees = task.assignees.map((a) => a.id);
+          const newAssignees = taskData.assignees.map((a) => a.id);
+
+          // Find added and removed assignees
+          const addedAssignees = taskData.assignees.filter(
+            (a) => !oldAssignees.includes(a.id)
           );
+          const removedAssignees = task.assignees.filter(
+            (a) => !newAssignees.includes(a.id)
+          );
+
+          // Log activity for added assignees
+          if (addedAssignees.length > 0) {
+            logActivity(
+              ActivityAction.ASSIGNED_TASK,
+              { assignees: task.assignees },
+              { assignees: addedAssignees }
+            );
+          }
+
+          // Log activity for removed assignees
+          if (removedAssignees.length > 0) {
+            logActivity(
+              ActivityAction.UNASSIGNED_TASK,
+              { assignees: task.assignees },
+              { assignees: removedAssignees }
+            );
+          }
         }
 
         if (
@@ -157,22 +218,8 @@ const TaskItemModal = ({
             throw error;
           }
 
-          createActivityLog({
-            actor_id: profile.id,
-            action: ActivityAction.UPDATED_TASK,
-            entity_id: task.id,
-            entity_type: EntityType.TASK,
-            metadata: {
-              old_data: {
-                dates: task.dates,
-              },
-              new_data: {
-                dates: taskData.dates,
-              },
-            },
-          });
-
           logActivity(
+            ActivityAction.UPDATED_TASK_DATES,
             {
               dates: task.dates,
             },
@@ -195,6 +242,7 @@ const TaskItemModal = ({
           }
 
           logActivity(
+            ActivityAction.UPDATED_TASK_PRIORITY,
             {
               priority: task.priority,
             },
@@ -202,6 +250,51 @@ const TaskItemModal = ({
               priority: taskData.priority,
             }
           );
+        }
+
+        if (
+          taskData.task_labels.flatMap((label) => label.id).join(",") !==
+          task.task_labels.flatMap((label) => label.id).join(",")
+        ) {
+          const { data, error } = await supabaseBrowser
+            .from("tasks")
+            .update({
+              task_labels: taskData.task_labels,
+            })
+            .eq("id", task.id);
+
+          if (error) {
+            throw error;
+          }
+
+          const oldLabels = task.task_labels.map((l) => l.id);
+          const newLabels = taskData.task_labels.map((l) => l.id);
+
+          // Find added and removed labels
+          const addedLabels = taskData.task_labels.filter(
+            (l) => !oldLabels.includes(l.id)
+          );
+          const removedLabels = task.task_labels.filter(
+            (l) => !newLabels.includes(l.id)
+          );
+
+          // Log activity for added labels
+          if (addedLabels.length > 0) {
+            logActivity(
+              ActivityAction.ADDED_TASK_LABELS,
+              { task_labels: task.task_labels },
+              { task_labels: addedLabels }
+            );
+          }
+
+          // Log activity for removed assignees
+          if (removedLabels.length > 0) {
+            logActivity(
+              ActivityAction.REMOVED_TASK_LABELS,
+              { task_labels: task.task_labels },
+              { task_labels: removedLabels }
+            );
+          }
         }
       } catch (error) {
         console.error(`Error updating task: ${error}`);
@@ -215,6 +308,7 @@ const TaskItemModal = ({
     taskData.assignees,
     taskData.dates,
     taskData.priority,
+    taskData.task_labels,
   ]);
 
   const handleSaveTaskTitle = async () => {
@@ -240,6 +334,7 @@ const TaskItemModal = ({
         }
 
         logActivity(
+          ActivityAction.UPDATED_TASK,
           {
             title: task.title,
           },
@@ -293,7 +388,7 @@ const TaskItemModal = ({
               damping: 15,
             },
           }}
-          className={`bg-background rounded-l-2xl max-w-[52rem] overflow-y-auto flex flex-col fixed top-0 right-0 bottom-0 border-l border-text-100 shadow-md ${
+          className={`bg-surface rounded-l-2xl max-w-[52rem] overflow-auto flex flex-col fixed top-0 right-0 bottom-0 border-l border-text-100 shadow-md ${
             screenWidth > 768 ? "w-11/12" : "w-full"
           }`}
           onClick={(ev) => ev.stopPropagation()}
@@ -305,7 +400,7 @@ const TaskItemModal = ({
           >
             <div>
               <button
-                className="flex items-center gap-2 hover:bg-text-100 rounded-lg p-2 transition text-xs"
+                className="flex items-center gap-2 text-text-500 hover:bg-text-100 rounded-lg p-2 transition text-xs"
                 onClick={onCheckClick}
               >
                 <AnimatedCircleCheck
@@ -318,7 +413,7 @@ const TaskItemModal = ({
               </button>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-text-500">
               {/* <button className="p-1 hover:bg-text-100 transition rounded-lg">
               <Ellipsis strokeWidth={1.5} className="w-6 h-6" />
             </button> */}
@@ -339,7 +434,7 @@ const TaskItemModal = ({
             <div>
               <input
                 type="text"
-                className={`text-3xl font-bold border-none focus-visible:outline-none bg-transparent w-full ${
+                className={`text-3xl font-bold border-none focus-visible:outline-none bg-transparent w-full text-text-900 ${
                   taskData.is_completed ? "line-through text-text-500" : ""
                 }`}
                 value={taskData.title}
@@ -355,10 +450,10 @@ const TaskItemModal = ({
             </div>
 
             <div className="space-y-3 flex-1">
-              <div className="grid grid-cols-[20%_80%] items-center text-xs gap-3">
-                <div className="flex items-center gap-2">
+              <div className="grid grid-cols-[20%_80%] items-center gap-3">
+                <div className="flex items-center gap-2 text-text-500">
                   <CheckCircle strokeWidth={2} size={16} />
-                  <p className="font-semibold text-xs">Project</p>
+                  <p className="font-medium text-xs">Project</p>
                 </div>
                 <ProjectsSelector
                   setTask={setTaskData}
@@ -367,10 +462,10 @@ const TaskItemModal = ({
                   forTaskModal
                 />
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 text-text-500">
                   <User strokeWidth={2} size={16} />
                   <p
-                    className={`font-semibold text-xs ${
+                    className={`font-medium text-xs ${
                       task.assignees.length > 0 && "cursor-text"
                     }`}
                   >
@@ -385,10 +480,10 @@ const TaskItemModal = ({
                   project={project}
                 />
 
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-2 text-text-500">
                   <CalendarRange strokeWidth={2} size={16} />
                   <p
-                    className={`font-semibold text-xs ${
+                    className={`font-medium text-xs ${
                       task.dates.end_date !== null && "cursor-text"
                     }`}
                   >
@@ -401,9 +496,9 @@ const TaskItemModal = ({
                   setTask={setTaskData}
                 />
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 text-text-500">
                   <ChevronUpCircle strokeWidth={2} size={16} />
-                  <p className="font-semibold text-xs">Priority</p>
+                  <p className="font-medium text-xs">Priority</p>
                 </div>
 
                 <Priorities
@@ -412,45 +507,35 @@ const TaskItemModal = ({
                   forTaskItemModal
                 />
 
-                {/* <div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-text-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
-                  <p className="font-semibold text-xs">Labels</p>
-                  <Plus strokeWidth={1.5} className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="h-[1px] bg-text-100 m-2"></div>
-            </div>
-            <div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-text-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
-                  <p className="font-semibold text-xs">Reminders</p>
-                  <Plus strokeWidth={1.5} className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="h-[1px] bg-text-100 m-2"></div>
-            </div>
-            <div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between hover:bg-text-100 rounded-lg cursor-pointer transition p-[6px] px-2 group">
-                  <p className="space-x-1 font-semibold text-xs">
-                    <span>Location</span>
-                    <span className="uppercase text-[10px] tracking-widest font-bold text-primary-800 bg-primary-100 p-[2px] px-1 rounded-lg">
-                      Upgrade
-                    </span>
+                <div className="flex items-start gap-2 text-text-500">
+                  <Tag strokeWidth={2} size={16} />
+                  <p
+                    className={`font-medium text-xs ${
+                      task.dates.end_date !== null && "cursor-text"
+                    }`}
+                  >
+                    Labels
                   </p>
-                  <LockKeyhole strokeWidth={1.5} className="w-4 h-4" />
                 </div>
-              </div>
-              <div className="h-[1px] bg-text-100 m-2"></div>
-            </div> */}
+                <LabelSelector
+                  task={taskData}
+                  setTask={setTaskData}
+                  forTaskModal
+                />
               </div>
 
-              {/* <TaskDescription
-              taskData={taskData}
-              setTasks={setTasks}
-              tasks={tasks}
-            /> */}
+              <div className="grid grid-cols-[20%_80%] items-start gap-3">
+                <div className="flex items-center gap-2 pt-2 text-text-500">
+                  <AlignLeft strokeWidth={2} size={16} />
+                  <p className="font-medium text-xs">Description</p>
+                </div>
+
+                <TaskDescription
+                  taskData={taskData}
+                  setTasks={setTasks}
+                  tasks={tasks}
+                />
+              </div>
 
               <SubTasks
                 task={task}
@@ -460,57 +545,9 @@ const TaskItemModal = ({
                 subTasks={subTasks}
               />
             </div>
-
-            <div className="bg-text-50 p-8 rounded-lg">
-              <div>
-                <ul className="flex items-center gap-4">
-                  <li className="font-semibold text-xs py-2 bg-text-50 transition cursor-pointer border-b-2 text-text-700 border-text-700 hover:border-text-700">
-                    Comments
-                  </li>
-                  <li className="font-semibold text-xs py-2 bg-transparent transition cursor-pointer border-b-2 text-text-500 border-transparent hover:border-text-700">
-                    Activity
-                  </li>
-                </ul>
-              </div>
-
-              <div className="mb-8 bg-text-100 h-[1px]" />
-
-              {!showCommentForm && (
-                <div className="flex items-center gap-2">
-                  <Image
-                    src={profile?.avatar_url || "/default_avatar.png"}
-                    width={28}
-                    height={28}
-                    alt={profile?.full_name || profile?.username || "avatar"}
-                    className="rounded-md object-cover max-w-[28px] max-h-[28px]"
-                  />
-
-                  <div
-                    className="flex items-center justify-between w-full border border-text-100 rounded-lg py-2 px-4 bg-background hover:bg-text-100 cursor-pointer transition text-xs"
-                    onClick={() => setShowCommentForm(true)}
-                  >
-                    <p className="">Write a comment</p>
-                  </div>
-                </div>
-              )}
-
-              {showCommentForm && (
-                <div className="flex items-start gap-2 w-full">
-                  <Image
-                    src={profile?.avatar_url || "/default_avatar.png"}
-                    width={28}
-                    height={28}
-                    alt={profile?.full_name || profile?.username || "avatar"}
-                    className="rounded-md object-cover max-w-[28px] max-h-[28px]"
-                  />
-                  {/* <AddComentForm
-                  onCancelClick={() => setShowCommentForm(false)}
-                  task={task}
-                /> */}
-                </div>
-              )}
-            </div>
           </div>
+
+          <TaskModalComment task={task} />
         </motion.div>
       </AnimatePresence>
     </div>

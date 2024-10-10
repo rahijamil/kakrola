@@ -261,7 +261,7 @@ const DmMessageCard: React.FC<DmMessageCardProps> = ({
 
               {/* {renderReactions(message.id)} */}
 
-              {screenWidth > 768 ? (
+              {/* {screenWidth > 768 ? (
                 <div className="absolute -top-6 right-6 hidden group-hover:block">
                   {renderOptions(message.id)}
                 </div>
@@ -275,7 +275,7 @@ const DmMessageCard: React.FC<DmMessageCardProps> = ({
                     <div className="pb-40">{renderOptions(message.id)}</div>
                   }
                 />
-              )}
+              )} */}
             </motion.div>
           ))}
       </div>

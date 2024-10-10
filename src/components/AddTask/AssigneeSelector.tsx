@@ -2,6 +2,7 @@ import React, {
   Dispatch,
   Fragment,
   SetStateAction,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -10,13 +11,16 @@ import Image from "next/image";
 import { Check, ChevronDown, Plus, User, UserPlus, X } from "lucide-react";
 import { ProjectType, TaskPriority, TaskType } from "@/types/project";
 import Dropdown from "../ui/Dropdown";
-import { useQuery } from "@tanstack/react-query";
-import { fetchAssigneeProfiles } from "@/lib/queries";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { v4 as uuidv4 } from "uuid";
 import AnimatedTaskCheckbox from "../TaskViewSwitcher/AnimatedCircleCheck";
 import { ProfileType } from "@/types/user";
 import { debounce } from "lodash";
-import useAssignee from "@/hooks/useAssignee";
+import { PersonalMemberForProjectType } from "@/types/team";
+
+interface MemberData extends PersonalMemberForProjectType {
+  profile: ProfileType;
+}
 
 const AssigneeSelector = ({
   task,
@@ -39,7 +43,7 @@ const AssigneeSelector = ({
 
   const debouncedSearch = debounce((query) => {
     setSearchQuery(query);
-  }, 300); // 300ms debounce delay
+  }, 0); // 300ms debounce delay
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     debouncedSearch(e.target.value);
@@ -48,12 +52,22 @@ const AssigneeSelector = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const triggerRef = useRef(null);
+  const queryClient = useQueryClient();
 
-  const { assigneeProfiles } = useAssignee({ project_id: project?.id });
+  const assignees: MemberData[] = queryClient.getQueryData([
+    "membersData",
+    project?.id,
+    undefined,
+  ]) || [];
 
-  const getAssigneeProfileById = (profileId: string | null) => {
-    return assigneeProfiles.find((profile) => profile.id === profileId);
-  };
+  const assigneeProfiles = useMemo(() => {
+    if (assignees) {
+      return assignees.map((item) => item.profile);
+    }
+    else {
+      return []
+    }
+  }, [assignees]);
 
   const handleProfileClick = (profile: ProfileType) => {
     const isExistAssignee = task.assignees.some(
@@ -69,6 +83,7 @@ const AssigneeSelector = ({
             id: uuidv4(),
             name: profile.full_name,
             avatar_url: profile.avatar_url,
+            created_at: new Date().toISOString(),
           },
         ],
       });
@@ -100,38 +115,20 @@ const AssigneeSelector = ({
           >
             <button ref={triggerRef} className={`flex items-center gap-2`}>
               {task.assignees.length === 0 ? (
-                <span>No assignee</span>
+                <span className="text-text-500">No assignee</span>
               ) : (
                 task.assignees.map((assignee) => (
                   <div key={assignee.id} className="flex items-center gap-2">
                     <Image
-                      src={
-                        getAssigneeProfileById(assignee.profile_id)
-                          ?.avatar_url || "/default_avatar.png"
-                      }
+                      src={assignee.avatar_url || "/default_avatar.png"}
                       width={18}
                       height={18}
-                      alt={
-                        getAssigneeProfileById(assignee.profile_id)
-                          ?.full_name ||
-                        getAssigneeProfileById(assignee.profile_id)?.username ||
-                        "avatar"
-                      }
+                      alt={assignee.name || "avatar"}
                       className="rounded-md object-cover max-w-[18px] max-h-[18px]"
                     />
-                    {
-                      getAssigneeProfileById(
-                        assignee.profile_id
-                      )?.full_name.split(" ")[0]
-                    }
-                    {getAssigneeProfileById(
-                      assignee.profile_id
-                    )?.full_name.split(" ")[1] // Check if the second name exists
-                      ? " " +
-                        getAssigneeProfileById(
-                          assignee.profile_id
-                        )?.full_name.split(" ")[1][0] +
-                        "." // Display the initial of the second name
+                    {assignee.name.split(" ")[0]}
+                    {assignee.name.split(" ")[1] // Check if the second name exists
+                      ? " " + assignee.name.split(" ")[1][0] + "." // Display the initial of the second name
                       : ""}
                   </div>
                 ))
@@ -140,7 +137,7 @@ const AssigneeSelector = ({
 
             <ChevronDown
               strokeWidth={1.5}
-              className={`w-4 h-4 transition ${
+              className={`w-4 h-4 transition text-text-500 ${
                 !isOpen && "opacity-0 group-hover:opacity-100"
               }`}
             />
@@ -161,23 +158,16 @@ const AssigneeSelector = ({
               task.assignees.map((assignee) => (
                 <div key={assignee.id} className="flex items-center gap-1">
                   <Image
-                    src={
-                      getAssigneeProfileById(assignee.profile_id)?.avatar_url ||
-                      "/default_avatar.png"
-                    }
+                    src={assignee.avatar_url || "/default_avatar.png"}
                     width={20}
                     height={20}
-                    alt={
-                      getAssigneeProfileById(assignee.profile_id)?.full_name ||
-                      getAssigneeProfileById(assignee.profile_id)?.username ||
-                      "avatar"
-                    }
+                    alt={assignee.name || "avatar"}
                     className="rounded-md object-cover max-w-5 max-h-5"
                   />
-                  {/* {getAssigneeProfileById(assignee.profile_id)?.full_name.split(" ")[0]}
-                  {getAssigneeProfileById(assignee.profile_id)?.full_name.split(" ")[1] // Check if the second name exists
+                  {/* {assignee.full_name.split(" ")[0]}
+                  {assignee.full_name.split(" ")[1] // Check if the second name exists
                     ? " " +
-                      getAssigneeProfileById(assignee.profile_id)?.full_name.split(
+                      assignee.full_name.split(
                         " "
                       )[1][0] +
                       "." // Display the initial of the second name
@@ -206,33 +196,15 @@ const AssigneeSelector = ({
                 <Fragment key={assignee.id}>
                   <div className="flex items-center gap-1">
                     <Image
-                      src={
-                        getAssigneeProfileById(assignee.profile_id)
-                          ?.avatar_url || "/default_avatar.png"
-                      }
+                      src={assignee.avatar_url || "/default_avatar.png"}
                       width={20}
                       height={20}
-                      alt={
-                        getAssigneeProfileById(assignee.profile_id)
-                          ?.full_name ||
-                        getAssigneeProfileById(assignee.profile_id)?.username ||
-                        "avatar"
-                      }
+                      alt={assignee.name || "avatar"}
                       className="rounded-md object-cover max-w-5 max-h-5"
                     />
-                    {
-                      getAssigneeProfileById(
-                        assignee.profile_id
-                      )?.full_name.split(" ")[0]
-                    }
-                    {getAssigneeProfileById(
-                      assignee.profile_id
-                    )?.full_name.split(" ")[1] // Check if the second name exists
-                      ? " " +
-                        getAssigneeProfileById(
-                          assignee.profile_id
-                        )?.full_name.split(" ")[1][0] +
-                        "." // Display the initial of the second name
+                    {assignee.name.split(" ")[0]}
+                    {assignee.name.split(" ")[1] // Check if the second name exists
+                      ? " " + assignee.name.split(" ")[1][0] + "." // Display the initial of the second name
                       : ""}
                   </div>
 
@@ -241,10 +213,12 @@ const AssigneeSelector = ({
                       ev.stopPropagation();
                       setTask({
                         ...task,
-                        assignees: [],
+                        assignees: task.assignees.filter(
+                          (a) => a.id != assignee.id
+                        ),
                       });
                     }}
-                    className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-lg"
+                    className="text-text-500 hover:text-text-900 p-[2px] hover:bg-text-100 rounded-lg"
                   >
                     <X strokeWidth={1.5} className="w-3 h-3 text-text-500" />
                   </button>

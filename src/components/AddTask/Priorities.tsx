@@ -95,7 +95,7 @@ const Priorities = ({
 
               <ChevronDown
                 strokeWidth={1.5}
-                className={`w-4 h-4 transition ${
+                className={`w-4 h-4 transition text-text-500 ${
                   !isOpen && "opacity-0 group-hover:opacity-100"
                 }`}
               />
@@ -165,7 +165,7 @@ const Priorities = ({
               {isSmall ? (
                 <>
                   {taskData.priority !== "Priority" && (
-                    <span className="text-text-700">
+                    <span className="text-text-500">
                       {
                         priorities.find((p) => p.value === taskData.priority)
                           ?.value
@@ -189,7 +189,7 @@ const Priorities = ({
                       priority: TaskPriority.Priority,
                     });
                   }}
-                  className="text-text-500 hover:text-text-700 p-[2px] hover:bg-text-100 rounded-lg"
+                  className="text-text-500 hover:text-text-900 p-[2px] hover:bg-text-100 rounded-lg"
                 >
                   <X strokeWidth={1.5} className="w-3 h-3 text-text-500" />
                 </button>

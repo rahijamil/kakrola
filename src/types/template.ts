@@ -1,3 +1,4 @@
+import { JSONContent } from "novel";
 import { TaskPriority } from "./project";
 import { ViewTypes } from "./viewTypes";
 
@@ -37,7 +38,7 @@ export interface TemplateTaskType {
   template_section_id: string | number | null;
   parent_template_task_id: string | number | null;
   title: string;
-  description: string;
+  description: JSONContent | null;
   priority: TaskPriority;
   order: number;
   created_at?: string;

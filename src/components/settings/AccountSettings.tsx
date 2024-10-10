@@ -86,8 +86,11 @@ export default function AccountSettings() {
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.UPDATED_PROFILE,
-        entity_type: EntityType.USER,
-        entity_id: profile?.id,
+        entity: {
+          type: EntityType.USER,
+          id: profile.id,
+          name: profile?.full_name,
+        },
         metadata: {
           old_data: {
             avatar_url: profile?.avatar_url,
@@ -124,8 +127,11 @@ export default function AccountSettings() {
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.UPDATED_PROFILE,
-        entity_type: EntityType.USER,
-        entity_id: profile?.id,
+        entity: {
+          type: EntityType.USER,
+          id: profile?.id,
+          name: profile.full_name
+        },
         metadata: {
           old_data: {
             full_name: profile?.full_name,

@@ -60,8 +60,11 @@ const AddLabelModal = ({ onClose }: { onClose: () => void }) => {
         createActivityLog({
           actor_id: profile.id,
           action: ActivityAction.CREATED_LABEL,
-          entity_type: EntityType.LABEL,
-          entity_id: data.id,
+          entity: {
+            type: EntityType.LABEL,
+            id: data.id,
+            name: data.name,
+          },
           metadata: {
             new_data: data,
           },

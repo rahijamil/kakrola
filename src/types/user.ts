@@ -10,7 +10,7 @@ export interface ProfileType {
   last_login_at?: Date;
   is_onboarded?: boolean;
   metadata?: {
-    last_active_contact_profile_id?: string;
+    last_active_contact_profile_id?: string | null;
   };
   linked_accounts?: {
     profile_id: string;

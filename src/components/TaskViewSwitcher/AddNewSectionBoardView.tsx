@@ -125,8 +125,11 @@ const AddNewSectionBoardView = ({
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.CREATED_SECTION,
-        entity_id: data.id,
-        entity_type: EntityType.SECTION,
+        entity: {
+          id: data.id,
+          type: EntityType.SECTION,
+          name: data.name,
+        },
         metadata: {
           new_data: newSection,
         },

@@ -21,21 +21,21 @@ const SubTasks = ({
   const [showAddSubtask, setShowAddSubtask] = useState<boolean>(false);
   return (
     <div className={`grid grid-cols-[20%_80%] items-start gap-3`}>
-      <div className="flex items-center gap-2 mt-2">
+      <div className="flex items-center gap-2 mt-2 text-text-500">
         <Workflow strokeWidth={2} size={16} />
-        <p className="font-semibold text-xs">Subtasks</p>
+        <p className="font-medium text-xs">Subtasks</p>
       </div>
 
       <div>
         <div>
           {!showAddSubtask && (
             <button
-              className="text-xs flex items-center gap-2 py-[6px] text-text-600 cursor-pointer hover:bg-text-100 transition rounded-lg p-2 px-4 w-full text-left"
+              className="flex items-center gap-2 py-[6px] text-text-500 cursor-pointer hover:bg-text-100 transition rounded-lg p-2 px-4 w-full text-left"
               onClick={() => setShowAddSubtask(true)}
             >
               <Plus strokeWidth={1.5} className="w-4 h-4" />
 
-              <span className="text-xs">Add subtask</span>
+              <span>Add subtask</span>
             </button>
           )}
           {showAddSubtask && (
@@ -76,6 +76,7 @@ const SubTasks = ({
                 setTasks={setTasks}
                 tasks={tasks}
                 section_id={task.section_id}
+                forTaskModal
               />
             </motion.div>
           )}

@@ -24,10 +24,10 @@ export const TaskInput: React.FC<{
   const cursorOffsetRef = useRef(0);
   const firstRenderRef = useRef(true); // Track if it's the first render
 
-  useEffect(() => {
-    const parsedData = parseInput(inputValue, projects);
-    setTaskData((prevData) => ({ ...prevData, ...parsedData }));
-  }, [inputValue, projects, setTaskData]);
+  // useEffect(() => {
+  //   const parsedData = parseInput(inputValue, projects);
+  //   setTaskData((prevData) => ({ ...prevData, ...parsedData }));
+  // }, [inputValue, projects, setTaskData]);
 
   const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
     const text = e.currentTarget.textContent || "";
@@ -104,8 +104,8 @@ export const TaskInput: React.FC<{
 
     if (el) {
       // Highlight the commands and update the content
-      const highlightedText = highlightCommands(inputValue);
-      el.innerHTML = highlightedText;
+      // const highlightedText = highlightCommands(inputValue);
+      // el.innerHTML = highlightedText;
 
       // Set cursor position at the end of the text on the first render
       if (firstRenderRef.current) {

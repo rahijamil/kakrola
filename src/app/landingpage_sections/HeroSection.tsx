@@ -16,7 +16,7 @@ const HeroSection = () => {
             Make <br /> things <br /> happen.
           </h1>
           <p className="mt-4 text-lg text-gray-600 sm:text-xl md:mt-6 md:max-w-2xl lg:text-2xl font-semibold md:font-normal">
-            Seamlessly integrate tasks, chats, and docs. Experience
+            Seamlessly integrate tasks, chats, and docs. <br /> Experience
             Kakrola&apos;s power - start free today!
           </p>
 

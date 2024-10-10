@@ -1,7 +1,16 @@
 import { supabaseBrowser } from "@/utils/supabase/client";
+import { ProfileType } from "./user";
 
 // Comprehensive enum for all possible actions across the app
 export enum ActivityAction {
+  // Page actions
+  CREATED_PAGE = "created_page",
+  UPDATED_PAGE = "updated_page",
+  ARCHIVED_PAGE = "archived_page",
+  UNARCHIVED_PAGE = "unarchived_page",
+  DELETED_PAGE = "deleted_page",
+  LEAVED_PAGE = "leaved_page",
+
   // Project actions
   CREATED_PROJECT = "created_project",
   UPDATED_PROJECT = "updated_project",
@@ -28,6 +37,11 @@ export enum ActivityAction {
   ASSIGNED_TASK = "assigned_task",
   UNASSIGNED_TASK = "unassigned_task",
   REORDERED_TASK = "reordered_section",
+  UPDATED_TASK_PRIORITY = "updated_task_priority",
+  ADDED_TASK_LABELS = "added_task_labels",
+  REMOVED_TASK_LABELS = "removed_task_labels",
+  UPDATED_TASK_DATES = "updated_task_dates",
+  UPDATED_TASK_DESCRIPTION = "updated_task_description",
 
   // Comment actions
   ADDED_COMMENT = "added_comment",
@@ -76,6 +90,7 @@ export enum ActivityAction {
 
 // Enum for all possible entity types
 export enum EntityType {
+  PAGE = "page",
   PROJECT = "project",
   SECTION = "section",
   TASK = "task",
@@ -91,38 +106,43 @@ export enum EntityType {
 // Refined ActivityLogType using the new enums
 export interface ActivityLogType {
   id?: number | string;
-  actor_id: string; // UUID of the user who performed the action
+  actor_id: ProfileType["id"]; // UUID of the user who performed the action
   action: ActivityAction;
-  entity_type: EntityType;
-  entity_id: number | string; // ID of the affected entity
-  metadata: {
+  entity: {
+    type: EntityType; // Enum for entity types like PROJECT, TASK
+    id: number | string; // Entity ID
+    name: string; // Optional name of the entity (e.g., project name)
+  };
+  metadata?: {
     old_data?: any;
     new_data?: any;
   }; // Additional context about the action
   created_at?: string;
 }
 
+export interface ActivityWithProfile extends ActivityLogType {
+  actor: {
+    id: ProfileType["id"];
+    avatar_url: ProfileType["avatar_url"];
+    full_name: ProfileType["full_name"];
+    email: ProfileType["email"];
+  };
+}
+
 // Function to create an activity log entry
 export async function createActivityLog({
   actor_id,
   action,
-  entity_type,
-  entity_id,
+  entity,
   metadata,
-}: {
-  actor_id: string;
-  action: ActivityAction;
-  entity_type: EntityType;
-  entity_id: number | string;
-  metadata: ActivityLogType["metadata"];
-}) {
+}: Omit<ActivityLogType, 'id'>) {
   const activityLog: ActivityLogType = {
     actor_id,
     action,
-    entity_type,
-    entity_id,
+    entity,
     metadata,
   };
+
   try {
     const { data, error } = await supabaseBrowser
       .from("activity_logs")
@@ -158,4 +178,26 @@ export async function getActivityLogs(
 
   // Placeholder return:
   return [];
+}
+
+import { format, isToday, isYesterday } from "date-fns";
+
+// Format the date for grouping
+function formatDateGroup(date: string): string {
+  const parsedDate = new Date(date);
+  if (isToday(parsedDate)) return "Today";
+  if (isYesterday(parsedDate)) return "Yesterday";
+  return format(parsedDate, "MMMM d, yyyy");
+}
+
+// Group logs by day
+function groupLogsByDate(
+  logs: ActivityLogType[]
+): Record<string, ActivityLogType[]> {
+  return logs.reduce((acc, log) => {
+    const dateKey = formatDateGroup(log.created_at!);
+    if (!acc[dateKey]) acc[dateKey] = [];
+    acc[dateKey].push(log);
+    return acc;
+  }, {} as Record<string, ActivityLogType[]>);
 }

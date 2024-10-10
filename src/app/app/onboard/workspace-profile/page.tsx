@@ -78,8 +78,11 @@ const Step4ProfileWorkspace = () => {
         createActivityLog({
           actor_id: profile.id,
           action: ActivityAction.CREATED_TEAM,
-          entity_type: EntityType.TEAM,
-          entity_id: data.id,
+          entity: {
+            type: EntityType.TEAM,
+            id: data.id,
+            name: teamData.name
+          },
           metadata: {
             new_data: data,
           },

@@ -1,3 +1,4 @@
+import { JSONContent } from "novel";
 import { ViewTypes } from "./viewTypes";
 
 // Project types
@@ -49,7 +50,7 @@ export interface TaskAssigneeType {
   profile_id: string;
   name: string;
   avatar_url: string | null;
-  created_at?: string;
+  created_at: string;
 }
 
 export enum TaskPriority {
@@ -74,7 +75,7 @@ export interface TaskType {
   profile_id: string; // UUID of the profile who created the task
   assignees: TaskAssigneeType[];
   title: string;
-  description: string;
+  description: JSONContent | null;
   priority: TaskPriority;
   is_inbox: boolean;
   status: TaskStatus | null;

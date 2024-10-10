@@ -24,7 +24,6 @@ import Priorities from "./Priorities";
 import { useAuthProvider } from "@/context/AuthContext";
 import Spinner from "../ui/Spinner";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import { Textarea } from "../ui";
 import { v4 as uuidv4 } from "uuid";
 import ProjectsSelector from "./ProjectsSelector";
 import DateSelector from "./DateSelector";
@@ -41,6 +40,7 @@ import { useRole } from "@/context/RoleContext";
 import { canEditTask } from "@/types/hasPermission";
 import { format } from "date-fns";
 import useScreen from "@/hooks/useScreen";
+import LabelSelector from "./LabelSelector";
 
 const AddTaskForm = ({
   onClose,
@@ -55,6 +55,7 @@ const AddTaskForm = ({
   tasks,
   setTasks,
   setShowModal,
+  forTaskModal,
 }: {
   onClose: () => void;
   isSmall?: boolean;
@@ -68,6 +69,7 @@ const AddTaskForm = ({
   tasks?: TaskType[];
   setTasks?: (tasks: TaskType[]) => void;
   setShowModal?: Dispatch<SetStateAction<string | null>>;
+  forTaskModal?: boolean;
 }) => {
   const { projects, activeProject } = useSidebarDataProvider();
   const { profile } = useAuthProvider();
@@ -168,8 +170,11 @@ const AddTaskForm = ({
           createActivityLog({
             actor_id: profile.id,
             action: ActivityAction.CREATED_TASK,
-            entity_type: EntityType.TASK,
-            entity_id: data.id,
+            entity: {
+              id: data.id,
+              type: EntityType.TASK,
+              name: taskData.title
+            },
             metadata: {
               new_data: data,
             },
@@ -235,8 +240,11 @@ const AddTaskForm = ({
         createActivityLog({
           actor_id: profile.id,
           action: ActivityAction.CREATED_TASK,
-          entity_type: EntityType.TASK,
-          entity_id: data.id,
+          entity: {
+            type: EntityType.TASK,
+            id: data.id,
+            name: taskData.title,
+          },
           metadata: {
             new_data: data,
           },
@@ -305,6 +313,12 @@ const AddTaskForm = ({
             isSmall={isSmall}
           />
 
+          <LabelSelector
+            task={taskData}
+            setTask={setTaskData}
+            isSmall={isSmall}
+          />
+
           {taskForEdit && setShowModal && (
             <button
               onClick={() => {
@@ -326,14 +340,16 @@ const AddTaskForm = ({
         )}
 
         <div className="flex items-center justify-between gap-2 p-2 whitespace-nowrap">
-          <ProjectsSelector
-            setTask={setTaskData}
-            task={taskData}
-            isInbox
-            isSmall={isSmall}
-          />
+          {!forTaskModal && (
+            <ProjectsSelector
+              setTask={setTaskData}
+              task={taskData}
+              isInbox
+              isSmall={isSmall}
+            />
+          )}
 
-          <div className="flex justify-end gap-2 select-none">
+          <div className="flex flex-1 justify-end gap-2 select-none">
             {screenWidth > 768 && (
               <button
                 type="button"
@@ -353,7 +369,7 @@ const AddTaskForm = ({
             )}
             <button
               type="submit"
-              className="px-3 py-[6px] text-[13px] text-white bg-primary-500 rounded-lg hover:bg-primary-700 disabled:bg-primary-600 disabled:cursor-not-allowed transition disabled:opacity-50"
+              className="px-3 py-[6px] text-[13px] text-surface bg-primary-500 rounded-lg hover:bg-primary-700 disabled:bg-primary-600 disabled:cursor-not-allowed transition disabled:opacity-50"
               disabled={!taskData.title.trim() || loading}
             >
               {loading ? (

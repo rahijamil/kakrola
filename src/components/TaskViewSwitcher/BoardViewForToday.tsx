@@ -24,9 +24,9 @@ const BoardViewForToday = ({
   const { foundFixedDropdown } = useFoundFixedDropdown();
 
   return (
-    <div className="flex gap-1 h-full overflow-x-auto px-4 md:px-6 md:pt-4 scroll-smooth">
+    <div className="flex gap-1 h-full overflow-auto px-4 md:px-6 md:pt-4 scroll-smooth">
       <div
-        className={`rounded-lg w-[calc(100vw-50px)] min-w-[calc(100vw-50px)] md:w-[300px] md:min-w-[300px] h-fit max-h-[calc(100vh-150px)] md:max-h-[calc(100vh-150px)] overflow-y-auto cursor-default bg-text-25 dark:bg-surface`}
+        className={`rounded-lg w-[calc(100vw-50px)] min-w-[calc(100vw-50px)] md:w-[300px] md:min-w-[300px] h-fit max-h-[calc(100vh-150px)] md:max-h-[calc(100vh-150px)] overflow-auto cursor-default bg-text-25 dark:bg-surface`}
       >
         <div
           className={`flex justify-between ${

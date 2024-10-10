@@ -159,8 +159,11 @@ const AddTaskFormForProject = ({
         createActivityLog({
           actor_id: profile.id,
           action: ActivityAction.UPDATED_TASK,
-          entity_type: EntityType.TASK,
-          entity_id: taskData.id,
+          entity: {
+            id: taskData.id,
+            type: EntityType.TASK,
+            name: taskData.title,
+          },
           metadata: {
             old_data: taskForEdit,
             new_data: data,
@@ -222,8 +225,11 @@ const AddTaskFormForProject = ({
         createActivityLog({
           actor_id: profile.id,
           action: ActivityAction.CREATED_TASK,
-          entity_type: EntityType.TASK,
-          entity_id: data.id,
+          entity: {
+            type: EntityType.TASK,
+            id: data.id,
+            name: data.title,
+          },
           metadata: {
             new_data: data,
           },
