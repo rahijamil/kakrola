@@ -74,9 +74,7 @@ const ThreadWrapper = ({
     <motion.div
       {...(screenWidth > 768 ? motionProps : motionPropsForMobile)}
       className={`flex flex-col h-full w-full flex-1 transition-all duration-300 fixed inset-0 bg-background z-10 md:z-auto md:inset-auto md:static ${
-        !thread
-          ? "thread-wrapper"
-          : ""
+        !thread ? "thread-wrapper" : ""
       }`}
       onContextMenu={(e) => e.preventDefault()}
     >
@@ -209,7 +207,10 @@ const ThreadWrapper = ({
             <div className={`flex items-center justify-end  h-full`}>
               <div className="flex items-center h-full" ref={triggerRef}>
                 {screenWidth > 768 && (
-                  <ShareOption triggerRef={triggerRef} />
+                  <ShareOption
+                    triggerRef={triggerRef}
+                    teamId={channel.team_id}
+                  />
                 )}
 
                 {/* <button className="text-text-500 md:hover:bg-text-100 md:px-2 p-1 justify-center md:rounded-lg transition flex items-center gap-1">

@@ -13,12 +13,15 @@ import {
   PersonalMemberForProjectType,
   ProjectInviteType,
   PageInviteType,
+  TeamType,
+  TeamMemberType,
 } from "@/types/team";
 import PendingItem from "./PendingItem";
 import ShareAvatar from "./ShareAvatar";
 import useScreen from "@/hooks/useScreen";
 import { useQuery } from "@tanstack/react-query";
 import { RoleType } from "@/types/role";
+import TeamMemberItem from "./TeamMemberItem";
 
 // Define types
 interface MemberData extends PersonalMemberForProjectType {
@@ -26,9 +29,13 @@ interface MemberData extends PersonalMemberForProjectType {
 }
 
 // Fetching pending users
-const fetchPendingUsers = async (projectId?: number, pageId?: number) => {
-  const column_name = projectId ? "project_id" : "page_id";
-  const id = projectId || pageId;
+const fetchPendingUsers = async (
+  projectId?: number,
+  pageId?: number,
+  teamId?: number
+) => {
+  const column_name = projectId ? "project_id" : pageId ? "page_id" : "team_id";
+  const id = projectId || pageId || teamId;
 
   const { data, error } = await supabaseBrowser
     .from("invites")
@@ -56,6 +63,7 @@ const fetchMembersData = async (projectId?: number, pageId?: number) => {
     const { profiles, ...restMember } = member;
     return {
       ...restMember,
+      profile_id: (profiles as any).id,
       profile: profiles as unknown as {
         id: any;
         avatar_url: any;
@@ -64,6 +72,34 @@ const fetchMembersData = async (projectId?: number, pageId?: number) => {
       },
     };
   }) as MemberData[];
+};
+
+interface TeamMemberData extends TeamMemberType {
+  profile: ProfileType;
+}
+
+const fetchTeamMembersData = async (teamId?: TeamType["id"]) => {
+  const { data: members, error: membersError } = await supabaseBrowser
+    .from("team_members")
+    .select("id, team_role, profiles(id, avatar_url, full_name, email)")
+    .eq("team_id", teamId);
+
+  if (membersError) throw new Error("Failed to fetch members");
+
+  return members.map((member) => {
+    const { profiles, ...restMember } = member;
+    return {
+      ...restMember,
+      team_id: teamId,
+      profile_id: (profiles as any).id,
+      profile: profiles as unknown as {
+        id: any;
+        avatar_url: any;
+        full_name: any;
+        email: any;
+      },
+    };
+  }) as TeamMemberData[];
 };
 
 // ShareOption component
@@ -75,7 +111,7 @@ const ShareOption = ({
 }: {
   projectId?: number;
   pageId?: number;
-  teamId?: number | null;
+  teamId?: number;
   triggerRef: React.RefObject<HTMLDivElement>;
 }) => {
   const { profile } = useAuthProvider();
@@ -85,6 +121,15 @@ const ShareOption = ({
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Use React Query for fetching members and pending invites
+  const { data: teamMembersData, error: teamMembersError } = useQuery<
+    TeamMemberData[],
+    Error
+  >({
+    queryKey: ["teamMembersData", teamId],
+    queryFn: () => fetchTeamMembersData(teamId),
+    enabled: !!teamId,
+  });
+
   const { data: membersData, error: membersError } = useQuery<
     MemberData[],
     Error
@@ -99,8 +144,8 @@ const ShareOption = ({
     Error
   >({
     queryKey: ["pendingUsers", projectId, pageId],
-    queryFn: () => fetchPendingUsers(projectId, pageId),
-    enabled: !!(projectId || pageId),
+    queryFn: () => fetchPendingUsers(projectId, pageId, teamId),
+    enabled: !!(projectId || pageId || teamId),
   });
 
   const { screenWidth } = useScreen();
@@ -148,7 +193,8 @@ const ShareOption = ({
             searchQuery={searchQuery}
           />
 
-          {(membersData && membersData.length > 0) ||
+          {(teamMembersData && teamMembersData.length > 0) ||
+          (membersData && membersData.length > 0) ||
           (pendingUsers && pendingUsers.length > 0) ? (
             <div className="space-y-2">
               <h3 className="font-semibold px-4 text-text-700">
@@ -156,6 +202,18 @@ const ShareOption = ({
               </h3>
 
               <div>
+                {teamMembersData?.map((member) => (
+                  <TeamMemberItem
+                    key={member.id}
+                    member={member}
+                    isCurrentUserAdmin={
+                      teamMembersData.find(
+                        (mem) => mem.profile_id == profile?.id
+                      )?.team_role == RoleType.ADMIN
+                    }
+                  />
+                ))}
+
                 {membersData?.map((member) => (
                   <MemberItem
                     key={member.id}
@@ -172,8 +230,13 @@ const ShareOption = ({
                     key={invite.id}
                     invite={invite}
                     isCurrentUserAdmin={
-                      membersData?.find((mem) => mem.profile_id == profile?.id)
-                        ?.role == RoleType.ADMIN
+                      teamId
+                        ? teamMembersData?.find(
+                            (mem) => mem.profile_id == profile?.id
+                          )?.team_role == RoleType.ADMIN
+                        : membersData?.find(
+                            (mem) => mem.profile_id == profile?.id
+                          )?.role == RoleType.ADMIN
                     }
                   />
                 ))}

@@ -43,6 +43,9 @@ import {
   canEditTask,
 } from "@/types/hasPermission";
 import useScreen from "@/hooks/useScreen";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ListViewProps {
   groupedTasks: Record<string, TaskType[]>;
@@ -58,6 +61,7 @@ interface ListViewProps {
   project: ProjectType | null;
   setTasks: (tasks: TaskType[]) => void;
   tasks: TaskType[];
+  isLoading: boolean;
 }
 
 const ListView: React.FC<ListViewProps> = ({
@@ -73,6 +77,7 @@ const ListView: React.FC<ListViewProps> = ({
   project,
   setTasks,
   tasks,
+  isLoading,
 }) => {
   const [showSectionMoreOptions, setShowSectionMoreOptions] =
     useState<SectionType | null>(null);
@@ -99,6 +104,7 @@ const ListView: React.FC<ListViewProps> = ({
   const { profile } = useAuthProvider();
   const { role } = useRole();
   const [sectionAddLoading, setSectionAddLoading] = useState(false);
+  const queryClient = useQueryClient();
 
   const columns = useMemo(() => {
     const columnsObj: Record<
@@ -137,15 +143,21 @@ const ListView: React.FC<ListViewProps> = ({
 
   const onDragEnd = useCallback(
     async (result: DropResult) => {
-      if (!profile?.id || !project?.id) return;
+      if (!profile?.id || !project?.id) {
+        return;
+      }
 
       const userRole = role({ _project_id: project.id });
       const canUpdateSection = userRole ? canEditSection(userRole) : false;
-      if (!canUpdateSection) return;
+      if (!canUpdateSection) {
+        return;
+      }
 
-      const { source, destination, type } = result;
+      const { source, destination, type, draggableId } = result;
 
-      if (!destination) return;
+      if (!destination) {
+        return;
+      }
 
       if (
         source.droppableId === destination.droppableId &&
@@ -154,13 +166,13 @@ const ListView: React.FC<ListViewProps> = ({
         return;
       }
 
+
       // Handle section reordering
       if (type === "column") {
         const reorderedSections = Array.from(sections);
         const [movedSection] = reorderedSections.splice(source.index, 1);
         reorderedSections.splice(destination.index, 0, movedSection);
 
-        // Update section order based on new positions
         const updatedSections = reorderedSections.map((section, index) => ({
           ...section,
           order: index,
@@ -171,12 +183,11 @@ const ListView: React.FC<ListViewProps> = ({
         // Update section order in Supabase
         try {
           for (const section of updatedSections) {
-            const { error } = await supabaseBrowser
+            console.log("Updating section in Supabase:", section);
+            await supabaseBrowser
               .from("sections")
               .update({ order: section.order })
               .eq("id", section.id);
-
-            if (error) throw error;
           }
         } catch (error) {
           console.error("Error updating section order:", error);
@@ -186,112 +197,98 @@ const ListView: React.FC<ListViewProps> = ({
       }
 
       // Handle task reordering or moving between sections
-      if (type === "task") {
+      if (type == "task") {
         const newSectionId =
           destination.droppableId !== "ungrouped"
             ? parseInt(destination.droppableId)
             : null;
-
         const sourceSectionId =
           source.droppableId !== "ungrouped"
             ? parseInt(source.droppableId)
             : null;
 
-        // To store the updated tasks that need to be sent to the database
-        let tasksToUpdate: TaskType[] = [];
+        queryClient.setQueryData(
+          ["projectDetails", project.id],
+          (
+            oldData: { sections: SectionType[]; tasks: TaskType[] } | undefined
+          ) => {
+            if (!oldData) return oldData;
 
-        const updateTasks = (prevTasks: TaskType[]) => {
-          // Find tasks in the source section
-          const sourceTasks = prevTasks.filter(
-            (task) => task.section_id === sourceSectionId
-          );
+            let updatedTasks = [...oldData.tasks];
+            const movedTaskIndex = updatedTasks.findIndex(
+              (t) => t.id.toString() === draggableId
+            );
 
-          // Find the moved task
-          const movedTask = sourceTasks[source.index];
+            if (movedTaskIndex === -1) return oldData;
 
-          if (!movedTask) {
-            console.error("Moved task not found");
-            return prevTasks;
-          }
+            const [movedTask] = updatedTasks.splice(movedTaskIndex, 1);
+            const updatedMovedTask = { ...movedTask, section_id: newSectionId };
 
-          // Remove the moved task from the source section
-          const tasksWithoutMoved = prevTasks.filter(
-            (task) => task.id !== movedTask.id
-          );
-
-          // Update the moved task with new section and order
-          const updatedMovedTask: TaskType = {
-            ...movedTask,
-            section_id: newSectionId,
-            order: destination.index,
-          };
-
-          // Find tasks in the destination section
-          const destinationTasks = tasksWithoutMoved.filter(
-            (task) => task.section_id === newSectionId
-          );
-
-          // Insert the updated task at the new position
-          const updatedDestinationTasks = [
-            ...destinationTasks.slice(0, destination.index),
-            updatedMovedTask,
-            ...destinationTasks.slice(destination.index),
-          ];
-
-          // Combine all tasks back together, ensuring correct order
-          const updatedTasks = [
-            ...tasksWithoutMoved.filter(
-              (task) => task.section_id !== newSectionId
-            ),
-            ...updatedDestinationTasks,
-          ];
-
-          // Reorder tasks in the affected sections
-          const finalTasks = updatedTasks.map((task, index) => {
-            if (
-              task.section_id === newSectionId ||
-              task.section_id === movedTask.section_id
-            ) {
-              const updatedTask = { ...task, order: index };
-              tasksToUpdate.push(updatedTask); // Collect tasks to update in the database
-              return updatedTask;
+            // Reorder tasks in the source section
+            if (sourceSectionId !== null) {
+              updatedTasks = updatedTasks.map((task) => {
+                if (
+                  task.section_id === sourceSectionId &&
+                  task.order > movedTask.order
+                ) {
+                  return { ...task, order: task.order - 1 };
+                }
+                return task;
+              });
             }
-            return task;
-          });
 
-          return finalTasks;
-        };
+            // Insert the moved task and update orders in the destination section
+            const tasksInDestSection = updatedTasks.filter(
+              (t) => t.section_id === newSectionId
+            );
+            tasksInDestSection.splice(destination.index, 0, updatedMovedTask);
 
-        setTasks(updateTasks(tasks));
+            const updatedDestTasks = tasksInDestSection.map((task, index) => ({
+              ...task,
+              order: index,
+            }));
 
-        // Update tasks in the database with correct orders within their sections
+            // Merge the updated destination tasks back into the main array
+            updatedTasks = updatedTasks
+              .filter((t) => t.section_id !== newSectionId)
+              .concat(updatedDestTasks);
+
+            return { ...oldData, tasks: updatedTasks };
+          }
+        );
+
+        // Update tasks in the database
         try {
-          const userRole = role({ _project_id: project.id });
+          const tasksToUpdate = queryClient
+            .getQueryData<{ tasks: TaskType[] }>(["projectDetails", project.id])
+            ?.tasks.filter(
+              (t) =>
+                t.section_id === newSectionId ||
+                t.section_id === sourceSectionId
+            );
 
-          const canUpdateTask = userRole ? canEditTask(userRole) : false;
-          if (!canUpdateTask) return;
-
-          const promises = tasksToUpdate.map((task) =>
-            supabaseBrowser
-              .from("tasks")
-              .update({
+          if (tasksToUpdate) {
+            const { data, error } = await supabaseBrowser.from("tasks").upsert(
+              tasksToUpdate.map((task) => ({
+                ...task,
                 section_id: task.section_id,
                 order: task.order,
                 updated_at: new Date().toISOString(),
-              })
-              .eq("id", task.id)
-          );
-          const results = await Promise.all(promises);
-          results.forEach((result) => {
-            if (result.error) throw result.error;
-          });
+              }))
+            );
+
+            if (error) throw error;
+          }
         } catch (error) {
           console.error("Error updating tasks:", error);
-          // Optionally, implement a way to revert the state if the database update fails
+          // Optionally, invalidate the query to refetch the correct data
+          queryClient.invalidateQueries({
+            queryKey: ["projectDetails", project.id],
+          });
         }
       }
     },
-    [sections, setSections, tasks, setTasks]
+    [sections, setSections, tasks, setTasks, project, role]
   );
 
   const toggleSection = async (
@@ -552,7 +549,7 @@ const ListView: React.FC<ListViewProps> = ({
         <Droppable droppableId="list" type="column" direction="vertical">
           {(listProvided) => (
             <div
-              className="overflow-auto h-[calc(100vh-186px)] md:px-6 pb-4"
+              className="overflow-auto h-[calc(100vh-180px)] md:px-6 pb-4"
               ref={listProvided.innerRef}
               {...listProvided.droppableProps}
             >
@@ -589,108 +586,303 @@ const ListView: React.FC<ListViewProps> = ({
                   </tr>
 
                   <tbody>
-                    {columns.filter((c) => c.id !== "ungrouped").length ==
-                      0 && (
-                      <tr>
-                        <td colSpan={5} className="p-0">
-                          <UngroupedTasks
-                            tasks={unGroupedTasks}
-                            showUngroupedAddTask={showUngroupedAddTask}
-                            setShowUngroupedAddTask={setShowUngroupedAddTask}
-                            project={project}
-                            setTasks={setTasks}
-                            showTaskItemModal={showTaskItemModal}
-                            setShowTaskItemModal={setShowTaskItemModal}
-                          />
-
-                          {screenWidth > 768 && (
-                            <AddNewSectionListView
-                              section={{
-                                id: "ungrouped",
-                                title: "Ungrouped",
-                                tasks: [],
-                              }}
-                              index={0}
-                              newSectionName={newSectionName}
-                              setNewSectionName={setNewSectionName}
-                              handleAddSection={handleAddSection}
-                              setShowAddSection={setShowAddSection}
-                              showAddSection={showAddSection}
-                              sectionAddLoading={sectionAddLoading}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                    )}
-
-                    {columns
-                      .filter((c) => c.id !== "ungrouped")
-                      .map((column, columnIndex) => (
-                        <Draggable
-                          key={column.id}
-                          draggableId={column.id}
-                          index={columnIndex}
-                          isDragDisabled={!!showTaskItemModal}
-                        >
-                          {(provided) => (
-                            <tr
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                            >
-                              <td
-                                colSpan={5}
-                                className={`p-0 pb-4 md:pb-0 bg-background`}
-                                style={{
-                                  minWidth:
-                                    tableRef.current?.scrollWidth + "px",
-                                }}
-                              >
-                                <ListViewSection
-                                  section={
-                                    sections.find(
-                                      (s) => s.id.toString() === column.id
-                                    )!
-                                  }
-                                  sections={sections}
-                                  setSections={setSections}
-                                  toggleSection={toggleSection}
-                                  groupedTasks={groupedTasks}
-                                  showSectionMoreOptions={
-                                    showSectionMoreOptions
-                                  }
-                                  setShowSectionMoreOptions={
-                                    setShowSectionMoreOptions
-                                  }
-                                  setShowDeleteConfirm={setShowDeleteConfirm}
-                                  setShowArchiveConfirm={setShowArchiveConfirm}
-                                  setShowAddTask={setShowAddTask}
-                                  setTasks={setTasks}
-                                  showAddTask={showAddTask}
-                                  tasks={tasks}
-                                  project={project}
-                                  showTaskItemModal={showTaskItemModal}
-                                  setShowTaskItemModal={setShowTaskItemModal}
-                                />
-                                {screenWidth > 768 && (
-                                  <AddNewSectionListView
-                                    section={column}
-                                    index={columnIndex}
-                                    newSectionName={newSectionName}
-                                    setNewSectionName={setNewSectionName}
-                                    handleAddSection={handleAddSection}
-                                    setShowAddSection={setShowAddSection}
-                                    showAddSection={showAddSection}
-                                    sectionAddLoading={sectionAddLoading}
-                                  />
-                                )}
+                    {isLoading ? (
+                      <>
+                        <tr>
+                          <td colSpan={5} className="p-0 w-full pb-4">
+                            <tr className="border-b border-text-100 block">
+                              <td colSpan={5} className="p-2">
+                                <Skeleton width={100} />
                               </td>
                             </tr>
-                          )}
-                        </Draggable>
-                      ))}
+                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                            </tr>
+                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                            </tr>
+                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                            </tr>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colSpan={5} className="p-0 w-full pb-4">
+                            <tr className="border-b border-text-100 block">
+                              <td colSpan={5} className="p-2">
+                                <Skeleton width={100} />
+                              </td>
+                            </tr>
+                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                            </tr>
+                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                            </tr>
+                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                            </tr>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colSpan={5} className="p-0 w-full pb-12">
+                            <tr className="border-b border-text-100 block">
+                              <td colSpan={5} className="p-2">
+                                <Skeleton width={100} />
+                              </td>
+                            </tr>
+                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                            </tr>
+                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                            </tr>
+                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                              <td className="p-2">
+                                <Skeleton width={"60%"} />
+                              </td>
+                            </tr>
+                          </td>
+                        </tr>
+                      </>
+                    ) : (
+                      <>
+                        {columns.filter((c) => c.id !== "ungrouped").length ==
+                          0 && (
+                          <tr>
+                            <td colSpan={5} className="p-0">
+                              <UngroupedTasks
+                                tasks={unGroupedTasks}
+                                showUngroupedAddTask={showUngroupedAddTask}
+                                setShowUngroupedAddTask={
+                                  setShowUngroupedAddTask
+                                }
+                                project={project}
+                                setTasks={setTasks}
+                                showTaskItemModal={showTaskItemModal}
+                                setShowTaskItemModal={setShowTaskItemModal}
+                              />
 
-                    {listProvided.placeholder}
+                              {screenWidth > 768 && (
+                                <AddNewSectionListView
+                                  section={{
+                                    id: "ungrouped",
+                                    title: "Ungrouped",
+                                    tasks: [],
+                                  }}
+                                  index={0}
+                                  newSectionName={newSectionName}
+                                  setNewSectionName={setNewSectionName}
+                                  handleAddSection={handleAddSection}
+                                  setShowAddSection={setShowAddSection}
+                                  showAddSection={showAddSection}
+                                  sectionAddLoading={sectionAddLoading}
+                                />
+                              )}
+                            </td>
+                          </tr>
+                        )}
+
+                        {columns
+                          .filter((c) => c.id !== "ungrouped")
+                          .map((column, columnIndex) => (
+                            <Draggable
+                              key={column.id}
+                              draggableId={column.id}
+                              index={columnIndex}
+                              isDragDisabled={!!showTaskItemModal}
+                            >
+                              {(provided) => (
+                                <tr
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <td
+                                    colSpan={5}
+                                    className={`p-0 pb-4 md:pb-0 bg-background`}
+                                    style={{
+                                      minWidth:
+                                        tableRef.current?.scrollWidth + "px",
+                                    }}
+                                  >
+                                    <ListViewSection
+                                      section={
+                                        sections.find(
+                                          (s) => s.id.toString() === column.id
+                                        )!
+                                      }
+                                      sections={sections}
+                                      setSections={setSections}
+                                      toggleSection={toggleSection}
+                                      groupedTasks={groupedTasks}
+                                      showSectionMoreOptions={
+                                        showSectionMoreOptions
+                                      }
+                                      setShowSectionMoreOptions={
+                                        setShowSectionMoreOptions
+                                      }
+                                      setShowDeleteConfirm={
+                                        setShowDeleteConfirm
+                                      }
+                                      setShowArchiveConfirm={
+                                        setShowArchiveConfirm
+                                      }
+                                      setShowAddTask={setShowAddTask}
+                                      setTasks={setTasks}
+                                      showAddTask={showAddTask}
+                                      tasks={tasks}
+                                      project={project}
+                                      showTaskItemModal={showTaskItemModal}
+                                      setShowTaskItemModal={
+                                        setShowTaskItemModal
+                                      }
+                                    />
+                                    {screenWidth > 768 && (
+                                      <AddNewSectionListView
+                                        section={column}
+                                        index={columnIndex}
+                                        newSectionName={newSectionName}
+                                        setNewSectionName={setNewSectionName}
+                                        handleAddSection={handleAddSection}
+                                        setShowAddSection={setShowAddSection}
+                                        showAddSection={showAddSection}
+                                        sectionAddLoading={sectionAddLoading}
+                                      />
+                                    )}
+                                  </td>
+                                </tr>
+                              )}
+                            </Draggable>
+                          ))}
+
+                        {listProvided.placeholder}
+                      </>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -718,7 +910,10 @@ const ListView: React.FC<ListViewProps> = ({
             handleSectionDelete(
               showDeleteConfirm.id == "ungrouped"
                 ? null
-                : { id: parseInt(showDeleteConfirm.id), name: showDeleteConfirm.title }
+                : {
+                    id: parseInt(showDeleteConfirm.id),
+                    name: showDeleteConfirm.title,
+                  }
             )
           }
         />
@@ -769,7 +964,10 @@ const ListView: React.FC<ListViewProps> = ({
             handleSectionArchive(
               showArchiveConfirm.id == "ungrouped"
                 ? null
-                : { id: parseInt(showArchiveConfirm.id), name: showArchiveConfirm.title }
+                : {
+                    id: parseInt(showArchiveConfirm.id),
+                    name: showArchiveConfirm.title,
+                  }
             )
           }
         />

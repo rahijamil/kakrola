@@ -1,10 +1,12 @@
 "use client";
+import { SidebarData } from "@/hooks/useSidebarData";
 import { fetchSidebarData, getNotifications } from "@/lib/queries";
 import { ProfileType } from "@/types/user";
+import { fetchSectionsAndTasksByProjectId } from "@/utils/fetchSectionsAndTasksByProjectId";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, {
   createContext,
   ReactNode,
@@ -39,6 +41,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const [userId, setUserId] = useState<ProfileType["id"] | null>(null);
   const queryClient = useQueryClient();
+  const pathname = usePathname();
 
   useEffect(() => {
     const { data: authListener } = supabaseBrowser.auth.onAuthStateChange(
@@ -91,6 +94,33 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
     }
   }, [userId]);
+
+  // useEffect(() => {
+  //   if (pathname.startsWith("/app/project/") && userId) {
+  //     const project_slug = pathname.split("/app/project/")[1];
+
+  //     // Ensure sidebarData is fetched before using it
+  //     const sidebarData = queryClient.getQueryData<SidebarData>([
+  //       "sidebar_data",
+  //       userId,
+  //     ]);
+
+  //     if (sidebarData) {
+  //       console.log({ project_slug, sidebarData });
+
+  //       const findProject = sidebarData.projects.find(
+  //         (project) => project.slug === project_slug
+  //       );
+
+  //       if (findProject) {
+  //         queryClient.prefetchQuery({
+  //           queryKey: ["projectDetails", findProject.id],
+  //           queryFn: () => fetchSectionsAndTasksByProjectId(findProject.id),
+  //         });
+  //       }
+  //     }
+  //   }
+  // }, [pathname, userId, queryClient]);
 
   return (
     <AuthContext.Provider

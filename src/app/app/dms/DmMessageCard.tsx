@@ -15,7 +15,11 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 
 interface DmMessageCardProps {
-  profile: ProfileType;
+  profile: {
+    id: string;
+    full_name: string;
+    avatar_url: string;
+  };
   messages: DmType[];
   setShowOptions: (showOptions: string | null) => void;
   showOptions: string | null;

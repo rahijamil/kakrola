@@ -29,13 +29,16 @@ const useProjectDetails = (projectId: number | null) => {
     );
   };
 
-  const setTasks = (tasks: TaskType[]) => {
+  const setTasks = (newTasks: TaskType[]) => {
     queryClient.setQueryData(
       ["projectDetails", projectId],
-      (oldData: { sections: SectionType[]; tasks: TaskType[] }) => ({
-        ...oldData,
-        tasks,
-      })
+      (oldData: { sections: SectionType[]; tasks: TaskType[] } | undefined) => {
+        if (!oldData) return { sections: [], tasks: newTasks };
+        return {
+          ...oldData,
+          tasks: newTasks,
+        };
+      }
     );
   };
 

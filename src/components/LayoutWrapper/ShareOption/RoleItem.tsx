@@ -9,10 +9,12 @@ const RoleItem = ({
   onChange,
   value,
   handleRemove,
+  handleRevoke,
 }: {
   value: RoleType;
   onChange: (newRole: RoleType) => void;
   handleRemove?: () => void;
+  handleRevoke?: () => void;
 }) => {
   const triggerRef = useRef(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -29,10 +31,10 @@ const RoleItem = ({
           onClick={onClick}
           className={`text-xs text-text-500 transition pl-2 p-1 rounded-lg flex items-center gap-1 whitespace-nowrap ${
             isOpen
-              ? handleRemove
+              ? handleRemove || handleRevoke
                 ? "bg-primary-100"
                 : "bg-text-100"
-              : handleRemove
+              : handleRemove || handleRevoke
               ? "hover:bg-primary-100"
               : "hover:bg-text-100"
           }`}
@@ -116,7 +118,7 @@ const RoleItem = ({
               is_completed={value === RoleType.VIEWER}
             />
           ),
-          divide: handleRemove ? true : false,
+          divide: handleRemove || handleRevoke ? true : false,
         },
         ...(handleRemove
           ? [
@@ -125,6 +127,15 @@ const RoleItem = ({
                 label: "Remove from project",
                 textColor: "text-red-500",
                 onClick: handleRemove,
+              },
+            ]
+          : handleRevoke
+          ? [
+              {
+                id: 5,
+                label: "Revoke from project",
+                textColor: "text-red-500",
+                onClick: handleRevoke,
               },
             ]
           : []),

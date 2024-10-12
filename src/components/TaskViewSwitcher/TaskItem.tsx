@@ -38,6 +38,7 @@ import { canDeleteTask, canEditTask } from "@/types/hasPermission";
 import useTheme from "@/hooks/useTheme";
 import { format } from "date-fns";
 import Image from "next/image";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const TaskItem = ({
   task,
@@ -187,6 +188,7 @@ const TaskItem = ({
   });
 
   const triggerRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
   return (
     <div className="w-full">
@@ -222,7 +224,14 @@ const TaskItem = ({
               {...provided.draggableProps}
               {...provided.dragHandleProps}
               className="transition w-full group relative bg-background rounded-lg cursor-pointer overflow-hidden"
-              onClick={() => setShowModal && setShowModal(task.id.toString())}
+              onClick={() => {
+                setShowModal && setShowModal(task.id.toString());
+                window.history.pushState(
+                  null,
+                  "",
+                  `${pathname}?task=${task.id}`
+                );
+              }}
               onContextMenu={(ev) => {
                 ev.preventDefault();
                 setShowContextMenu(true);
@@ -251,7 +260,7 @@ const TaskItem = ({
                 </div>
               )}
 
-              <div className={`p-2 w-full relative bg-background space-y-2`}>
+              <div className={`p-2 w-full relative space-y-2`}>
                 <div className="flex items-center gap-2 w-full">
                   <div>
                     <AnimatedCircleCheck
@@ -381,7 +390,10 @@ const TaskItem = ({
           subTasks={subTasks}
           setTasks={setTasks}
           tasks={tasks}
-          onClose={() => setShowModal(null)}
+          onClose={() => {
+            setShowModal(null);
+            window.history.pushState(null, "", pathname);
+          }}
           onCheckClick={handleCheckClickDebounced}
           project={project}
         />

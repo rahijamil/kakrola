@@ -218,6 +218,7 @@ const ListViewSection = ({
           key={section.id}
           type="task"
           droppableId={section.id.toString()}
+          direction="vertical"
         >
           {(provided, snapshot) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>

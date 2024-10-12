@@ -1,10 +1,11 @@
 import { JSONContent } from "novel";
 import { ViewTypes } from "./viewTypes";
+import { TeamType } from "./team";
 
 // Project types
 export interface ProjectType {
   id: number;
-  team_id: number | null;
+  team_id: TeamType['id'] | null;
   profile_id: string; // UUID
   name: string;
   slug: string;

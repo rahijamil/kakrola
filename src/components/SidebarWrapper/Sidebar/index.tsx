@@ -29,7 +29,7 @@ import { getNotifications } from "@/lib/queries";
 import SidebarNotifications from "./SidebarNotifications";
 import AddTeam from "@/components/AddTeam";
 import Dropdown from "@/components/ui/Dropdown";
-import DmSidebar from "@/app/app/dm/DmSidebar";
+import DmSidebar from "@/app/app/dms/DmSidebar";
 import DmDropdown from "./DmDropdown";
 
 const menuItems: {
@@ -44,7 +44,7 @@ const menuItems: {
   { id: 1, icon: CheckSquare, text: "My Tasks", path: "/app" },
   { id: 2, icon: Inbox, text: "Inbox", path: "/app/inbox" },
   { id: 3, icon: Search, text: "Search", path: "#" },
-  { id: 4, icon: MessagesSquare, text: "DMs", path: "/app/dm" },
+  { id: 4, icon: MessagesSquare, text: "DMs", path: "/app/dms" },
 ];
 
 const Sidebar = ({
@@ -147,7 +147,7 @@ const Sidebar = ({
             ) : (
               <li key={item.id}>
                 {item.path ? (
-                  item.path == "/app/dm" ? (
+                  item.path == "/app/dms" ? (
                     <DmDropdown item={item} />
                   ) : (
                     <Link

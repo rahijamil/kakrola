@@ -9,6 +9,7 @@ import moment from "moment";
 import useScreen from "@/hooks/useScreen";
 import { DmContactType } from "@/types/channel";
 import { AnimatePresence, motion } from "framer-motion";
+import { useAuthProvider } from "@/context/AuthContext";
 
 interface DmSidebarProps {
   activeContact: DmContactType | null;
@@ -26,7 +27,7 @@ const DmSidebar: React.FC<DmSidebarProps> = ({
   forDropdown,
 }) => {
   const { screenWidth } = useScreen();
-
+  const { profile } = useAuthProvider();
   const { sidebarLoading } = useSidebarDataProvider();
 
   const getLastMessagePreview = (message: string | undefined) => {
@@ -67,7 +68,7 @@ const DmSidebar: React.FC<DmSidebarProps> = ({
                   </div>
                 ) : (
                   dmContacts.length > 0 && (
-                    <div className="py-2 px-4 border-b border-text-100 overflow-x-auto scrollbar-hide space-x-2">
+                    <div className="py-2 px-4 border-b border-text-100 overflow-x-auto scrollbar-hide space-x-2 flex">
                       {dmContacts.map((contact) => (
                         <button
                           onTouchStart={(ev) =>
@@ -82,7 +83,7 @@ const DmSidebar: React.FC<DmSidebarProps> = ({
                               window.history.pushState(
                                 null,
                                 "",
-                                `/app/dm?contact-id=${contact.profile_id}`
+                                `/app/dms?contact-id=${contact.profile_id}`
                               );
                           }}
                           key={contact.profile_id}
@@ -130,7 +131,7 @@ const DmSidebar: React.FC<DmSidebarProps> = ({
                             window.history.pushState(
                               null,
                               "",
-                              `/app/dm?contact-id=${contact.profile_id}`
+                              `/app/dms?contact-id=${contact.profile_id}`
                             );
                         }}
                         onTouchStart={(ev) =>
@@ -169,6 +170,8 @@ const DmSidebar: React.FC<DmSidebarProps> = ({
                             </span>
                           </div>
                           <p className="text-text-500 text-xs truncate">
+                            {lastMessage?.sender_profile_id == profile?.id &&
+                              "You: "}
                             {getLastMessagePreview(lastMessage?.content)}
                           </p>
                         </div>
@@ -188,13 +191,11 @@ const DmSidebar: React.FC<DmSidebarProps> = ({
             !forDropdown && "md:min-w-[25%] md:border-r "
           } md:w-1/4 max-w-[400px] border-text-100 shadow-[inset_-1rem_0_1rem_-1rem_rgba(0,0,0,0.1),inset_1rem_0_1rem_-1rem_rgba(0,0,0,0.1)]`}
         >
-          {
-            !forDropdown && (
-              <div className="flex items-center justify-between border-b border-text-100 p-4 h-[53px]">
-            <h2 className="font-semibold">Direct Messages</h2>
-          </div>
-            )
-          }
+          {!forDropdown && (
+            <div className="flex items-center justify-between border-b border-text-100 p-4 h-[53px]">
+              <h2 className="font-semibold">Direct Messages</h2>
+            </div>
+          )}
 
           {screenWidth <= 768 && (
             <>
@@ -223,7 +224,7 @@ const DmSidebar: React.FC<DmSidebarProps> = ({
                             window.history.pushState(
                               null,
                               "",
-                              `/app/dm?contact-id=${contact.profile_id}`
+                              `/app/dms?contact-id=${contact.profile_id}`
                             );
                         }}
                         key={contact.profile_id}
@@ -275,7 +276,7 @@ const DmSidebar: React.FC<DmSidebarProps> = ({
                           window.history.pushState(
                             null,
                             "",
-                            `/app/dm?contact-id=${contact.profile_id}`
+                            `/app/dms?contact-id=${contact.profile_id}`
                           );
                       }}
                       onTouchStart={(ev) =>
@@ -314,6 +315,8 @@ const DmSidebar: React.FC<DmSidebarProps> = ({
                           </span>
                         </div>
                         <p className="text-text-500 text-xs truncate">
+                          {lastMessage?.sender_profile_id == profile?.id &&
+                            "You: "}
                           {getLastMessagePreview(lastMessage?.content)}
                         </p>
                       </div>

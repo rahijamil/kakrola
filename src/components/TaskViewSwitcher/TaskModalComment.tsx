@@ -169,6 +169,9 @@ const TaskModalComment = ({ task }: { task: TaskType }) => {
     if (searchTabs) {
       setTabs(searchTabs as TabEnum);
     }
+    else {
+      setTabs(TabEnum.comments);
+    }
   }, [searchTabs]);
 
   const {

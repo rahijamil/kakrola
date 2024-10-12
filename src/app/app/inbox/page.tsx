@@ -7,8 +7,11 @@ import TaskViewSwitcher from "@/components/TaskViewSwitcher";
 import { ViewTypes } from "@/types/viewTypes";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useAuthProvider } from "@/context/AuthContext";
+import { useQuery } from "@tanstack/react-query";
 
-const fetchInboxSectionsAndTasks = async (_profile_id: string) => {
+const fetchInboxSectionsAndTasks = async (_profile_id?: string) => {
+  if (!_profile_id) return { sections: [], tasks: [] };
+
   const { data, error } = await supabaseBrowser.rpc(
     "fetch_inbox_sections_and_tasks",
     { _profile_id }
@@ -25,19 +28,24 @@ const fetchInboxSectionsAndTasks = async (_profile_id: string) => {
 
 const InboxPage = () => {
   const { profile } = useAuthProvider();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["inbox", profile?.id],
+    queryFn: () => fetchInboxSectionsAndTasks(profile?.id),
+    enabled: !!profile?.id,
+  });
+
   const [view, setView] = useState<ViewTypes["view"]>("List");
 
   const [inboxTasks, setInboxTasks] = useState<TaskType[]>([]);
   const [inboxSections, setInboxSections] = useState<SectionType[]>([]);
 
   useEffect(() => {
-    if (!profile) return;
-
-    fetchInboxSectionsAndTasks(profile?.id).then((data) => {
-      setInboxSections(data.sections || []);
-      setInboxTasks(data.tasks || []);
-    });
-  }, [profile?.id]);
+    if(data){
+      setInboxTasks(data.tasks);
+      setInboxSections(data.sections);
+    }
+  }, [data]);
 
   return (
     <LayoutWrapper headline="Inbox" setView={setView} view={view}>
@@ -48,6 +56,7 @@ const InboxPage = () => {
         sections={inboxSections}
         setSections={setInboxSections}
         view={view}
+        isLoading={isLoading}
       />
 
       {inboxTasks.length === 0 && view === "List" && (

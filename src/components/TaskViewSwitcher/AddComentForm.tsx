@@ -19,10 +19,13 @@ import {
 } from "@/types/activitylog";
 import Spinner from "../ui/Spinner";
 import { useRole } from "@/context/RoleContext";
-import NovelEditor from "../NovelEditor";
 import { v4 as uuidv4 } from "uuid";
 import { useQueryClient } from "@tanstack/react-query";
 import { PersonalMemberForProjectType } from "@/types/team";
+import dynamic from "next/dynamic";
+const NovelEditor = dynamic(() => import("@/components/NovelEditor"), {
+  ssr: false,
+});
 
 const MentionInput = ({
   content,

@@ -55,20 +55,18 @@ const SectionAddTask = ({
       )}
       {isAddTaskFormVisible &&
         (view == "Board" ? (
-          <div className="pt-1">
-            <AddTask
-              onClose={() =>
-                section
-                  ? setShowAddTask && setShowAddTask(null)
-                  : setShowUngroupedAddTask && setShowUngroupedAddTask(false)
-              }
-              isSmall={isSmall}
-              section_id={section?.id}
-              project={project}
-              tasks={tasks}
-              setTasks={setTasks}
-            />
-          </div>
+          <AddTask
+            onClose={() =>
+              section
+                ? setShowAddTask && setShowAddTask(null)
+                : setShowUngroupedAddTask && setShowUngroupedAddTask(false)
+            }
+            isSmall={isSmall}
+            section_id={section?.id}
+            project={project}
+            tasks={tasks}
+            setTasks={setTasks}
+          />
         ) : (
           <div
             className={`flex items-center gap-3 cursor-pointer w-full h-10 ring-1 ring-primary-300 pt-[1px]`}

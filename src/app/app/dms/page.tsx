@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { MessageCircleMore } from "lucide-react";
 import useDms from "./useDms";
 import Spinner from "@/components/ui/Spinner";
@@ -17,69 +23,39 @@ import { EditorContent, JSONContent } from "novel";
 import { v4 as uuidv4 } from "uuid";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { defaultExtensions } from "@/components/NovelEditor/extensions";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getProfileById } from "@/lib/queries";
 import moment from "moment";
 import { ProfileType } from "@/types/user";
 import { format, isSameDay } from "date-fns";
 import DmMessageCard from "./DmMessageCard";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 
 interface GroupedDm {
   date: Date;
-  messages: {
-    profile: ProfileType;
-    messages: DmType[];
-  }[];
+  messages: DmType[]; // Array of messages only
+  profile: {
+    id: string;
+    full_name: string;
+    avatar_url: string;
+  };
 }
 
 const DmPage: React.FC = () => {
   const { profile } = useAuthProvider();
   const {
-    contacts: initialContacts,
+    contacts,
     isLoadingContacts,
-    getDmsForContact,
-    loadMore,
-    limit,
+    activeContact,
+    setActiveContact,
+    dmMessages,
   } = useDms();
 
-  const [contacts, setContacts] = useState<DmContactType[]>(initialContacts);
-  const [activeContact, setActiveContact] = useState<DmContactType | null>(
-    null
-  );
-  const [dmMessages, setDmMessages] = useState<DmType[]>([]);
-  const [groupedDms, setGroupedDms] = useState<GroupedDm[]>([]);
   const [showOptions, setShowOptions] = useState<string | null>(null);
-  const [hasMore, setHasMore] = useState(true);
+
   const { screenWidth } = useScreen();
 
-  const { data: profilesCache } = useQuery({
-    queryKey: ["profiles", dmMessages],
-    queryFn: async () => {
-      const uniqueProfileIds = Array.from(
-        new Set(dmMessages.map((dm) => dm.sender_profile_id))
-      );
-      const profiles = await Promise.all(uniqueProfileIds.map(getProfileById));
-      return Object.fromEntries(
-        profiles.map((profile) => [profile.id, profile])
-      );
-    },
-    enabled: dmMessages.length > 0,
-  });
-
-  const updateDmMessages = useCallback(async () => {
-    if (activeContact) {
-      const messages = await getDmsForContact(activeContact.profile_id);
-      setDmMessages(messages);
-    }
-  }, [activeContact, getDmsForContact]);
-
-  useEffect(() => {
-    updateDmMessages();
-  }, [updateDmMessages]);
-
-  useEffect(() => {
-    setContacts(initialContacts);
-  }, [initialContacts]);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const fetchLastActiveContact = async () => {
@@ -125,63 +101,48 @@ const DmPage: React.FC = () => {
     updateLastActiveContact();
   }, [activeContact, profile]);
 
-  useEffect(() => {
-    if (dmMessages.length > 0 && profilesCache) {
-      // Group DMs by date and then by sender
-      const grouped = dmMessages.reduce<GroupedDm[]>((acc, dm) => {
-        const profile = profilesCache[dm.sender_profile_id];
-        if (!profile) return acc;
+  const groupedDms = useMemo(() => {
+    if (!activeContact) return [];
 
-        const dmDate = new Date(dm.created_at || "");
-        let dateGroup = acc.find((group) => isSameDay(group.date, dmDate));
+    const grouped: GroupedDm[] = [];
+    let lastProfileId: ProfileType["id"] | null = null; // Track the last sender's profile ID
+    let lastGroup: GroupedDm | null = null; // Track the last group for the sender
 
-        if (!dateGroup) {
-          dateGroup = { date: dmDate, messages: [] };
-          acc.push(dateGroup);
-        }
-
-        let senderGroup = dateGroup.messages.find(
-          (group) => group.profile.id === profile.id
-        );
-
-        if (!senderGroup) {
-          senderGroup = { profile, messages: [] };
-          dateGroup.messages.push(senderGroup);
-        }
-
-        senderGroup.messages.push(dm);
-        return acc;
-      }, []);
-
-      // Sort the grouped DMs in ascending order by date
-      const sortedGroupedDms = grouped.sort(
-        (a, b) => a.date.getTime() - b.date.getTime()
+    dmMessages.forEach((dm) => {
+      const dmProfile = contacts.find(
+        (contact) => contact.profile_id === dm.sender_profile_id
       );
 
-      // Sort messages within each group in ascending order
-      sortedGroupedDms.forEach((dateGroup) => {
-        dateGroup.messages.forEach((senderGroup) => {
-          senderGroup.messages.sort(
-            (a, b) =>
-              new Date(a.created_at || "").getTime() -
-              new Date(b.created_at || "").getTime()
-          );
-        });
-      });
+      if (!dmProfile) return; // Skip if profile not found
 
-      setGroupedDms(sortedGroupedDms);
-    }
-  }, [dmMessages, profilesCache]);
+      const profile = {
+        id: dmProfile.profile_id,
+        full_name: dmProfile.name,
+        avatar_url: dmProfile.avatar_url,
+      };
 
-  const handleScroll = async () => {
-    if (hasMore && dmMessages.length >= limit && activeContact) {
-      const newDms = await loadMore(activeContact.profile_id);
-      setDmMessages((prev) => [...prev, ...newDms]);
-      if (newDms.length < limit) {
-        setHasMore(false);
+      const dmDate = new Date(dm.created_at || "");
+
+      // Check if we are creating a new group or adding to the existing one
+      const isSameProfile = lastProfileId === profile.id;
+      const isSameDate = lastGroup && isSameDay(dmDate, lastGroup.date); // Check if the date is the same
+
+      if (isSameProfile && isSameDate && lastGroup) {
+        // Same sender and same date, add to the existing group
+        lastGroup.messages.push(dm); // Add to the same group
+        lastGroup.date = dmDate; // Update the group's date to the latest message date
+      } else {
+        // Create a new group
+        lastGroup = { date: dmDate, messages: [dm], profile }; // Include profile in the group
+        grouped.push(lastGroup);
       }
-    }
-  };
+
+      lastProfileId = profile.id; // Update lastProfileId to current profile
+    });
+
+    // Sort the grouped DMs in ascending order by date
+    return grouped.sort((a, b) => a.date.getTime() - b.date.getTime());
+  }, [activeContact, dmMessages, contacts]);
 
   const handleReplySave = async ({
     ev,
@@ -210,21 +171,26 @@ const DmPage: React.FC = () => {
         created_at: new Date().toISOString(),
       };
 
-      setDmMessages((prev) => [...prev, newDm]);
       setReplyContent(null);
       // Optimistically update the contacts list with the new last message
-      setContacts((prevContacts) =>
-        prevContacts
-          .map((contact) =>
-            contact.profile_id === activeContact.profile_id
-              ? { ...contact, last_message: newDm }
-              : contact
-          )
-          .sort((a, b) => {
-            const timeA = a.last_message?.created_at ?? "0";
-            const timeB = b.last_message?.created_at ?? "0";
-            return timeB.localeCompare(timeA);
-          })
+      queryClient.setQueryData(
+        ["dmContacts", profile?.id],
+        (prevContacts: DmContactType[]) =>
+          prevContacts
+            .map((contact) =>
+              contact.profile_id === activeContact.profile_id
+                ? {
+                    ...contact,
+                    all_dms: [...contact.all_dms, newDm],
+                    last_message: newDm,
+                  }
+                : contact
+            )
+            .sort((a, b) => {
+              const timeA = a.last_message?.created_at ?? "0";
+              const timeB = b.last_message?.created_at ?? "0";
+              return timeB.localeCompare(timeA);
+            })
       );
 
       ProseMirror.innerHTML = `<p data-placeholder="Press '/' for commands" class="is-empty is-editor-empty"><br class="ProseMirror-trailingBreak"></p>`;
@@ -239,19 +205,41 @@ const DmPage: React.FC = () => {
 
       if (error) throw error;
 
-      setDmMessages((prev) =>
-        prev.map((dm) => (dm.id === newDm.id ? data : dm))
+      queryClient.setQueryData(
+        ["dmContacts", profile?.id],
+        (prevContacts: DmContactType[]) =>
+          prevContacts.map((contact) =>
+            contact.profile_id === activeContact.profile_id
+              ? {
+                  ...contact,
+                  all_dms: contact.all_dms.map((dm) =>
+                    dm.id == newDm.id ? data : dm
+                  ),
+                }
+              : contact
+          )
       );
     } catch (error) {
       console.error(error);
-      getDmsForContact(activeContact!.profile_id).then(setDmMessages);
+      queryClient.setQueryData(
+        ["dmContacts", profile?.id],
+        (prevContacts: DmContactType[]) =>
+          prevContacts.map((contact) =>
+            contact.profile_id === activeContact?.profile_id
+              ? {
+                  ...contact,
+                  all_dms: dmMessages,
+                }
+              : contact
+          )
+      );
     }
   };
 
   const closeActiveContact = async () => {
     if (profile) {
       setActiveContact(null);
-      window.history.pushState(null, "", "/app/dm");
+      window.history.pushState(null, "", "/app/dms");
 
       const { error } = await supabaseBrowser
         .from("profiles")
@@ -268,6 +256,15 @@ const DmPage: React.FC = () => {
       }
     }
   };
+
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight + 25;
+    }
+  }, [activeContact, dmMessages]);
 
   return (
     <div className="flex h-screen bg-background">
@@ -307,7 +304,8 @@ const DmPage: React.FC = () => {
                   {/* Messages */}
                   <div
                     className="max-h-[calc(100vh-170px)] overflow-y-auto"
-                    onScroll={handleScroll}
+                    // onScroll={handleScroll}
+                    ref={messagesContainerRef}
                   >
                     <div className="space-y-4 p-6 pt-8">
                       <div className="flex items-center gap-3">
@@ -347,30 +345,42 @@ const DmPage: React.FC = () => {
                     </div>
 
                     {groupedDms.length > 0 && (
-                      <div className="space-y-6 pb-6">
-                        {groupedDms.map((dateGroup) => (
-                          <div
-                            key={dateGroup.date.toISOString()}
-                            className="space-y-4"
-                          >
-                            <div className="flex items-center select-none">
-                              <div className="h-px w-full bg-text-100"></div>
-                              <div className="text-center text-text-500 whitespace-nowrap bg-background border border-text-100 rounded-lg text-xs font-medium px-2 py-1">
-                                {format(dateGroup.date, "MMMM d, yyyy")}
-                              </div>
-                              <div className="h-px w-full bg-text-100"></div>
-                            </div>
-                            {dateGroup.messages.map((senderGroup, index) => (
+                      <div className="pb-6">
+                        {groupedDms.map((dateGroup, index) => {
+                          // Check if the current group is on a different date or sent by a different profile than the last one
+                          const isNewDate =
+                            index === 0 ||
+                            !isSameDay(
+                              dateGroup.date,
+                              groupedDms[index - 1].date
+                            );
+
+                          return (
+                            <div
+                              key={dateGroup.date.toISOString()}
+                              className={`${isNewDate && "space-y-4"}`}
+                            >
+                              {isNewDate && (
+                                <div className="flex items-center select-none pt-6">
+                                  <div className="h-px w-full bg-text-100"></div>
+                                  <div className="text-center text-text-500 whitespace-nowrap bg-background border border-text-100 rounded-lg text-xs font-medium px-2 py-1">
+                                    {format(dateGroup.date, "MMMM d, yyyy")}
+                                  </div>
+                                  <div className="h-px w-full bg-text-100"></div>
+                                </div>
+                              )}
+
+                              {/* Render messages grouped by profile */}
                               <DmMessageCard
-                                key={`${senderGroup.profile.id}-${index}`}
-                                profile={senderGroup.profile}
-                                messages={senderGroup.messages}
+                                key={dateGroup.profile.id} // Unique key for the profile
+                                profile={dateGroup.profile} // Profile of the sender
+                                messages={dateGroup.messages} // Array of messages for this profile on the date
                                 setShowOptions={setShowOptions}
                                 showOptions={showOptions}
                               />
-                            ))}
-                          </div>
-                        ))}
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
@@ -405,7 +415,8 @@ const DmPage: React.FC = () => {
                   {/* Messages */}
                   <div
                     className="max-h-[calc(100vh-50px)] md:max-h-[calc(100vh-170px)] overflow-y-auto pb-20 md:pb-0"
-                    onScroll={handleScroll}
+                    // onScroll={handleScroll}
+                    ref={messagesContainerRef}
                   >
                     <div className="space-y-4 p-6 md:pt-8">
                       <div className="flex items-center gap-3">
@@ -445,30 +456,42 @@ const DmPage: React.FC = () => {
                     </div>
 
                     {groupedDms.length > 0 && (
-                      <div className="space-y-6 pb-6">
-                        {groupedDms.map((dateGroup) => (
-                          <div
-                            key={dateGroup.date.toISOString()}
-                            className="space-y-4"
-                          >
-                            <div className="flex items-center select-none">
-                              <div className="h-px w-full bg-text-100"></div>
-                              <div className="text-center text-text-500 whitespace-nowrap bg-background border border-text-100 rounded-lg text-xs font-medium px-2 py-1">
-                                {format(dateGroup.date, "MMMM d, yyyy")}
-                              </div>
-                              <div className="h-px w-full bg-text-100"></div>
-                            </div>
-                            {dateGroup.messages.map((senderGroup, index) => (
+                      <div className="pb-6">
+                        {groupedDms.map((dateGroup, index) => {
+                          // Check if the current group is on a different date or sent by a different profile than the last one
+                          const isNewDate =
+                            index === 0 ||
+                            !isSameDay(
+                              dateGroup.date,
+                              groupedDms[index - 1].date
+                            );
+
+                          return (
+                            <div
+                              key={dateGroup.date.toISOString()}
+                              className={`${isNewDate && "space-y-4"}`}
+                            >
+                              {isNewDate && (
+                                <div className="flex items-center select-none pt-6">
+                                  <div className="h-px w-full bg-text-100"></div>
+                                  <div className="text-center text-text-500 whitespace-nowrap bg-background border border-text-100 rounded-lg text-xs font-medium px-2 py-1">
+                                    {format(dateGroup.date, "MMMM d, yyyy")}
+                                  </div>
+                                  <div className="h-px w-full bg-text-100"></div>
+                                </div>
+                              )}
+
+                              {/* Render messages grouped by profile */}
                               <DmMessageCard
-                                key={`${senderGroup.profile.id}-${index}`}
-                                profile={senderGroup.profile}
-                                messages={senderGroup.messages}
+                                key={dateGroup.profile.id} // Unique key for the profile
+                                profile={dateGroup.profile} // Profile of the sender
+                                messages={dateGroup.messages} // Array of messages for this profile on the date
                                 setShowOptions={setShowOptions}
                                 showOptions={showOptions}
                               />
-                            ))}
-                          </div>
-                        ))}
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </div>

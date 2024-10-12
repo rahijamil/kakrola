@@ -18,7 +18,7 @@ export const getInitialTaskData = ({
 }): TaskType => ({
   id: uuidv4(),
   title: "",
-  description: "",
+  description: null,
   priority: TaskPriority.Priority,
   project_id: project?.id || null,
   section_id: section_id || null,

@@ -1,11 +1,28 @@
 "use client";
 import { ProjectType, SectionType } from "@/types/project";
-import React, { createContext, ReactNode, useContext, useState } from "react";
-import { TeamType, TeamMemberType, PersonalMemberForProjectType, PersonalMemberForPageType } from "@/types/team";
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import {
+  TeamType,
+  TeamMemberType,
+  PersonalMemberForProjectType,
+  PersonalMemberForPageType,
+} from "@/types/team";
 import { PageType } from "@/types/pageTypes";
 import useSidebarData from "@/hooks/useSidebarData";
 import { ChannelType } from "@/types/channel";
-import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { usePathname } from "next/navigation";
+import { fetchSectionsAndTasksByProjectId } from "@/utils/fetchSectionsAndTasksByProjectId";
 
 const SidebarDataContext = createContext<{
   projects: ProjectType[];
@@ -23,10 +40,13 @@ const SidebarDataContext = createContext<{
   teams: TeamType[];
   setTeams: (teams: TeamType[]) => void;
   teamMembers: TeamMemberType[];
+  setTeamMembers: (teamMembers: TeamMemberType[]) => void;
   activeProject: ProjectType | null;
   setActiveProject: React.Dispatch<React.SetStateAction<ProjectType | null>>;
   personalMembers: (PersonalMemberForProjectType | PersonalMemberForPageType)[];
-  setPersonalMembers: (members: (PersonalMemberForProjectType | PersonalMemberForPageType)[]) => void;
+  setPersonalMembers: (
+    members: (PersonalMemberForProjectType | PersonalMemberForPageType)[]
+  ) => void;
   isShowViewModal: boolean;
   setIsShowViewModal: React.Dispatch<React.SetStateAction<boolean>>;
   isError: boolean;
@@ -44,6 +64,7 @@ const SidebarDataContext = createContext<{
   teams: [],
   setTeams: () => {},
   teamMembers: [],
+  setTeamMembers: () => {},
   activeProject: null,
   setActiveProject: () => {},
   personalMembers: [],
@@ -65,6 +86,7 @@ const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
     personalMembers,
     setPersonalMembers,
     teamMembers,
+    setTeamMembers,
     isLoading,
     isError,
     error,
@@ -89,6 +111,7 @@ const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
         teams,
         setTeams,
         teamMembers,
+        setTeamMembers,
         activeProject,
         setActiveProject,
         personalMembers,

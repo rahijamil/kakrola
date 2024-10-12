@@ -27,8 +27,8 @@ const AddTask: React.FC<AddTaskProps> = ({
 }) => {
   return (
     <div
-      className={`rounded-lg border border-text-100 focus-within:border-text-400 bg-surface ${
-        addTaskAboveBellow?.position == "above" ? "mb-2" : "mt-2"
+      className={`rounded-lg border border-text-100 focus-within:border-text-400 bg-background ${
+        addTaskAboveBellow?.position == "above" ? "mb-2" : addTaskAboveBellow?.position == "below" ? "mt-2" : "mt-1"
       }`}
     >
       <AddTaskForm
@@ -41,6 +41,7 @@ const AddTask: React.FC<AddTaskProps> = ({
         addTaskAboveBellow={addTaskAboveBellow}
         taskForEdit={taskForEdit}
         setShowModal={setShowModal}
+        forTaskModal={isSmall}
       />
     </div>
   );

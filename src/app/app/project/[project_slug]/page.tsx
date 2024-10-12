@@ -124,14 +124,6 @@ const ProjectDetails = ({
     [currentProject?.id, setProjects]
   );
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center w-full h-screen text-primary-500">
-        <Spinner color="current" />
-      </div>
-    );
-  }
-
   if (isError) {
     console.error("Error fetching data:", error);
     return (
@@ -186,6 +178,7 @@ const ProjectDetails = ({
           view={currentProject.settings.view}
           showNoDateTasks={showNoDateTasks}
           setShowNoDateTasks={setShowNoDateTasks}
+          isLoading={isLoading}
         />
 
         {tasks?.length === 0 && currentProject.settings.view === "List" && (

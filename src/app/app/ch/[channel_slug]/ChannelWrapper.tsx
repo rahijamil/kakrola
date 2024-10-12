@@ -106,8 +106,6 @@ const ChannelWrapper = ({
             screenWidth > 768 ? "py-3 px-6" : "p-3"
           }`}
         >
-          
-
           <div className={`flex items-center justify-end md:flex-1`}>
             <ul className="flex items-center" ref={triggerRef}>
               {/* <li>
@@ -116,7 +114,7 @@ const ChannelWrapper = ({
               </Button>
             </li> */}
               <li>
-                <ShareOption triggerRef={triggerRef} />
+                <ShareOption triggerRef={triggerRef} teamId={channel.team_id} />
               </li>
 
               <li>

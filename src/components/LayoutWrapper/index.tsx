@@ -293,7 +293,7 @@ const LayoutWrapper = ({
                         <li>
                           <ShareOption
                             projectId={project?.id}
-                            teamId={project?.team_id}
+                            teamId={project?.team_id || undefined}
                             triggerRef={triggerRef}
                           />
                         </li>

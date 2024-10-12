@@ -9,12 +9,13 @@ import DashboardView from "./DashboardView";
 interface TaskViewSwitcherProps {
   project: ProjectType | null;
   tasks: TaskType[];
-  setTasks: (tasks: TaskType[]) => void
+  setTasks: (tasks: TaskType[]) => void;
   sections: SectionType[];
   setSections: (updatedSections: SectionType[]) => void;
   view: ViewTypes["view"];
   showNoDateTasks?: boolean;
   setShowNoDateTasks?: Dispatch<SetStateAction<boolean>>;
+  isLoading: boolean;
 }
 
 const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
@@ -26,6 +27,7 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
   setSections,
   showNoDateTasks,
   setShowNoDateTasks,
+  isLoading,
 }) => {
   const [showAddTask, setShowAddTask] = useState<string | number | null>(null);
 
@@ -71,6 +73,7 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
           project={project}
           setTasks={setTasks}
           tasks={tasks}
+          isLoading={isLoading}
         />
       );
     case "Board":
@@ -89,6 +92,7 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
           setShowUngroupedAddTask={setShowUngroupedAddTask}
           project={project}
           setTasks={setTasks}
+          isLoading={isLoading}
         />
       );
     case "Calendar":
@@ -102,7 +106,9 @@ const TaskViewSwitcher: React.FC<TaskViewSwitcherProps> = ({
         />
       );
     case "Dashboard":
-      return <DashboardView tasks={tasks} sections={sections} project={project} />;
+      return (
+        <DashboardView tasks={tasks} sections={sections} project={project} />
+      );
     default:
       return <div>Invalid view selected</div>;
   }

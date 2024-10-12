@@ -23,6 +23,7 @@ import {
 import { useAuthProvider } from "@/context/AuthContext";
 import { useRole } from "@/context/RoleContext";
 import { canEditSection } from "@/types/hasPermission";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const BoardViewColumn = ({
   column,
@@ -171,16 +172,23 @@ const BoardViewColumn = ({
   // Tailwind doesn't generate all color classes by default, so we need to explicitly define them
   const bgColorClass =
     theme == "dark"
-      ? `${
-          sectionColor == "gray"
-            ? `bg-surface`
-            : `bg-${sectionColor}-500/20`
-        }`
+      ? `${sectionColor == "gray" ? `bg-surface` : `bg-${sectionColor}-500/20`}`
       : `bg-${sectionColor}-25`;
   const hoverBgColorClass =
     theme == "dark"
       ? `hover:bg-${sectionColor}-800`
       : `hover:bg-${sectionColor}-200`;
+
+  const searchParams = useSearchParams();
+  const searchTask = searchParams.get("task");
+
+  useEffect(() => {
+    if (searchTask) {
+      setShowTaskItemModal(searchTask);
+    } else {
+      setShowTaskItemModal(null);
+    }
+  }, [searchTask]);
 
   return (
     <>
@@ -225,151 +233,151 @@ const BoardViewColumn = ({
                 ref={boardDraggaleProvided.innerRef}
                 {...boardDraggaleProvided.draggableProps}
                 {...boardDraggaleProvided.dragHandleProps}
-                className={`rounded-lg w-[calc(100vw-50px)] min-w-[calc(100vw-50px)] md:w-[300px] md:min-w-[300px] h-fit max-h-[calc(100vh-150px)] md:max-h-[calc(100vh-150px)] overflow-auto cursor-default ${
-                  column.is_archived && "opacity-70"
-                }`}
               >
-                <div
-                  className={`flex justify-between ${
-                    !foundFixedDropdown && "sticky"
-                  } top-0 z-10 ${bgColorClass} p-2 pb-1`}
-                >
-                  {!editColumnTitle && (
-                    <div
-                      className={`flex items-center gap-2 w-full ${
-                        column.is_archived
-                          ? ""
-                          : column.id !== "ungrouped" && "cursor-pointer"
-                      }`}
-                      onClick={() =>
-                        !column.is_archived &&
-                        column.id !== "ungrouped" &&
-                        setEditColumnTitle(true)
-                      }
-                    >
-                      <h3 className="font-bold pl-[6px]">{column.title}</h3>
-                      <p className="text-sm text-text-600">
-                        {column.tasks.length}
-                      </p>
-                    </div>
-                  )}
-
-                  {editColumnTitle && (
-                    <input
-                      value={columnTitle}
-                      onChange={(ev) => setColumnTitle(ev.target.value)}
-                      className="font-bold rounded-lg px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 w-full"
-                      onKeyDown={(ev) => {
-                        if (ev.key === "Enter") {
-                          handleUpdateColumnTitle();
-                        }
-                      }}
-                      onBlur={handleUpdateColumnTitle}
-                      autoFocus
-                      onFocus={(ev) => ev.target.select()}
-                    />
-                  )}
-
-                  <div className="flex items-center">
-                    <button
-                      className={`p-1 hover:transition rounded-lg ${hoverBgColorClass}`}
-                      onClick={() => setCollapseColumn(true)}
-                    >
-                      <FoldHorizontal
-                        strokeWidth={1.5}
-                        className="w-5 h-5 text-text-700"
-                      />
-                    </button>
-
-                    {column.id !== "ungrouped" && (
-                      <SectionMoreOptions
-                        key={column.id}
-                        column={column}
-                        setShowDeleteConfirm={setShowDeleteConfirm}
-                        setEditColumnTitle={setEditColumnTitle}
-                        setShowArchiveConfirm={setShowArchiveConfirm}
-                        setSections={setSections}
-                        sections={sections}
-                      />
-                    )}
-                  </div>
-                </div>
-
                 <Droppable droppableId={column.id} type="task">
                   {(provided, snapshot) => (
                     <div
-                      key={column.id}
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className={`space-y-2 min-h-1 p-2 pt-1 ${bgColorClass}`}
+                      className={`rounded-lg w-[calc(100vw-50px)] min-w-[calc(100vw-50px)] md:w-[300px] md:min-w-[300px] cursor-default flex flex-col h-full ${bgColorClass} ${
+                        column.is_archived && "opacity-70"
+                      }`}
                     >
-                      {column.tasks
-                        .filter((t) => !t.parent_task_id)
-                        .sort((a, b) => {
-                          // Sort by is_completed: false (incomplete) comes before true (completed)
-                          if (a.is_completed !== b.is_completed) {
-                            return a.is_completed ? 1 : -1;
-                          }
-                          // Then sort by order within each completion status
-                          return a.order - b.order;
-                        })
-                        .map((task, taskIndex) => (
-                          <>
-                            <div
-                              key={task.id}
-                              className={`rounded-lg hover:ring-2 hover:ring-primary-300 hover:transition ring-1 ring-text-200`}
-                            >
-                              <TaskItem
-                                key={task.id}
-                                task={task}
-                                setTasks={setTasks}
-                                tasks={tasks}
-                                subTasks={column.tasks.filter(
-                                  (t) => t.parent_task_id == task.id
-                                )}
-                                sections={sections}
-                                index={taskIndex}
-                                project={project}
-                                setShowDeleteConfirm={setShowTaskDeleteConfirm}
-                                setShowModal={setShowTaskItemModal}
-                                showModal={showTaskItemModal}
-                                showDeleteConfirm={showTaskDeleteConfirm}
-                                column={column}
-                                smallAddTask
-                              />
-                            </div>
-                          </>
-                        ))}
+                      <div className={`flex justify-between p-2 pb-1`}>
+                        {!editColumnTitle && (
+                          <div
+                            className={`flex items-center gap-2 w-full ${
+                              column.is_archived
+                                ? ""
+                                : column.id !== "ungrouped" && "cursor-pointer"
+                            }`}
+                            onClick={() =>
+                              !column.is_archived &&
+                              column.id !== "ungrouped" &&
+                              setEditColumnTitle(true)
+                            }
+                          >
+                            <h3 className="font-bold pl-[6px]">
+                              {column.title}
+                            </h3>
+                            <p className="text-sm text-text-600">
+                              {column.tasks.length}
+                            </p>
+                          </div>
+                        )}
 
-                      {provided.placeholder}
+                        {editColumnTitle && (
+                          <input
+                            value={columnTitle}
+                            onChange={(ev) => setColumnTitle(ev.target.value)}
+                            className="font-bold rounded-lg px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 w-full"
+                            onKeyDown={(ev) => {
+                              if (ev.key === "Enter") {
+                                handleUpdateColumnTitle();
+                              }
+                            }}
+                            onBlur={handleUpdateColumnTitle}
+                            autoFocus
+                            onFocus={(ev) => ev.target.select()}
+                          />
+                        )}
+
+                        <div className="flex items-center">
+                          <button
+                            className={`p-1 hover:transition rounded-lg ${hoverBgColorClass}`}
+                            onClick={() => setCollapseColumn(true)}
+                          >
+                            <FoldHorizontal
+                              strokeWidth={1.5}
+                              className="w-5 h-5 text-text-700"
+                            />
+                          </button>
+
+                          {column.id !== "ungrouped" && (
+                            <SectionMoreOptions
+                              key={column.id}
+                              column={column}
+                              setShowDeleteConfirm={setShowDeleteConfirm}
+                              setEditColumnTitle={setEditColumnTitle}
+                              setShowArchiveConfirm={setShowArchiveConfirm}
+                              setSections={setSections}
+                              sections={sections}
+                            />
+                          )}
+                        </div>
+                      </div>
+
+                      <div
+                        className={`space-y-2 px-2 py-1 overflow-auto w-full`}
+                      >
+                        {column.tasks
+                          .filter((t) => !t.parent_task_id)
+                          .sort((a, b) => {
+                            // Sort by is_completed: false (incomplete) comes before true (completed)
+                            if (a.is_completed !== b.is_completed) {
+                              return a.is_completed ? 1 : -1;
+                            }
+                            // Then sort by order within each completion status
+                            return a.order - b.order;
+                          })
+                          .map((task, taskIndex) => (
+                            <>
+                              <div
+                                key={task.id}
+                                className={`rounded-lg hover:ring-2 hover:ring-primary-300 hover:transition ring-1 ring-text-200`}
+                              >
+                                <TaskItem
+                                  key={task.id}
+                                  task={task}
+                                  setTasks={setTasks}
+                                  tasks={tasks}
+                                  subTasks={column.tasks.filter(
+                                    (t) => t.parent_task_id == task.id
+                                  )}
+                                  sections={sections}
+                                  index={taskIndex}
+                                  project={project}
+                                  setShowDeleteConfirm={
+                                    setShowTaskDeleteConfirm
+                                  }
+                                  setShowModal={setShowTaskItemModal}
+                                  showModal={showTaskItemModal}
+                                  showDeleteConfirm={showTaskDeleteConfirm}
+                                  column={column}
+                                  smallAddTask
+                                />
+                              </div>
+                            </>
+                          ))}
+
+                        {provided.placeholder}
+                      </div>
+
+                      {!column.is_archived && (
+                        <div className="p-2 pt-0">
+                          <SectionAddTask
+                            section={
+                              column.id === "ungrouped"
+                                ? undefined
+                                : sections.find(
+                                    (s) => s.id.toString() === column.id
+                                  )
+                            }
+                            showAddTask={showAddTask}
+                            setShowAddTask={setShowAddTask}
+                            isSmall
+                            showUngroupedAddTask={showUngroupedAddTask}
+                            setShowUngroupedAddTask={setShowUngroupedAddTask}
+                            project={project}
+                            setTasks={setTasks}
+                            tasks={tasks}
+                            view={"Board"}
+                          />
+                        </div>
+                      )}
                     </div>
                   )}
                 </Droppable>
-
-                {!column.is_archived && (
-                  <div
-                    className={`${
-                      !foundFixedDropdown && "sticky"
-                    } bottom-0 ${bgColorClass} p-2 pt-0`}
-                  >
-                    <SectionAddTask
-                      section={
-                        column.id === "ungrouped"
-                          ? undefined
-                          : sections.find((s) => s.id.toString() === column.id)
-                      }
-                      showAddTask={showAddTask}
-                      setShowAddTask={setShowAddTask}
-                      isSmall
-                      showUngroupedAddTask={showUngroupedAddTask}
-                      setShowUngroupedAddTask={setShowUngroupedAddTask}
-                      project={project}
-                      setTasks={setTasks}
-                      tasks={tasks}
-                      view={"Board"}
-                    />
-                  </div>
-                )}
               </div>
             )}
           </>

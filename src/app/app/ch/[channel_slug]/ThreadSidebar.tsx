@@ -26,12 +26,13 @@ interface ThreadWithProfile extends ThreadType {
 }
 
 const ThreadSidebar = ({ channel_slug }: { channel_slug: string }) => {
-  const { threads, isLoading } = useChannelDetails(channel_slug);
   const { channels, teams } = useSidebarDataProvider();
+  const channel = channels.find((c) => c.slug === channel_slug);
+
+  const { threads, isLoading } = useChannelDetails(channel?.id);
   const { screenWidth } = useScreen();
   const router = useRouter();
 
-  const channel = channels.find((c) => c.slug === channel_slug);
   if (!channel) return null;
 
   const team = teams.find((t) => t.id === channel.team_id);
@@ -215,20 +216,10 @@ const ThreadSidebar = ({ channel_slug }: { channel_slug: string }) => {
             </div>
           </div>
         ) : (
-          <div className="flex items-center justify-center flex-col gap-1 h-[70vh] select-none w-full">
-            <Image
-              src="/not_found.png"
-              width={220}
-              height={200}
-              alt="Channel not found"
-              className="rounded-md object-cover"
-              draggable={false}
-            />
-            <div className="text-center space-y-2 w-72">
-              <h3 className="font-bold text-base">No threads found</h3>
-              <p className="text-sm text-text-600 pb-4">
-                Every discussion is a thread
-              </p>
+          <div>
+            <div className="flex items-center justify-between border-b border-text-100 p-2 px-4">
+              <h2 className="font-semibold">Threads</h2>
+
               <Link
                 onClick={(ev) => {
                   ev.preventDefault();
@@ -239,12 +230,43 @@ const ThreadSidebar = ({ channel_slug }: { channel_slug: string }) => {
                   );
                 }}
                 href={`/app/ch/${channel_slug}/th/new`}
+                className="text-primary-500 hover:text-primary-600 hover:bg-primary-50 transition text-sm flex items-center gap-1 px-2 py-1 rounded-lg"
               >
-                <Button>
-                  <Edit size={16} strokeWidth={2} />
-                  Create Thread
-                </Button>
+                <Plus size={16} strokeWidth={2} />
+                Create Thread
               </Link>
+            </div>
+            <div className="flex items-center justify-center flex-col gap-1 h-[70vh] select-none w-full">
+              <Image
+                src="/not_found.png"
+                width={220}
+                height={200}
+                alt="Channel not found"
+                className="rounded-md object-cover"
+                draggable={false}
+              />
+              <div className="text-center space-y-2 w-72">
+                <h3 className="font-bold text-base">Create a new thread</h3>
+                <p className="text-sm text-text-600 pb-4">
+                  Every discussion is a thread
+                </p>
+                <Link
+                  onClick={(ev) => {
+                    ev.preventDefault();
+                    window.history.pushState(
+                      null,
+                      "",
+                      `/app/ch/${channel_slug}/th/new`
+                    );
+                  }}
+                  href={`/app/ch/${channel_slug}/th/new`}
+                >
+                  <Button>
+                    <Edit size={16} strokeWidth={2} />
+                    Create Thread
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         )}

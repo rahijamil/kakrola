@@ -14,10 +14,10 @@ interface ThreadWithProfile extends ThreadType {
 }
 
 const fetchChannelDetails = async (
-  channel_slug: string,
+  channel_id: ChannelType['id'],
   profile_id: string
 ) => {
-  if (!channel_slug || !profile_id) return { channel: null };
+  if (!channel_id) return { channel: null };
 
   try {
     const { data, error } = await supabaseBrowser
@@ -31,8 +31,7 @@ const fetchChannelDetails = async (
             )
         )`
       )
-      .eq("slug", channel_slug)
-      .eq("profile_id", profile_id)
+      .eq("id", channel_id)
       .single();
 
     if (error) throw error;
@@ -56,28 +55,28 @@ const fetchChannelDetails = async (
   }
 };
 
-const useChannelDetails = (channel_slug: string) => {
+const useChannelDetails = (channel_id?: ChannelType['id']) => {
   const { profile } = useAuthProvider();
 
   const queryClient = useQueryClient();
 
   const { data, error, isLoading, isError } = useQuery({
-    queryKey: ["channelDetails", channel_slug, profile?.id],
+    queryKey: ["channelDetails", channel_id, profile?.id],
     queryFn: () => {
-      if (channel_slug === null || !profile?.id) {
+      if (!channel_id || !profile?.id) {
         return { channel: null, threads: [] };
       }
 
-      return fetchChannelDetails(channel_slug, profile?.id);
+      return fetchChannelDetails(channel_id, profile?.id);
     },
-    enabled: !!channel_slug || !!profile?.id, // Only run the query if projectId is not null
+    enabled: !!channel_id || !!profile?.id, // Only run the query if projectId is not null
     staleTime: 300000, // 5 minutes
     refetchOnWindowFocus: false, // Optional: adjust as needed
   });
 
   const setChannel = (channel: ChannelType) => {
     queryClient.setQueryData(
-      ["channelDetails", channel_slug, profile?.id],
+      ["channelDetails", channel_id, profile?.id],
       (oldData: {
         channel: ChannelType | null;
         threads: ThreadType[] | null;
@@ -90,7 +89,7 @@ const useChannelDetails = (channel_slug: string) => {
 
   const setThreads = (threads: ThreadType[]) => {
     queryClient.setQueryData(
-      ["channelDetails", channel_slug, profile?.id],
+      ["channelDetails", channel_id, profile?.id],
       (oldData: {
         channel: ChannelType | null;
         threads: ThreadType[] | null;

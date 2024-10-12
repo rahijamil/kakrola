@@ -1,5 +1,5 @@
-import DmSidebar from "@/app/app/dm/DmSidebar";
-import useDms from "@/app/app/dm/useDms";
+import DmSidebar from "@/app/app/dms/DmSidebar";
+import useDms from "@/app/app/dms/useDms";
 import Dropdown from "@/components/ui/Dropdown";
 import { DmContactType } from "@/types/channel";
 import { LucideProps } from "lucide-react";

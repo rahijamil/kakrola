@@ -9,38 +9,8 @@ import React, {
 
 import { TaskPriority, TaskType } from "@/types/project";
 import { Check, ChevronDown, Flag, X } from "lucide-react";
-import { FlagIcon } from "@heroicons/react/16/solid";
 import Dropdown from "../ui/Dropdown";
-const priorities = [
-  { value: "P1", label: "Priority 1", color: "text-red-500" },
-  { value: "P2", label: "Priority 2", color: "text-orange-500" },
-  { value: "P3", label: "Priority 3", color: "text-primary-600" },
-  { value: "Priority", label: "Priority 4", color: "text-text-500" },
-];
-
-const PriorityIcon = ({ priority }: { priority: string }) => {
-  switch (priority) {
-    case "P1":
-    case "P2":
-    case "P3":
-      return (
-        <FlagIcon
-          className={`w-4 h-4 ${
-            priorities.find((p) => p.value === priority)?.color
-          }`}
-        />
-      );
-    default:
-      return (
-        <Flag
-          strokeWidth={1.5}
-          className={`w-4 h-4 ${
-            priorities.find((p) => p.value === priority)?.color
-          }`}
-        />
-      );
-  }
-};
+import { priorities, PriorityIcon } from "@/utils/utility_functions";
 
 const Priorities = ({
   taskData,

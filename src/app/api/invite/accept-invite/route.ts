@@ -16,6 +16,8 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const token = searchParams.get("token");
 
+  console.debug("Received token:", token);
+
   if (!token) {
     console.error("Missing token parameter");
     return NextResponse.json({ error: "Token is missing" }, { status: 400 });
@@ -24,6 +26,8 @@ export async function GET(request: Request) {
   const supabase = createClient();
   const user = await getUser();
 
+  console.debug("Authenticated user:", user);
+
   const { data: invite, error } = await supabase
     .from("invites")
     .select("*")
@@ -31,6 +35,7 @@ export async function GET(request: Request) {
     .single();
 
   if (error) {
+    console.error("Error fetching invite:", error);
     return NextResponse.json(
       { error: error.message || "Error fetching invite" },
       { status: 400 }
@@ -38,6 +43,7 @@ export async function GET(request: Request) {
   }
 
   if (!invite) {
+    console.warn("No invite found for token:", token);
     return NextResponse.json(
       { error: "Invalid invite token" },
       { status: 400 }
@@ -48,11 +54,12 @@ export async function GET(request: Request) {
   const isExpired =
     differenceInDays(new Date(), new Date(invite.created_at)) > 7;
   if (isExpired) {
-    console.error("Invite has expired");
+    console.error("Invite has expired for token:", token);
     return NextResponse.json({ error: "Invite has expired" }, { status: 400 });
   }
 
   if (user && invite.email === user.email) {
+    console.debug("User is accepting their own invite:", invite);
     try {
       await handleInviteAcceptance(invite, user);
       return NextResponse.redirect(`${origin}/app`);
@@ -62,6 +69,7 @@ export async function GET(request: Request) {
     }
   }
 
+  console.debug("Fetching profile for invite email:", invite.email);
   const { data: userProfile, error: profileError } = await supabase
     .from("profiles")
     .select("*")
@@ -69,12 +77,17 @@ export async function GET(request: Request) {
     .single();
 
   if (profileError || !userProfile) {
-    console.error("Error fetching profile:", profileError);
+    console.error(
+      "Error fetching profile for email:",
+      invite.email,
+      profileError
+    );
 
     return NextResponse.redirect(
       `${origin}/auth/signup?email=${invite.email}&token=${token}`
     );
   } else {
+    console.debug("Redirecting to login for invite email:", invite.email);
     return NextResponse.redirect(
       `${origin}/auth/login?email=${invite.email}&token=${token}`
     );
@@ -88,9 +101,15 @@ async function handleInviteAcceptance(
 ) {
   try {
     const supabase = createClient();
-
     const id = invite.project_id || invite.page_id;
     const column_name = invite.project_id ? "project_id" : "page_id";
+
+    console.debug(
+      "Processing invite acceptance for ID:",
+      id,
+      "Column:",
+      column_name
+    );
 
     // Insert into the appropriate members table for project
     if (id) {
@@ -103,6 +122,7 @@ async function handleInviteAcceptance(
         .single();
 
       if (member) {
+        console.info("Member already exists in project:", member);
         return;
       }
 
@@ -113,12 +133,14 @@ async function handleInviteAcceptance(
         .eq(column_name, id)
         .order("settings->order", { ascending: false }); // Order by existing order values
 
-      if (fetchError)
+      if (fetchError) {
+        console.error("Failed to fetch project members:", fetchError);
         throw new Error(
           `Failed to fetch project members: ${fetchError.message}`
         );
+      }
 
-      console.log("existingAllMembers", existingAllMembers);
+      console.debug("Existing project members:", existingAllMembers);
 
       // TypeScript will understand that `order` is a number
       const existingMembers: { order: number }[] = existingAllMembers as any[];
@@ -139,11 +161,13 @@ async function handleInviteAcceptance(
         },
       };
 
+      console.debug("Inserting new member data:", memberData);
       const { error: insertError } = await supabase
         .from("personal_members")
         .insert(memberData);
 
       if (insertError) {
+        console.error("Failed to add to project members:", insertError);
         throw new Error(
           `Failed to add to project members: ${insertError.message}`
         );
@@ -159,12 +183,14 @@ async function handleInviteAcceptance(
         .eq("profile_id", profile.id);
 
       if (teamMemberError) {
+        console.error("Failed to check team members:", teamMemberError);
         throw new Error(
           `Failed to add to team members: ${teamMemberError.message}`
         );
       }
 
-      if (teamMember) {
+      if (teamMember.length > 0) {
+        console.info("Member already exists in team:", teamMember);
         return;
       }
 
@@ -175,11 +201,13 @@ async function handleInviteAcceptance(
         team_role: invite.role,
       };
 
+      console.debug("Inserting new team member data:", teamMemberData);
       const { error: teamInsertError } = await supabase
         .from("team_members")
         .insert(teamMemberData);
 
       if (teamInsertError) {
+        console.error("Failed to add to team members:", teamInsertError);
         throw new Error(
           `Failed to add to team members: ${teamInsertError.message}`
         );
@@ -187,14 +215,23 @@ async function handleInviteAcceptance(
     }
 
     // Update the invite status to 'accepted'
+    console.debug(
+      "Updating invite status to accepted for invite ID:",
+      invite.id
+    );
     const { error: updateError } = await supabase
       .from("invites")
       .update({ status: InviteStatus.ACCEPTED })
       .eq("id", invite.id);
 
     if (updateError) {
+      console.error("Failed to update invite status:", updateError);
       throw new Error(`Failed to update invite: ${updateError.message}`);
     }
+
+    console.info("Invite accepted successfully:", invite.id);
+
+    return { success: true, invite };
   } catch (error) {
     console.error("Error accepting invite:", error);
     throw error;

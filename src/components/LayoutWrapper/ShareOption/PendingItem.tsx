@@ -14,7 +14,7 @@ const PendingItem = ({
   invite: ProjectInviteType | PageInviteType;
   isCurrentUserAdmin: boolean;
 }) => {
-  const { projects, pages } = useSidebarDataProvider();
+  const { projects, pages, teams } = useSidebarDataProvider();
   const [pendingData, setPendingData] = useState(invite);
   const queryClient = useQueryClient();
   const [confirmRevoke, setConfirmRevoke] = useState(false);
@@ -99,7 +99,7 @@ const PendingItem = ({
         <RoleItem
           value={invite.role}
           onChange={(newRole) => handleUpdateRole(newRole)}
-          handleRemove={handleRemove}
+          handleRevoke={() => setConfirmRevoke(true)}
         />
       </div>
 
@@ -107,7 +107,9 @@ const PendingItem = ({
         <ConfirmAlert
           onCancel={() => setConfirmRevoke(false)}
           onConfirm={handleRemove}
-          title={`Revoke ${invite.project_id ? "project" : "page"} invite?`}
+          title={`Revoke ${
+            invite.project_id ? "project" : invite.page_id ? "page" : "team"
+          } invite?`}
           description={
             <>
               The{" "}
@@ -115,10 +117,12 @@ const PendingItem = ({
                 {invite.project_id
                   ? projects.find((project) => project.id === invite.project_id)
                       ?.name
-                  : pages.find((page) => page.id === invite.page_id)?.title}
+                  : invite.page_id
+                  ? pages.find((page) => page.id === invite.page_id)?.title
+                  : teams.find((team) => team.id == invite.team_id)?.name}
               </span>{" "}
-              {invite.project_id ? "project" : "page"} invite for {invite.email?.split("@")[0]}{" "}
-              will be revoked.
+              {invite.project_id ? "project" : invite.page_id ? "page" : "team"}{" "}
+              invite for {invite.email?.split("@")[0]} will be revoked.
             </>
           }
           submitBtnText="Revoke"

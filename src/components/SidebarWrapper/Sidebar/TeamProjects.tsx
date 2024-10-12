@@ -46,9 +46,10 @@ const TeamProjects = ({
     if (team) {
       setTeamProjects(projects.filter((p) => p.team_id === team.id));
       setTeamPages(pages.filter((p) => p.team_id === team.id));
-      setTeamChannels(channels.filter((p) => p.team_id === team.id));
+      setTeamChannels(channels.filter((c) => c.team_id === team.id));
     }
-  }, [team, projects, pages]);
+
+  }, [team, projects, pages, channels]);
 
   const handleOnDragEnd = async (result: DropResult) => {
     const { source, destination } = result;
@@ -246,7 +247,7 @@ const TeamProjects = ({
                       {teamPages.map((page, index) => (
                         <Draggable
                           key={page.id}
-                          draggableId={page.id.toString()}
+                          draggableId={page.id?.toString()}
                           index={index}
                           isDragDisabled={isDragDisabled}
                         >

@@ -24,10 +24,11 @@ export const TaskInput: React.FC<{
   const cursorOffsetRef = useRef(0);
   const firstRenderRef = useRef(true); // Track if it's the first render
 
-  // useEffect(() => {
-  //   const parsedData = parseInput(inputValue, projects);
-  //   setTaskData((prevData) => ({ ...prevData, ...parsedData }));
-  // }, [inputValue, projects, setTaskData]);
+  useEffect(() => {
+    // const parsedData = parseInput(inputValue, projects);
+    // setTaskData((prevData) => ({ ...prevData, ...parsedData }));
+    setTaskData((prevData) => ({ ...prevData, title: inputValue }));
+  }, [inputValue, setTaskData]);
 
   const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
     const text = e.currentTarget.textContent || "";

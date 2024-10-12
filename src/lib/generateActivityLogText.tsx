@@ -1,12 +1,13 @@
 import { ActivityAction, ActivityWithProfile } from "@/types/activitylog";
 import { ActivityLogType } from "@/types/activitylog";
-import { TaskAssigneeType, TaskLabelType } from "@/types/project";
+import { TaskAssigneeType, TaskLabelType, TaskPriority } from "@/types/project";
 import { ProfileType } from "@/types/user";
 import { colors } from "@/utils/colors";
 import { format } from "date-fns";
 import Image from "next/image";
 import { Theme } from "./theme.types";
 import { ReactNode } from "react";
+import { PriorityIcon } from "@/utils/utility_functions";
 
 export function generateActivityLogText(
   log: ActivityWithProfile,
@@ -237,10 +238,21 @@ export function generateActivityLogText(
     case ActivityAction.REORDERED_TASK:
       return <p className="">{actorName} reordered the tasks.</p>;
     case ActivityAction.UPDATED_TASK_PRIORITY:
+      const priority: TaskPriority = log.metadata?.new_data.priority;
+
+      const prioritySpan = (
+        <div className="flex items-center gap-1 text-xs rounded-lg transition bg-text-200 px-1 font-medium">
+          <PriorityIcon priority={priority} />
+          <span className="text-xs">
+            {priority == "Priority" ? "P4" : priority}
+          </span>
+        </div>
+      );
+
       return (
-        <p className="">
-          {actorName} updated the priority of the task {entityName}.
-        </p>
+        <div className="flex gap-1">
+          {actorName} updated the priority {prioritySpan} of the task.
+        </div>
       );
     case ActivityAction.ADDED_TASK_LABELS:
       const addedLabels: TaskLabelType[] =

@@ -23,22 +23,25 @@ const DescriptionInput = ({
     }
   };
 
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setTaskData({ ...taskData, description: e.target.value });
-  };
+  // const handleDescriptionChange = (
+  //   e: React.ChangeEvent<HTMLTextAreaElement>
+  // ) => {
+  //   setTaskData({ ...taskData, description: e.target.value });
+  // };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      setTaskData({
-        ...taskData,
-        description: taskData.description + "\n",
-      });
-    }
-  };
+  // const handleKeyDown = (e: React.KeyboardEvent) => {
+  //   if (e.key === "Enter" && !e.shiftKey) {
+  //     e.preventDefault();
+  //     setTaskData({
+  //       ...taskData,
+  //       description: taskData.description + "\n",
+  //     });
+  //   }
+  // };
 
   return (
-    <Textarea
+    <>
+      {/* <Textarea
       ref={textareaRef}
       placeholder="Description"
       value={taskData.description}
@@ -46,7 +49,8 @@ const DescriptionInput = ({
       onKeyDown={handleKeyDown}
       rows={1}
       className="text-xs max-h-60 overflow-y-auto"
-    />
+    /> */}
+    </>
   );
 };
 

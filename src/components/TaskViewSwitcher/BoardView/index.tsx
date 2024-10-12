@@ -18,6 +18,9 @@ import {
 } from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
 import useTheme from "@/hooks/useTheme";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { useQueryClient } from "@tanstack/react-query";
 
 const BoardView: React.FC<{
   tasks: TaskType[];
@@ -33,6 +36,7 @@ const BoardView: React.FC<{
   setShowUngroupedAddSection: React.Dispatch<React.SetStateAction<boolean>>;
   project: ProjectType | null;
   setTasks: (tasks: TaskType[]) => void;
+  isLoading: boolean;
 }> = ({
   tasks,
   sections,
@@ -47,8 +51,10 @@ const BoardView: React.FC<{
   setShowUngroupedAddSection,
   project,
   setTasks,
+  isLoading,
 }) => {
   const { profile } = useAuthProvider();
+  const queryClient = useQueryClient();
 
   const columns = useMemo(() => {
     const columnsObj: Record<
@@ -90,9 +96,11 @@ const BoardView: React.FC<{
   }, [columns.length, setShowUngroupedAddSection]);
 
   const onDragEnd = async (result: DropResult) => {
-    if (!profile?.id) return;
+    if (!profile?.id || !project?.id) {
+      return;
+    }
 
-    const { source, destination, type } = result;
+    const { source, destination, type, draggableId } = result;
 
     if (!destination) return;
 
@@ -157,98 +165,88 @@ const BoardView: React.FC<{
         destination.droppableId !== "ungrouped"
           ? parseInt(destination.droppableId)
           : null;
-
       const sourceSectionId =
         source.droppableId !== "ungrouped"
           ? parseInt(source.droppableId)
           : null;
 
-      // To store the updated tasks that need to be sent to the database
-      let tasksToUpdate: TaskType[] = [];
+      queryClient.setQueryData(
+        ["projectDetails", project.id],
+        (
+          oldData: { sections: SectionType[]; tasks: TaskType[] } | undefined
+        ) => {
+          if (!oldData) return oldData;
 
-      const updateTasks = (prevTasks: TaskType[]) => {
-        // Find tasks in the source section
-        const sourceTasks = prevTasks.filter(
-          (task) => task.section_id === sourceSectionId
-        );
+          let updatedTasks = [...oldData.tasks];
+          const movedTaskIndex = updatedTasks.findIndex(
+            (t) => t.id.toString() === draggableId
+          );
 
-        // Find the moved task
-        const movedTask = sourceTasks[source.index];
+          if (movedTaskIndex === -1) return oldData;
 
-        if (!movedTask) {
-          console.error("Moved task not found");
-          return prevTasks;
-        }
+          const [movedTask] = updatedTasks.splice(movedTaskIndex, 1);
+          const updatedMovedTask = { ...movedTask, section_id: newSectionId };
 
-        // Remove the moved task from the source section
-        const tasksWithoutMoved = prevTasks.filter(
-          (task) => task.id !== movedTask.id
-        );
-
-        // Update the moved task with new section and order
-        const updatedMovedTask: TaskType = {
-          ...movedTask,
-          section_id: newSectionId,
-          order: destination.index,
-        };
-
-        // Find tasks in the destination section
-        const destinationTasks = tasksWithoutMoved.filter(
-          (task) => task.section_id === newSectionId
-        );
-
-        // Insert the updated task at the new position
-        const updatedDestinationTasks = [
-          ...destinationTasks.slice(0, destination.index),
-          updatedMovedTask,
-          ...destinationTasks.slice(destination.index),
-        ];
-
-        // Combine all tasks back together, ensuring correct order
-        const updatedTasks = [
-          ...tasksWithoutMoved.filter(
-            (task) => task.section_id !== newSectionId
-          ),
-          ...updatedDestinationTasks,
-        ];
-
-        // Reorder tasks in the affected sections
-        const finalTasks = updatedTasks.map((task, index) => {
-          if (
-            task.section_id === newSectionId ||
-            task.section_id === movedTask.section_id
-          ) {
-            const updatedTask = { ...task, order: index };
-            tasksToUpdate.push(updatedTask); // Collect tasks to update in the database
-            return updatedTask;
+          // Reorder tasks in the source section
+          if (sourceSectionId !== null) {
+            updatedTasks = updatedTasks.map((task) => {
+              if (
+                task.section_id === sourceSectionId &&
+                task.order > movedTask.order
+              ) {
+                return { ...task, order: task.order - 1 };
+              }
+              return task;
+            });
           }
-          return task;
-        });
 
-        return finalTasks;
-      };
+          // Insert the moved task and update orders in the destination section
+          const tasksInDestSection = updatedTasks.filter(
+            (t) => t.section_id === newSectionId
+          );
+          tasksInDestSection.splice(destination.index, 0, updatedMovedTask);
 
-      setTasks(updateTasks(tasks));
+          const updatedDestTasks = tasksInDestSection.map((task, index) => ({
+            ...task,
+            order: index,
+          }));
 
-      // Update tasks in the database with correct orders within their sections
+          // Merge the updated destination tasks back into the main array
+          updatedTasks = updatedTasks
+            .filter((t) => t.section_id !== newSectionId)
+            .concat(updatedDestTasks);
+
+          return { ...oldData, tasks: updatedTasks };
+        }
+      );
+
+      // Update tasks in the database
       try {
-        const promises = tasksToUpdate.map((task) =>
-          supabaseBrowser
-            .from("tasks")
-            .update({
+        const tasksToUpdate = queryClient
+          .getQueryData<{ tasks: TaskType[] }>(["projectDetails", project.id])
+          ?.tasks.filter(
+            (t) =>
+              t.section_id === newSectionId || t.section_id === sourceSectionId
+          );
+
+        if (tasksToUpdate) {
+          const { data, error } = await supabaseBrowser.from("tasks").upsert(
+            tasksToUpdate.map((task) => ({
+              ...task,
               section_id: task.section_id,
               order: task.order,
               updated_at: new Date().toISOString(),
-            })
-            .eq("id", task.id)
-        );
-        const results = await Promise.all(promises);
-        results.forEach((result) => {
-          if (result.error) throw result.error;
-        });
+            }))
+          );
+
+          if (error) throw error;
+        }
       } catch (error) {
         console.error("Error updating tasks:", error);
-        // Optionally, implement a way to revert the state if the database update fails
+        // Optionally, invalidate the query to refetch the correct data
+        queryClient.invalidateQueries({
+          queryKey: ["projectDetails", project.id],
+        });
       }
     }
   };
@@ -417,56 +415,178 @@ const BoardView: React.FC<{
             <div
               ref={boardProvided.innerRef}
               {...boardProvided.droppableProps}
-              className="flex gap-1 h-full overflow-auto px-4 md:px-6 md:pt-4 scroll-smooth"
+              className="flex gap-1 h-[calc(100vh-180px)] overflow-auto px-4 md:px-6 md:py-4 scroll-smooth"
             >
-              {columns.map((column, columnIndex) => (
-                <BoardViewColumn
-                  key={column.id}
-                  tasks={tasks}
-                  setIndex={setIndex}
-                  setColumnId={setColumnId}
-                  column={column}
-                  columnIndex={columnIndex}
-                  project={project}
-                  setShowArchiveConfirm={setShowArchiveConfirm}
-                  setShowDeleteConfirm={setShowDeleteConfirm}
-                  setShowUngroupedAddSection={setShowUngroupedAddSection}
-                  setSections={setSections}
-                  sections={sections}
-                  setTasks={setTasks}
-                  setShowAddTask={setShowAddTask}
-                  setShowUngroupedAddTask={setShowUngroupedAddTask}
-                  showAddTask={showAddTask}
-                  showUngroupedAddTask={showUngroupedAddTask}
-                  columns={columns}
-                />
-              ))}
+              {isLoading ? (
+                <div className="space-x-4 flex">
+                  <div className="bg-surface p-2 rounded-lg w-72 space-y-2 h-fit">
+                    <h3 className="font-bold pl-[6px]">
+                      <Skeleton width={50} />
+                    </h3>
 
-              <div>
-                {columns.length == 0 && (
-                  <AddNewSectionBoardView
-                    setShowUngroupedAddSection={setShowUngroupedAddSection}
-                    showUngroupedAddSection={showUngroupedAddSection}
-                    project={project}
-                    setSections={setSections}
-                    sections={sections}
-                    index={columns.length}
-                  />
-                )}
-              </div>
+                    <div className="space-y-2">
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"60%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"70%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"60%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"70%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"60%"} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-surface p-2 rounded-lg w-72 space-y-2 h-fit">
+                    <h3 className="font-bold pl-[6px]">
+                      <Skeleton width={50} />
+                    </h3>
 
-              {boardProvided.placeholder}
+                    <div className="space-y-2">
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"60%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"70%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"60%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"70%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"60%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"60%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"70%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"60%"} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-              {columns.length - 1 == index && (
-                <AddNewSectionBoardView
-                  setShowUngroupedAddSection={setShowUngroupedAddSection}
-                  columnId={columnId}
-                  columns={columns}
-                  index={index}
-                  project={project}
-                  setSections={setSections}
-                  sections={sections}
-                />
+                  <div className="bg-surface p-2 rounded-lg w-72 space-y-2 h-fit">
+                    <h3 className="font-bold pl-[6px]">
+                      <Skeleton width={50} />
+                    </h3>
+
+                    <div className="space-y-2">
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"60%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"70%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"60%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"70%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"60%"} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {columns.map((column, columnIndex) => (
+                    <BoardViewColumn
+                      key={column.id}
+                      tasks={tasks}
+                      setIndex={setIndex}
+                      setColumnId={setColumnId}
+                      column={column}
+                      columnIndex={columnIndex}
+                      project={project}
+                      setShowArchiveConfirm={setShowArchiveConfirm}
+                      setShowDeleteConfirm={setShowDeleteConfirm}
+                      setShowUngroupedAddSection={setShowUngroupedAddSection}
+                      setSections={setSections}
+                      sections={sections}
+                      setTasks={setTasks}
+                      setShowAddTask={setShowAddTask}
+                      setShowUngroupedAddTask={setShowUngroupedAddTask}
+                      showAddTask={showAddTask}
+                      showUngroupedAddTask={showUngroupedAddTask}
+                      columns={columns}
+                    />
+                  ))}
+
+                  <div>
+                    {columns.length == 0 && (
+                      <AddNewSectionBoardView
+                        setShowUngroupedAddSection={setShowUngroupedAddSection}
+                        showUngroupedAddSection={showUngroupedAddSection}
+                        project={project}
+                        setSections={setSections}
+                        sections={sections}
+                        index={columns.length}
+                      />
+                    )}
+                  </div>
+
+                  {boardProvided.placeholder}
+
+                  {columns.length - 1 == index && (
+                    <AddNewSectionBoardView
+                      setShowUngroupedAddSection={setShowUngroupedAddSection}
+                      columnId={columnId}
+                      columns={columns}
+                      index={index}
+                      project={project}
+                      setSections={setSections}
+                      sections={sections}
+                    />
+                  )}
+                </>
               )}
             </div>
           )}

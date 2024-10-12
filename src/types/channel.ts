@@ -82,4 +82,5 @@ export interface DmContactType {
   name: string;
   avatar_url: string;
   last_message: DmType | null;
+  all_dms: DmType[];
 }

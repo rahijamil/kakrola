@@ -189,9 +189,9 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
                     {personalMembers
                       .sort((a, b) => a.settings.order - b.settings.order)
                       .map((personalMember, index) => {
-                        const project = projects.find(
-                          (p) => p.id === personalMember.project_id
-                        );
+                        const project = projects
+                          .filter((p) => !p.team_id)
+                          .find((p) => p.id === personalMember.project_id);
                         if (!project) return null;
                         return (
                           <Draggable
@@ -226,9 +226,9 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
                     {personalMembers
                       .sort((a, b) => a.settings.order - b.settings.order)
                       .map((personalMember, index) => {
-                        const page = pages.find(
-                          (p) => p.id === personalMember.page_id
-                        );
+                        const page = pages
+                          .filter((p) => !p.team_id)
+                          .find((p) => p.id === personalMember.page_id);
                         if (!page) return null;
                         return (
                           <Draggable

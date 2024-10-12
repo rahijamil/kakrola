@@ -16,8 +16,11 @@ import { Spinner } from "@nextui-org/react";
 import ReplyEditor from "@/app/app/ch/[channel_slug]/th/[thread_slug]/ReplyEditor";
 import { JSONContent } from "novel";
 import useScreen from "@/hooks/useScreen";
-import NovelEditor from "../NovelEditor";
 import { getTextFromContent } from "@/lib/getTextFromContent";
+import dynamic from "next/dynamic";
+const NovelEditor = dynamic(() => import("@/components/NovelEditor"), {
+  ssr: false,
+});
 
 const TaskDescription = ({
   taskData,
