@@ -26,6 +26,7 @@ const AddNewSectionListView = ({
   setShowAddSection: Dispatch<SetStateAction<string | number | null>>;
   sectionAddLoading: boolean;
 }) => {
+
   return (
     <>
       <div

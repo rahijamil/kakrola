@@ -1,5 +1,5 @@
 import { generateSlug } from "@/utils/generateSlug";
-import { LucideProps } from "lucide-react";
+import { LucideProps, X } from "lucide-react";
 import React, {
   Dispatch,
   forwardRef,
@@ -24,6 +24,8 @@ interface DialogProps {
   size?: "xs" | "sm" | "md" | "lg";
   position?: "top" | "center";
   bgWhite?: boolean;
+  lessOverlay?: boolean;
+  hideCloseIcon?: boolean;
 }
 
 export const Dialog: React.FC<DialogProps> = ({
@@ -32,15 +34,9 @@ export const Dialog: React.FC<DialogProps> = ({
   size = "sm",
   position = "center",
   bgWhite,
+  lessOverlay,
+  hideCloseIcon,
 }) => {
-  const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(
-    null
-  );
-
-  useEffect(() => {
-    setPortalContainer(document.body);
-  }, []);
-
   return (
     <PortalWrapper>
       <motion.div
@@ -51,6 +47,8 @@ export const Dialog: React.FC<DialogProps> = ({
         className={`fixed inset-0 z-50 cursor-default flex justify-center bg-black ${
           bgWhite
             ? "bg-opacity-70 backdrop-blur-sm"
+            : lessOverlay
+            ? "bg-opacity-70"
             : "bg-opacity-80 dark:bg-opacity-90"
         } ${position == "center" ? "items-center" : "items-start pt-40"}`}
         onClick={onClose}
@@ -60,7 +58,7 @@ export const Dialog: React.FC<DialogProps> = ({
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.99 }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className={`md:rounded-lg md:shadow-lg w-full md:w-11/12 flex flex-col ${
+          className={`relative md:rounded-lg md:shadow-lg w-full md:w-11/12 flex flex-col ${
             bgWhite ? "bg-white" : "bg-surface"
           } ${
             size === "xs"
@@ -75,11 +73,20 @@ export const Dialog: React.FC<DialogProps> = ({
           }`}
           onClick={(ev) => ev.stopPropagation()}
         >
+          {!hideCloseIcon && (
+            <button
+              className={`absolute top-2 right-2 transition rounded-lg p-1 text-text-500 ${bgWhite ? "hover:bg-[#ebebeb] hover:text-[#333333]" : "hover:bg-text-100 hover:text-text-700"} z-10`}
+              onClick={onClose}
+              type="button"
+            >
+              <X strokeWidth={1.5} size={16} />
+            </button>
+          )}
           {children}
         </motion.div>
       </motion.div>
     </PortalWrapper>
-  ); // Dialog Component
+  );
 };
 
 interface DialogHeaderProps {

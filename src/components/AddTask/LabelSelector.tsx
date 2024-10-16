@@ -23,7 +23,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ProfileType } from "@/types/user";
 import { colors } from "@/utils/colors";
 import useTheme from "@/hooks/useTheme";
-import { Theme } from "@/lib/theme.types";
+import { Theme, ThemeMode } from "@/lib/theme.types";
 import { v4 as uuidv4 } from "uuid";
 import {
   ActivityAction,
@@ -113,7 +113,7 @@ const LabelSelector = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { theme } = useTheme();
+  const { themeMode } = useTheme();
   const queryClient = useQueryClient();
 
   const handleClose = () => {
@@ -271,7 +271,7 @@ const LabelSelector = ({
                     style={{
                       backgroundColor:
                         colors.find((c) => c.value == label.color)?.color +
-                        (theme == Theme.DARK ? "80" : "a0"),
+                        (themeMode == ThemeMode.DARK ? "80" : "a0"),
                     }}
                     className="px-1 rounded-md font-medium text-text-900"
                   >
@@ -307,7 +307,7 @@ const LabelSelector = ({
                   style={{
                     backgroundColor:
                       colors.find((c) => c.value == label.color)?.color +
-                      (theme == Theme.DARK ? "80" : "a0"),
+                      (themeMode == ThemeMode.DARK ? "80" : "a0"),
                   }}
                   className="px-1 rounded-md font-medium text-text-900"
                 >
@@ -337,7 +337,7 @@ const LabelSelector = ({
                   style={{
                     backgroundColor:
                       colors.find((c) => c.value == label.color)?.color +
-                      (theme == Theme.DARK ? "80" : "a0"),
+                      (themeMode == ThemeMode.DARK ? "80" : "a0"),
                   }}
                   className="px-1 rounded-md font-medium text-text-900"
                 >
@@ -393,7 +393,7 @@ const LabelSelector = ({
                 style: {
                   backgroundColor:
                     colors.find((c) => c.value == label.color)?.color +
-                    (theme == Theme.DARK ? "80" : "a0"),
+                    (themeMode == ThemeMode.DARK ? "80" : "a0"),
                 },
                 rightContent: (
                   <button

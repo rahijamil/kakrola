@@ -61,9 +61,8 @@ const ChannelWrapper = ({
         )
       );
 
-      // const userRole = role(project.id);
-      // const canUpdateSection = userRole ? canEditProject(userRole) : false;
-      // if (!canUpdateSection) return;
+      // if (!canEditContent(role({ project, page: null }), !!project.team_id))
+      //   return;
 
       // const { error } = await supabaseBrowser
       //   .from("projects")

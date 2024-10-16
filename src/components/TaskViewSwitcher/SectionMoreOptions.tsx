@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { SectionType, TaskType } from "@/types/project";
 import useTheme from "@/hooks/useTheme";
+import { ThemeMode } from "@/lib/theme.types";
 
 const colors = [
   "kakrola",
@@ -66,7 +67,7 @@ const SectionMoreOptions = ({
 
   const triggerRef = useRef(null);
 
-  const { theme } = useTheme();
+  const { themeMode } = useTheme();
 
   const handleColor = (color: string) => {
     setSections(
@@ -84,7 +85,7 @@ const SectionMoreOptions = ({
 
   const ColorButton = ({ color }: { color: string }) => {
     const bgClassName =
-      theme === "dark" ? `bg-${color}-400` : `bg-${color}-400`; // Adjusted class based on theme
+      themeMode == ThemeMode.DARK ? `bg-${color}-400` : `bg-${color}-400`; // Adjusted class based on theme
 
     return (
       <button
@@ -103,11 +104,11 @@ const SectionMoreOptions = ({
 
   // Tailwind doesn't generate all color classes by default, so we need to explicitly define them
   const bgColorClass =
-    theme == "dark"
+    themeMode == ThemeMode.DARK
       ? `bg-${sectionColor}-800 text-${sectionColor}-100`
       : `bg-${sectionColor}-100 text-${sectionColor}-600`;
   const hoverBgColorClass =
-    theme == "dark"
+    themeMode == ThemeMode.DARK
       ? `hover:bg-${sectionColor}-400`
       : `hover:bg-${sectionColor}-100 hover:bg-text-100`;
 

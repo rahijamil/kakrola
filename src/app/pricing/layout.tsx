@@ -2,15 +2,15 @@ import { Metadata } from "next";
 import React, { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Kakrola Pricing Plans: Free, Pro, and Business",
+  title: "Kakrola Pricing Plans: Free, Plus, and Business",
   description:
     "Explore Kakrola's flexible pricing plans. Find the perfect plan for your team to manage projects, docs, tasks, and team communication all in one place.",
   keywords:
-    "Kakrola pricing, project management, team communication, team plans, collaboration, Free plan, Pro plan, Business plan, SaaS pricing, productivity tools",
+    "Kakrola pricing, project management, team communication, team plans, collaboration, Free plan, Plus plan, Business plan, SaaS pricing, productivity tools",
   robots: "index, follow",
   openGraph: {
     title:
-      "Pricing - Kakrola: Free, Pro, and Business Plans for Project Management",
+      "Pricing - Kakrola: Free, Plus, and Business Plans for Project Management",
     description:
       "Explore Kakrola's flexible pricing plans for individuals, teams, and businesses. Start managing projects, docs, and team communication today.",
     url: "https://www.kakrola.com/pricing",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@kakrola",
     title:
-      "Pricing - Kakrola: Free, Pro, and Business Plans for Project Management",
+      "Pricing - Kakrola: Free, Plus, and Business Plans for Project Management",
     description:
       "Explore Kakrola's flexible pricing plans for individuals, teams, and businesses.",
     images: ["/path/to/your/twitter-image.jpg"],
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
 //           priceCurrency: "USD",
 //           price: "9.99",
 //           url: "https://www.kakrola.com/pricing/pro",
-//           name: "Pro Plan",
+//           name: "Plus Plan",
 //           priceValidUntil: "2024-12-31",
 //           eligibleRegion: {
 //             "@type": "Place",

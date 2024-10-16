@@ -27,16 +27,15 @@ import Dropdown from "@/components/ui/Dropdown";
 import { usePathname } from "next/navigation";
 import useFavorite from "@/hooks/useFavorite";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
-import {
-  canArchiveProject,
-  canCreateProject,
-  canDeleteProject,
-  canEditProject,
-} from "@/types/hasPermission";
 import { useRole } from "@/context/RoleContext";
-import { RoleType } from "@/types/role";
+import { PersonalRoleType, TeamRoleType } from "@/types/role";
 import { PageType } from "@/types/pageTypes";
 import useAddPage from "@/app/app/page/[page_slug]/useAddPage";
+import {
+  canCreateContent,
+  canDeleteContent,
+  canEditContent,
+} from "@/utils/permissionUtils";
 
 const SidebarPageMoreOptions = ({
   page,
@@ -79,14 +78,19 @@ const SidebarPageMoreOptions = ({
 
   const { role } = useRole();
 
-  const pageRole = role({
-    _page_id: page.id,
-  });
-
-  const canCreate = pageRole ? canCreateProject(pageRole) : false;
-  const canEdit = pageRole ? canEditProject(pageRole) : false;
-  const canDelete = pageRole ? canDeleteProject(pageRole) : false;
-  const canArchive = pageRole ? canArchiveProject(pageRole) : false;
+  const canCreate = canCreateContent(
+    role({ project: null, page }),
+    !!page.team_id
+  );
+  const canEdit = canEditContent(role({ project: null, page }), !!page.team_id);
+  const canDelete = canDeleteContent(
+    role({ project: null, page }),
+    !!page.team_id
+  );
+  const canArchive = canDeleteContent(
+    role({ project: null, page }),
+    !!page.team_id
+  );
 
   // Find the current user project settings for the given project
   const currentUserPage = personalMembers.find(
@@ -98,7 +102,7 @@ const SidebarPageMoreOptions = ({
     ? currentUserPage.settings.is_favorite
     : false;
 
-  const handleCopyProjectLink = () => {
+  const handleCopyLink = () => {
     navigator.clipboard.writeText(`https://kakrola.com/app/page/${page.slug}`);
   };
 
@@ -131,12 +135,12 @@ const SidebarPageMoreOptions = ({
         </div>
       )}
       beforeItemsContent={
-        currentUserPage?.role != RoleType.ADMIN ? (
+        currentUserPage?.role != PersonalRoleType.ADMIN ? (
           <p className="text-xs mb-1 p-2 whitespace-normal bg-text-100 px-6 text-text-700">
             Some features are not available to page
-            {currentUserPage?.role == RoleType.MEMBER
+            {currentUserPage?.role == PersonalRoleType.MEMBER
               ? " members"
-              : currentUserPage?.role == RoleType.COMMENTER
+              : currentUserPage?.role == PersonalRoleType.COMMENTER
               ? " commenters"
               : " viewers"}
             .
@@ -205,7 +209,7 @@ const SidebarPageMoreOptions = ({
           id: 6,
           label: "Copy link",
           icon: <Link strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: handleCopyProjectLink,
+          onClick: handleCopyLink,
           divide: true,
         },
         // {

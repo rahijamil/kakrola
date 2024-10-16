@@ -12,6 +12,7 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import useTheme from "@/hooks/useTheme";
+import { ThemeMode } from "@/lib/theme.types";
 
 const AddNewSectionBoardView = ({
   setShowUngroupedAddSection,
@@ -146,7 +147,7 @@ const AddNewSectionBoardView = ({
     }
   };
 
-  const { theme } = useTheme();
+  const { themeMode } = useTheme();
 
   return (
     <div>
@@ -155,7 +156,7 @@ const AddNewSectionBoardView = ({
           {(columns ? columns.length - 1 == index : true) ? (
             <div
               className={`${
-                theme == "dark" ? `bg-surface` : `bg-text-50`
+                themeMode == ThemeMode.DARK ? `bg-surface` : `bg-text-50`
               } p-3 py-2 rounded-lg w-72 md:w-[300px] h-fit ml-3`}
             >
               <button
@@ -207,7 +208,7 @@ const AddNewSectionBoardView = ({
                     : setShowUngroupedAddSection(true)
                 }
               >
-                <div className="flex-1 bg-primary-400 w-[1px]"></div>
+                <div className="flex-1 bg-primary-500 w-[1px]"></div>
                 <div className="font-medium text-primary-600 text-sm bg-background">
                   Add section
                 </div>

@@ -1,6 +1,6 @@
 import { ProjectType, TaskType } from "@/types/project";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import CommentOrActivityModal from "../../../LayoutWrapper/CommentOrActivityModal";
 import ExportCSVModal from "../SidebarProjectMoreOptions/ExportCSVModal";
@@ -18,17 +18,21 @@ import useScreen from "@/hooks/useScreen";
 import { PageType } from "@/types/pageTypes";
 import SidebarChannelMoreOptions from "./SidebarChannelMoreOptions";
 import { ChannelType } from "@/types/channel";
+import Rename from "../Rename";
+import AddEditChannel from "@/components/AddEditChannel";
 
 const ChannelItem = ({
   channel,
   pathname,
   isDragging,
   setIsDragDisabled,
+  forFavorites,
 }: {
   channel: ChannelType;
   pathname: string;
   isDragging?: boolean;
   setIsDragDisabled?: React.Dispatch<React.SetStateAction<boolean>>;
+  forFavorites?: boolean;
 }) => {
   const { sidebarLoading } = useSidebarDataProvider();
 
@@ -63,6 +67,7 @@ const ChannelItem = ({
   );
 
   const { screenWidth } = useScreen();
+  const triggerRef = useRef<HTMLDivElement>(null);
 
   return (
     <li>
@@ -85,15 +90,21 @@ const ChannelItem = ({
               : "md:hover:bg-primary-50 border-transparent hover:border-primary-200 text-text-700"
           }`}
         >
+          <div
+            ref={triggerRef}
+            className="absolute left-4 top-1/2 pointer-events-none opacity-0 -z-10"
+          ></div>
           <Link
             href={`/app/ch/${channel.slug}`}
-            className={`w-full p-2 ${channel.team_id ? "pl-7 pr-4" : "px-4"}`}
+            className={`w-full p-2 ${
+              channel.team_id && !forFavorites ? "pl-7 pr-4" : "px-4"
+            }`}
             draggable={false}
           >
             <div className="flex items-center gap-2">
               <Hash
-                className={`w-4 h-4 min-w-4 min-h-4 text-${channel.settings.color}`}
-                strokeWidth={2}
+                className={`w-5 h-5 min-w-5 min-h-5 text-${channel.settings.color}`}
+                strokeWidth={1.5}
               />
 
               <span className="truncate">{channel.name}</span>
@@ -121,24 +132,25 @@ const ChannelItem = ({
         </div>
       )}
 
-      {/* {showLeaveConfirm && (
-        <ProjectLeaveConfirm
-          setShowLeaveConfirm={setShowLeaveConfirm}
-          project={project}
-        />
-      )}
+      <Rename
+        triggerRef={triggerRef}
+        channel={channel}
+        isOpen={projectEdit}
+        setIsOpen={setProjectEdit}
+        Icon={Hash}
+      />
 
       {showDeleteConfirm && (
         <DeleteConfirm
           setShowDeleteConfirm={setShowDeleteConfirm}
-          project={project}
+          channel={channel}
         />
       )}
 
       {showArchiveConfirm && (
         <ArchiveConfirm
           setShowArchiveConfirm={setShowArchiveConfirm}
-          project={project}
+          channel={channel}
         />
       )}
 
@@ -147,7 +159,7 @@ const ChannelItem = ({
           onClose={() => setShowCommentOrActivity(null)}
           showCommentOrActivity={showCommentOrActivity}
           setShowCommentOrActivity={setShowCommentOrActivity}
-          project={project}
+          channel={channel}
         />
       )}
 
@@ -156,21 +168,14 @@ const ChannelItem = ({
         <ImportCSVModal onClose={() => setImportFromCSV(false)} />
       )}
 
-      {projectEdit && (
-        <AddEditProject
-          onClose={() => setProjectEdit(false)}
-          project={project}
-        />
-      )}
-
       {aboveBellow && (
-        <AddEditProject
+        <AddEditChannel
           onClose={() => setAboveBellow(null)}
           aboveBellow={aboveBellow}
-          project={project}
-          workspaceId={channel.team_id}
+          channel={channel}
+          teamId={channel.team_id}
         />
-      )} */}
+      )}
     </li>
   );
 };

@@ -133,6 +133,24 @@ const useSidebarData = () => {
         })
       ),
     channels: data?.channels || [],
+    setChannels: (newChannels: ChannelType[]) =>
+      queryClient.setQueryData(
+        ["sidebar_data", profile?.id],
+        (
+          oldData: SidebarData = {
+            personal_members: [],
+            projects: [],
+            sections: [],
+            team_members: [],
+            teams: [],
+            pages: [],
+            channels: [],
+          }
+        ) => ({
+          ...oldData,
+          channels: newChannels,
+        })
+      ),
     isLoading,
     isError,
     error,

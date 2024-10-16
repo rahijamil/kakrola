@@ -11,6 +11,7 @@ import {
 } from "@/types/team";
 import { ProfileType } from "@/types/user";
 import { differenceInDays } from "date-fns";
+import { PersonalRoleType, TeamRoleType } from "@/types/role";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -154,7 +155,7 @@ async function handleInviteAcceptance(
       > = {
         [column_name]: id,
         profile_id: profile.id,
-        role: invite.role,
+        role: invite.role as PersonalRoleType,
         settings: {
           is_favorite: false,
           order: newOrder,
@@ -198,7 +199,12 @@ async function handleInviteAcceptance(
         email: profile.email,
         team_id: invite.team_id,
         profile_id: profile.id,
-        team_role: invite.role,
+        team_role: invite.role as TeamRoleType,
+        settings: {
+          projects: [],
+          pages: [],
+          channels: [],
+        },
       };
 
       console.debug("Inserting new team member data:", teamMemberData);

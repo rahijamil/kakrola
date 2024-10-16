@@ -1,5 +1,5 @@
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
-import { ChevronRight, Heart } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import React from "react";
 import ProjectItem from "./ProjectItem";
 import { usePathname } from "next/navigation";
@@ -8,6 +8,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import useScreen from "@/hooks/useScreen";
 import PageItem from "./PageItem";
+import ChannelItem from "./ChannelItem";
 
 const FavoriteProjects = ({
   setShowFavoritesProjects,
@@ -16,47 +17,59 @@ const FavoriteProjects = ({
   setShowFavoritesProjects: any;
   showFavoritesProjects: boolean;
 }) => {
-  const { projects, pages, sidebarLoading, personalMembers } =
-    useSidebarDataProvider();
+  const {
+    projects,
+    pages,
+    channels,
+    sidebarLoading,
+    personalMembers,
+    teamMembers,
+  } = useSidebarDataProvider();
   const pathname = usePathname();
+  const { screenWidth } = useScreen();
 
-  // Create a set of favorite project IDs
-  const favoriteProjectIds = new Set(
-    personalMembers
+  // Create sets of favorite project, page, and channel IDs from both personal and team members
+  const favoriteProjectIds = new Set([
+    ...personalMembers
       .filter((member) => member.settings.is_favorite)
-      .map((member) => member.project_id)
-  );
+      .map((member) => member.project_id),
+    ...teamMembers
+      .flatMap((member) => member.settings.projects)
+      .filter((project) => project.is_favorite)
+      .map((project) => project.id),
+  ]);
 
-  const hasFavoriteProjects = projects.some((project) =>
+  const favoritePageIds = new Set([
+    ...personalMembers
+      .filter((member) => member.settings.is_favorite)
+      .map((member) => member.page_id),
+    ...teamMembers
+      .flatMap((member) => member.settings.pages)
+      .filter((page) => page.is_favorite)
+      .map((page) => page.id),
+  ]);
+
+  const favoriteChannelIds = new Set([
+    ...teamMembers
+      .flatMap((member) => member.settings.channels)
+      .filter((channel) => channel.is_favorite)
+      .map((channel) => channel.id),
+  ]);
+
+  const favoriteProjects = projects.filter((project) =>
     favoriteProjectIds.has(project.id)
   );
 
-  // Create a map of project ID to favorite status from userProjectSettings
-  const favoritesMap = new Map(
-    personalMembers.map((member) => [
-      member.project_id,
-      member.settings.is_favorite,
-    ])
+  const favoritePages = pages.filter((page) => favoritePageIds.has(page.id));
+
+  const favoriteChannels = channels.filter((channel) =>
+    favoriteChannelIds.has(channel.id)
   );
 
-  // Filter projects based on userProjectSettings
-  const favoriteProjects = projects.filter(
-    (project) => favoritesMap.get(project.id) === true
-  );
-
-  // Create a map of project ID to favorite status from userProjectSettings
-  const favoritePagesMap = new Map(
-    personalMembers.map((member) => [
-      member.page_id,
-      member.settings.is_favorite,
-    ])
-  );
-
-  const favoritePages = pages.filter(
-    (page) => favoritePagesMap.get(page.id) === true
-  );
-
-  const { screenWidth } = useScreen();
+  const hasFavorite =
+    favoriteProjects.length > 0 ||
+    favoritePages.length > 0 ||
+    favoriteChannels.length > 0;
 
   return (
     <div>
@@ -64,10 +77,9 @@ const FavoriteProjects = ({
         <Skeleton height={16} width={150} borderRadius={9999} />
       ) : (
         <>
-          {hasFavoriteProjects && (
+          {hasFavorite && (
             <div className="w-full flex items-center justify-between p-1 pl-4 text-text-600 rounded-lg transition-colors group">
               <div className="flex items-center gap-2 pl-1">
-                {/* <Heart strokeWidth={1.5} size={20} /> */}
                 <span className="font-medium text-xs">Favorites</span>
               </div>
 
@@ -95,7 +107,7 @@ const FavoriteProjects = ({
         </>
       )}
 
-      {showFavoritesProjects && hasFavoriteProjects && (
+      {showFavoritesProjects && hasFavorite && (
         <motion.div
           initial={{ opacity: 0.5, height: 0, y: -10 }}
           animate={{
@@ -113,11 +125,21 @@ const FavoriteProjects = ({
                 key={project.id}
                 project={project}
                 pathname={pathname}
+                forFavorites
               />
             ))}
 
             {favoritePages.map((page) => (
-              <PageItem key={page.id} page={page} pathname={pathname} />
+              <PageItem key={page.id} page={page} pathname={pathname} forFavorites />
+            ))}
+
+            {favoriteChannels.map((channel) => (
+              <ChannelItem
+                key={channel.id}
+                channel={channel}
+                pathname={pathname}
+                forFavorites
+              />
             ))}
           </ul>
         </motion.div>

@@ -17,7 +17,7 @@ function BottomNav() {
     ? [
         { id: 1, icon: Home, text: "Home", path: "/" },
         { id: 2, icon: KakrolaLogo, text: "Open Kakrola", path: "/app" },
-        { id: 3, icon: Rocket, text: "Upgrade to Pro", path: "/app/pricing" },
+        { id: 3, icon: Rocket, text: "Upgrade to Plus", path: "/app/pricing" },
       ]
     : [
         { id: 1, icon: Home, text: "Home", path: "/" },

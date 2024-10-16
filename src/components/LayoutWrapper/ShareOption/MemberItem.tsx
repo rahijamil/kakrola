@@ -3,7 +3,7 @@ import { ProfileType } from "@/types/user";
 import Image from "next/image";
 import React, { useState } from "react";
 import RoleItem from "./RoleItem";
-import { RoleType } from "@/types/role";
+import { PersonalRoleType } from "@/types/role";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
@@ -29,7 +29,7 @@ const MemberItem = ({ member, isCurrentUserAdmin }: MemberItemProps) => {
   const [confirmLeave, setConfirmLeave] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
 
-  const handleUpdateRole = async (newRole: RoleType) => {
+  const handleUpdateRole = async (newRole: PersonalRoleType) => {
     try {
       // Optimistic update
       queryClient.setQueryData(
@@ -130,7 +130,7 @@ const MemberItem = ({ member, isCurrentUserAdmin }: MemberItemProps) => {
               ) : isCurrentUserAdmin ? (
                 <RoleItem
                   value={member.role}
-                  onChange={(newRole) => handleUpdateRole(newRole)}
+                  onChange={(newRole) => handleUpdateRole(newRole as PersonalRoleType)}
                   handleRemove={() => setConfirmRemove(true)}
                 />
               ) : (
@@ -169,13 +169,13 @@ const MemberItem = ({ member, isCurrentUserAdmin }: MemberItemProps) => {
           onCancel={() => setConfirmRemove(false)}
           onConfirm={handleRemove}
           title={`Remove ${
-            member.role == RoleType.ADMIN
+            member.role == PersonalRoleType.ADMIN
               ? "Admin"
-              : member.role == RoleType.MEMBER
+              : member.role == PersonalRoleType.MEMBER
               ? "Member"
-              : member.role == RoleType.COMMENTER
+              : member.role == PersonalRoleType.COMMENTER
               ? "Commenter"
-              : member.role == RoleType.VIEWER && "Viewer"
+              : member.role == PersonalRoleType.VIEWER && "Viewer"
           }?`}
           description={
             <>

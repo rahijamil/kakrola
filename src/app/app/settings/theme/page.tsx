@@ -29,7 +29,7 @@ const ThemeSettingsPage = () => {
       },
       {
         name: "Dark",
-        value: Theme.DARK,
+        value: Theme.KAKROLA_DARK,
         primaryColor: "#8698c2",
         sidebarBg: "#1e1e1e",
         sidebarAccentColor1: "#2d3642",

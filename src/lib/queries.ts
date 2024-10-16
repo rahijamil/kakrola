@@ -91,3 +91,32 @@ export async function getNotifications({
     return [];
   }
 }
+
+export interface TeamMemberData extends TeamMemberType {
+  profile: ProfileType;
+}
+
+
+export const fetchTeamMembersData = async (teamId?: TeamType["id"]) => {
+  const { data: members, error: membersError } = await supabaseBrowser
+    .from("team_members")
+    .select("id, team_role, profiles(id, avatar_url, full_name, email)")
+    .eq("team_id", teamId);
+
+  if (membersError) throw new Error("Failed to fetch members");
+
+  return members.map((member) => {
+    const { profiles, ...restMember } = member;
+    return {
+      ...restMember,
+      team_id: teamId,
+      profile_id: (profiles as any).id,
+      profile: profiles as unknown as {
+        id: any;
+        avatar_url: any;
+        full_name: any;
+        email: any;
+      },
+    };
+  }) as TeamMemberData[];
+};

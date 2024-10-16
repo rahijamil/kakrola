@@ -15,6 +15,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   rightIcon?: ReactNode;
   howBig?: "xs" | "sm" | "md" | "lg";
   showFocusInMobile?: boolean;
+  borderLess?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -30,6 +31,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       howBig = "md",
       showFocusInMobile = false,
       type,
+      borderLess,
       ...props
     },
     ref
@@ -57,16 +59,22 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             />
           )}
           <input
-            className={`flex w-full border-text-300 hover:border-text-400 focus:border-text-300 bg-transparent ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-offset-2 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-50 read-only:bg-primary-10 read-only:cursor-default ${
+            className={`flex w-full bg-transparent ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-text-500 focus:outline-none focus:ring-offset-2 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-50 read-only:bg-primary-10 read-only:cursor-default ${
+              borderLess
+                ? "border-none outline-none"
+                : "border-text-300 hover:border-text-400 focus:border-text-300"
+            } ${
               showFocusInMobile
                 ? `rounded-lg ${type !== "radio" && "border focus:ring-2"}`
-                : `md:rounded-lg ${
+                : `${borderLess ? "md:rounded-md" : "md:rounded-lg"} ${
                     type !== "radio" && "border-b md:border md:focus:ring-2"
                   }`
             } ${
               type !== "radio" &&
               (howBig == "xs"
-                ? "px-3 h-8"
+                ? borderLess
+                  ? "px-1 h-5"
+                  : "px-3 h-8"
                 : howBig == "sm"
                 ? "px-3 h-10"
                 : howBig == "md"

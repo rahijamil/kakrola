@@ -59,6 +59,7 @@ const Step4ProfileWorkspace = () => {
 
         const teamData: Omit<TeamType, "id"> = {
           name: team_name,
+          description: "",
           work_role: work_role?.value,
           industry: industry?.value,
           work_type: work_type?.value,
@@ -66,6 +67,7 @@ const Step4ProfileWorkspace = () => {
           avatar_url: null,
           profile_id: profile.id,
           updated_at: new Date().toISOString(),
+          is_archived: false,
         };
 
         const { error, data } = await supabaseBrowser

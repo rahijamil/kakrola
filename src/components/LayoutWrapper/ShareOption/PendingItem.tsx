@@ -1,7 +1,7 @@
 import { ProjectInviteType, PageInviteType } from "@/types/team";
 import React, { useState } from "react";
 import RoleItem from "./RoleItem";
-import { RoleType } from "@/types/role";
+import { PersonalRoleType } from "@/types/role";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
@@ -19,7 +19,7 @@ const PendingItem = ({
   const queryClient = useQueryClient();
   const [confirmRevoke, setConfirmRevoke] = useState(false);
 
-  const handleUpdateRole = async (newRole: RoleType) => {
+  const handleUpdateRole = async (newRole: PersonalRoleType) => {
     try {
       // Optimistic update
       queryClient.setQueryData(
@@ -98,7 +98,7 @@ const PendingItem = ({
 
         <RoleItem
           value={invite.role}
-          onChange={(newRole) => handleUpdateRole(newRole)}
+          onChange={(newRole) => handleUpdateRole(newRole as PersonalRoleType)}
           handleRevoke={() => setConfirmRevoke(true)}
         />
       </div>

@@ -3,12 +3,13 @@ import { ProfileType } from "@/types/user";
 import Image from "next/image";
 import React, { useState } from "react";
 import RoleItem from "./RoleItem";
-import { RoleType } from "@/types/role";
+import { PersonalRoleType, TeamRoleType } from "@/types/role";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import ConfirmAlert from "@/components/AlertBox/ConfirmAlert";
 import { useAuthProvider } from "@/context/AuthContext";
+import TeamMemberRemove from "./TeamMemberRemove";
 
 interface MemberData extends TeamMemberType {
   profile: ProfileType;
@@ -17,9 +18,14 @@ interface MemberData extends TeamMemberType {
 interface MemberItemProps {
   member: MemberData;
   isCurrentUserAdmin: boolean;
+  forTeamspaceSettings?: boolean;
 }
 
-const TeamMemberItem = ({ member, isCurrentUserAdmin }: MemberItemProps) => {
+const TeamMemberItem = ({
+  member,
+  isCurrentUserAdmin,
+  forTeamspaceSettings,
+}: MemberItemProps) => {
   const { profile } = useAuthProvider();
 
   const [memberData, setMemberData] = useState(member);
@@ -28,7 +34,7 @@ const TeamMemberItem = ({ member, isCurrentUserAdmin }: MemberItemProps) => {
   const [confirmLeave, setConfirmLeave] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
 
-  const handleUpdateRole = async (newRole: RoleType) => {
+  const handleUpdateRole = async (newRole: TeamRoleType) => {
     try {
       // Optimistic update
       queryClient.setQueryData(
@@ -107,7 +113,11 @@ const TeamMemberItem = ({ member, isCurrentUserAdmin }: MemberItemProps) => {
 
   return (
     <>
-      <div className="flex items-center gap-2 w-full p-2 px-4 hover:bg-primary-50 border-l-4 border-transparent hover:border-primary-200 cursor-default transition">
+      <div
+        className={`flex items-center gap-2 w-full hover:bg-primary-50 border-l-4 border-transparent hover:border-primary-200 cursor-default transition p-2 ${
+          forTeamspaceSettings ? "px-6" : "px-4"
+        }`}
+      >
         <Image
           src={member.profile.avatar_url || "/default_avatar.png"}
           alt="Avatar"
@@ -131,7 +141,9 @@ const TeamMemberItem = ({ member, isCurrentUserAdmin }: MemberItemProps) => {
               ) : isCurrentUserAdmin ? (
                 <RoleItem
                   value={member.team_role}
-                  onChange={(newRole) => handleUpdateRole(newRole)}
+                  onChange={(newRole) =>
+                    handleUpdateRole(newRole as TeamRoleType)
+                  }
                   handleRemove={() => setConfirmRemove(true)}
                 />
               ) : (
@@ -145,36 +157,22 @@ const TeamMemberItem = ({ member, isCurrentUserAdmin }: MemberItemProps) => {
         </div>
       </div>
 
-      {confirmLeave && member.profile_id === profile?.id && (
-        <ConfirmAlert
-          onCancel={() => setConfirmLeave(false)}
-          onConfirm={handleRemove}
-          title={"Leave Team"}
-          description={
-            <>
-              You will be removed from the{" "}
-              <span className="font-semibold">
-                {teams.find((team) => team.id === member.team_id)?.name}
-              </span>{" "}
-              team. You will need to ask for access to rejoin the team.
-            </>
-          }
-          submitBtnText="Leave"
-        />
-      )}
+      <TeamMemberRemove
+        confirmLeave={confirmLeave}
+        setConfirmLeave={setConfirmLeave}
+        member={member}
+      />
 
       {confirmRemove && isCurrentUserAdmin && (
         <ConfirmAlert
           onCancel={() => setConfirmRemove(false)}
           onConfirm={handleRemove}
           title={`Remove ${
-            member.team_role == RoleType.ADMIN
+            member.team_role == TeamRoleType.TEAM_ADMIN
               ? "Admin"
-              : member.team_role == RoleType.MEMBER
+              : member.team_role == TeamRoleType.TEAM_MEMBER
               ? "Member"
-              : member.team_role == RoleType.COMMENTER
-              ? "Commenter"
-              : member.team_role == RoleType.VIEWER && "Viewer"
+              : member.team_role
           }?`}
           description={
             <>

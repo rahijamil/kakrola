@@ -10,7 +10,7 @@ import {
   PersonalMemberForPageType,
   PersonalMemberForProjectType,
 } from "@/types/team";
-import { RoleType } from "@/types/role";
+import { PersonalRoleType } from "@/types/role";
 
 const useAddPage = ({ teamId }: { teamId?: number }) => {
   const { profile } = useAuthProvider();
@@ -77,7 +77,7 @@ const useAddPage = ({ teamId }: { teamId?: number }) => {
 
       const newPersonalMember: Omit<PersonalMemberForPageType, "id"> = {
         profile_id: profile.id,
-        role: RoleType.ADMIN,
+        role: PersonalRoleType.ADMIN,
         settings: {
           is_favorite: false,
           order: newOrder,

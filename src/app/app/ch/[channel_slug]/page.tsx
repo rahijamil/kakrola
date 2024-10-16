@@ -32,7 +32,6 @@ const ChannelDetails = ({
       ? null
       : pathname.split("/").pop();
 
-  // const { channel, isPending, isError } = useChannelDetails(channel_slug);
   const {
     thread,
     replies,

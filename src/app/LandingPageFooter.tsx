@@ -17,7 +17,7 @@ const faqItems = [
   {
     title: "Is there a free trial?",
     content:
-      "Yes, we offer a 14-day free trial for our Pro and Business plans. You can experience the full power of Kakrola risk-free, with no credit card required to start your trial.",
+      "Yes, we offer a 14-day free trial for our Plus and Business plans. You can experience the full power of Kakrola risk-free, with no credit card required to start your trial.",
   },
   {
     title: "What happens when I hit my storage limit?",

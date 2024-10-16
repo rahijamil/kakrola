@@ -7,18 +7,18 @@ import React, {
 } from "react";
 import { Dialog, Label, RadioGroup, RadioGroupItem } from "../../ui";
 import { usePaddleCheckout } from "../../Paddle/usePaddleCheckout";
-import { PricingPlanForSettings } from "../pricing.types";
 import { ChevronDown, Rocket } from "lucide-react";
 import Link from "next/link";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
+import { Tier } from "@/lib/constants/pricing-tier";
 
 const CheckoutSettings = ({
   selectedPlan,
   setSelectedPlan,
   tab,
 }: {
-  selectedPlan: PricingPlanForSettings;
-  setSelectedPlan: Dispatch<SetStateAction<PricingPlanForSettings | null>>;
+  selectedPlan: Tier;
+  setSelectedPlan: Dispatch<SetStateAction<Tier | null>>;
   tab: string | null;
 }) => {
   const [billingCycle, setBillingCycle] = useState<"annually" | "monthly">(
@@ -32,8 +32,8 @@ const CheckoutSettings = ({
     priceId:
       selectedPlan.priceId[billingCycle === "annually" ? "year" : "month"],
     quantity: teamMembers.length,
-    id: selectedPlan.id as "pro" | "business",
-    paddleFrameRef
+    id: selectedPlan.id as "plus" | "business",
+    paddleFrameRef,
   });
 
   return (
@@ -126,7 +126,7 @@ const CheckoutSettings = ({
                         </div>
 
                         <div className="text-xs text-green-700 font-semibold">
-                          Save 30%
+                          Save 20%
                         </div>
                       </div>
                     </Label>
@@ -269,7 +269,7 @@ const CheckoutSettings = ({
                     billingCycle === "annually" ? "year" : "month"
                   ],
                 quantity: teamSize,
-                id: selectedPlan.id as "pro" | "business",
+                id: selectedPlan.id as "plus" | "business",
               })
             }
           >

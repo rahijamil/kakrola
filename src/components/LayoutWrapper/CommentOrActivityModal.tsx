@@ -5,6 +5,7 @@ import AddComentForm from "../TaskViewSwitcher/AddComentForm";
 import Image from "next/image";
 import { ProjectType } from "@/types/project";
 import { PageType } from "@/types/pageTypes";
+import { ChannelType, ThreadType } from "@/types/channel";
 
 const CommentOrActivityModal = ({
   onClose,
@@ -12,6 +13,8 @@ const CommentOrActivityModal = ({
   setShowCommentOrActivity,
   project,
   page,
+  thread,
+  channel,
 }: {
   onClose: () => void;
   showCommentOrActivity: "comment" | "activity" | null;
@@ -20,6 +23,8 @@ const CommentOrActivityModal = ({
   >;
   project?: ProjectType | null;
   page?: PageType | null;
+  thread?: ThreadType | null;
+  channel?: ChannelType | null;
 }) => {
   return (
     <Dialog onClose={onClose} size="md">
@@ -28,35 +33,30 @@ const CommentOrActivityModal = ({
           <HashtagIcon className="w-4 h-4" />
           {project?.name}
         </div>
-
-        <button
-          className="p-1 hover:bg-text-100 transition rounded-lg"
-          onClick={onClose}
-        >
-          <XMarkIcon className="w-6 h-6" />
-        </button>
       </div>
 
-      <div className="px-4">
-        <ul className="flex items-center p-1 rounded-lg bg-text-100 w-fit">
-          <li
-            className={`p-1 px-4 rounded-lg font-medium cursor-pointer transition ${
-              showCommentOrActivity === "comment" ? "bg-surface" : ""
-            }`}
-            onClick={() => setShowCommentOrActivity("comment")}
-          >
-            Comments
-          </li>
-          <li
-            className={`p-1 px-4 rounded-lg font-medium cursor-pointer transition ${
-              showCommentOrActivity === "activity" ? "bg-surface" : ""
-            }`}
-            onClick={() => setShowCommentOrActivity("activity")}
-          >
-            Activity
-          </li>
-        </ul>
-      </div>
+      {!thread && !channel && (
+        <div className="px-4">
+          <ul className="flex items-center p-1 rounded-lg bg-text-100 w-fit">
+            <li
+              className={`p-1 px-4 rounded-lg font-medium cursor-pointer transition ${
+                showCommentOrActivity === "comment" ? "bg-surface" : ""
+              }`}
+              onClick={() => setShowCommentOrActivity("comment")}
+            >
+              Comments
+            </li>
+            <li
+              className={`p-1 px-4 rounded-lg font-medium cursor-pointer transition ${
+                showCommentOrActivity === "activity" ? "bg-surface" : ""
+              }`}
+              onClick={() => setShowCommentOrActivity("activity")}
+            >
+              Activity
+            </li>
+          </ul>
+        </div>
+      )}
 
       <div className="p-4 flex flex-col h-full">
         <div className="flex-grow">

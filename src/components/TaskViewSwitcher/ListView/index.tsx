@@ -37,15 +37,13 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import { useRole } from "@/context/RoleContext";
-import {
-  canCreateSection,
-  canEditSection,
-  canEditTask,
-} from "@/types/hasPermission";
 import useScreen from "@/hooks/useScreen";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useQueryClient } from "@tanstack/react-query";
+import { PermissionName } from "@/types/role";
+import withPermission from "@/utils/withPermission";
+import { canCreateContent } from "@/utils/permissionUtils";
 
 interface ListViewProps {
   groupedTasks: Record<string, TaskType[]>;
@@ -147,9 +145,16 @@ const ListView: React.FC<ListViewProps> = ({
         return;
       }
 
-      const userRole = role({ _project_id: project.id });
-      const canUpdateSection = userRole ? canEditSection(userRole) : false;
-      if (!canUpdateSection) {
+      if (
+        !canCreateContent(
+          role({
+            project,
+            page: null,
+          }),
+          !!project?.team_id
+        )
+      ) {
+        console.error("User doesn't have permission to create a section");
         return;
       }
 
@@ -165,7 +170,6 @@ const ListView: React.FC<ListViewProps> = ({
       ) {
         return;
       }
-
 
       // Handle section reordering
       if (type === "column") {
@@ -288,7 +292,7 @@ const ListView: React.FC<ListViewProps> = ({
         }
       }
     },
-    [sections, setSections, tasks, setTasks, project, role]
+    [sections, setSections, tasks, setTasks, project]
   );
 
   const toggleSection = async (
@@ -323,7 +327,20 @@ const ListView: React.FC<ListViewProps> = ({
   ) => {
     ev.preventDefault();
 
-    if (!profile?.id || !newSectionName.trim()) {
+    if (!profile?.id || !newSectionName.trim() || !project?.id) {
+      return;
+    }
+
+    if (
+      !canCreateContent(
+        role({
+          project,
+          page: null,
+        }),
+        !!project?.team_id
+      )
+    ) {
+      console.error("User doesn't have permission to create a section");
       return;
     }
 
@@ -375,13 +392,6 @@ const ListView: React.FC<ListViewProps> = ({
     setShowAddSection(null);
 
     try {
-      if (!project?.id) return;
-      const userRole = role({
-        _project_id: project.id,
-      });
-      const canCreate = userRole ? canCreateSection(userRole) : false;
-      if (!canCreate) return;
-
       const { data, error } = await supabaseBrowser
         .from("sections")
         .insert([
@@ -542,6 +552,14 @@ const ListView: React.FC<ListViewProps> = ({
 
   const { screenWidth } = useScreen();
   const tableRef = useRef<HTMLTableElement>(null);
+
+  const AddNewSection = withPermission(AddNewSectionListView, {
+    permissionName: project?.team_id
+      ? PermissionName.CREATE_TEAM_CONTENT
+      : PermissionName.CREATE_PERSONAL_CONTENT,
+    project,
+    page: null,
+  });
 
   return (
     <>
@@ -788,7 +806,7 @@ const ListView: React.FC<ListViewProps> = ({
                               />
 
                               {screenWidth > 768 && (
-                                <AddNewSectionListView
+                                <AddNewSection
                                   section={{
                                     id: "ungrouped",
                                     title: "Ungrouped",
@@ -863,7 +881,7 @@ const ListView: React.FC<ListViewProps> = ({
                                       }
                                     />
                                     {screenWidth > 768 && (
-                                      <AddNewSectionListView
+                                      <AddNewSection
                                         section={column}
                                         index={columnIndex}
                                         newSectionName={newSectionName}

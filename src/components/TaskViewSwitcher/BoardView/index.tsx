@@ -21,6 +21,8 @@ import useTheme from "@/hooks/useTheme";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useQueryClient } from "@tanstack/react-query";
+import withPermission from "@/utils/withPermission";
+import { PermissionName } from "@/types/role";
 
 const BoardView: React.FC<{
   tasks: TaskType[];
@@ -407,6 +409,14 @@ const BoardView: React.FC<{
   const [columnId, setColumnId] = useState<any>(null);
   const [index, setIndex] = useState(0);
 
+  const AddNewSection = withPermission(AddNewSectionBoardView, {
+    permissionName: project?.team_id
+      ? PermissionName.CREATE_TEAM_CONTENT
+      : PermissionName.CREATE_PERSONAL_CONTENT,
+    project,
+    page: null,
+  });
+
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -418,8 +428,8 @@ const BoardView: React.FC<{
               className="flex gap-1 h-[calc(100vh-180px)] overflow-auto px-4 md:px-6 md:py-4 scroll-smooth"
             >
               {isLoading ? (
-                <div className="space-x-4 flex">
-                  <div className="bg-surface p-2 rounded-lg w-72 space-y-2 h-fit">
+                <div className="space-x-5 flex">
+                  <div className="bg-gray-25 dark:bg-surface p-2 rounded-lg w-[calc(100vw-50px)] min-w-[calc(100vw-50px)] md:w-[300px] md:min-w-[300px] space-y-2">
                     <h3 className="font-bold pl-[6px]">
                       <Skeleton width={50} />
                     </h3>
@@ -452,7 +462,7 @@ const BoardView: React.FC<{
                       </div>
                     </div>
                   </div>
-                  <div className="bg-surface p-2 rounded-lg w-72 space-y-2 h-fit">
+                  <div className="bg-gray-25 dark:bg-surface p-2 rounded-lg w-[calc(100vw-50px)] min-w-[calc(100vw-50px)] md:w-[300px] md:min-w-[300px] space-y-2">
                     <h3 className="font-bold pl-[6px]">
                       <Skeleton width={50} />
                     </h3>
@@ -501,7 +511,41 @@ const BoardView: React.FC<{
                     </div>
                   </div>
 
-                  <div className="bg-surface p-2 rounded-lg w-72 space-y-2 h-fit">
+                  <div className="bg-gray-25 dark:bg-surface p-2 rounded-lg w-[calc(100vw-50px)] min-w-[calc(100vw-50px)] md:w-[300px] md:min-w-[300px] space-y-2">
+                    <h3 className="font-bold pl-[6px]">
+                      <Skeleton width={50} />
+                    </h3>
+
+                    <div className="space-y-2">
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"60%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"70%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"60%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"70%"} />
+                        </div>
+                      </div>
+                      <div className="p-2 flex items-center gap-2 bg-background rounded-lg">
+                        <div className="w-full">
+                          <Skeleton width={"60%"} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-25 dark:bg-surface p-2 rounded-lg w-[calc(100vw-50px)] min-w-[calc(100vw-50px)] md:w-[300px] md:min-w-[300px] space-y-2">
                     <h3 className="font-bold pl-[6px]">
                       <Skeleton width={50} />
                     </h3>
@@ -562,7 +606,7 @@ const BoardView: React.FC<{
 
                   <div>
                     {columns.length == 0 && (
-                      <AddNewSectionBoardView
+                      <AddNewSection
                         setShowUngroupedAddSection={setShowUngroupedAddSection}
                         showUngroupedAddSection={showUngroupedAddSection}
                         project={project}
@@ -576,7 +620,7 @@ const BoardView: React.FC<{
                   {boardProvided.placeholder}
 
                   {columns.length - 1 == index && (
-                    <AddNewSectionBoardView
+                    <AddNewSection
                       setShowUngroupedAddSection={setShowUngroupedAddSection}
                       columnId={columnId}
                       columns={columns}

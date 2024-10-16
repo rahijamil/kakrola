@@ -1,44 +1,30 @@
-import React, {
-  Dispatch,
-  RefObject,
-  SetStateAction,
-  useEffect,
-  useRef,
-} from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import {
   Archive,
   ArrowDown,
-  ArrowDownToLine,
   ArrowUp,
-  ArrowUpFromLine,
   Ellipsis,
   Heart,
   HeartOff,
-  HeartOffIcon,
   Link,
   LogOut,
   Logs,
-  Pencil,
   SquarePen,
   Trash2,
-  UserPlus,
 } from "lucide-react";
 import { ProjectType } from "@/types/project";
-import DeleteOption from "./DeleteOption";
-import ArchiveOption from "./ArchiveOption";
-import CopyProjectLinkOption from "./CopyProjectLinkOption";
 import Dropdown from "@/components/ui/Dropdown";
 import { usePathname } from "next/navigation";
 import useFavorite from "@/hooks/useFavorite";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
-import {
-  canArchiveProject,
-  canCreateProject,
-  canDeleteProject,
-  canEditProject,
-} from "@/types/hasPermission";
 import { useRole } from "@/context/RoleContext";
-import { RoleType } from "@/types/role";
+import { PersonalRoleType, TeamRoleType } from "@/types/role";
+import { channel } from "diagnostics_channel";
+import {
+  canCreateContent,
+  canDeleteContent,
+  canEditContent,
+} from "@/utils/permissionUtils";
 
 const SidebarProjectMoreOptions = ({
   project,
@@ -74,18 +60,31 @@ const SidebarProjectMoreOptions = ({
 
   const pathname = usePathname();
 
-  const { handleFavorite } = useFavorite({ column_value: project.id, column_name: "project_id" });
+  const { handleFavorite } = useFavorite({
+    column_value: project.id,
+    column_name: "project_id",
+  });
 
   const { personalMembers } = useSidebarDataProvider();
 
   const { role } = useRole();
 
-  const projectRole = role({_project_id: project.id});
-
-  const canCreate = projectRole ? canCreateProject(projectRole) : false;
-  const canEdit = projectRole ? canEditProject(projectRole) : false;
-  const canDelete = projectRole ? canDeleteProject(projectRole) : false;
-  const canArchive = projectRole ? canArchiveProject(projectRole) : false;
+  const canCreate = canCreateContent(
+    role({ project, page: null }),
+    !!project.team_id
+  );
+  const canEdit = canEditContent(
+    role({ project, page: null }),
+    !!project.team_id
+  );
+  const canDelete = canDeleteContent(
+    role({ project, page: null }),
+    !!project.team_id
+  );
+  const canArchive = canDeleteContent(
+    role({ project, page: null }),
+    !!project.team_id
+  );
 
   // Find the current user project settings for the given project
   const currentUserProject = personalMembers.find(
@@ -130,12 +129,12 @@ const SidebarProjectMoreOptions = ({
         </div>
       )}
       beforeItemsContent={
-        currentUserProject?.role != RoleType.ADMIN ? (
-          <p className="text-xs mb-1 p-2 whitespace-normal bg-text-50 rounded-lg">
+        currentUserProject?.role != PersonalRoleType.ADMIN ? (
+          <p className="text-xs mb-1 p-2 whitespace-normal bg-text-100 px-6 text-text-700">
             Some features are not available to project
-            {currentUserProject?.role == RoleType.MEMBER
+            {currentUserProject?.role == PersonalRoleType.MEMBER
               ? " members"
-              : currentUserProject?.role == RoleType.COMMENTER
+              : currentUserProject?.role == PersonalRoleType.COMMENTER
               ? " commenters"
               : " viewers"}
             .

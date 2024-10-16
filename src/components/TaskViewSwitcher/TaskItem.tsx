@@ -34,11 +34,11 @@ import {
 } from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
 import { useRole } from "@/context/RoleContext";
-import { canDeleteTask, canEditTask } from "@/types/hasPermission";
 import useTheme from "@/hooks/useTheme";
 import { format } from "date-fns";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
+import { canDeleteContent, canEditContent } from "@/utils/permissionUtils";
 
 const TaskItem = ({
   task,
@@ -96,10 +96,17 @@ const TaskItem = ({
     if (!profile?.id) return;
 
     if (!task.is_inbox && task.project_id) {
-      const userRole = role({ _project_id: task.project_id });
-      const canEdit = userRole ? canDeleteTask(userRole) : false;
-
-      if (!canEdit) return;
+      if (
+        !canDeleteContent(
+          role({
+            project,
+            page: null,
+          }),
+          !!project?.team_id
+        )
+      ) {
+        return;
+      }
     }
 
     const updatedTasks = tasks.filter((t) => t.id !== task.id);
@@ -134,10 +141,18 @@ const TaskItem = ({
       if (!profile?.id) return;
 
       if (!task.is_inbox && task.project_id) {
-        const userRole = role({ _project_id: task.project_id });
-        const canEdit = userRole ? canEditTask(userRole) : false;
-
-        if (!canEdit) return;
+        if (
+          !canEditContent(
+            role({
+              project,
+              page: null,
+            }),
+            !!project?.team_id
+          )
+        ) {
+          console.error("User doesn't have permission to create a section");
+          return;
+        }
       }
 
       // Update local tasks

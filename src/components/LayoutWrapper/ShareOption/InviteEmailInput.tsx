@@ -5,7 +5,7 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import RoleItem from "./RoleItem";
 import Spinner from "@/components/ui/Spinner";
-import { RoleType } from "@/types/role";
+import { PersonalRoleType, TeamRoleType } from "@/types/role";
 
 const InviteEmailInput = ({
   projectId,
@@ -33,7 +33,9 @@ const InviteEmailInput = ({
   const emailRegex =
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
   const domainSuggestions = ["gmail.com", "outlook.com", "yahoo.com"];
-  const [role, setRole] = React.useState<RoleType>(RoleType.MEMBER);
+  const [role, setRole] = React.useState<PersonalRoleType | TeamRoleType>(
+    teamId ? TeamRoleType.TEAM_ADMIN : PersonalRoleType.ADMIN
+  );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -174,6 +176,7 @@ const InviteEmailInput = ({
                 <RoleItem
                   value={role}
                   onChange={(newRole) => setRole(newRole)}
+                  teamId={teamId}
                 />
               </div>
             )}

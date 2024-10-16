@@ -87,13 +87,7 @@ const Sidebar = ({
   const [showWorkspaces, setShowWorkspaces] = useState(true);
   const [addTeam, setAddTeam] = useState(false);
 
-  const queryClient = useQueryClient();
-
-  const { profile } = useAuthProvider();
-  const triggerRef = useRef(null);
-
   const [isProfileMoreOpen, setIsProfileOpen] = useState(false);
-
 
   return (
     <aside className="h-full flex flex-col w-full">
@@ -111,23 +105,21 @@ const Sidebar = ({
 
         {sidebarLoading ? (
           <div className="flex items-center w-full justify-end gap-2">
-            <Skeleton width={28} height={28} borderRadius={9999} />
-            <Skeleton width={28} height={28} borderRadius={9999} />
-            <Skeleton width={28} height={28} borderRadius={9999} />
+            <Skeleton width={28} height={28} borderRadius={8} />
+            <Skeleton width={28} height={28} borderRadius={8} />
+            <Skeleton width={28} height={28} borderRadius={8} />
           </div>
         ) : (
           <div
             className={`flex items-center justify-end w-full transition duration-150 ${
               sidebarWidth > 220 ? "gap-2" : "gap-1"
             }`}
-            ref={triggerRef}
           >
-            <SidebarNotifications triggerRef={triggerRef} />
+            <SidebarNotifications />
 
             <SidebarCreateMore
               quickActions={quickActions}
               setQuickActions={setQuickActions}
-              triggerRef={triggerRef}
             />
           </div>
         )}
@@ -141,7 +133,7 @@ const Sidebar = ({
                 key={item.id}
                 height={16}
                 width={150}
-                borderRadius={9999}
+                borderRadius={8}
                 style={{ marginBottom: ".5rem" }}
               />
             ) : (
@@ -192,7 +184,7 @@ const Sidebar = ({
 
         <div>
           {sidebarLoading ? (
-            <Skeleton height={16} width={150} borderRadius={9999} />
+            <Skeleton height={16} width={150} borderRadius={8} />
           ) : (
             <div
               onTouchStart={(ev) =>
@@ -277,20 +269,29 @@ const Sidebar = ({
       </nav>
 
       <div className="py-2">
-        <Link
-          href={"/app/templates"}
-          className={`flex items-center p-2 px-4 transition-colors duration-150 font-medium md:font-normal w-full border-l-4 ${
-            pathname.startsWith("/app/templates")
-              ? "bg-primary-100 text-text-900 border-primary-300"
-              : "md:hover:bg-primary-50 border-transparent hover:border-primary-200 text-text-700"
-          }`}
-        >
-          <SwatchBook
-            strokeWidth={1.5}
-            className="w-5 h-5 mr-3 text-primary-500"
+        {sidebarLoading ? (
+          <Skeleton
+            height={16}
+            width={150}
+            borderRadius={8}
+            style={{ marginBottom: ".5rem" }}
           />
-          Templates
-        </Link>
+        ) : (
+          <Link
+            href={"/app/templates"}
+            className={`flex items-center p-2 px-4 transition-colors duration-150 font-medium md:font-normal w-full border-l-4 ${
+              pathname.startsWith("/app/templates")
+                ? "bg-primary-100 text-text-900 border-primary-300"
+                : "md:hover:bg-primary-50 border-transparent hover:border-primary-200 text-text-700"
+            }`}
+          >
+            <SwatchBook
+              strokeWidth={1.5}
+              className="w-5 h-5 mr-3 text-primary-500"
+            />
+            Templates
+          </Link>
+        )}
       </div>
 
       {addTeam && <AddTeam onClose={() => setAddTeam(false)} />}

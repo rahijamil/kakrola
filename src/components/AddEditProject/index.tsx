@@ -19,14 +19,13 @@ import ColorSelector from "./ColorSelector";
 import { generateSlug } from "@/utils/generateSlug";
 import AnimatedCircleCheck from "@/components/TaskViewSwitcher/AnimatedCircleCheck";
 import { PersonalMemberForProjectType } from "@/types/team";
-import { RoleType } from "@/types/role";
+import { PersonalRoleType } from "@/types/role";
 import {
   ActivityAction,
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
 import { useRole } from "@/context/RoleContext";
-import { canEditProject } from "@/types/hasPermission";
 import { Button } from "../ui/button";
 import "react-loading-skeleton/dist/skeleton.css";
 import ViewSkeleton from "../ViewSkeleton";
@@ -34,6 +33,7 @@ import { projectViewsToSelect } from "@/data/project_views";
 import useScreen from "@/hooks/useScreen";
 import { motion } from "framer-motion";
 import { createPortal } from "react-dom";
+import { canEditContent } from "@/utils/permissionUtils";
 
 const AddEditProject = ({
   workspaceId,
@@ -90,7 +90,7 @@ const AddEditProject = ({
       findProjectMember(project?.id) || {
         profile_id: profile?.id || "",
         project_id: project?.id || 0,
-        role: RoleType.MEMBER,
+        role: PersonalRoleType.MEMBER,
         settings: {
           is_favorite: false,
           order: 0,
@@ -172,11 +172,8 @@ const AddEditProject = ({
     setError(null);
 
     if (project?.id) {
-      const userRole = role({
-        _project_id: project.id,
-      });
-      const canUpdateSection = userRole ? canEditProject(userRole) : false;
-      if (!canUpdateSection) return;
+      if (!canEditContent(role({ project, page: null }), !!project.team_id))
+        return;
 
       const data: Partial<ProjectType> = {};
       const fields = ["name"] as const;
@@ -251,7 +248,7 @@ const AddEditProject = ({
           entity: {
             type: EntityType.PROJECT,
             id: project.id,
-            name: project.name
+            name: project.name,
           },
           metadata: {
             old_data: initialProjectMembersData,
@@ -271,6 +268,7 @@ const AddEditProject = ({
           _view: projectData.settings.view,
           _selected_views: projectData.settings.selected_views,
           _is_favorite: projectMembersData.settings.is_favorite,
+          _order: projects.length + 1,
         }
       );
 
@@ -286,7 +284,7 @@ const AddEditProject = ({
         entity: {
           type: EntityType.PROJECT,
           id: data.project_id,
-          name: projectData.name
+          name: projectData.name,
         },
         metadata: {},
       });
@@ -374,7 +372,7 @@ const AddEditProject = ({
         entity: {
           type: EntityType.PROJECT,
           id: data.project_id,
-          name: projectData.name
+          name: projectData.name,
         },
         metadata: {},
       });

@@ -17,7 +17,9 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
-import { canEditProject } from "@/types/hasPermission";
+import { PermissionName } from "@/types/role";
+import { useRole } from "@/context/RoleContext";
+import { canEditContent } from "@/utils/permissionUtils";
 
 const ProjectDetails = ({
   params: { project_slug },
@@ -37,6 +39,7 @@ const ProjectDetails = ({
   );
   const [notFound, setNotFound] = useState<boolean>(false);
   const [showNoDateTasks, setShowNoDateTasks] = useState(false);
+  const { role } = useRole();
 
   const projectId = currentProject?.id || null;
   const { tasks, sections, setSections, setTasks, error, isLoading, isError } =
@@ -78,15 +81,22 @@ const ProjectDetails = ({
     async (view: ViewTypes["view"]) => {
       if (!profile?.id || !currentProject?.id) return;
 
-      const role = personalMembers.find(
-        (member) => member.profile_id == profile.id
-      )?.role;
-
       // create api to check if team member
       if (currentProject.team_id) {
       }
 
-      if (!role || !canEditProject(role)) return;
+      if (
+        !canEditContent(
+          role({
+            project: currentProject,
+            page: null,
+          }),
+          !!currentProject?.team_id
+        )
+      ) {
+        console.error("User doesn't have permission to create a section");
+        return;
+      }
 
       setProjects(
         projects.map((p) =>

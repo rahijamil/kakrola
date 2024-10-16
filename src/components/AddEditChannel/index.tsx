@@ -15,13 +15,13 @@ import PortalWrapper from "../PortalWrapper";
 
 const AddEditChannel = ({
   teamId,
-  channelId,
+  channel,
   onClose,
   page,
   aboveBellow,
 }: {
   teamId: number;
-  channelId?: number;
+  channel?: ChannelType;
   onClose: () => void;
   page?: PageType;
   aboveBellow?: "above" | "below" | null;
@@ -29,7 +29,7 @@ const AddEditChannel = ({
   const { screenWidth } = useScreen();
   const { profile } = useAuthProvider();
 
-  const { teams } = useSidebarDataProvider();
+  const { teams, channels, setChannels } = useSidebarDataProvider();
 
   const [channelName, setChannelName] = useState("");
   const [visibility, setVisibility] = useState<"public" | "private">("public");
@@ -42,7 +42,7 @@ const AddEditChannel = ({
 
   if (!findTeam) return null;
 
-  const forEdit = !!channelId;
+  const forEdit = !!channel && !aboveBellow;
 
   const handleAddChannel = async () => {
     if (!profile?.id || !teamId) return;
@@ -56,29 +56,59 @@ const AddEditChannel = ({
       setLoading(true);
       if (error) setError(null);
 
-      if (forEdit) {
+      const targetChannelOrder = channel?.settings.order;
+      let newOrder: number;
+      if (targetChannelOrder === undefined) {
+        newOrder = channels.length + 1;
       } else {
-        if (aboveBellow) {
+        const sortedchannels = [...channels].sort(
+          (a, b) => Number(a.id) - Number(b.id)
+        );
+        // Find the current index based on the channel's order
+        const currentIndex = sortedchannels.findIndex(
+          (ch) => ch.settings.order === targetChannelOrder
+        );
+
+        if (aboveBellow === "above") {
+          const prevPage = sortedchannels[currentIndex - 1];
+          newOrder = prevPage
+            ? (Number(prevPage.id) + targetChannelOrder) / 2
+            : targetChannelOrder - 0.5;
         } else {
-          const channelData: Omit<ChannelType, "id"> = {
-            name: channelName,
-            slug: generateSlug(channelName),
-            team_id: teamId,
-            profile_id: profile.id,
-            description: "",
-            is_archived: false,
-            is_private: visibility === "private",
-            settings: {
-              color: "gray-500",
-            },
-          };
-
-          const { data, error } = await supabaseBrowser
-            .from("channels")
-            .insert(channelData);
-
-          if (error) throw error;
+          // "below"
+          const nextPage = sortedchannels[currentIndex + 1];
+          newOrder = nextPage
+            ? (targetChannelOrder + Number(nextPage.id)) / 2
+            : targetChannelOrder + 0.5;
         }
+      }
+
+      const channelData: Omit<ChannelType, "id"> = {
+        name: channelName,
+        slug: generateSlug(channelName),
+        team_id: teamId,
+        profile_id: profile.id,
+        description: "",
+        is_archived: false,
+        is_private: visibility === "private",
+        settings: {
+          color: "gray-500",
+          order: newOrder,
+        },
+      };
+
+      if (forEdit) {
+        // optimistic udpate
+      } else {
+        // optimistic udpate
+
+        const { data, error } = await supabaseBrowser
+          .from("channels")
+          .insert(channelData)
+          .select("id")
+          .single();
+
+        if (error) throw error;
       }
     } catch (error: any) {
       console.error(error);

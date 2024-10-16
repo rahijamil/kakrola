@@ -27,10 +27,10 @@ import {
 } from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
 import { useRole } from "@/context/RoleContext";
-import { canEditProject } from "@/types/hasPermission";
 import useScreen from "@/hooks/useScreen";
 import { useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
+import { canEditContent } from "@/utils/permissionUtils";
 
 const LayoutWrapper = ({
   children,
@@ -88,11 +88,8 @@ const LayoutWrapper = ({
         )
       );
 
-      const userRole = role({
-        _project_id: project.id,
-      });
-      const canUpdateSection = userRole ? canEditProject(userRole) : false;
-      if (!canUpdateSection) return;
+      if (!canEditContent(role({ project, page: null }), !!project.team_id))
+        return;
 
       const { error } = await supabaseBrowser
         .from("projects")

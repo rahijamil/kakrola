@@ -1,101 +1,15 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { Check, CheckCircle, ChevronDown, Rocket } from "lucide-react";
-import { PricingPlanForSettings } from "./pricing.types";
 import { usePathname } from "next/navigation";
-import {
-  SubscriptionDetailResponse,
-  TransactionResponse,
-} from "@/lib/api.types";
 import { getSubscription } from "@/utils/paddle/get-subscription";
 import { getTransactions } from "@/utils/paddle/get-transactions";
 import BillingSettings from "./BillingSettings";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useQuery } from "@tanstack/react-query";
-
-const pricingPlans: PricingPlanForSettings[] = [
-  {
-    id: "free",
-    name: "Free",
-    price: (isAnnual: boolean) => "$0",
-    price1: <>$0 per member / month</>,
-    description: "For individuals getting started",
-    features: [
-      "Up to 5 active projects",
-      "Basic task management",
-      "100MB file storage",
-      "3 team members",
-      "Basic integrations",
-      "2-factor authentication",
-    ],
-    highlighted: false,
-    priceId: {
-      month: "",
-      year: "",
-    },
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    price: (isAnnual: boolean) => (isAnnual ? "$8" : "$12"),
-    price1: (
-      <>
-        $8 per member / month <br /> billed annually
-      </>
-    ),
-    price2: "$12 billed monthly",
-    description: "For power users and small teams",
-    features: [
-      "Unlimited active projects",
-      "Advanced task management",
-      "5GB file storage per member",
-      "Unlimited team members",
-      "Advanced integrations",
-      "Priority support",
-      "Custom fields",
-      "Gantt charts",
-      "Time tracking",
-    ],
-    cta: "Upgrade",
-    highlighted: true,
-    badge: "Popular",
-    priceId: {
-      month: "pri_01j8wqm8x8w7gnmbax9wdeqpjf",
-      year: "pri_01j8wqntqppsyw4ce6z65yc9ry",
-    },
-  },
-  {
-    id: "business",
-    name: "Business",
-    price: (isAnnual: boolean) => (isAnnual ? "$13" : "$18"),
-    price1: (
-      <>
-        $13 per member / month <br /> billed annually
-      </>
-    ),
-    price2: "$18 billed monthly",
-    description: "For organizations that need more control and support",
-    features: [
-      "Everything in Pro",
-      "Unlimited file storage",
-      "Advanced security features",
-      "Admin & owner roles",
-      "Team billing",
-      "Custom workflows",
-      "Workload management",
-      "24/7 customer support",
-      "SSO (SAML)",
-    ],
-    cta: "Upgrade",
-    businessHighlight: true,
-    priceId: {
-      month: "pri_01j8wqqssqgy137net5xa76djm",
-      year: "pri_01j8wqrmqq2s336f4ehjwpxzqj",
-    },
-  },
-];
+import { pricingTiers, Tier } from "@/lib/constants/pricing-tier";
 
 const comparisonFeatures = [
   {
@@ -111,12 +25,6 @@ const comparisonFeatures = [
         name: "Team members",
         free: "Up to 3",
         pro: "Unlimited",
-        business: "Unlimited",
-      },
-      {
-        name: "File storage",
-        free: "100MB",
-        pro: "5GB per user",
         business: "Unlimited",
       },
       {
@@ -245,7 +153,7 @@ const SubscriptionSettings = ({
   isShowBilling,
   subscriptionId,
 }: {
-  setSelectedPlan: Dispatch<SetStateAction<PricingPlanForSettings | null>>;
+  setSelectedPlan: Dispatch<SetStateAction<Tier | null>>;
   isShowBilling: boolean;
   subscriptionId: string | null;
 }) => {
@@ -274,6 +182,9 @@ const SubscriptionSettings = ({
   const activeSubscription = subscription?.data;
 
   const loading = isSubscriptionLoading;
+  const currentPlanIndex = pricingTiers.findIndex(
+    (item) => item.product_id == product?.id
+  );
 
   if (isShowBilling && subscription && transactions) {
     return (
@@ -291,11 +202,11 @@ const SubscriptionSettings = ({
 
             <div
               className={`flex gap-4 border border-l-4 p-4 rounded-lg ${
-                pricingPlans.find(
+                pricingTiers.find(
                   (item) => item.id === product?.name.toLowerCase()
                 )?.businessHighlight
                   ? "border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface"
-                  : pricingPlans.find(
+                  : pricingTiers.find(
                       (item) =>
                         item.id ===
                         activeSubscription?.items[0].product.name.toLowerCase()
@@ -306,11 +217,11 @@ const SubscriptionSettings = ({
             >
               {/* <div
               className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                pricingPlans.find(
+                pricingTiers.find(
                   (item) => item.id === product?.name.toLowerCase()
                 )?.businessHighlight
                   ? "bg-text-500"
-                  : pricingPlans.find(
+                  : pricingTiers.find(
                       (item) =>
                         item.id === product?.name.toLowerCase()
                     )?.highlighted
@@ -320,10 +231,10 @@ const SubscriptionSettings = ({
             >
               <Rocket
                 className={`w-5 h-5 ${
-                  pricingPlans.find(
+                  pricingTiers.find(
                     (item) => item.id === product?.name.toLowerCase()
                   )?.highlighted ||
-                  pricingPlans.find(
+                  pricingTiers.find(
                     (item) => item.id === product?.name.toLowerCase()
                   )?.businessHighlight
                     ? "text-white"
@@ -368,18 +279,18 @@ const SubscriptionSettings = ({
                 {/* <p className="mt-4 flex flex-col">
                 <span className="text-xs font-medium text-text-600">
                   {
-                    pricingPlans.find(
+                    pricingTiers.find(
                       (item) =>
                         item.id === product?.name.toLowerCase()
                     )?.price1
                   }
                 </span>
-                {pricingPlans.find(
+                {pricingTiers.find(
                   (item) => item.id === product?.name.toLowerCase()
                 )?.price2 && (
                   <span className="text-xs font-medium text-text-600 opacity-70">
                     {
-                      pricingPlans.find(
+                      pricingTiers.find(
                         (item) =>
                           item.id === product?.name.toLowerCase()
                       )?.price2
@@ -397,7 +308,7 @@ const SubscriptionSettings = ({
             </div>
 
             <div className="grid gap-6 lg:grid-cols-3">
-              {pricingPlans.map((plan, index) => (
+              {pricingTiers.map((plan, index) => (
                 <div
                   key={index}
                   className={`rounded-lg overflow-hidden border border-t-5 bg-background p-6 space-y-6 flex flex-col ${
@@ -429,24 +340,39 @@ const SubscriptionSettings = ({
                     </span>
                   </p>
 
-                  {plan.cta ? (
+                  {plan.cta !== "Sign up" ? (
                     <div>
                       <Button
-                        variant={plan.highlighted ? "default" : "outline"}
+                        variant={
+                          product?.id == plan.product_id ||
+                          index < currentPlanIndex
+                            ? "outline"
+                            : plan.highlighted
+                            ? "default"
+                            : "outline"
+                        }
                         color={
-                          plan.highlighted
+                          product?.id == plan.product_id ||
+                          index < currentPlanIndex
+                            ? "text"
+                            : plan.highlighted
                             ? "kakrola"
                             : plan.businessHighlight
                             ? "text"
                             : "primary"
                         }
-                        fullWidth
-                        onClick={() => setSelectedPlan(plan)}
+                        // fullWidth
+                        size="sm"
+                        onClick={() =>
+                          product?.id != plan.product_id &&
+                          setSelectedPlan(plan)
+                        }
                       >
-                        {(plan.highlighted || plan.businessHighlight) && (
-                          <Rocket className="w-5 h-5" strokeWidth={1.5} />
-                        )}
-                        {plan.cta}
+                        {product?.id == plan.product_id
+                          ? "Current plan"
+                          : index < currentPlanIndex
+                          ? "Downgrade"
+                          : "Upgrade"}
                       </Button>
                     </div>
                   ) : (
@@ -506,7 +432,7 @@ const SubscriptionSettings = ({
                           {category.category}
                         </div>
 
-                        {pricingPlans.map((plan, index) =>
+                        {pricingTiers.map((plan, index) =>
                           categoryIndex == 0 ? (
                             <div
                               key={index}
@@ -582,18 +508,23 @@ const SubscriptionSettings = ({
                                 <div
                                   className={`text-center font-semibold text-text-700 uppercase tracking-widerbg-background pb-4`}
                                 >
-                                  Pro
+                                  Plus
                                 </div>
 
-                                <Link href="/auth/signup">
-                                  <Button fullWidth color="kakrola">
-                                    <Rocket
-                                      className="w-5 h-5"
-                                      strokeWidth={1.5}
-                                    />
-                                    Upgrade
-                                  </Button>
-                                </Link>
+                                <Button
+                                  size="sm"
+                                  fullWidth
+                                  color="kakrola"
+                                  onClick={() =>
+                                    setSelectedPlan(
+                                      pricingTiers.find(
+                                        (tier) => tier.id == "plus"
+                                      ) || null
+                                    )
+                                  }
+                                >
+                                  Upgrade
+                                </Button>
                               </div>
                               <div className="px-4 py-2 text-xs font-medium text-text-500 text-center w-1/4 border border-t-0 border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface rounded-b-lg">
                                 <div
@@ -602,19 +533,21 @@ const SubscriptionSettings = ({
                                   Business
                                 </div>
 
-                                <Link href="/auth/signup">
-                                  <Button
-                                    fullWidth
-                                    variant="outline"
-                                    color="text"
-                                  >
-                                    <Rocket
-                                      className="w-5 h-5"
-                                      strokeWidth={1.5}
-                                    />
-                                    Upgrade
-                                  </Button>
-                                </Link>
+                                <Button
+                                  size="sm"
+                                  fullWidth
+                                  variant="outline"
+                                  color="text"
+                                  onClick={() =>
+                                    setSelectedPlan(
+                                      pricingTiers.find(
+                                        (tier) => tier.id == "business"
+                                      ) || null
+                                    )
+                                  }
+                                >
+                                  Upgrade
+                                </Button>
                               </div>
                             </div>
                           </div>

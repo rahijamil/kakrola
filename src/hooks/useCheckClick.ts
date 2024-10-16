@@ -1,13 +1,14 @@
 import { useAuthProvider } from "@/context/AuthContext";
 import { useRole } from "@/context/RoleContext";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import {
   ActivityAction,
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
-import { canEditTask } from "@/types/hasPermission";
 import { TaskType } from "@/types/project";
 import { ProfileType } from "@/types/user";
+import { canEditContent } from "@/utils/permissionUtils";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { debounce } from "lodash";
 
@@ -24,16 +25,25 @@ const useCheckClick = ({
 }) => {
   const { role } = useRole();
   const { profile } = useAuthProvider();
+  const { projects } = useSidebarDataProvider();
 
   const handleCheckClickDebounced = debounce(async () => {
     if (!profile?.id || !task) return;
 
     try {
       if (!task.is_inbox && task.project_id) {
-        const userRole = role({ _project_id: task.project_id });
-
-        const canUpdateTask = userRole ? canEditTask(userRole) : false;
-        if (!canUpdateTask) return;
+        if (
+          !canEditContent(
+            role({
+              project: projects.find((pro) => pro.id == task.id) || null,
+              page: null,
+            }),
+            !!projects.find((pro) => pro.id == task.id)?.team_id
+          )
+        ) {
+          console.error("User doesn't have permission to create a section");
+          return;
+        }
 
         // Update local tasks
         // setTasks(
@@ -60,7 +70,7 @@ const useCheckClick = ({
             entity: {
               id: task.id,
               type: EntityType.TASK,
-              name: task.title
+              name: task.title,
             },
             metadata: {},
           });
@@ -71,7 +81,7 @@ const useCheckClick = ({
             entity: {
               id: task.id,
               type: EntityType.TASK,
-              name: task.title
+              name: task.title,
             },
             metadata: {},
           });
@@ -102,7 +112,7 @@ const useCheckClick = ({
             entity: {
               id: task.id,
               type: EntityType.TASK,
-              name: task.title
+              name: task.title,
             },
             metadata: {},
           });
@@ -113,7 +123,7 @@ const useCheckClick = ({
             entity: {
               id: task.id,
               type: EntityType.TASK,
-              name: task.title
+              name: task.title,
             },
             metadata: {},
           });

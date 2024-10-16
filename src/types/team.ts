@@ -1,4 +1,7 @@
-import { RoleType } from "./role";
+import { ChannelType } from "./channel";
+import { PageType } from "./pageTypes";
+import { ProjectType } from "./project";
+import { PersonalRoleType, TeamRoleType } from "./role";
 
 // Enums for predefined options
 export enum Industry {
@@ -87,8 +90,10 @@ export const organizationSizeOptions = Object.values(OrganizationSize).map(
 
 export interface BaseTeamType {
   name: string;
+  description: string;
   avatar_url: string | null;
   profile_id: string;
+  is_archived: boolean;
   updated_at: string;
   created_at?: string;
 }
@@ -108,15 +113,29 @@ export interface TeamMemberType {
   team_id: number;
   profile_id: string; // UUID
   email: string;
-  team_role: RoleType;
+  team_role: TeamRoleType;
   joined_at?: string;
+  settings: {
+    projects: {
+      id: ProjectType["id"];
+      is_favorite: boolean;
+    }[];
+    pages: {
+      id: PageType["id"];
+      is_favorite: boolean;
+    }[];
+    channels: {
+      id: ChannelType["id"];
+      is_favorite: boolean;
+    }[];
+  };
 }
 
 // Personal member type
 interface PersonalMemberBaseType {
   id: number | string;
   profile_id: string;
-  role: RoleType;
+  role: PersonalRoleType;
   created_at?: string;
   settings: {
     is_favorite: boolean;
@@ -145,7 +164,7 @@ interface InviteBaseType {
   id: number;
   team_id: number | null;
   email: string | null;
-  role: RoleType;
+  role: PersonalRoleType | TeamRoleType;
   status: InviteStatus;
   token: string;
   project_id?: number;

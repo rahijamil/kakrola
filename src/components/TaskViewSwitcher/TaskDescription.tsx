@@ -1,4 +1,3 @@
-import { AlignLeft } from "lucide-react";
 import React, { KeyboardEvent, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
@@ -11,13 +10,12 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import { useRole } from "@/context/RoleContext";
-import { canEditTask } from "@/types/hasPermission";
 import { Spinner } from "@nextui-org/react";
-import ReplyEditor from "@/app/app/ch/[channel_slug]/th/[thread_slug]/ReplyEditor";
-import { JSONContent } from "novel";
 import useScreen from "@/hooks/useScreen";
 import { getTextFromContent } from "@/lib/getTextFromContent";
 import dynamic from "next/dynamic";
+import { canEditContent } from "@/utils/permissionUtils";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 const NovelEditor = dynamic(() => import("@/components/NovelEditor"), {
   ssr: false,
 });
@@ -34,6 +32,7 @@ const TaskDescription = ({
   const editorRef = useRef<HTMLDivElement>(null);
   const [charsCount, setCharsCount] = useState(0);
   const ProseMirror = (editorRef.current as any)?.querySelector(".ProseMirror");
+  const { projects } = useSidebarDataProvider();
 
   const { screenWidth } = useScreen();
 
@@ -49,10 +48,14 @@ const TaskDescription = ({
     if (!profile?.id) return;
 
     if (!taskData.is_inbox && taskData.project_id) {
-      const userRole = role({ _project_id: taskData.project_id });
-      const canEdit = userRole ? canEditTask(userRole) : false;
+      const project = projects.find((proj) => proj.id == taskData.project_id);
 
-      if (!canEdit)
+      if (
+        !canEditContent(
+          role({ project: project || null, page: null }),
+          !!project?.team_id
+        )
+      )
         throw new Error("You don't have permission to edit this task");
     }
 

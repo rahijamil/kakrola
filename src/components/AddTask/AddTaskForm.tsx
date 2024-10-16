@@ -37,10 +37,11 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import { useRole } from "@/context/RoleContext";
-import { canEditTask } from "@/types/hasPermission";
 import { format } from "date-fns";
 import useScreen from "@/hooks/useScreen";
 import LabelSelector from "./LabelSelector";
+import { PersonalRoleType } from "@/types/role";
+import { canEditContent } from "@/utils/permissionUtils";
 
 const AddTaskForm = ({
   onClose,
@@ -139,11 +140,18 @@ const AddTaskForm = ({
 
     try {
       if (isEditing && taskData.project_id) {
-        const userRole = role({
-          _project_id: taskData.project_id,
-        });
-        const canUpdateSection = userRole ? canEditTask(userRole) : false;
-        if (!canUpdateSection) return;
+        if (
+          !canEditContent(
+            role({
+              project,
+              page: null,
+            }),
+            !!project?.team_id
+          )
+        ) {
+          console.error("User doesn't have permission");
+          return;
+        }
 
         if (tasks && setTasks) {
           // Optimistically update the task in the UI
@@ -173,7 +181,7 @@ const AddTaskForm = ({
             entity: {
               id: data.id,
               type: EntityType.TASK,
-              name: taskData.title
+              name: taskData.title,
             },
             metadata: {
               new_data: data,
@@ -218,9 +226,18 @@ const AddTaskForm = ({
         resetTaskData();
 
         if (!taskData.project_id) return;
-        const userRole = role({ _project_id: taskData.project_id });
-        const canUpdateSection = userRole ? canEditTask(userRole) : false;
-        if (!canUpdateSection) return;
+        if (
+          !canEditContent(
+            role({
+              project,
+              page: null,
+            }),
+            !!project?.team_id
+          )
+        ) {
+          console.error("User doesn't have permission");
+          return;
+        }
 
         // Insert the new task into Supabase
         const { id: tempId, ...taskDataWithoutId } = newTask;

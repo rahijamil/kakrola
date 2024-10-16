@@ -27,18 +27,18 @@ import Dropdown from "@/components/ui/Dropdown";
 import { usePathname } from "next/navigation";
 import useFavorite from "@/hooks/useFavorite";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
-import {
-  canArchiveProject,
-  canCreateProject,
-  canDeleteProject,
-  canEditProject,
-} from "@/types/hasPermission";
 import { useRole } from "@/context/RoleContext";
-import { RoleType } from "@/types/role";
+import { PersonalRoleType, TeamRoleType } from "@/types/role";
 import { PageType } from "@/types/pageTypes";
 import { ChannelType } from "@/types/channel";
+import { useAuthProvider } from "@/context/AuthContext";
+import {
+  canCreateContent,
+  canDeleteContent,
+  canEditContent,
+} from "@/utils/permissionUtils";
 
-const SidebarPageMoreOptions = ({
+const SidebarChannelMoreOptions = ({
   channel,
   stateActions: {
     setShowDeleteConfirm,
@@ -71,39 +71,50 @@ const SidebarPageMoreOptions = ({
   const [isOpen, setIsOpen] = React.useState(false);
 
   const pathname = usePathname();
+  const { profile } = useAuthProvider();
 
   const { handleFavorite } = useFavorite({
-    column_name: "page_id",
+    column_name: "channel_id",
     column_value: channel.id,
+    team_id: channel.team_id,
   });
 
-  const { personalMembers } = useSidebarDataProvider();
+  const { teamMembers } = useSidebarDataProvider();
 
   const { role } = useRole();
 
-  const projectRole = role({
-    _project_id: channel.id,
-  });
-
-  const canCreate = projectRole ? canCreateProject(projectRole) : false;
-  const canEdit = projectRole ? canEditProject(projectRole) : false;
-  const canDelete = projectRole ? canDeleteProject(projectRole) : false;
-  const canArchive = projectRole ? canArchiveProject(projectRole) : false;
-
+  const canCreate = canCreateContent(
+    role({ project: null, page: null, team_id: channel.team_id }),
+    !!channel.team_id
+  );
+  const canEdit = canEditContent(
+    role({ project: null, page: null, team_id: channel.team_id }),
+    !!channel.team_id
+  );
+  const canDelete = canDeleteContent(
+    role({ project: null, page: null, team_id: channel.team_id }),
+    !!channel.team_id
+  );
+  const canArchive = canDeleteContent(
+    role({ project: null, page: null, team_id: channel.team_id }),
+    !!channel.team_id
+  );
   // Find the current user project settings for the given project
-  const currentUserPage = personalMembers.find(
-    (member) => member.page_id === channel.id
+  const findTeamMember = teamMembers.find(
+    (member) =>
+      member.profile_id == profile?.id && member.team_id == channel.team_id
+  );
+  const currentUserTeamChannel = findTeamMember?.settings.channels.find(
+    (ch) => ch.id == channel.id
   );
 
   // Determine the current favorite status
-  const isFavorite = currentUserPage
-    ? currentUserPage.settings.is_favorite
+  const isFavorite = currentUserTeamChannel
+    ? currentUserTeamChannel.is_favorite
     : false;
 
-  const handleCopyProjectLink = () => {
-    navigator.clipboard.writeText(
-      `https://kakrola.com/app/page/${channel.slug}`
-    );
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(`https://kakrola.com/app/ch/${channel.slug}`);
   };
 
   useEffect(() => {
@@ -133,14 +144,12 @@ const SidebarPageMoreOptions = ({
         </div>
       )}
       beforeItemsContent={
-        currentUserPage?.role != RoleType.ADMIN ? (
-          <p className="text-xs mb-1 p-2 whitespace-normal bg-text-100 rounded-lg">
+        findTeamMember?.team_role != TeamRoleType.TEAM_ADMIN ? (
+          <p className="text-xs mb-1 p-2 whitespace-normal bg-text-100 px-6 text-text-700">
             Some features are not available to project
-            {currentUserPage?.role == RoleType.MEMBER
+            {findTeamMember?.team_role == TeamRoleType.TEAM_MEMBER
               ? " members"
-              : currentUserPage?.role == RoleType.COMMENTER
-              ? " commenters"
-              : " viewers"}
+              : findTeamMember?.team_role}
             .
           </p>
         ) : null
@@ -201,7 +210,7 @@ const SidebarPageMoreOptions = ({
           id: 6,
           label: "Copy link",
           icon: <Link strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: handleCopyProjectLink,
+          onClick: handleCopyLink,
           divide: true,
         },
         // {
@@ -270,4 +279,4 @@ const SidebarPageMoreOptions = ({
   );
 };
 
-export default SidebarPageMoreOptions;
+export default SidebarChannelMoreOptions;

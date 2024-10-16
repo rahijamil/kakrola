@@ -1,3 +1,4 @@
+// Kakrola
 :root {
   --skeleton-base-color: var(--color-text-100);
   --skeleton-highlight-color: var(--color-text-50);
@@ -51,19 +52,19 @@
   --color-text-900: #111827; /* Black for main text */
 }
 
-[data-theme="dark"] {
+[data-theme="kakrola-dark"] {
   --color-primary-10: #191c20;
-  --color-primary-25: #1e1e1e; /* Darkest shade */
+  --color-primary-25: #1e1e1e;
   --color-primary-50: #23282f;
   --color-primary-100: #2d3642;
   --color-primary-200: #374455;
   --color-primary-300: #415268;
   --color-primary-400: #4b607b;
-  --color-primary-500: #8698c2; /* Base color */
+  --color-primary-500: #a0b4de; /* Lightened for better visibility */
   --color-primary-600: #96a6ca;
   --color-primary-700: #a7b4d2;
   --color-primary-800: #b7c2da;
-  --color-primary-900: #c8d0e2; /* Lightest shade */
+  --color-primary-900: #c8d0e2;
 
   --color-secondary: #bb86fc; /* Lavender for secondary highlights */
   --color-accent: #ff4081; /* Vivid pink for notifications, success messages */
@@ -97,10 +98,56 @@
   --color-primary-800: #222b3a; /* Deep navy blue */
   --color-primary-900: #1b2230; /* Darkest navy shade */
 
+  --color-primary-10: #121820;
+  --color-primary-25: #1a2330;
+  --color-primary-50: #232d3d;
+  --color-primary-100: #2c384a;
+  --color-primary-200: #354357;
+  --color-primary-300: #3e4e64;
+  --color-primary-400: #475971;
+  --color-primary-500: #50647e;
+  --color-primary-600: #5a6f8b;
+  --color-primary-700: #647a98;
+  --color-primary-800: #7389a7;
+  --color-primary-900: #8298b6;
+
   --color-secondary: #6e5e9e; /* Muted purple for secondary highlights */
   --color-accent: #ffb84d; /* Warm golden orange accent for contrast */
   --color-background: #f5f7fa; /* Very light grey-blue background for main content areas */
   --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
+}
+
+[data-theme="moonstone-dark"] {
+  --color-primary-10: #121820;
+  --color-primary-25: #1a2330;
+  --color-primary-50: #232d3d;
+  --color-primary-100: #2c384a;
+  --color-primary-200: #354357;
+  --color-primary-300: #3e4e64;
+  --color-primary-400: #475971;
+  --color-primary-500: #8bafd3; /* Lightened for better visibility */
+  --color-primary-600: #5a6f8b;
+  --color-primary-700: #647a98;
+  --color-primary-800: #7389a7;
+  --color-primary-900: #8298b6;
+
+  --color-secondary: #6e5e9e; /* Muted purple for secondary highlights */
+  --color-accent: #ffb84d; /* Warm golden orange accent for contrast */
+
+  --color-background: #151515; /* Dark background for main content areas */
+  --color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
+
+  --color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
+  --color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
+  --color-text-100: #2a2a2a; /* Dark grey */
+  --color-text-200: #333333; /* Darker grey for less subtle text */
+  --color-text-300: #4d4d4d; /* Medium-dark grey */
+  --color-text-400: #666666; /* Slightly lighter grey */
+  --color-text-500: #808080; /* Neutral grey */
+  --color-text-600: #999999; /* Light grey for general text */
+  --color-text-700: #b3b3b3; /* Lighter grey */
+  --color-text-800: #cccccc; /* Light grey */
+  --color-text-900: #ffffff; /* White for main text */
 }
 
 [data-theme="tangerine"] {
@@ -124,6 +171,40 @@
   --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
 }
 
+[data-theme="tangerine-dark"] {
+  --color-primary-10: #1f1709;
+  --color-primary-25: #2a200c;
+  --color-primary-50: #352910;
+  --color-primary-100: #403214;
+  --color-primary-200: #4b3b18;
+  --color-primary-300: #56441c;
+  --color-primary-400: #614d20;
+  --color-primary-500: #ffa726; /* Lightened for better visibility */
+  --color-primary-600: #775f28;
+  --color-primary-700: #82682c;
+  --color-primary-800: #8d7130;
+  --color-primary-900: #987a34;
+
+  --color-secondary: #ff7043; /* Bright coral for highlights */
+  --color-accent: #ffeb3b; /* Yellow accent for notifications, success messages */
+  /* --color-background: #fff3e0; Light creamy background */
+
+  --color-background: #151515; /* Dark background for main content areas */
+  --color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
+
+  --color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
+  --color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
+  --color-text-100: #2a2a2a; /* Dark grey */
+  --color-text-200: #333333; /* Darker grey for less subtle text */
+  --color-text-300: #4d4d4d; /* Medium-dark grey */
+  --color-text-400: #666666; /* Slightly lighter grey */
+  --color-text-500: #808080; /* Neutral grey */
+  --color-text-600: #999999; /* Light grey for general text */
+  --color-text-700: #b3b3b3; /* Lighter grey */
+  --color-text-800: #cccccc; /* Light grey */
+  --color-text-900: #ffffff; /* White for main text */
+}
+
 [data-theme="kale"] {
   --color-primary-10: #f3f7f3;
   --color-primary-25: #e8efe8;
@@ -143,6 +224,40 @@
   /* --color-background: #f1f8f6; Light greenish-grey background */
   --color-background: #ffffff; /* Light greenish-grey background */
   --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
+}
+
+[data-theme="kale-dark"] {
+  --color-primary-10: #0f1a0f;
+  --color-primary-25: #162316;
+  --color-primary-50: #1d2c1d;
+  --color-primary-100: #243524;
+  --color-primary-200: #2b3e2b;
+  --color-primary-300: #324732;
+  --color-primary-400: #395039;
+  --color-primary-500: #66bb6a; /* Lightened for better visibility */
+  --color-primary-600: #476247;
+  --color-primary-700: #4e6b4e;
+  --color-primary-800: #557455;
+  --color-primary-900: #5c7d5c;
+
+  --color-secondary: #558b2f; /* Olive green for secondary highlights */
+  --color-accent: #ffd700; /* Gold accent for contrast */
+  /* --color-background: #f1f8f6; Light greenish-grey background */
+
+  --color-background: #151515; /* Dark background for main content areas */
+  --color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
+
+  --color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
+  --color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
+  --color-text-100: #2a2a2a; /* Dark grey */
+  --color-text-200: #333333; /* Darker grey for less subtle text */
+  --color-text-300: #4d4d4d; /* Medium-dark grey */
+  --color-text-400: #666666; /* Slightly lighter grey */
+  --color-text-500: #808080; /* Neutral grey */
+  --color-text-600: #999999; /* Light grey for general text */
+  --color-text-700: #b3b3b3; /* Lighter grey */
+  --color-text-800: #cccccc; /* Light grey */
+  --color-text-900: #ffffff; /* White for main text */
 }
 
 [data-theme="blueberry"] {
@@ -166,6 +281,40 @@
   --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
 }
 
+[data-theme="blueberry-dark"] {
+  --color-primary-10: #0a1620;
+  --color-primary-25: #0f1f2d;
+  --color-primary-50: #14283a;
+  --color-primary-100: #193147;
+  --color-primary-200: #1e3a54;
+  --color-primary-300: #234361;
+  --color-primary-400: #284c6e;
+  --color-primary-500: #64b5f6; /* Lightened for better visibility */
+  --color-primary-600: #325e88;
+  --color-primary-700: #376795;
+  --color-primary-800: #3c70a2;
+  --color-primary-900: #4179af;
+
+  --color-secondary: #4a90e2; /* Light blue for secondary highlights */
+  --color-accent: #ff4081; /* Vivid pink for notifications, success messages */
+  /* --color-background: #e3f2fd; Light blue background */
+
+  --color-background: #151515; /* Dark background for main content areas */
+  --color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
+
+  --color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
+  --color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
+  --color-text-100: #2a2a2a; /* Dark grey */
+  --color-text-200: #333333; /* Darker grey for less subtle text */
+  --color-text-300: #4d4d4d; /* Medium-dark grey */
+  --color-text-400: #666666; /* Slightly lighter grey */
+  --color-text-500: #808080; /* Neutral grey */
+  --color-text-600: #999999; /* Light grey for general text */
+  --color-text-700: #b3b3b3; /* Lighter grey */
+  --color-text-800: #cccccc; /* Light grey */
+  --color-text-900: #ffffff; /* White for main text */
+}
+
 [data-theme="lavender"] {
   --color-primary-10: #f8f6ff;
   --color-primary-25: #f1edff;
@@ -187,6 +336,40 @@
   --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
 }
 
+[data-theme="lavender-dark"] {
+  --color-primary-10: #16131f;
+  --color-primary-25: #1f1a2d;
+  --color-primary-50: #28213b;
+  --color-primary-100: #312849;
+  --color-primary-200: #3a2f57;
+  --color-primary-300: #433665;
+  --color-primary-400: #4c3d73;
+  --color-primary-500: #b39ddb;
+  --color-primary-600: #5e4b8f;
+  --color-primary-700: #67529d;
+  --color-primary-800: #7059ab;
+  --color-primary-900: #7960b9;
+
+  --color-secondary: #ff8e72; /* Soft coral for highlights */
+  --color-accent: #ffd700; /* Gold accent for contrast */
+  /* --color-background: #f7f5fa; Light lavender background */
+
+  --color-background: #151515; /* Dark background for main content areas */
+  --color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
+
+  --color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
+  --color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
+  --color-text-100: #2a2a2a; /* Dark grey */
+  --color-text-200: #333333; /* Darker grey for less subtle text */
+  --color-text-300: #4d4d4d; /* Medium-dark grey */
+  --color-text-400: #666666; /* Slightly lighter grey */
+  --color-text-500: #808080; /* Neutral grey */
+  --color-text-600: #999999; /* Light grey for general text */
+  --color-text-700: #b3b3b3; /* Lighter grey */
+  --color-text-800: #cccccc; /* Light grey */
+  --color-text-900: #ffffff; /* White for main text */
+}
+
 [data-theme="raspberry"] {
   --color-primary-10: #fef2f5;
   --color-primary-25: #fce6eb;
@@ -206,4 +389,38 @@
   /* --color-background: #fff0f2; Light pinkish background */
   --color-background: #ffffff; /* Light pinkish background */
   --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
+}
+
+[data-theme="raspberry-dark"] {
+  --color-primary-10: #1f0d14;
+  --color-primary-25: #2d131c;
+  --color-primary-50: #3b1924;
+  --color-primary-100: #491f2c;
+  --color-primary-200: #572534;
+  --color-primary-300: #652b3c;
+  --color-primary-400: #733144;
+  --color-primary-500: #ff80ab;
+  --color-primary-600: #8f3d54;
+  --color-primary-700: #9d435c;
+  --color-primary-800: #ab4964;
+  --color-primary-900: #b94f6c;
+
+  --color-secondary: #e91e63; /* Pink for secondary highlights */
+  --color-accent: #ffeb3b; /* Bright yellow accent for contrast */
+  /* --color-background: #fff0f2; Light pinkish background */
+
+  --color-background: #151515; /* Dark background for main content areas */
+  --color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
+
+  --color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
+  --color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
+  --color-text-100: #2a2a2a; /* Dark grey */
+  --color-text-200: #333333; /* Darker grey for less subtle text */
+  --color-text-300: #4d4d4d; /* Medium-dark grey */
+  --color-text-400: #666666; /* Slightly lighter grey */
+  --color-text-500: #808080; /* Neutral grey */
+  --color-text-600: #999999; /* Light grey for general text */
+  --color-text-700: #b3b3b3; /* Lighter grey */
+  --color-text-800: #cccccc; /* Light grey */
+  --color-text-900: #ffffff; /* White for main text */
 }

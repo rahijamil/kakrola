@@ -33,7 +33,7 @@ const UngroupedTasks: React.FC<UngroupedTasksProps> = ({
 
   return (
     <>
-      <Droppable droppableId="ungrouped" type="task">
+      <Droppable droppableId="ungrouped" type="task" key={tasks.length}>
         {(provided) => (
           <div
             {...provided.droppableProps}

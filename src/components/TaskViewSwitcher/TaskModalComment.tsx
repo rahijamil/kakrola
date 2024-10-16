@@ -5,7 +5,7 @@ import AddComentForm from "./AddComentForm";
 import { TaskType } from "@/types/project";
 import { motion } from "framer-motion";
 import { Logs, MessageCircle } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { TaskCommentType } from "@/types/comment";
 import { ProfileType } from "@/types/user";
@@ -17,81 +17,26 @@ import { formatDate } from "@/utils/utility_functions";
 import moment from "moment";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { TabItem } from "@/types/types.utils";
+import TabSwitcher from "../TabSwitcher";
 
 enum TabEnum {
   comments = "comments",
   activity = "activity",
 }
 
-const tabItems: {
-  id: number;
-  name: string;
-  tab: TabEnum;
-  icon: React.ReactNode;
-}[] = [
+const tabItems: TabItem[] = [
   {
-    id: 1,
+    id: "comments",
     name: "Comments",
     icon: <MessageCircle strokeWidth={1.5} className="w-4 h-4" />,
-    tab: TabEnum.comments,
   },
   {
-    id: 2,
+    id: "activity",
     name: "Activity",
     icon: <Logs strokeWidth={1.5} className="w-4 h-4" />,
-    tab: TabEnum.activity,
   },
 ];
-
-const TabsComponent = ({
-  tabs,
-  setTabs,
-}: {
-  tabs: TabEnum;
-  setTabs: Dispatch<SetStateAction<TabEnum>>;
-}) => {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const searchTask = searchParams.get("task");
-
-  return (
-    <ul className="flex items-center gap-1 relative">
-      {tabItems.map((item) => (
-        <li key={item.id} className="relative">
-          <button
-            className={`flex items-center justify-center gap-1 rounded-lg cursor-pointer flex-1 transition px-2 p-1 hover:bg-text-100 hover:text-primary-500 ${
-              tabs === item.tab ? "text-primary-500" : "text-text-500"
-            }`}
-            onClick={() => {
-              setTabs(item.tab as TabEnum);
-              window.history.pushState(
-                null,
-                "",
-                `${pathname}?task=${searchTask}&tab=${item.tab}`
-              );
-            }}
-          >
-            {item.icon}
-            <span className="capitalize">{item.name}</span>
-          </button>
-
-          {tabs === item.tab && (
-            <motion.span
-              layoutId="activeIndicator"
-              className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-500"
-              initial={false}
-              transition={{
-                type: "spring",
-                stiffness: 500,
-                damping: 30,
-              }}
-            />
-          )}
-        </li>
-      ))}
-    </ul>
-  );
-};
 
 interface CommentWithProfile extends TaskCommentType {
   profiles: {
@@ -164,12 +109,12 @@ const TaskModalComment = ({ task }: { task: TaskType }) => {
   const { profile } = useAuthProvider();
   const searchParams = useSearchParams();
   const searchTabs = searchParams.get("tab");
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (searchTabs) {
       setTabs(searchTabs as TabEnum);
-    }
-    else {
+    } else {
       setTabs(TabEnum.comments);
     }
   }, [searchTabs]);
@@ -198,13 +143,57 @@ const TaskModalComment = ({ task }: { task: TaskType }) => {
     refetchOnWindowFocus: false,
   });
 
+  useEffect(() => {
+    const channel = supabaseBrowser
+      .channel("custom-all-channel")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "task_comments",
+          filter: `task_id=eq.${task.id}`,
+        },
+        (payload) => {
+          if (payload.eventType == "INSERT") {
+            queryClient.invalidateQueries({
+              queryKey: ["task_comments", task.id],
+            });
+          } else if (payload.eventType == "UPDATE") {
+            queryClient.setQueryData(
+              ["task_comments", task.id],
+              (oldData: CommentWithProfile[] = []) =>
+                oldData.map((comment) =>
+                  comment.id == payload.new.id
+                    ? { ...comment, ...payload.new }
+                    : comment
+                )
+            );
+          } else if (payload.eventType == "DELETE") {
+            queryClient.setQueryData(
+              ["task_comments", task.id],
+              (oldData: CommentWithProfile[] = []) =>
+                oldData.filter((comment) => comment.id != payload.old.id)
+            );
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabaseBrowser.removeChannel(channel);
+    };
+  }, []);
+
   return (
     <div className="">
-      <div className="px-8">
-        <TabsComponent tabs={tabs} setTabs={setTabs} />
+      <div className="mb-4">
+        <TabSwitcher
+          tabItems={tabItems}
+          activeTab={tabs}
+          setActiveTab={setTabs as any}
+        />
       </div>
-
-      <div className="bg-text-100 h-px mb-4" />
 
       {tabs === TabEnum.comments ? (
         <div>
@@ -279,43 +268,45 @@ const TaskModalComment = ({ task }: { task: TaskType }) => {
         </div>
       )}
 
-      <div className="bg-text-100 h-px my-4" />
+      <div className="sticky bottom-0 bg-surface">
+        <div className="bg-text-100 h-px my-4" />
 
-      <div className="p-8 pt-0">
-        {!showCommentForm && (
-          <div className="flex items-center gap-2">
-            <Image
-              src={profile?.avatar_url || "/default_avatar.png"}
-              width={28}
-              height={28}
-              alt={profile?.full_name || profile?.username || "avatar"}
-              className="rounded-md object-cover max-w-[28px] max-h-[28px]"
-            />
+        <div className="px-8 pb-4 pt-0">
+          {!showCommentForm && (
+            <div className="flex items-center gap-2">
+              <Image
+                src={profile?.avatar_url || "/default_avatar.png"}
+                width={28}
+                height={28}
+                alt={profile?.full_name || profile?.username || "avatar"}
+                className="rounded-md object-cover max-w-[28px] max-h-[28px]"
+              />
 
-            <div
-              className="flex items-center justify-between w-full border border-text-100 rounded-lg py-2 px-4 bg-background hover:bg-text-100 dark:hover:bg-surface cursor-pointer transition text-xs"
-              onClick={() => setShowCommentForm(true)}
-            >
-              <p className="text-text-500">Write a comment</p>
+              <div
+                className="flex items-center justify-between w-full border border-text-100 rounded-lg py-2 px-4 bg-background hover:bg-text-100 dark:hover:bg-surface cursor-pointer transition text-xs"
+                onClick={() => setShowCommentForm(true)}
+              >
+                <p className="text-text-500">Write a comment</p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {showCommentForm && (
-          <div className="flex items-start gap-2 w-full">
-            <Image
-              src={profile?.avatar_url || "/default_avatar.png"}
-              width={28}
-              height={28}
-              alt={profile?.full_name || profile?.username || "avatar"}
-              className="rounded-md object-cover max-w-[28px] max-h-[28px]"
-            />
-            <AddComentForm
-              onCancelClick={() => setShowCommentForm(false)}
-              task={task}
-            />
-          </div>
-        )}
+          {showCommentForm && (
+            <div className="flex items-start gap-2 w-full">
+              <Image
+                src={profile?.avatar_url || "/default_avatar.png"}
+                width={28}
+                height={28}
+                alt={profile?.full_name || profile?.username || "avatar"}
+                className="rounded-md object-cover max-w-[28px] max-h-[28px]"
+              />
+              <AddComentForm
+                onCancelClick={() => setShowCommentForm(false)}
+                task={task}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

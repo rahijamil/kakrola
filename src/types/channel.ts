@@ -13,6 +13,7 @@ export interface ChannelType {
   is_private: boolean;
   settings: {
     color: string;
+    order: number;
   };
 }
 

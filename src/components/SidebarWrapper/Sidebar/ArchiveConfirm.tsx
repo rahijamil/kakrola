@@ -10,34 +10,62 @@ import {
 } from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
 import { useRole } from "@/context/RoleContext";
-import { canEditProject } from "@/types/hasPermission";
 import { PageType } from "@/types/pageTypes";
+import { ChannelType, ThreadType } from "@/types/channel";
+import { TeamType } from "@/types/team";
+import { canEditContent } from "@/utils/permissionUtils";
 
 const ArchiveConfirm = ({
   project,
   setShowArchiveConfirm,
   page,
+  channel,
+  thread,
+  team,
+  handleArchive: handleArchiveMethod,
 }: {
   project?: ProjectType;
   setShowArchiveConfirm: Dispatch<SetStateAction<boolean>>;
   page?: PageType;
+  channel?: ChannelType;
+  thread?: ThreadType | null;
+  team?: TeamType;
+  handleArchive?: () => void;
 }) => {
   const { projects, setProjects, pages, setPages } = useSidebarDataProvider();
   const { profile } = useAuthProvider();
   const { role } = useRole();
 
-  const table = project ? "projects" : "pages";
-  const id = project ? project.id : page?.id;
+  const table = project
+    ? "projects"
+    : page
+    ? "pages"
+    : channel
+    ? "channels"
+    : "threads";
+  const id = project
+    ? project.id
+    : page
+    ? page?.id
+    : channel
+    ? channel.id
+    : thread?.id;
 
   const handleArchive = async () => {
+    if (handleArchiveMethod) {
+      handleArchiveMethod();
+      return;
+    }
+
     if (!profile?.id || !id) return;
 
-    const userRole = role({
-      _project_id: project?.id,
-      _page_id: page?.id,
-    });
-    const canUpdateSection = userRole ? canEditProject(userRole) : false;
-    if (!canUpdateSection) return;
+    if (
+      !canEditContent(
+        role({ project: project || null, page: null }),
+        !!project?.team_id
+      )
+    )
+      return;
 
     if (project) {
       const updatedProjects = projects.map((p) => {
@@ -79,7 +107,17 @@ const ArchiveConfirm = ({
 
   return (
     <ConfirmAlert
-      title={project ? "Archive project?" : "Archive page?"}
+      title={
+        project
+          ? "Archive project?"
+          : page
+          ? "Archive page?"
+          : channel
+          ? "Archive channel?"
+          : thread
+          ? "Archive thread?"
+          : "Archive team?"
+      }
       description={
         project ? (
           <>
@@ -87,13 +125,26 @@ const ArchiveConfirm = ({
             <span className="font-semibold">&quot;{project.name}&quot;</span>{" "}
             and all its tasks.
           </>
+        ) : page ? (
+          <>
+            This will archive{" "}
+            <span className="font-semibold">&quot;{page.title}&quot;</span>.
+          </>
+        ) : channel ? (
+          <>
+            This will archive{" "}
+            <span className="font-semibold">&quot;{channel.name}&quot;</span>.
+          </>
+        ) : thread ? (
+          <>
+            This will archive{" "}
+            <span className="font-semibold">&quot;{thread?.title}&quot;</span>.
+          </>
         ) : (
-          page && (
-            <>
-              This will archive{" "}
-              <span className="font-semibold">&quot;{page.title}&quot;</span>.
-            </>
-          )
+          <>
+            This will archive{" "}
+            <span className="font-semibold">&quot;{team?.name}&quot;</span>.
+          </>
         )
       }
       submitBtnText="Archive"

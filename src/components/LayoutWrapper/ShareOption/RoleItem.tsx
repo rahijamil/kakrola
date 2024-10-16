@@ -2,19 +2,22 @@ import AnimatedTaskCheckbox from "@/components/TaskViewSwitcher/AnimatedCircleCh
 import Dropdown from "@/components/ui/Dropdown";
 import React, { useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { RoleType } from "@/types/role";
+import { PersonalRoleType, TeamRoleType } from "@/types/role";
 import { TaskPriority } from "@/types/project";
+import { TeamType } from "@/types/team";
 
 const RoleItem = ({
   onChange,
   value,
   handleRemove,
   handleRevoke,
+  teamId,
 }: {
-  value: RoleType;
-  onChange: (newRole: RoleType) => void;
+  value: PersonalRoleType | TeamRoleType;
+  onChange: (newRole: PersonalRoleType | TeamRoleType) => void;
   handleRemove?: () => void;
   handleRevoke?: () => void;
+  teamId?: TeamType["id"] | null;
 }) => {
   const triggerRef = useRef(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -39,107 +42,167 @@ const RoleItem = ({
               : "hover:bg-text-100"
           }`}
         >
-          {value === RoleType.ADMIN
+          {value === PersonalRoleType.ADMIN
             ? "Project Admin"
-            : value === RoleType.MEMBER
+            : value === PersonalRoleType.MEMBER
             ? "Member"
-            : value === RoleType.COMMENTER
+            : value === PersonalRoleType.COMMENTER
             ? "Commenter"
             : "Viewer"}
 
           <ChevronDown strokeWidth={1.5} size={16} />
         </button>
       )}
-      items={[
-        {
-          id: 1,
-          label: "Project Admin",
-          onClick: () => {
-            onChange(RoleType.ADMIN);
-          },
-          summary:
-            "Full access to change settings, modify, or delete the project.",
-          divide: true,
-          rightContent: value == RoleType.ADMIN && (
-            <AnimatedTaskCheckbox
-              priority={TaskPriority.P3}
-              playSound={false}
-              handleCheckSubmit={() => onChange(RoleType.ADMIN)}
-              is_completed={value === RoleType.ADMIN}
-            />
-          ),
-        },
-        {
-          id: 2,
-          label: "Member",
-          onClick: () => {
-            onChange(RoleType.MEMBER);
-          },
-          summary: "Can add, edit and delete anything in the project.",
-          rightContent: value == RoleType.MEMBER && (
-            <AnimatedTaskCheckbox
-              priority={TaskPriority.P3}
-              playSound={false}
-              handleCheckSubmit={() => onChange(RoleType.MEMBER)}
-              is_completed={value === RoleType.MEMBER}
-            />
-          ),
-          divide: true,
-        },
-        {
-          id: 3,
-          label: "Commenter",
-          onClick: () => {
-            onChange(RoleType.COMMENTER);
-          },
-          summary: "Can comment, but can't edit anything in the project.",
-          rightContent: value == RoleType.COMMENTER && (
-            <AnimatedTaskCheckbox
-              priority={TaskPriority.P3}
-              playSound={false}
-              handleCheckSubmit={() => onChange(RoleType.COMMENTER)}
-              is_completed={value === RoleType.COMMENTER}
-            />
-          ),
-          divide: true,
-        },
-        {
-          id: 4,
-          label: "Viewer",
-          onClick: () => {
-            onChange(RoleType.VIEWER);
-          },
-          summary: "Can view, but can't add comments or edit the project.",
-          rightContent: value == RoleType.VIEWER && (
-            <AnimatedTaskCheckbox
-              priority={TaskPriority.P3}
-              playSound={false}
-              handleCheckSubmit={() => onChange(RoleType.VIEWER)}
-              is_completed={value === RoleType.VIEWER}
-            />
-          ),
-          divide: handleRemove || handleRevoke ? true : false,
-        },
-        ...(handleRemove
+      items={
+        teamId
           ? [
               {
-                id: 5,
-                label: "Remove from project",
-                textColor: "text-red-500",
-                onClick: handleRemove,
+                id: 1,
+                label: "Teamspace Admin",
+                onClick: () => {
+                  onChange(TeamRoleType.TEAM_ADMIN);
+                },
+                summary:
+                  "Full access to change settings, modify, or delete the project.",
+                divide: true,
+                rightContent: value == TeamRoleType.TEAM_ADMIN && (
+                  <AnimatedTaskCheckbox
+                    priority={TaskPriority.P3}
+                    playSound={false}
+                    handleCheckSubmit={() => onChange(TeamRoleType.TEAM_ADMIN)}
+                    is_completed={value === TeamRoleType.TEAM_ADMIN}
+                  />
+                ),
               },
-            ]
-          : handleRevoke
-          ? [
               {
-                id: 5,
-                label: "Revoke from project",
-                textColor: "text-red-500",
-                onClick: handleRevoke,
+                id: 2,
+                label: "Member",
+                onClick: () => {
+                  onChange(TeamRoleType.TEAM_MEMBER);
+                },
+                summary: "Can add, edit and delete anything in the project.",
+                rightContent: value == TeamRoleType.TEAM_MEMBER && (
+                  <AnimatedTaskCheckbox
+                    priority={TaskPriority.P3}
+                    playSound={false}
+                    handleCheckSubmit={() => onChange(TeamRoleType.TEAM_MEMBER)}
+                    is_completed={value === TeamRoleType.TEAM_MEMBER}
+                  />
+                ),
+                divide: true,
               },
+              ...(handleRemove
+                ? [
+                    {
+                      id: 5,
+                      label: "Remove from project",
+                      textColor: "text-red-500",
+                      onClick: handleRemove,
+                    },
+                  ]
+                : handleRevoke
+                ? [
+                    {
+                      id: 5,
+                      label: "Revoke from project",
+                      textColor: "text-red-500",
+                      onClick: handleRevoke,
+                    },
+                  ]
+                : []),
             ]
-          : []),
-      ]}
+          : [
+              {
+                id: 1,
+                label: "Project Admin",
+                onClick: () => {
+                  onChange(PersonalRoleType.ADMIN);
+                },
+                summary:
+                  "Full access to change settings, modify, or delete the project.",
+                divide: true,
+                rightContent: value == PersonalRoleType.ADMIN && (
+                  <AnimatedTaskCheckbox
+                    priority={TaskPriority.P3}
+                    playSound={false}
+                    handleCheckSubmit={() => onChange(PersonalRoleType.ADMIN)}
+                    is_completed={value === PersonalRoleType.ADMIN}
+                  />
+                ),
+              },
+              {
+                id: 2,
+                label: "Member",
+                onClick: () => {
+                  onChange(PersonalRoleType.MEMBER);
+                },
+                summary: "Can add, edit and delete anything in the project.",
+                rightContent: value == PersonalRoleType.MEMBER && (
+                  <AnimatedTaskCheckbox
+                    priority={TaskPriority.P3}
+                    playSound={false}
+                    handleCheckSubmit={() => onChange(PersonalRoleType.MEMBER)}
+                    is_completed={value === PersonalRoleType.MEMBER}
+                  />
+                ),
+                divide: true,
+              },
+              {
+                id: 3,
+                label: "Commenter",
+                onClick: () => {
+                  onChange(PersonalRoleType.COMMENTER);
+                },
+                summary: "Can comment, but can't edit anything in the project.",
+                rightContent: value == PersonalRoleType.COMMENTER && (
+                  <AnimatedTaskCheckbox
+                    priority={TaskPriority.P3}
+                    playSound={false}
+                    handleCheckSubmit={() => onChange(PersonalRoleType.COMMENTER)}
+                    is_completed={value === PersonalRoleType.COMMENTER}
+                  />
+                ),
+                divide: true,
+              },
+              {
+                id: 4,
+                label: "Viewer",
+                onClick: () => {
+                  onChange(PersonalRoleType.VIEWER);
+                },
+                summary:
+                  "Can view, but can't add comments or edit the project.",
+                rightContent: value == PersonalRoleType.VIEWER && (
+                  <AnimatedTaskCheckbox
+                    priority={TaskPriority.P3}
+                    playSound={false}
+                    handleCheckSubmit={() => onChange(PersonalRoleType.VIEWER)}
+                    is_completed={value === PersonalRoleType.VIEWER}
+                  />
+                ),
+                divide: handleRemove || handleRevoke ? true : false,
+              },
+              ...(handleRemove
+                ? [
+                    {
+                      id: 5,
+                      label: "Remove from project",
+                      textColor: "text-red-500",
+                      onClick: handleRemove,
+                    },
+                  ]
+                : handleRevoke
+                ? [
+                    {
+                      id: 5,
+                      label: "Revoke from project",
+                      textColor: "text-red-500",
+                      onClick: handleRevoke,
+                    },
+                  ]
+                : []),
+            ]
+      }
       contentWidthClass="w-72 py-1"
     />
   );

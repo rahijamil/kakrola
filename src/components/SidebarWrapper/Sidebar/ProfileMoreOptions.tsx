@@ -150,11 +150,12 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
             window.dispatchEvent(new Event("popstate"));
           },
         },
-        {
-          icon: Plus,
-          label: "Add a team",
-          onClick: () => setShowAddTeam(true),
-        },
+        // {
+        //   icon: Plus,
+        //   label: "Add workspace",
+        //   // onClick: () => setShowAddTeam(true),
+        //   onClick: () => {},
+        // },
       ],
     },
     // {
@@ -179,25 +180,25 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
     //   type: "group",
     //   items: [{ icon: Gift, label: "What's new" }],
     // },
-    {
-      type: "group",
-      items: [
-        {
-          icon: () => (
-            <Rocket strokeWidth={1.5} className="w-4 h-4 text-tangerine-500" />
-          ),
-          label: "Upgrade to Pro",
-          onClick: () => {
-            window.history.pushState(
-              null,
-              "",
-              `${pathname}?settings=subscription`
-            );
-            window.dispatchEvent(new Event("popstate"));
-          },
-        },
-      ],
-    },
+    // {
+    //   type: "group",
+    //   items: [
+    //     {
+    //       icon: () => (
+    //         <Rocket strokeWidth={1.5} className="w-4 h-4 text-tangerine-500" />
+    //       ),
+    //       label: "Upgrade Plan",
+    //       onClick: () => {
+    //         window.history.pushState(
+    //           null,
+    //           "",
+    //           `${pathname}?settings=subscription`
+    //         );
+    //         window.dispatchEvent(new Event("popstate"));
+    //       },
+    //     },
+    //   ],
+    // },
     {
       type: "group",
       items: [

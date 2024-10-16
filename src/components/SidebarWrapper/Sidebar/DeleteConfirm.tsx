@@ -10,16 +10,21 @@ import {
 } from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
 import { useRole } from "@/context/RoleContext";
-import { canDeleteProject } from "@/types/hasPermission";
 import { PageType } from "@/types/pageTypes";
+import { ChannelType, ThreadType } from "@/types/channel";
+import { canDeleteContent } from "@/utils/permissionUtils";
 
 const DeleteConfirm = ({
   project,
   page,
+  channel,
+  thread,
   setShowDeleteConfirm,
 }: {
   project?: ProjectType;
   page?: PageType;
+  channel?: ChannelType;
+  thread?: ThreadType | null;
   setShowDeleteConfirm: Dispatch<SetStateAction<boolean>>;
 }) => {
   const { projects, setProjects, pages, setPages } = useSidebarDataProvider();
@@ -27,18 +32,37 @@ const DeleteConfirm = ({
 
   const { role } = useRole();
 
-  const table = project ? "projects" : "pages";
-  const id = project ? project.id : page?.id;
+  const table = project
+    ? "projects"
+    : page
+    ? "pages"
+    : channel
+    ? "channels"
+    : "threads";
+  const id = project
+    ? project.id
+    : page
+    ? page?.id
+    : channel
+    ? channel.id
+    : thread?.id;
 
   const handleProjectDelete = async () => {
-    if (!profile?.id) return;
+    if (!profile?.id || !id) return;
 
-    const userRole = role({
-      _project_id: project?.id,
-      _page_id: page?.id,
-    });
-    const canUpdateSection = userRole ? canDeleteProject(userRole) : false;
-    if (!canUpdateSection || !id) return;
+    if (
+      !canDeleteContent(
+        role({
+          project: project || null,
+          page: page || null,
+        }),
+        !!project?.team_id || !!page?.team_id
+      )
+    ) {
+      console.error("User doesn't have permission");
+      return;
+    }
+    
 
     if (project) {
       const updatedProjects = projects.filter((proj) => proj.id !== project.id);
@@ -57,7 +81,7 @@ const DeleteConfirm = ({
       console.error(projectError);
     }
 
-    if(project){
+    if (project) {
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.DELETED_PROJECT,
@@ -70,8 +94,7 @@ const DeleteConfirm = ({
           old_data: project,
         },
       });
-    }
-    else if(page) {
+    } else if (page) {
       createActivityLog({
         actor_id: profile.id,
         action: ActivityAction.DELETED_PAGE,
@@ -89,7 +112,15 @@ const DeleteConfirm = ({
 
   return (
     <ConfirmAlert
-      title={project ? "Delete project?" : "Delete page?"}
+      title={
+        project
+          ? "Delete project?"
+          : page
+          ? "Delete page?"
+          : channel
+          ? "Delete channel?"
+          : "Delete thread?"
+      }
       description={
         project ? (
           <>
@@ -97,14 +128,24 @@ const DeleteConfirm = ({
             <span className="font-semibold">{project.name}</span> and all its
             tasks. This can&apos;t be undone.
           </>
+        ) : page ? (
+          <>
+            This will permanently delete{" "}
+            <span className="font-semibold">{page.title}</span>. This can&apos;t
+            be undone.
+          </>
+        ) : channel ? (
+          <>
+            This will permanently delete{" "}
+            <span className="font-semibold">{channel.name}</span>. This can&apos;t
+            be undone.
+          </>
         ) : (
-          page && (
-            <>
-              This will permanently delete{" "}
-              <span className="font-semibold">{page.title}</span>. This
-              can&apos;t be undone.
-            </>
-          )
+          <>
+            This will permanently delete{" "}
+            <span className="font-semibold">{thread?.title}</span>. This can&apos;t
+            be undone.
+          </>
         )
       }
       submitBtnText="Delete"

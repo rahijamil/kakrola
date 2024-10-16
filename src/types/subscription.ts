@@ -9,3 +9,18 @@ export interface Subscription {
   customer_id: string;
   customer_profile_id: string;
 }
+
+enum SubscriptionPlan {
+  FREE = "FREE",
+  PLUS = "PLUS",
+  BUSINESS = "BUSINESS",
+}
+
+enum SubscriptionPermission {}
+
+// Define role permissions
+const PlanPermission: Record<SubscriptionPlan, SubscriptionPermission[]> = {
+  [SubscriptionPlan.FREE]: [],
+  [SubscriptionPlan.PLUS]: [],
+  [SubscriptionPlan.BUSINESS]: [],
+};

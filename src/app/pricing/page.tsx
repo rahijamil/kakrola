@@ -6,57 +6,60 @@ import LandingPageHeader from "../LandingPageHeader";
 import LandingPageFooter from "../LandingPageFooter";
 import { Button } from "@/components/ui/button";
 import { ToggleSwitch } from "@/components/ui/ToggleSwitch";
+import { pricingTiers } from "@/lib/constants/pricing-tier";
 
-const comparisonFeatures = [
+const comparisonFeatures: {
+  category: string;
+  features: {
+    name: string;
+    free: string | boolean;
+    plus: string | boolean;
+    business: string | boolean;
+  }[];
+}[] = [
   {
     category: "Core Features",
     features: [
       {
         name: "Projects",
         free: "Up to 5",
-        pro: "Unlimited",
+        plus: "Unlimited",
         business: "Unlimited",
       },
       {
         name: "Team members",
         free: "Up to 3",
-        pro: "Unlimited",
-        business: "Unlimited",
-      },
-      {
-        name: "File storage",
-        free: "100MB",
-        pro: "5GB per user",
+        plus: "Unlimited",
         business: "Unlimited",
       },
       {
         name: "Task management",
         free: "Basic",
-        pro: "Advanced",
+        plus: "Advanced",
         business: "Advanced",
       },
-      { name: "Views (List, Board)", free: true, pro: true, business: true },
-      { name: "Mobile app access", free: true, pro: true, business: true },
+      { name: "Views (List, Board)", free: true, plus: true, business: true },
+      { name: "Mobile app access", free: true, plus: true, business: true },
     ],
   },
   {
     category: "Advanced Features",
     features: [
-      { name: "Custom fields", free: false, pro: true, business: true },
-      { name: "Gantt charts", free: false, pro: true, business: true },
-      { name: "Timeline view", free: false, pro: true, business: true },
-      { name: "Calendar view", free: false, pro: true, business: true },
-      { name: "Time tracking", free: false, pro: true, business: true },
+      { name: "Custom fields", free: false, plus: true, business: true },
+      { name: "Gantt charts", free: false, plus: true, business: true },
+      { name: "Timeline view", free: false, plus: true, business: true },
+      { name: "Calendar view", free: false, plus: true, business: true },
+      { name: "Time tracking", free: false, plus: true, business: true },
       {
         name: "Workflow automation",
         free: false,
-        pro: "Basic",
+        plus: "Basic",
         business: "Advanced",
       },
       {
         name: "Reporting and dashboards",
         free: false,
-        pro: "Basic",
+        plus: "Basic",
         business: "Advanced",
       },
     ],
@@ -67,16 +70,16 @@ const comparisonFeatures = [
       {
         name: "Task comments",
         free: "Basic",
-        pro: "Advanced",
+        plus: "Advanced",
         business: "Advanced",
       },
-      { name: "File sharing", free: true, pro: true, business: true },
-      { name: "Team channels", free: false, pro: true, business: true },
-      { name: "Guest access", free: false, pro: true, business: true },
+      { name: "File sharing", free: true, plus: true, business: true },
+      { name: "Team channels", free: false, plus: true, business: true },
+      { name: "Guest access", free: false, plus: true, business: true },
       {
         name: "Proofing and approvals",
         free: false,
-        pro: false,
+        plus: false,
         business: true,
       },
     ],
@@ -84,15 +87,20 @@ const comparisonFeatures = [
   {
     category: "Customization & Integration",
     features: [
-      { name: "Templates", free: "Basic", pro: "Custom", business: "Advanced" },
+      {
+        name: "Templates",
+        free: "Basic",
+        plus: "Custom",
+        business: "Advanced",
+      },
       {
         name: "Integrations",
         free: "Basic",
-        pro: "Advanced",
+        plus: "Advanced",
         business: "Enterprise-grade",
       },
-      { name: "API access", free: false, pro: false, business: true },
-      { name: "Custom branding", free: false, pro: false, business: true },
+      { name: "API access", free: false, plus: false, business: true },
+      { name: "Custom branding", free: false, plus: false, business: true },
     ],
   },
   {
@@ -101,21 +109,21 @@ const comparisonFeatures = [
       {
         name: "Two-factor authentication",
         free: true,
-        pro: true,
+        plus: true,
         business: true,
       },
-      { name: "SSO (SAML)", free: false, pro: false, business: true },
-      { name: "Advanced permissions", free: false, pro: true, business: true },
+      { name: "SSO (SAML)", free: false, plus: false, business: true },
+      { name: "Advanced permissions", free: false, plus: true, business: true },
       {
         name: "User provisioning (SCIM)",
         free: false,
-        pro: false,
+        plus: false,
         business: true,
       },
       {
         name: "Data encryption at rest",
         free: false,
-        pro: false,
+        plus: false,
         business: true,
       },
     ],
@@ -126,13 +134,13 @@ const comparisonFeatures = [
       {
         name: "Customer support",
         free: "Email",
-        pro: "Priority email",
+        plus: "Priority email",
         business: "24/7 priority",
       },
       {
         name: "Dedicated success manager",
         free: false,
-        pro: false,
+        plus: false,
         business: true,
       },
     ],
@@ -153,70 +161,12 @@ const renderFeatureValue = (value: boolean | string) => {
 const PricingPage = () => {
   const [isAnnual, setIsAnnual] = useState(true);
 
-  const pricingPlans = [
-    {
-      name: "Free",
-      price: "$0",
-      period: "forever",
-      description: "For individuals getting started",
-      features: [
-        "Up to 5 active projects",
-        "Basic task management",
-        "100MB file storage",
-        "3 team members",
-        "Basic integrations",
-        "2-factor authentication",
-      ],
-      cta: "Sign Up",
-      highlighted: false,
-    },
-    {
-      name: "Pro",
-      price: isAnnual ? "$8" : "$12",
-      period: isAnnual ? "per user/month" : "per user/month",
-      description: "For power users and small teams",
-      features: [
-        "Unlimited active projects",
-        "Advanced task management",
-        "5GB file storage per user",
-        "Unlimited team members",
-        "Advanced integrations",
-        "Priority support",
-        "Custom fields",
-        "Gantt charts",
-        "Time tracking",
-      ],
-      cta: "Start Free Trial",
-      highlighted: true,
-      badge: "Popular",
-    },
-    {
-      name: "Business",
-      price: isAnnual ? "$13" : "$18",
-      period: isAnnual ? "per user/month" : "per user/ month",
-      description: "For organizations that need more control and support",
-      features: [
-        "Everything in Pro",
-        "Unlimited file storage",
-        "Advanced security features",
-        "Admin & owner roles",
-        "Team billing",
-        "Custom workflows",
-        "Workload management",
-        "24/7 customer support",
-        "SSO (SAML)",
-      ],
-      cta: "Start Free Trial",
-      businessHighlight: true,
-    },
-  ];
-
   return (
     <div className="min-h-screen">
       <LandingPageHeader />
 
       <main>
-        <div className="wrapper py-20 sm:pt-32 space-y-20">
+        <div className="wrapper max-w-6xl py-20 sm:pt-32 space-y-20">
           <div className="text-center">
             <h1 className="font-bold text-gray-900 text-4xl sm:text-5xl hidden md:block">
               One tool for your entire workflow
@@ -247,12 +197,12 @@ const PricingPage = () => {
                 }`}
               >
                 Pay Annually{" "}
-                <span className="text-primary-500 font-bold">(Save 30%)</span>
+                <span className="text-primary-500 font-bold">(Save 20%)</span>
               </span>
             </div>
 
             <div className="grid gap-6 lg:grid-cols-3">
-              {pricingPlans.map((plan, index) => (
+              {pricingTiers.map((plan, index) => (
                 <div
                   key={index}
                   className={`rounded-lg overflow-hidden border border-t-5 bg-white ${
@@ -266,7 +216,7 @@ const PricingPage = () => {
                   <div className="p-6 space-y-6">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h2 className="text-2xl font-semibold text-text-900">
+                        <h2 className="text-lg font-semibold text-text-900">
                           {plan.name}
                         </h2>
 
@@ -283,11 +233,11 @@ const PricingPage = () => {
                     </div>
 
                     <div>
-                      <p className="mt-4">
-                        <span className="text-4xl font-extrabold text-text-900">
-                          {plan.price}
+                      <p>
+                        <span className="text-3xl font-semibold text-text-900">
+                          {plan.price(isAnnual)}
                         </span>
-                        <span className="text-base font-medium text-text-500">
+                        <span className="text-base font-medium text-text-700">
                           {" "}
                           {plan.period}
                         </span>
@@ -309,18 +259,24 @@ const PricingPage = () => {
                       </Link>
                     </div>
 
-                    <ul className="space-y-4">
+                    <ul className="space-y-3">
+                      {plan.featureHeading && (
+                        <li key={"featureHeading"}>
+                          <h3 className="font-semibold">
+                            {plan.featureHeading}
+                          </h3>
+                        </li>
+                      )}
+
                       {plan.features.map((feature, featureIndex) => (
                         <li key={featureIndex} className="flex items-start">
                           <div className="flex-shrink-0 pt-0.5">
                             <CheckCircle
-                              className="h-5 w-5 text-text-500"
+                              className="h-4 w-4 text-text-700"
                               strokeWidth={1.5}
                             />
                           </div>
-                          <p className="ml-3 text-base text-text-700">
-                            {feature}
-                          </p>
+                          <p className="ml-3 text-text-700">{feature}</p>
                         </li>
                       ))}
                     </ul>
@@ -351,7 +307,7 @@ const PricingPage = () => {
                       {category.category}
                     </div>
 
-                    {pricingPlans.map((plan, index) =>
+                    {pricingTiers.map((plan, index) =>
                       categoryIndex == 0 ? (
                         <div
                           key={index}
@@ -397,7 +353,7 @@ const PricingPage = () => {
                             {renderFeatureValue(feature.free)}
                           </div>
                           <div className="px-6 py-4 text-sm text-text-500 text-center w-1/4 border-x border-primary-500 bg-primary-10">
-                            {renderFeatureValue(feature.pro)}
+                            {renderFeatureValue(feature.plus)}
                           </div>
                           <div className="px-6 py-4 text-sm text-text-500 text-center w-1/4 border-x border-text-500 bg-text-10">
                             {renderFeatureValue(feature.business)}
@@ -433,13 +389,13 @@ const PricingPage = () => {
                             <div
                               className={`text-center font-semibold text-text-700 uppercase tracking-widerbg-white pb-4`}
                             >
-                              Pro
+                              Plus
                             </div>
 
                             <Link href="/auth/signup">
                               <Button fullWidth>
                                 <Rocket className="w-5 h-5" strokeWidth={1.5} />
-                                Start Free Trial
+                                Get started
                               </Button>
                             </Link>
                           </div>
@@ -453,7 +409,7 @@ const PricingPage = () => {
                             <Link href="/auth/signup">
                               <Button fullWidth variant="outline" color="text">
                                 <Rocket className="w-5 h-5" strokeWidth={1.5} />
-                                Start Free Trial
+                                Get started
                               </Button>
                             </Link>
                           </div>
@@ -473,7 +429,7 @@ const PricingPage = () => {
                           {renderFeatureValue(feature.free)}
                         </div>
                         <div className="px-6 py-4 text-sm text-text-500 text-center w-1/4 border-x border-primary-500 bg-primary-10">
-                          {renderFeatureValue(feature.pro)}
+                          {renderFeatureValue(feature.plus)}
                         </div>
                         <div className="px-6 py-4 text-sm text-text-500 text-center w-1/4 border-x border-text-500 bg-text-10">
                           {renderFeatureValue(feature.business)}

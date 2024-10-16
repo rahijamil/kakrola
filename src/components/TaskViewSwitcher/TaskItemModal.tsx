@@ -32,13 +32,18 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import { useRole } from "@/context/RoleContext";
-import { canEditTask } from "@/types/hasPermission";
 import useScreen from "@/hooks/useScreen";
 import LabelSelector from "../AddTask/LabelSelector";
 import TaskModalComment from "./TaskModalComment";
 import { ProfileType } from "@/types/user";
 import { useQueryClient } from "@tanstack/react-query";
 import { v4 as uuidv4 } from "uuid";
+import { canEditContent } from "@/utils/permissionUtils";
+import {
+  createNotification,
+  NotificationTypeEnum,
+  RelatedEntityTypeEnum,
+} from "@/types/notification";
 
 const TaskItemModal = ({
   task,
@@ -118,10 +123,18 @@ const TaskItemModal = ({
         if (!profile?.id) return;
 
         if (!taskData.is_inbox && taskData.project_id) {
-          const userRole = role({ _project_id: taskData.project_id });
-          const canEdit = userRole ? canEditTask(userRole) : false;
-
-          if (!canEdit) return;
+          if (
+            !canEditContent(
+              role({
+                project,
+                page: null,
+              }),
+              !!project?.team_id
+            )
+          ) {
+            console.error("User doesn't have permission to create a section");
+            return;
+          }
         }
 
         setTasks(tasks.map((t) => (t.id === task.id ? taskData : t)));
@@ -188,6 +201,30 @@ const TaskItemModal = ({
               { assignees: task.assignees },
               { assignees: addedAssignees }
             );
+
+            createNotification({
+              recipients: addedAssignees.map((a) => ({
+                profile_id: a.profile_id,
+                is_read: false,
+              })),
+              triggered_by: {
+                id: profile.id,
+                first_name:
+                  profile.full_name?.split(" ")[0] ||
+                  profile.email?.split("@")[0],
+                avatar_url: profile.avatar_url,
+              },
+              type: NotificationTypeEnum.ASSIGNMENT,
+              related_entity_type: RelatedEntityTypeEnum.TASK,
+              redirect_url: `/app/project/${project?.slug}?task=${task.id}`,
+              api_url: null,
+              data: {
+                triggered_by:
+                  profile.full_name?.split(" ")[0] ||
+                  profile.email?.split("@")[0],
+                entityName: task.title,
+              },
+            });
           }
 
           // Log activity for removed assignees

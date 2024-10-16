@@ -32,7 +32,14 @@ const NotificationItem = ({
       (oldNotifications: NotificationType[] | undefined) => {
         return oldNotifications?.map((notif) =>
           notif.id === notification.id
-            ? { ...notif, is_read: !notif.is_read }
+            ? {
+                ...notif,
+                recipients: notif.recipients.map((item) =>
+                  item.profile_id == profile?.id
+                    ? { ...item, is_read: !item.is_read }
+                    : item
+                ),
+              }
             : notif
         );
       }
@@ -41,7 +48,13 @@ const NotificationItem = ({
     try {
       await supabaseBrowser
         .from("notifications")
-        .update({ is_read: !notification.is_read })
+        .update({
+          recipients: notification.recipients.map((item) =>
+            item.profile_id == profile?.id
+              ? { ...item, is_read: !item.is_read }
+              : item
+          ),
+        })
         .eq("id", notification.id);
     } catch (error) {
       console.error("Failed to mark as read/unread", error);
@@ -49,11 +62,18 @@ const NotificationItem = ({
   };
 
   const handleNotificationClick = async (ev: React.MouseEvent<HTMLElement>) => {
-    if (!notification.is_read) {
+    if (
+      !notification.recipients.find((item) => item.profile_id == profile?.id)
+        ?.is_read
+    ) {
       await handleMarkAsReadUnread(ev);
     }
 
-    if (notification.api_url && !notification.is_read) {
+    if (
+      notification.api_url &&
+      !notification.recipients.find((item) => item.profile_id == profile?.id)
+        ?.is_read
+    ) {
       setIsLoading(true);
       await axios(notification.api_url);
       await refetchSidebarData();
@@ -70,7 +90,7 @@ const NotificationItem = ({
     <>
       <div
         onClick={handleNotificationClick}
-        className={`flex items-center cursor-pointer gap-2 border-l-4 transition relative border-transparent hover:border-primary-200 hover:bg-primary-50 ${
+        className={`flex items-center cursor-pointer gap-2 border-l-4 border-b border-b-text-100 transition relative border-transparent hover:border-l-primary-200 hover:bg-primary-50 ${
           !forModal ? "rounded-lg p-4" : "px-4 py-2"
         }`}
       >
@@ -84,7 +104,11 @@ const NotificationItem = ({
         <div className="flex flex-col">
           <p
             className={`${
-              notification.is_read ? "text-text-700" : "text-primary-500"
+              notification.recipients.find(
+                (item) => item.profile_id == profile?.id
+              )?.is_read
+                ? "text-text-700"
+                : "text-primary-500"
             } ${!forModal ? "text-sm" : "text-xs"}`}
             dangerouslySetInnerHTML={{ __html: notification.content }}
           />
@@ -97,9 +121,17 @@ const NotificationItem = ({
         <button
           className="absolute bottom-4 right-3 w-3 h-3 flex items-center justify-center border border-primary-500 rounded-lg"
           onClick={handleMarkAsReadUnread}
-          title={notification.is_read ? "Mark as unread" : "Mark as read"}
+          title={
+            notification.recipients.find(
+              (item) => item.profile_id == profile?.id
+            )?.is_read
+              ? "Mark as unread"
+              : "Mark as read"
+          }
         >
-          {!notification.is_read && (
+          {!notification.recipients.find(
+            (item) => item.profile_id == profile?.id
+          )?.is_read && (
             <span className="w-1.5 h-1.5 bg-primary-500 rounded-lg" />
           )}
         </button>

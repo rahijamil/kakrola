@@ -27,7 +27,7 @@ import CustomSelect from "./ui/CustomSelect";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import Textarea from "./ui/textarea";
 import Link from "next/link";
-import { Permission, RoleType } from "@/types/role";
+import { TeamRoleType } from "@/types/role";
 import {
   ActivityAction,
   createActivityLog,
@@ -36,6 +36,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import PortalWrapper from "./PortalWrapper";
 import { Dialog } from "./ui";
+import { useSearchParams } from "next/navigation";
 
 // Updated TeamData type
 interface TeamData extends BaseTeamType {
@@ -61,6 +62,7 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
   const { profile } = useAuthProvider();
   const [teamData, setTeamData] = useState<Omit<TeamData, "created_at">>({
     name: "",
+    description: "",
     industry: null,
     work_type: null,
     work_role: {
@@ -71,6 +73,7 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
     avatar_url: "",
     profile_id: profile?.id || "",
     updated_at: new Date().toISOString(),
+    is_archived: false,
   });
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
@@ -130,9 +133,14 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
           const teamMemberData: Omit<TeamMemberType, "id"> = {
             team_id: createdTeamData.id,
             profile_id: profile.id,
-            team_role: RoleType.ADMIN,
+            team_role: TeamRoleType.TEAM_ADMIN,
             email: profile.email,
             joined_at: new Date().toISOString(),
+            settings: {
+              projects: [],
+              pages: [],
+              channels: [],
+            },
           };
 
           const { error: memberError } = await supabaseBrowser
@@ -162,9 +170,16 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
     }
   };
 
+  const searchParams = useSearchParams();
+  const settings = searchParams.get("settings");
+
   return (
     <PortalWrapper>
-      <Dialog onClose={onClose} size="xs">
+      <Dialog
+        onClose={onClose}
+        size="xs"
+        lessOverlay={settings == "teamspaces"}
+      >
         <div className="space-y-6 p-6 relative">
           <div className="flex justify-between items-center text-text-700">
             <h1 className="font-semibold text-lg">
@@ -174,13 +189,6 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
                 ? "Tell us about your team"
                 : "Invite your teammates"}
             </h1>
-
-            <button
-              onClick={onClose}
-              className="text-text-500 hover:text-text-700 hover:bg-text-100 transition p-1 rounded-lg absolute top-2 right-2"
-            >
-              <X size={20} />
-            </button>
           </div>
 
           <form

@@ -16,7 +16,7 @@ const AppLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
 
   if (!loading) {
     return (
-      <main className="fixed inset-0 flex h-full bg-primary-10">
+      <main className="fixed inset-0 flex h-full bg-primary-10d bg-gradient-to-br from-primary-10 via-background to-primary-50">
         {pathname.startsWith("/app/onboard") ? null : (
           <SidebarWrapper props={{ isCollapsed, sidebarWidth, ...sidebarProps }} />
         )}

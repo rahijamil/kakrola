@@ -79,8 +79,6 @@ function MobileSidebar({
     }
   }, [isPending]);
 
-  const triggerRef = useRef(null);
-
   return (
     <motion.nav
       initial={{ y: "100%" }}
@@ -147,7 +145,6 @@ function MobileSidebar({
         <SidebarCreateMore
           quickActions={quickActions}
           setQuickActions={setQuickActions}
-          triggerRef={triggerRef}
         />
       </div>
     </motion.nav>

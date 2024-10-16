@@ -24,11 +24,13 @@ const ProjectItem = ({
   pathname,
   isDragging,
   setIsDragDisabled,
+  forFavorites,
 }: {
   project: ProjectType;
   pathname: string;
   isDragging?: boolean;
   setIsDragDisabled?: React.Dispatch<React.SetStateAction<boolean>>;
+  forFavorites?: boolean;
 }) => {
   const { sidebarLoading, teams } = useSidebarDataProvider();
   const [tasks, setTasks] = useState<TaskType[]>([]);
@@ -109,13 +111,13 @@ const ProjectItem = ({
           ></div>
           <Link
             href={`/app/project/${project.slug}`}
-            className={`w-full p-2 ${project.team_id ? "pl-7 pr-4" : "px-4"}`}
+            className={`w-full p-2 ${(project.team_id && !forFavorites) ? "pl-7 pr-4" : "px-4"}`}
             draggable={false}
           >
             <div className="flex items-center gap-2">
               <CheckCircle
-                className={`w-4 h-4 min-w-4 min-h-4 text-${project.settings.color}`}
-                strokeWidth={2}
+                className={`w-5 h-5 min-w-5 min-h-5 text-${project.settings.color}`}
+                strokeWidth={1.5}
               />
 
               <span className="truncate">{project.name}</span>

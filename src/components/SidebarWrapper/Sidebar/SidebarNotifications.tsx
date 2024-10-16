@@ -1,30 +1,54 @@
 import NotificationItem from "@/app/app/notifications/NotificationItem";
 import { useNotifications } from "@/app/app/notifications/useNotifications";
+import TabSwitcher from "@/components/TabSwitcher";
 import Dropdown from "@/components/ui/Dropdown";
+import { useAuthProvider } from "@/context/AuthContext";
 import useScreen from "@/hooks/useScreen";
-import { useQueryClient } from "@tanstack/react-query";
-import { Bell } from "lucide-react";
+import { TabItem } from "@/types/types.utils";
+import { Bell, MailOpen } from "lucide-react";
 import Image from "next/image";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
-const SidebarNotifications = ({
-  triggerRef,
-}: {
-  triggerRef: React.RefObject<HTMLDivElement>;
-}) => {
+enum Id {
+  All = "all",
+  Unread = "unread",
+}
+
+const tabItems: TabItem[] = [
+  {
+    id: Id.All,
+    name: "All",
+    icon: <Bell strokeWidth={1.5} className="w-4 h-4" />,
+  },
+  {
+    id: Id.Unread,
+    name: "Unread",
+    icon: <MailOpen strokeWidth={1.5} className="w-4 h-4" />,
+  },
+];
+
+const SidebarNotifications = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { notifications, isLoading } = useNotifications();
-  const [allUnread, setAllUnread] = useState<"all" | "unread">("unread");
+  const [allUnread, setAllUnread] = useState<Id>(Id.Unread);
+  const { profile } = useAuthProvider();
 
   const { screenWidth } = useScreen();
 
+  const triggerRef = useRef(null);
+
   const filteredNotifications = useMemo(() => {
-    if (allUnread === "all") {
+    if (allUnread == Id.All) {
       return notifications;
     } else {
-      return notifications.filter((notification) => !notification.is_read);
+      return notifications.filter(
+        (notification) =>
+          !notification.recipients.find(
+            (item) => item.profile_id == profile?.id
+          )?.is_read
+      );
     }
   }, [notifications, allUnread]);
 
@@ -35,6 +59,7 @@ const SidebarNotifications = ({
       triggerRef={triggerRef}
       Label={({ onClick }) => (
         <button
+          ref={triggerRef}
           onClick={onClick}
           className={`${
             isOpen
@@ -49,28 +74,13 @@ const SidebarNotifications = ({
       title="Notifications"
       content={
         <div className="h-[400px] overflow-y-auto">
-          <div className="px-4 pt-1 text-xs">
-            <ul className="flex items-center p-1 rounded-lg bg-text-100 w-fit">
-              <li
-                className={`p-1 px-4 rounded-lg font-medium cursor-pointer transition ${
-                  allUnread === "all" ? "bg-surface" : ""
-                }`}
-                onClick={() => setAllUnread("all")}
-              >
-                All
-              </li>
-              <li
-                className={`p-1 px-4 rounded-lg font-medium cursor-pointer transition ${
-                  allUnread === "unread" ? "bg-surface" : ""
-                }`}
-                onClick={() => setAllUnread("unread")}
-              >
-                Unread
-              </li>
-            </ul>
-          </div>
+          <TabSwitcher
+            activeTab={allUnread}
+            setActiveTab={setAllUnread as any}
+            tabItems={tabItems}
+          />
 
-          <div className="mt-2 h-full">
+          <div className="h-full">
             {isLoading ? (
               <div className="divide-y divide-text-100 border-y border-text-100">
                 {Array.from({ length: 5 }).map((_, index) => (
@@ -92,15 +102,17 @@ const SidebarNotifications = ({
                 ))}
               </div>
             ) : filteredNotifications.length > 0 ? (
-              <div className="divide-y divide-text-100 border-y border-text-100">
-                {filteredNotifications.map((notification) => (
-                  <NotificationItem
-                    key={notification.id}
-                    notification={notification}
-                    forModal
-                  />
-                ))}
-              </div>
+              <>
+                {filteredNotifications
+                  .sort((a, b) => Number(b.created_at) - Number(a.created_at))
+                  .map((notification) => (
+                    <NotificationItem
+                      key={notification.id}
+                      notification={notification}
+                      forModal
+                    />
+                  ))}
+              </>
             ) : (
               <div className="flex items-center pt-10 flex-col gap-1 h-full select-none">
                 <Image

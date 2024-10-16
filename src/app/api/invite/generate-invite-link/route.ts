@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { v4 as uuidv4 } from "uuid";
 import { InviteStatus, PageInviteType, ProjectInviteType } from "@/types/team";
-import { RoleType } from "@/types/role";
+import { PersonalRoleType } from "@/types/role";
 
 export async function POST(req: NextRequest) {
   const supabase = createClient();
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     const inviteData: Omit<ProjectInviteType | PageInviteType, "id"> = {
       team_id,
       email: null,
-      role: RoleType["MEMBER"],
+      role: PersonalRoleType["MEMBER"],
       status: InviteStatus.PENDING,
       token,
     };

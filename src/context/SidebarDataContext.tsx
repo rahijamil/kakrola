@@ -29,7 +29,7 @@ const SidebarDataContext = createContext<{
   setProjects: (projects: ProjectType[]) => void;
 
   pages: PageType[];
-  setPages: (projects: PageType[]) => void;
+  setPages: (pages: PageType[]) => void;
 
   sectionsForProjectSelector: {
     id: SectionType["id"];
@@ -51,6 +51,7 @@ const SidebarDataContext = createContext<{
   setIsShowViewModal: React.Dispatch<React.SetStateAction<boolean>>;
   isError: boolean;
   channels: ChannelType[];
+  setChannels: (channels: ChannelType[]) => void;
   refetchSidebarData: (
     options?: RefetchOptions
   ) => Promise<QueryObserverResult<any, Error>> | void;
@@ -73,6 +74,7 @@ const SidebarDataContext = createContext<{
   setIsShowViewModal: () => {},
   isError: false,
   channels: [],
+  setChannels: () => {},
   refetchSidebarData: () => {},
 });
 
@@ -93,6 +95,7 @@ const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
     pages,
     setPages,
     channels,
+    setChannels,
     refetchSidebarData,
   } = useSidebarData();
 
@@ -120,6 +123,7 @@ const SidebarDataProvider = ({ children }: { children: ReactNode }) => {
         setIsShowViewModal,
         isError,
         channels,
+        setChannels,
         refetchSidebarData,
       }}
     >

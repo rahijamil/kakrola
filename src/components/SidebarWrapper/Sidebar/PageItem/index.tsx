@@ -31,11 +31,13 @@ const PageItem = ({
   pathname,
   isDragging,
   setIsDragDisabled,
+  forFavorites
 }: {
   page: PageType;
   pathname: string;
   isDragging?: boolean;
   setIsDragDisabled?: React.Dispatch<React.SetStateAction<boolean>>;
+  forFavorites?: boolean
 }) => {
   const { sidebarLoading } = useSidebarDataProvider();
 
@@ -112,13 +114,13 @@ const PageItem = ({
           ></div>
           <Link
             href={`/app/page/${page.slug}`}
-            className={`w-full p-2 ${page.team_id ? "pl-7 pr-4" : "px-4"}`}
+            className={`w-full p-2 ${(page.team_id && !forFavorites) ? "pl-7 pr-4" : "px-4"}`}
             draggable={false}
           >
             <div className="flex items-center gap-2">
               <FileText
-                className={`w-4 h-4 min-w-4 min-h-4 text-${page.settings.color}`}
-                strokeWidth={2}
+                className={`w-5 h-5 min-w-5 min-h-5 text-${page.settings.color}`}
+                strokeWidth={1.5}
               />
 
               <span className="truncate">{page.title}</span>

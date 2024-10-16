@@ -46,7 +46,7 @@ const TeamProjects = ({
     if (team) {
       setTeamProjects(projects.filter((p) => p.team_id === team.id));
       setTeamPages(pages.filter((p) => p.team_id === team.id));
-      setTeamChannels(channels.filter((c) => c.team_id === team.id));
+      setTeamChannels(channels.filter((c) => c.team_id === team.id).sort((a, b) => a.settings.order - b.settings.order));
     }
 
   }, [team, projects, pages, channels]);

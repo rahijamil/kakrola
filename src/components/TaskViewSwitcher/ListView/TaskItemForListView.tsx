@@ -23,7 +23,6 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import { useRole } from "@/context/RoleContext";
-import { canDeleteTask, canEditTask } from "@/types/hasPermission";
 import useCheckClick from "@/hooks/useCheckClick";
 import LocationSelector from "@/components/AddTask/LocationSelector";
 import {
@@ -34,6 +33,7 @@ import { createNotification } from "@/types/notification";
 import { usePathname, useSearchParams } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { useQueryClient } from "@tanstack/react-query";
+import { canDeleteContent, canEditContent } from "@/utils/permissionUtils";
 
 const TaskItemForListView = ({
   task,
@@ -88,10 +88,18 @@ const TaskItemForListView = ({
     if (!profile?.id) return;
 
     if (!task.is_inbox && task.project_id) {
-      const userRole = role({ _project_id: task.project_id });
-
-      const canDelTask = userRole ? canDeleteTask(userRole) : false;
-      if (!canDelTask) return;
+      if (
+        !canDeleteContent(
+          role({
+            project,
+            page: null,
+          }),
+          !!project?.team_id
+        )
+      ) {
+        console.error("User doesn't have permission to create a section");
+        return;
+      }
 
       const updatedTasks = tasks.filter((t) => t.id !== task.id);
 
@@ -203,10 +211,18 @@ const TaskItemForListView = ({
         if (!profile?.id) return;
 
         if (!taskData.is_inbox && taskData.project_id) {
-          const userRole = role({ _project_id: taskData.project_id });
-          const canEdit = userRole ? canEditTask(userRole) : false;
-
-          if (!canEdit) return;
+          if (
+            !canEditContent(
+              role({
+                project,
+                page: null,
+              }),
+              !!project?.team_id
+            )
+          ) {
+            console.error("User doesn't have permission to create a section");
+            return;
+          }
         }
 
         setTasks(tasks.map((t) => (t.id === task.id ? taskData : t)));
@@ -244,6 +260,26 @@ const TaskItemForListView = ({
               { assignees: task.assignees },
               { assignees: addedAssignees }
             );
+
+            createNotification({
+              recipients: addedAssignees.map((a) => ({
+                profile_id: a.profile_id,
+                is_read: false
+              })),
+              triggered_by: {
+                id: profile.id,
+                first_name: profile.full_name?.split(' ')[0] || profile.email?.split('@')[0],
+                avatar_url: profile.avatar_url,
+              },
+              type: NotificationTypeEnum.ASSIGNMENT,
+              related_entity_type: RelatedEntityTypeEnum.TASK,
+              redirect_url: `/app/project/${project?.slug}?task=${task.id}`,
+              api_url: null,
+              data: {
+                triggered_by: profile.full_name?.split(' ')[0] || profile.email?.split('@')[0],
+                entityName: task.title,
+              }
+            })
           }
 
           // Log activity for removed assignees

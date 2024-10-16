@@ -184,7 +184,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ profile, comment }) => {
 
         {/* {renderReactions(comment.id)} */}
 
-        {screenWidth > 768 ? (
+        {/* {screenWidth > 768 ? (
           <div className="absolute -top-6 right-6 hidden group-hover:block">
             {renderOptions(comment.id, authProfile?.id)}
           </div>
@@ -200,7 +200,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ profile, comment }) => {
               </div>
             }
           />
-        )}
+        )} */}
       </motion.div>
     </AnimatePresence>
   );

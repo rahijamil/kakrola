@@ -2,12 +2,12 @@ import React, { Dispatch, SetStateAction } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { Dialog } from "@/components/ui";
 import { usePathname, useSearchParams } from "next/navigation";
-import { PricingPlanForSettings } from "../pricing.types";
+import { Tier } from "@/lib/constants/pricing-tier";
 
 const CheckoutSuccess = ({
   setSelectedPlan,
 }: {
-  setSelectedPlan: Dispatch<SetStateAction<PricingPlanForSettings | null>>;
+  setSelectedPlan: Dispatch<SetStateAction<Tier | null>>;
 }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();

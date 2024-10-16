@@ -22,8 +22,12 @@ import {
 } from "@/types/activitylog";
 import { useAuthProvider } from "@/context/AuthContext";
 import { useRole } from "@/context/RoleContext";
-import { canEditSection } from "@/types/hasPermission";
 import { usePathname, useSearchParams } from "next/navigation";
+import { ThemeMode } from "@/lib/theme.types";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
+import { PermissionName } from "@/types/role";
+import withPermission from "@/utils/withPermission";
+import { canCreateContent } from "@/utils/permissionUtils";
 
 const BoardViewColumn = ({
   column,
@@ -111,10 +115,18 @@ const BoardViewColumn = ({
     const findSection = sections.find((s) => s.id == column.id);
 
     if (!findSection?.is_inbox && findSection?.project_id) {
-      const userRole = role({ _project_id: findSection.project_id });
-      const canEdit = userRole ? canEditSection(userRole) : false;
-
-      if (!canEdit) return;
+      if (
+        !canCreateContent(
+          role({
+            project,
+            page: null,
+          }),
+          !!project?.team_id
+        )
+      ) {
+        console.error("User doesn't have permission to create a section");
+        return;
+      }
     }
 
     if (columnTitle.trim().length && columnTitle.trim() !== column.title) {
@@ -165,17 +177,17 @@ const BoardViewColumn = ({
 
   const { foundFixedDropdown } = useFoundFixedDropdown();
 
-  const { theme } = useTheme();
+  const { themeMode } = useTheme();
 
   const sectionColor = sections.find((s) => s.id == column.id)?.color || "gray";
 
   // Tailwind doesn't generate all color classes by default, so we need to explicitly define them
   const bgColorClass =
-    theme == "dark"
+    themeMode == ThemeMode.DARK
       ? `${sectionColor == "gray" ? `bg-surface` : `bg-${sectionColor}-500/20`}`
       : `bg-${sectionColor}-25`;
   const hoverBgColorClass =
-    theme == "dark"
+    themeMode == ThemeMode.DARK
       ? `hover:bg-${sectionColor}-800`
       : `hover:bg-${sectionColor}-200`;
 
@@ -189,6 +201,14 @@ const BoardViewColumn = ({
       setShowTaskItemModal(null);
     }
   }, [searchTask]);
+
+  const AddNewSection = withPermission(AddNewSectionBoardView, {
+    permissionName: project?.team_id
+      ? PermissionName.CREATE_TEAM_CONTENT
+      : PermissionName.CREATE_PERSONAL_CONTENT,
+    project: project,
+    page: null,
+  });
 
   return (
     <>
@@ -234,7 +254,7 @@ const BoardViewColumn = ({
                 {...boardDraggaleProvided.draggableProps}
                 {...boardDraggaleProvided.dragHandleProps}
               >
-                <Droppable droppableId={column.id} type="task">
+                <Droppable droppableId={column.id} type="task" key={column.id}>
                   {(provided, snapshot) => (
                     <div
                       ref={provided.innerRef}
@@ -270,7 +290,7 @@ const BoardViewColumn = ({
                           <input
                             value={columnTitle}
                             onChange={(ev) => setColumnTitle(ev.target.value)}
-                            className="font-bold rounded-lg px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 w-full"
+                            className="font-bold rounded-lg px-[6px] outline-none border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 w-full bg-transparent"
                             onKeyDown={(ev) => {
                               if (ev.key === "Enter") {
                                 handleUpdateColumnTitle();
@@ -385,7 +405,7 @@ const BoardViewColumn = ({
       </Draggable>
 
       {columns && columns?.length - 1 != columnIndex && (
-        <AddNewSectionBoardView
+        <AddNewSection
           setShowUngroupedAddSection={setShowUngroupedAddSection}
           columnId={column.id}
           columns={columns}

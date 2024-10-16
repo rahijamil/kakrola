@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction} from "react";
+import React, { Dispatch, SetStateAction, useRef } from "react";
 import Dropdown from "@/components/ui/Dropdown";
 import {
   Plus,
@@ -13,7 +13,6 @@ import useScreen from "@/hooks/useScreen";
 const SidebarCreateMore = ({
   quickActions: { isOpen },
   setQuickActions,
-  triggerRef
 }: {
   quickActions: {
     isOpen: boolean;
@@ -28,9 +27,9 @@ const SidebarCreateMore = ({
       isOpen: boolean;
     }>
   >;
-  triggerRef: React.RefObject<HTMLButtonElement>;
 }) => {
- const { screenWidth } = useScreen();
+  const { screenWidth } = useScreen();
+  const triggerRef = useRef(null);
 
   return (
     <Dropdown
@@ -43,8 +42,11 @@ const SidebarCreateMore = ({
       Label={({ onClick }) =>
         screenWidth > 768 ? (
           <button
+          ref={triggerRef}
             onClick={onClick}
-            className={`flex items-center justify-center w-7 h-7 text-primary-600 font-semibold rounded-lg transition-colors duration-150 z-10 ${isOpen ? "bg-primary-50" : "hover:bg-primary-100"}`}
+            className={`flex items-center justify-center w-7 h-7 text-primary-600 font-semibold rounded-lg transition-colors duration-150 z-10 ${
+              isOpen ? "bg-primary-50" : "hover:bg-primary-100"
+            }`}
           >
             <div className="w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center">
               <Plus className="w-4 h-4 text-surface" strokeWidth={2} />
@@ -53,6 +55,7 @@ const SidebarCreateMore = ({
         ) : (
           <button
             onClick={onClick}
+            ref={triggerRef}
             // floating button best shadow
             className="bg-primary-10 text-primary-500 p-3 rounded-lg shadow-[2px_2px_16px_-4px_rgba(0,0,0,0.5)] transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50"
             aria-label="Add new task"

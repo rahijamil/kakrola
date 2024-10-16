@@ -20,8 +20,10 @@ import PendingItem from "./PendingItem";
 import ShareAvatar from "./ShareAvatar";
 import useScreen from "@/hooks/useScreen";
 import { useQuery } from "@tanstack/react-query";
-import { RoleType } from "@/types/role";
+import { PersonalRoleType, TeamRoleType } from "@/types/role";
 import TeamMemberItem from "./TeamMemberItem";
+import { fetchTeamMembersData } from "@/lib/queries";
+import { TeamMemberData } from "@/lib/queries";
 
 // Define types
 interface MemberData extends PersonalMemberForProjectType {
@@ -72,34 +74,6 @@ const fetchMembersData = async (projectId?: number, pageId?: number) => {
       },
     };
   }) as MemberData[];
-};
-
-interface TeamMemberData extends TeamMemberType {
-  profile: ProfileType;
-}
-
-const fetchTeamMembersData = async (teamId?: TeamType["id"]) => {
-  const { data: members, error: membersError } = await supabaseBrowser
-    .from("team_members")
-    .select("id, team_role, profiles(id, avatar_url, full_name, email)")
-    .eq("team_id", teamId);
-
-  if (membersError) throw new Error("Failed to fetch members");
-
-  return members.map((member) => {
-    const { profiles, ...restMember } = member;
-    return {
-      ...restMember,
-      team_id: teamId,
-      profile_id: (profiles as any).id,
-      profile: profiles as unknown as {
-        id: any;
-        avatar_url: any;
-        full_name: any;
-        email: any;
-      },
-    };
-  }) as TeamMemberData[];
 };
 
 // ShareOption component
@@ -209,7 +183,7 @@ const ShareOption = ({
                     isCurrentUserAdmin={
                       teamMembersData.find(
                         (mem) => mem.profile_id == profile?.id
-                      )?.team_role == RoleType.ADMIN
+                      )?.team_role == TeamRoleType.TEAM_ADMIN
                     }
                   />
                 ))}
@@ -220,7 +194,7 @@ const ShareOption = ({
                     member={member}
                     isCurrentUserAdmin={
                       membersData.find((mem) => mem.profile_id == profile?.id)
-                        ?.role == RoleType.ADMIN
+                        ?.role == PersonalRoleType.ADMIN
                     }
                   />
                 ))}
@@ -233,10 +207,10 @@ const ShareOption = ({
                       teamId
                         ? teamMembersData?.find(
                             (mem) => mem.profile_id == profile?.id
-                          )?.team_role == RoleType.ADMIN
+                          )?.team_role == TeamRoleType.TEAM_ADMIN
                         : membersData?.find(
                             (mem) => mem.profile_id == profile?.id
-                          )?.role == RoleType.ADMIN
+                          )?.role == PersonalRoleType.ADMIN
                     }
                   />
                 ))}

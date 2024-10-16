@@ -13,5 +13,6 @@ export interface PageType {
   settings: {
     color: string;
     banner_url?: string;
+    order_in_team?: number;
   };
 }

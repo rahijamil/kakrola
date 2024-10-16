@@ -23,6 +23,13 @@ import { v4 as uuidv4 } from "uuid";
 import { useQueryClient } from "@tanstack/react-query";
 import { PersonalMemberForProjectType } from "@/types/team";
 import dynamic from "next/dynamic";
+import {
+  NotificationTypeEnum,
+  RelatedEntityTypeEnum,
+} from "@/types/notification";
+import { createNotification } from "@/types/notification";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
+import { getTextFromContent } from "@/lib/getTextFromContent";
 const NovelEditor = dynamic(() => import("@/components/NovelEditor"), {
   ssr: false,
 });
@@ -160,10 +167,10 @@ const AddComentForm = ({
   const editorRef = useRef<HTMLDivElement>(null);
   const ProseMirror = (editorRef.current as any)?.querySelector(".ProseMirror");
 
+  const { projects } = useSidebarDataProvider();
+
   const handleComment = async () => {
     if (!content || !profile) return;
-
-    setIsCommenting(true);
 
     try {
       const tempId = uuidv4();
@@ -178,7 +185,7 @@ const AddComentForm = ({
 
       queryClient.setQueryData(
         ["task_comments", task.id],
-        (oldData: CommentWithProfile[]) => [
+        (oldData: CommentWithProfile[] = []) => [
           ...oldData,
           {
             ...commentData,
@@ -206,7 +213,7 @@ const AddComentForm = ({
 
       queryClient.setQueryData(
         ["task_comments", task.id],
-        (oldData: CommentWithProfile[]) =>
+        (oldData: CommentWithProfile[] = []) =>
           oldData.map((item) =>
             item.id == tempId
               ? {
@@ -218,13 +225,29 @@ const AddComentForm = ({
           )
       );
 
-      // createActivityLog({
-      //   actor_id: profile.id,
-      //   action: ActivityAction.ADDED_COMMENT,
-      //   entity_id: data.id,
-      //   entity_type: EntityType.COMMENT,
-      //   metadata: {},
-      // });
+      createNotification({
+        recipients: task.assignees.map((a) => ({
+          profile_id: a.profile_id,
+          is_read: false,
+        })),
+        triggered_by: {
+          id: profile.id,
+          first_name:
+            profile.full_name?.split(" ")[0] || profile.email?.split("@")[0],
+          avatar_url: profile.avatar_url,
+        },
+        type: NotificationTypeEnum.COMMENT,
+        related_entity_type: RelatedEntityTypeEnum.COMMENT,
+        redirect_url: `/app/project/${
+          projects.find((pro) => pro.id == task.project_id)?.slug
+        }?task=${task.id}`,
+        api_url: null,
+        data: {
+          triggered_by:
+            profile.full_name?.split(" ")[0] || profile.email?.split("@")[0],
+          entityName: getTextFromContent(JSON.parse(commentData.content)).slice(0, 20),
+        },
+      });
     } catch (error) {
       console.error(`Error adding comment: `, error);
     } finally {

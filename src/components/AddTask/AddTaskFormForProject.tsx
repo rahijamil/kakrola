@@ -18,7 +18,8 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import { useRole } from "@/context/RoleContext";
-import { canCreateTask, canEditTask } from "@/types/hasPermission";
+import { PersonalRoleType } from "@/types/role";
+import { canCreateContent, canEditContent } from "@/utils/permissionUtils";
 
 const AddTaskFormForProject = ({
   onClose,
@@ -141,10 +142,18 @@ const AddTaskFormForProject = ({
         setTasks(updatedTasks);
         setLoading(false);
 
-        const userRole = role({ _project_id: taskData.project_id });
-        const canUpdateSection = userRole ? canEditTask(userRole) : false;
-        if (!canUpdateSection) return;
-
+        if (
+          !canEditContent(
+            role({
+              project,
+              page: null,
+            }),
+            !!project?.team_id
+          )
+        ) {
+          console.error("User doesn't have permission");
+          return;
+        }
         // Update the existing task in Supabase
         const { data, error } = await supabaseBrowser
           .from("tasks")
@@ -207,9 +216,18 @@ const AddTaskFormForProject = ({
         resetTaskData();
 
         if (!taskData.project_id) return;
-        const userRole = role({ _project_id: taskData.project_id });
-        const canUpdateSection = userRole ? canCreateTask(userRole) : false;
-        if (!canUpdateSection) return;
+        if (
+          !canCreateContent(
+            role({
+              project,
+              page: null,
+            }),
+            !!project?.team_id
+          )
+        ) {
+          console.error("User doesn't have permission");
+          return;
+        }
 
         // Insert the new task into Supabase
         const { id: tempId, ...taskDataWithoutId } = newTask;

@@ -9,7 +9,7 @@ import {
   TeamType,
 } from "@/types/team";
 import { ProjectType } from "@/types/project";
-import { RoleType } from "@/types/role";
+import { PersonalRoleType } from "@/types/role";
 import { PageType } from "@/types/pageTypes";
 
 export async function POST(req: NextRequest) {
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
         email: string;
         avatar_url: string;
       };
-      role?: RoleType;
+      role?: PersonalRoleType;
     };
 
   if (!emails || !inviter) {
@@ -193,7 +193,7 @@ export async function POST(req: NextRequest) {
           : page_id,
         team_id,
         email,
-        role: role ? role : RoleType["MEMBER"],
+        role: role ? role : PersonalRoleType["MEMBER"],
         status: InviteStatus.PENDING,
         token: uuidv4(),
       };

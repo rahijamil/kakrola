@@ -1,4 +1,5 @@
 import { supabaseBrowser } from "@/utils/supabase/client";
+import { ProfileType } from "./user";
 
 // Enum for all possible notification types
 export enum NotificationTypeEnum {
@@ -24,26 +25,30 @@ export enum RelatedEntityTypeEnum {
 // Notification templates for each type
 const notificationTemplates = {
   [NotificationTypeEnum.INVITE]:
-    "<b>{inviter}</b> invited you to the <b>{entityName}</b>",
+    "<b>{triggered_by}</b> invited you to the <b>{entityName}</b>",
   [NotificationTypeEnum.ASSIGNMENT]:
-    "<b>{assigner}</b> assigned you to the task <b>{entityName}</b>",
+    "<b>{triggered_by}</b> assigned you to the task <b>{entityName}</b>",
   [NotificationTypeEnum.MENTION]:
-    "<b>{mentioner}</b> mentioned you in <b>{entityName}</b>",
+    "<b>{triggered_by}</b> mentioned you in <b>{entityName}</b>",
   [NotificationTypeEnum.END_DATE]:
-    "<b>{assigner}</b> set a new due date for the task <b>{entityName}</b>",
+    "<b>{triggered_by}</b> set a new due date for the task <b>{entityName}</b>",
   [NotificationTypeEnum.COMMENT]:
-    "<b>{commenter}</b> commented on your task <b>{entityName}</b>",
+    "<b>{triggered_by}</b> added a comment: <b>{entityName}</b>",
   [NotificationTypeEnum.PROJECT_UPDATE]:
-    "<b>{updater}</b> updated the project <b>{entityName}</b>",
+    "<b>{triggered_by}</b> updated the project <b>{entityName}</b>",
   [NotificationTypeEnum.TEAM_UPDATE]:
-    "<b>{updater}</b> updated the team <b>{entityName}</b>",
+    "<b>{triggered_by}</b> updated the team <b>{entityName}</b>",
 };
+interface Recipient {
+  profile_id: ProfileType["id"];
+  is_read: boolean;
+}
 
 // Notification interface
 export interface NotificationType {
   id: string;
   created_at: string;
-  recipients: string[];
+  recipients: Recipient[];
   triggered_by: {
     id: string;
     first_name: string;
@@ -54,7 +59,6 @@ export interface NotificationType {
   related_entity_type: RelatedEntityTypeEnum;
   redirect_url: string | null;
   api_url: string | null;
-  is_read: boolean;
 }
 
 // Utility function to format notification content
@@ -82,7 +86,7 @@ export async function createNotification({
   api_url,
   data, // Dynamic data to be used for formatting the content
 }: {
-  recipients: string[];
+  recipients: Recipient[];
   triggered_by: {
     id: string;
     first_name: string;
@@ -92,7 +96,10 @@ export async function createNotification({
   related_entity_type: RelatedEntityTypeEnum;
   redirect_url: string | null;
   api_url: string | null;
-  data: Record<string, string>; // Dynamic data for content formatting
+  data: {
+    triggered_by: string;
+    entityName: string;
+  }; // Dynamic data for content formatting
 }): Promise<Omit<NotificationType, "id"> | null> {
   try {
     // Format the content based on the notification type and provided data
@@ -106,7 +113,6 @@ export async function createNotification({
       related_entity_type,
       redirect_url,
       api_url,
-      is_read: false,
       created_at: new Date().toISOString(),
     };
 

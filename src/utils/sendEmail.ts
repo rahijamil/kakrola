@@ -1,7 +1,6 @@
 import nodemailer from "nodemailer";
 import fs from "fs/promises";
 import path from "path";
-import { ProjectType } from "@/types/project";
 import { TeamType } from "@/types/team";
 import { createClient } from "./supabase/server";
 import {
@@ -94,7 +93,12 @@ export default async function sendInviteEmail({
       if (recipientExistData) {
         // Create a notification
         await createNotification({
-          recipients: [recipientExistData.id],
+          recipients: [
+            {
+              profile_id: recipientExistData.id,
+              is_read: false,
+            },
+          ],
           triggered_by: {
             id: inviter.id,
             first_name: inviter.first_name,
@@ -107,8 +111,10 @@ export default async function sendInviteEmail({
             : `/app/page/${page_data?.slug}`,
           api_url: inviteLink,
           data: {
-            inviter: inviter.first_name,
-            entityName: project_data ? project_data.name : page_data?.name || "",
+            triggered_by: inviter.first_name,
+            entityName: project_data
+              ? project_data.name
+              : page_data?.name || "",
           },
         });
       }
@@ -145,7 +151,12 @@ export default async function sendInviteEmail({
       if (recipientExistData) {
         // Create a notification
         await createNotification({
-          recipients: [recipientExistData.id],
+          recipients: [
+            {
+              profile_id: recipientExistData.id,
+              is_read: false,
+            },
+          ],
           triggered_by: {
             id: inviter.id,
             first_name: inviter.first_name,
@@ -156,7 +167,7 @@ export default async function sendInviteEmail({
           redirect_url: `/app/${team_data.id}`,
           api_url: inviteLink,
           data: {
-            inviter: inviter.first_name,
+            triggered_by: inviter.first_name,
             entityName: team_data.name,
           },
         });

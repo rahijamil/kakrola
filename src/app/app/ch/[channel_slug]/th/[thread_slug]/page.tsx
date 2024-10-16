@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import Thread from "../../Thread";
 import { usePathname } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
+import useScreen from "@/hooks/useScreen";
 
 const ThreadDetailsPage = ({
   params: { channel_slug },
@@ -25,7 +26,8 @@ const ThreadDetailsPage = ({
 
   const pathname = usePathname();
   const threadSlug =
-    pathname === `/app/ch/${channel_slug}/th/new`
+    pathname === `/app/ch/${channel_slug}/th/new` ||
+    pathname.split("/").pop() == channel_slug
       ? null
       : pathname.split("/").pop();
 
@@ -40,6 +42,8 @@ const ThreadDetailsPage = ({
     showOptions,
     setShowOptions,
   } = useThread(findChannel?.id, threadSlug);
+
+  const { screenWidth } = useScreen();
 
   if (threadSlug !== null && (isLoading || sidebarLoading)) {
     return (
@@ -75,12 +79,27 @@ const ThreadDetailsPage = ({
   }
 
   return (
-    <ThreadWrapper
-      channel={findChannel}
-      thread={threadSlug == thread?.slug ? thread : null}
-    >
-      <AnimatePresence>
-        {thread && threadSlug === thread.slug ? (
+    <AnimatePresence>
+      <ThreadWrapper channel={findChannel} thread={thread}>
+        {screenWidth > 768 && pathname === `/app/ch/${findChannel.slug}` ? (
+          <div className="flex flex-col items-center justify-center gap-4 h-full">
+            <Image
+              src="/images/thread.png"
+              width={180}
+              height={100}
+              alt="Channel not found"
+              className="rounded-md object-cover"
+              draggable={false}
+            />
+
+            <div className="space-y-2 text-center">
+              <h2 className="font-semibold mb-2 text-lg">Select a thread</h2>
+              <p className="text-text-600 text-center">
+                Threads keep discussions on-topic.
+              </p>
+            </div>
+          </div>
+        ) : thread && threadSlug === thread.slug ? (
           <Thread
             channel={findChannel}
             thread={thread}
@@ -93,8 +112,8 @@ const ThreadDetailsPage = ({
             channel_slug={channel_slug}
           />
         ) : null}
-      </AnimatePresence>
-    </ThreadWrapper>
+      </ThreadWrapper>
+    </AnimatePresence>
   );
 };
 

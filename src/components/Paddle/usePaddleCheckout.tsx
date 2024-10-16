@@ -1,5 +1,4 @@
 import { useAuthProvider } from "@/context/AuthContext";
-import useTheme from "@/hooks/useTheme";
 import {
   initializePaddle,
   Paddle,
@@ -17,7 +16,7 @@ export const usePaddleCheckout = ({
 }: {
   priceId: string;
   quantity: number;
-  id: "pro" | "business";
+  id: "plus" | "business";
   paddleFrameRef: React.RefObject<HTMLDivElement>;
 }) => {
   const [paddle, setPaddle] = useState<Paddle | null>(null);
