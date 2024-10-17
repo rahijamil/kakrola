@@ -168,7 +168,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                     style={{
                       color: selectedOption?.color
                         ? selectedOption.color
-                        : "var(--color-text-400)",
+                        : "var(--k-color-text-400)",
                     }}
                   />
                 )}

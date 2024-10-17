@@ -82,8 +82,8 @@
     transform: scale(1.05);
     background: linear-gradient(
       to right,
-      var(--color-primary-400),
-      var(--color-primary-500)
+      var(--k-color-primary-400),
+      var(--k-color-primary-500)
     );
   }
 
@@ -93,10 +93,10 @@
   }
 
   .paddle-checkout-frame h2 {
-    color: var(--color-text-900) !important;
+    color: var(--k-color-text-900) !important;
   }
 
   .paddle-checkout-frame p {
-    color: var(--color-text-600) !important;
+    color: var(--k-color-text-600) !important;
   }
 }

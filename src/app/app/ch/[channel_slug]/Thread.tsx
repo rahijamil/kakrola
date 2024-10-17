@@ -92,10 +92,8 @@ const Thread = ({
   };
 
   return (
-    <div
-      className="flex flex-col justify-end h-full"
-    >
-      <div className="max-h-[calc(100vh-170px)] overflow-y-auto">
+    <div className="flex flex-col justify-end h-full">
+      <div className="max-h-[calc(100vh-50px)] md:max-h-[calc(100vh-170px)] overflow-y-auto pb-20 md:pb-0">
         <div className="p-4 md:p-6 pt-8">
           <h1 className="text-2xl md:text-3xl font-bold">{thread.title}</h1>
           <div className="flex items-center gap-1 text-xs">

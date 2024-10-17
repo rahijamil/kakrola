@@ -41,13 +41,13 @@ const SidebarPlusDropdown = ({
           <button
             ref={triggerRef}
             className={`p-1 rounded-lg transition ${
-              isOpen ? "bg-primary-100" : "hover:bg-primary-100"
+              isOpen ? "md:bg-primary-100" : "md:hover:bg-primary-100"
             }`}
             onClick={onClick}
           >
             <Plus
               strokeWidth={1.5}
-              className={`w-[18px] h-[18px] transition-transform duration-150`}
+              className={`w-5 md:w-[18px] h-5 md:h-[18px] transition-transform duration-150`}
             />
           </button>
         )}

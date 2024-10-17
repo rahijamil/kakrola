@@ -31,13 +31,13 @@ const PageItem = ({
   pathname,
   isDragging,
   setIsDragDisabled,
-  forFavorites
+  forFavorites,
 }: {
   page: PageType;
   pathname: string;
   isDragging?: boolean;
   setIsDragDisabled?: React.Dispatch<React.SetStateAction<boolean>>;
-  forFavorites?: boolean
+  forFavorites?: boolean;
 }) => {
   const { sidebarLoading } = useSidebarDataProvider();
 
@@ -96,17 +96,15 @@ const PageItem = ({
         </div>
       ) : (
         <div
-          onTouchStart={(ev) => ev.currentTarget.classList.add("bg-primary-50")}
-          onTouchEnd={(ev) =>
-            ev.currentTarget.classList.remove("bg-primary-50")
-          }
-          className={`sidebar_project_item flex items-center transition-colors duration-150 font-medium md:font-normal w-full border-l-4 relative ${
+          className={`sidebar_project_item flex items-center transition-colors duration-150 font-medium md:font-normal w-full md:border-l-4 relative active:bg-text-100 ${
             isDragging
               ? "bg-surface shadow-[1px_1px_8px_1px_rgba(0,0,0,0.1)]"
               : pathname === `/app/page/${page.slug}`
               ? "bg-primary-100 text-text-900 border-primary-300"
               : "md:hover:bg-primary-50 border-transparent hover:border-primary-200 text-text-700"
           }`}
+          onTouchStart={(ev) => ev.currentTarget.classList.add("bg-text-100")}
+          onTouchEnd={(ev) => ev.currentTarget.classList.remove("bg-text-100")}
         >
           <div
             ref={triggerRef}
@@ -114,7 +112,9 @@ const PageItem = ({
           ></div>
           <Link
             href={`/app/page/${page.slug}`}
-            className={`w-full p-2 ${(page.team_id && !forFavorites) ? "pl-7 pr-4" : "px-4"}`}
+            className={`w-full p-2 h-9 ${
+              page.team_id && !forFavorites ? "pl-7 pr-4" : "px-4"
+            }`}
             draggable={false}
           >
             <div className="flex items-center gap-2">

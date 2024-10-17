@@ -6,6 +6,27 @@ import NotificationItem from "./NotificationItem";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import useScreen from "@/hooks/useScreen";
+import TabSwitcher from "@/components/TabSwitcher";
+import { TabItem } from "@/types/types.utils";
+import { Bell, MailOpen } from "lucide-react";
+
+enum Id {
+  All = "all",
+  Unread = "unread",
+}
+
+const tabItems: TabItem[] = [
+  {
+    id: Id.All,
+    name: "All",
+    icon: <Bell strokeWidth={1.5} className="w-4 h-4" />,
+  },
+  {
+    id: Id.Unread,
+    name: "Unread",
+    icon: <MailOpen strokeWidth={1.5} className="w-4 h-4" />,
+  },
+];
 
 const AppNotifications = () => {
   const { notifications, isLoading } = useNotifications();
@@ -20,27 +41,11 @@ const AppNotifications = () => {
       >
         Notifications
       </h1>
-
-      <div>
-        <ul className="flex items-center p-1 rounded-lg bg-text-100 w-fit">
-          <li
-            className={`p-1 px-4 rounded-lg font-medium cursor-pointer transition ${
-              allUnread === "all" ? "bg-surface" : ""
-            }`}
-            onClick={() => setAllUnread("all")}
-          >
-            All
-          </li>
-          <li
-            className={`p-1 px-4 rounded-lg font-medium cursor-pointer transition ${
-              allUnread === "unread" ? "bg-surface" : ""
-            }`}
-            onClick={() => setAllUnread("unread")}
-          >
-            Unread
-          </li>
-        </ul>
-      </div>
+      <TabSwitcher
+        activeTab={allUnread}
+        setActiveTab={setAllUnread as any}
+        tabItems={tabItems}
+      />
 
       <div className="mt-4">
         {isLoading ? (

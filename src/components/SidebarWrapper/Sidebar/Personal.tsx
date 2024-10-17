@@ -91,22 +91,24 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
         <Skeleton height={16} width={150} borderRadius={9999} />
       ) : (
         <div
-          onTouchStart={(ev) => ev.currentTarget.classList.add("bg-primary-50")}
-          onTouchEnd={(ev) =>
-            ev.currentTarget.classList.remove("bg-primary-50")
-          }
-          // className={`relative text-text-600 rounded-lg transition flex items-center justify-between pl-3 pr-1 ${
-          //   pathname.startsWith("/app/projects") && "bg-primary-100"
-          // } ${!isOpen ? "md:hover:bg-primary-50" : "md:bg-primary-50"}`}
-          className={`flex items-center transition-colors duration-150 font-medium pr-1 md:font-normal w-full border-l-4 group ${
+          // className={`flex items-center transition-colors duration-150 font-medium pr-1 md:font-normal w-full border-l-4 group h-9
+          //   ${
+          //   pathname.startsWith("/app/projects")
+          //     ? "md:bg-primary-100 text-text-900 md:border-primary-200"
+          //     : "md:hover:bg-primary-50 border-transparent md:hover:border-primary-200 text-text-700"
+          // }
+          // `}
+          className={`flex items-center text-text-700 font-medium md:font-normal w-full group h-9 cursor-pointer md:border-l-4 pr-4 active:bg-text-100 ${
             pathname.startsWith("/app/projects")
               ? "md:bg-primary-100 text-text-900 md:border-primary-200"
               : "md:hover:bg-primary-50 border-transparent md:hover:border-primary-200 text-text-700"
           }`}
+          onClick={() => setShowProjects(!showProjects)}
+          onTouchStart={(ev) => ev.currentTarget.classList.add("bg-text-100")}
+          onTouchEnd={(ev) => ev.currentTarget.classList.remove("bg-text-100")}
         >
-          <Link
-            href={`/app/projects`}
-            className={`w-full flex items-center justify-between pl-4 py-2 gap-1`}
+          <div
+            className={`w-full flex items-center justify-between py-2 pl-4 gap-1`}
           >
             <div
               className={`flex items-center ${
@@ -135,7 +137,7 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
                 </span>
               )}
             </div>
-          </Link>
+          </div>
 
           <div
             className={`${
@@ -144,9 +146,10 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
               !isOpen &&
               "opacity-0 group-hover:opacity-100"
             } transition flex items-center`}
+            onClick={(ev) => ev.stopPropagation()}
           >
-            <button
-              className="p-1 hover:bg-primary-100 rounded-lg transition duration-150"
+            {/* <button
+              // className="p-1 hover:bg-primary-100 rounded-lg transition duration-150"
               onClick={() => setShowProjects(!showProjects)}
             >
               <ChevronRight
@@ -155,7 +158,7 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
                   showProjects ? "rotate-90" : ""
                 }`}
               />
-            </button>
+            </button> */}
 
             <SidebarPlusDropdown
               modalStates={{
@@ -171,15 +174,8 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
 
       {showProjects && (
         <motion.div
-          initial={{ opacity: 0.5, height: 0, y: -10 }}
-          animate={{
-            opacity: 1,
-            height: "auto",
-            y: 0,
-            transition: { type: "spring" },
-          }}
-          exit={{ opacity: 0.5, height: 0, y: -10 }}
-          className="bg-text-100 dark:bg-surface md:bg-transparent md:dark:bg-transparent rounded-lg md:rounded-none overflow-hidden"
+
+        // className="bg-text-100 dark:bg-surface md:bg-transparent md:dark:bg-transparent md:rounded-none overflow-hidden"
         >
           <DragDropContext onDragEnd={handleOnDragEnd}>
             <Droppable droppableId="projects">

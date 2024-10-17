@@ -54,6 +54,7 @@ const SidebarNotifications = () => {
 
   return (
     <Dropdown
+      fullMode
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       triggerRef={triggerRef}
@@ -62,11 +63,11 @@ const SidebarNotifications = () => {
           ref={triggerRef}
           onClick={onClick}
           className={`${
-            isOpen
-              ? "bg-primary-100 text-primary-500"
-              : "hover:bg-primary-100 text-text-700"
+            isOpen ? "md:bg-primary-100 md:text-primary-500" : "text-text-700"
           } 
-              rounded-lg transition-colors duration-150 z-10 w-7 h-7 flex items-center justify-center`}
+              rounded-lg transition-colors duration-150 z-10 w-7 h-7 flex items-center justify-center active:bg-text-100`}
+          onTouchStart={(ev) => ev.currentTarget.classList.add("bg-text-100")}
+          onTouchEnd={(ev) => ev.currentTarget.classList.remove("bg-text-100")}
         >
           <Bell strokeWidth={1.5} width={20} />
         </button>

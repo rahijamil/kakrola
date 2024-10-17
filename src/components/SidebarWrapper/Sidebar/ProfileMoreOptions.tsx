@@ -117,7 +117,6 @@ const MenuItem: React.FC<MenuItemProps> = ({
 );
 
 interface ProfileMoreOptionsProps {
-  setShowAddTeam: React.Dispatch<React.SetStateAction<boolean | number>>;
   setShowLogoutConfirm: React.Dispatch<React.SetStateAction<boolean>>;
   setShowAddAnotherAccount: React.Dispatch<React.SetStateAction<boolean>>;
   isOpen: boolean;
@@ -125,7 +124,6 @@ interface ProfileMoreOptionsProps {
 }
 
 const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
-  setShowAddTeam,
   setShowLogoutConfirm,
   setShowAddAnotherAccount,
   isOpen,

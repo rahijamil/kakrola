@@ -59,7 +59,7 @@ const AnimatedTaskCheckbox = ({
         };
       case "P3":
         return {
-          hex: "var(--color-primary-500)",
+          hex: "var(--k-color-primary-500)",
           class1: "bg-primary-500",
           class2: "bg-primary-50",
         };

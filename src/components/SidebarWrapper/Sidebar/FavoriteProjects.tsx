@@ -78,8 +78,21 @@ const FavoriteProjects = ({
       ) : (
         <>
           {hasFavorite && (
-            <div className="w-full flex items-center justify-between p-1 pl-4 text-text-600 rounded-lg transition-colors group">
-              <div className="flex items-center gap-2 pl-1">
+            <div
+              onTouchStart={(ev) =>
+                ev.currentTarget.classList.add("bg-text-100")
+              }
+              onTouchEnd={(ev) =>
+                ev.currentTarget.classList.remove("bg-text-100")
+              }
+              onClick={() => setShowFavoritesProjects(!showFavoritesProjects)}
+              className={`w-full flex items-center justify-between pr-4 text-text-600 transition-colors group h-9 cursor-pointer md:border-l-4 active:bg-text-100 ${
+                pathname.startsWith("/app/projects")
+                  ? "md:bg-primary-100 text-text-900 md:border-primary-200"
+                  : "md:hover:bg-primary-50 border-transparent md:hover:border-primary-200 text-text-700"
+              }`}
+            >
+              <div className="flex items-center gap-2 pl-4">
                 <span className="font-medium text-xs">Favorites</span>
               </div>
 
@@ -88,8 +101,8 @@ const FavoriteProjects = ({
                   screenWidth > 768 && "opacity-0 group-hover:opacity-100"
                 } transition flex items-center`}
               >
-                <button
-                  className="p-1 hover:bg-primary-50 rounded-lg transition"
+                {/* <button
+                  // className="p-1 hover:bg-primary-50 rounded-lg transition"
                   onClick={() =>
                     setShowFavoritesProjects(!showFavoritesProjects)
                   }
@@ -100,7 +113,7 @@ const FavoriteProjects = ({
                       showFavoritesProjects ? "rotate-90" : ""
                     }`}
                   />
-                </button>
+                </button> */}
               </div>
             </div>
           )}
@@ -109,15 +122,7 @@ const FavoriteProjects = ({
 
       {showFavoritesProjects && hasFavorite && (
         <motion.div
-          initial={{ opacity: 0.5, height: 0, y: -10 }}
-          animate={{
-            opacity: 1,
-            height: "auto",
-            y: 0,
-            transition: { type: "spring" },
-          }}
-          exit={{ opacity: 0.5, height: 0, y: -10 }}
-          className="bg-text-100 dark:bg-surface md:bg-transparent md:dark:bg-transparent rounded-lg md:rounded-none overflow-hidden"
+        // className="bg-text-100 dark:bg-surface md:bg-transparent md:dark:bg-transparent overflow-hidden"
         >
           <ul>
             {favoriteProjects.map((project) => (
@@ -130,7 +135,12 @@ const FavoriteProjects = ({
             ))}
 
             {favoritePages.map((page) => (
-              <PageItem key={page.id} page={page} pathname={pathname} forFavorites />
+              <PageItem
+                key={page.id}
+                page={page}
+                pathname={pathname}
+                forFavorites
+              />
             ))}
 
             {favoriteChannels.map((channel) => (

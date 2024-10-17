@@ -45,6 +45,7 @@ interface DropdownProps {
   titleRightAction?: ReactNode;
   fullMode?: boolean;
   style?: CSSProperties;
+  touchMoveClose?: boolean;
 }
 
 import { AnimatePresence, motion } from "framer-motion";
@@ -68,6 +69,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   titleRightAction,
   fullMode,
   style,
+  touchMoveClose = true,
 }) => {
   const [position, setPosition] = useState<{
     top: string;
@@ -231,7 +233,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       if (offsetY > 0 && scrollTop === 0) {
         setDragOffsetY(offsetY);
 
-        if (offsetY > (menuRef.current?.clientHeight || 200) / 2) {
+        if (offsetY > (menuRef.current?.clientHeight || 200) / 3) {
           setOverlayOpen(false);
         } else {
           setOverlayOpen(true);
@@ -244,7 +246,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   const handleTouchEnd = () => {
     if (isDragging) {
-      if (dragOffsetY > (menuRef.current?.clientHeight || 200) / 2) {
+      if (dragOffsetY > (menuRef.current?.clientHeight || 200) / 3) {
         setIsOpen(false);
       }
       setIsDragging(false);
@@ -327,7 +329,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                       {items.map((item, _index) => (
                         <>
                           <div
-                            key={_index}
+                            key={item.id}
                             onClick={(ev) => ev.stopPropagation()}
                           >
                             {item.parentTitle && (
@@ -440,15 +442,26 @@ const Dropdown: React.FC<DropdownProps> = ({
                       id="fixed_dropdown"
                       data-form-element={dataFromElement}
                       onClick={(ev) => ev.stopPropagation()}
-                      className={`fixed z-[70] bg-surface shadow-lg rounded-t-2xl touch-none ${
+                      className={`fixed z-[70] bg-surface shadow-[1px_1px_.5rem_0_rgba(0,0,0,0.1)] rounded-t-2xl touch-none ${
                         fullMode ? "inset-0" : "inset-x-0 bottom-0"
                       }`}
+                      onTouchStart={(ev) =>
+                        touchMoveClose && handleTouchStart(ev)
+                      }
+                      onTouchMove={(ev) =>
+                        touchMoveClose && handleTouchMove(ev)
+                      }
+                      onTouchEnd={() => touchMoveClose && handleTouchEnd()}
                     >
                       <div
                         className="space-y-2"
-                        onTouchStart={handleTouchStart}
-                        onTouchMove={handleTouchMove}
-                        onTouchEnd={handleTouchEnd}
+                        onTouchStart={(ev) =>
+                          !touchMoveClose && handleTouchStart(ev)
+                        }
+                        onTouchMove={(ev) =>
+                          !touchMoveClose && handleTouchMove(ev)
+                        }
+                        onTouchEnd={() => !touchMoveClose && handleTouchEnd()}
                       >
                         <div className="flex items-center justify-center pt-2">
                           <div className="w-10 h-1 bg-text-100 rounded-full"></div>
@@ -473,6 +486,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                           <div className="w-[calc(100%-2rem)] mx-auto h-px bg-text-100 my-1"></div>
                         </div>
                       </div>
+
                       {beforeItemsContent && (
                         <div className="px-4">{beforeItemsContent}</div>
                       )}
@@ -481,7 +495,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                           {items.map((item, _index) => (
                             <>
                               <div
-                                key={_index}
+                                key={item.id}
                                 onClick={(ev) => ev.stopPropagation()}
                               >
                                 {item.parentTitle && (

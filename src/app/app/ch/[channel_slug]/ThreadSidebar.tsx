@@ -101,7 +101,7 @@ const ThreadSidebar = ({ channel_slug }: { channel_slug: string }) => {
           ) : (
             <div className="flex items-center gap-3">
               <button
-                onClick={() => router.push(`/app/ch/${channel.slug}`)}
+                onClick={() => router.push(`/app`)}
                 className="flex items-center text-text-700 transition p-1"
               >
                 <ChevronLeft

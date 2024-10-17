@@ -46,9 +46,12 @@ const TeamProjects = ({
     if (team) {
       setTeamProjects(projects.filter((p) => p.team_id === team.id));
       setTeamPages(pages.filter((p) => p.team_id === team.id));
-      setTeamChannels(channels.filter((c) => c.team_id === team.id).sort((a, b) => a.settings.order - b.settings.order));
+      setTeamChannels(
+        channels
+          .filter((c) => c.team_id === team.id)
+          .sort((a, b) => a.settings.order - b.settings.order)
+      );
     }
-
   }, [team, projects, pages, channels]);
 
   const handleOnDragEnd = async (result: DropResult) => {
@@ -112,20 +115,21 @@ const TeamProjects = ({
           <Skeleton width={20} borderRadius={9999} />
         ) : (
           <div
-            onTouchStart={(ev) =>
-              ev.currentTarget.classList.add("bg-primary-50")
-            }
-            onTouchEnd={(ev) =>
-              ev.currentTarget.classList.remove("bg-primary-50")
-            }
-            className={`flex items-center transition-colors duration-150 font-medium pr-1 md:font-normal w-full border-l-4 group ${
+            className={`flex items-center transition-colors duration-150 font-medium pr-4 md:font-normal w-full md:border-l-4 group h-9 active:bg-text-100 cursor-pointer ${
               isOpen
                 ? "md:bg-primary-100 text-text-900 md:border-primary-200"
                 : "md:hover:bg-primary-50 border-transparent md:hover:border-primary-200 text-text-700"
             }`}
+            onClick={() => setShowProjects(!showProjects)}
+            onTouchStart={(ev) =>
+              ev.currentTarget.classList.add("bg-text-100")
+            }
+            onTouchEnd={(ev) =>
+              ev.currentTarget.classList.remove("bg-text-100")
+            }
           >
-            <Link
-              href={`/app/${team.id}`}
+            <div
+              // href={`/app/${team.id}`}
               className={`w-full flex items-center justify-between pl-4 py-[7px] gap-1`}
             >
               <div
@@ -163,7 +167,7 @@ const TeamProjects = ({
                   </span>
                 </div>
               </div>
-            </Link>
+            </div>
 
             <div
               className={`${
@@ -173,9 +177,10 @@ const TeamProjects = ({
                 !isOpen &&
                 "opacity-0 group-hover:opacity-100"
               } transition flex items-center`}
+              onClick={(ev) => ev.stopPropagation()}
             >
-              <button
-                className="p-1 hover:bg-primary-100 rounded-lg transition duration-150"
+              {/* <button
+                className="p-1 md:hover:bg-primary-100 rounded-lg transition duration-150"
                 onClick={() => setShowProjects(!showProjects)}
               >
                 <ChevronRight
@@ -184,7 +189,7 @@ const TeamProjects = ({
                     showProjects ? "rotate-90" : ""
                   }`}
                 />
-              </button>
+              </button> */}
               <SidebarPlusDropdown
                 teamId={team.id}
                 modalStates={{
@@ -202,15 +207,8 @@ const TeamProjects = ({
 
         {showProjects && (
           <motion.div
-            initial={{ opacity: 0.5, height: 0, y: -10 }}
-            animate={{
-              opacity: 1,
-              height: "auto",
-              y: 0,
-              transition: { type: "spring" },
-            }}
-            exit={{ opacity: 0.5, height: 0, y: -10 }}
-            className="bg-text-100 dark:bg-surface md:bg-transparent md:dark:bg-transparent rounded-lg md:rounded-none overflow-hidden"
+
+          // className="bg-text-100 dark:bg-surface md:bg-transparent md:dark:bg-transparent md:rounded-none overflow-hidden"
           >
             <DragDropContext onDragEnd={handleOnDragEnd}>
               <Droppable droppableId="teams">

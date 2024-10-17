@@ -33,7 +33,6 @@ const ThreadWrapper = ({
 }) => {
   const { screenWidth } = useScreen();
 
-  const router = useRouter();
   const pathname = usePathname();
 
   const {
@@ -56,20 +55,16 @@ const ThreadWrapper = ({
       duration: 0.2,
       ease: "easeInOut",
       type: "spring",
+      stiffness: 100,
+      damping: 10,
     },
   };
 
   const motionPropsForMobile = {
-    initial: { opacity: 0, x: 100 },
-    animate: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: 100 },
-    transition: {
-      duration: 0.2,
-      ease: "easeInOut",
-      type: "spring",
-      stiffness: 100,
-      damping: 10,
-    },
+    initial: { x: 100, opacity: 0 },
+    animate: { x: 0, opacity: 1 },
+    exit: { x: 100, opacity: 0 },
+    transition: { duration: 0.3, ease: "easeInOut", type: "spring" },
   };
 
   const triggerRef = useRef(null);
@@ -89,11 +84,19 @@ const ThreadWrapper = ({
   const toggleModal = (key: keyof typeof modalState, value: boolean | null) =>
     setModalState((prev) => ({ ...prev, [key]: value }));
 
+  if (
+    !thread &&
+    screenWidth <= 768 &&
+    pathname !== `/app/ch/${channel.slug}/th/new`
+  ) {
+    return null;
+  }
+
   return (
     <>
       <motion.div
         {...(screenWidth > 768 ? motionProps : motionPropsForMobile)}
-        className={`flex flex-col h-full w-full flex-1 transition-all duration-300 fixed inset-0 bg-background z-10 md:z-auto md:inset-auto md:static ${
+        className={`flex flex-col h-full w-full flex-1 fixed inset-0 bg-background z-10 md:z-auto md:inset-auto md:static ${
           !thread ? "thread-wrapper" : ""
         }`}
         onContextMenu={(e) => e.preventDefault()}
@@ -149,8 +152,27 @@ const ThreadWrapper = ({
                 </>
               ) : (
                 <>
-                  <div className="flex items-center justify-end gap-4">
+                  <div className="flex items-center justify-center gap-3">
                     <button
+                      onClick={() =>
+                        window.history.pushState(
+                          null,
+                          "",
+                          `/app/ch/${channel.slug}`
+                        )
+                      }
+                      disabled={loading}
+                      type="button"
+                      className="w-6 h-6"
+                    >
+                      <ChevronLeft strokeWidth={1.5} size={24} />
+                    </button>
+
+                    <p className="font-semibold">New Thread</p>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-4">
+                    {/* <button
                       onClick={() =>
                         window.history.pushState(
                           null,
@@ -163,7 +185,7 @@ const ThreadWrapper = ({
                       className="flex items-center gap-2 bg-text-100 text-text-700 hover:text-text-900 p-2 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg"
                     >
                       <X size={20} />
-                    </button>
+                    </button> */}
 
                     <button
                       onClick={handleAddThread}

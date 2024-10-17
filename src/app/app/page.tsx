@@ -12,7 +12,7 @@ import { CalendarCheck, CalendarDays } from "lucide-react";
 import { motion } from "framer-motion";
 import { fetchTodayUpcomingTasks } from "@/utils/fetchTodayUpcomingTasks";
 import useScreen from "@/hooks/useScreen";
-import MobileHome from "@/components/MobileHome";
+import Sidebar from "@/components/SidebarWrapper/Sidebar";
 
 const TabsComponent = ({
   tabs,
@@ -41,7 +41,7 @@ const TabsComponent = ({
 
           {tabs === tab && (
             <motion.span
-              layoutId="activeIndicator"
+              layoutId="myTaskActiveIndicator"
               className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-500"
               initial={false}
               transition={{
@@ -119,7 +119,7 @@ const MyTasksPage = () => {
       {renderTaskViewSwitcher()}
     </LayoutWrapper>
   ) : (
-    <MobileHome />
+    <Sidebar sidebarWidth={screenWidth} />
   );
 };
 

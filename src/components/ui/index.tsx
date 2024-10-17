@@ -16,6 +16,7 @@ import React, {
 import { motion } from "framer-motion";
 import { createPortal } from "react-dom";
 import PortalWrapper from "../PortalWrapper";
+import useScreen from "@/hooks/useScreen";
 
 // Dialog Component
 interface DialogProps {
@@ -26,6 +27,7 @@ interface DialogProps {
   bgWhite?: boolean;
   lessOverlay?: boolean;
   hideCloseIcon?: boolean;
+  fullMode?: boolean;
 }
 
 export const Dialog: React.FC<DialogProps> = ({
@@ -36,7 +38,9 @@ export const Dialog: React.FC<DialogProps> = ({
   bgWhite,
   lessOverlay,
   hideCloseIcon,
+  fullMode,
 }) => {
+  const { screenWidth } = useScreen();
   return (
     <PortalWrapper>
       <motion.div
@@ -58,7 +62,9 @@ export const Dialog: React.FC<DialogProps> = ({
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.99 }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className={`relative md:rounded-lg md:shadow-lg w-full md:w-11/12 flex flex-col ${
+          className={`${
+            fullMode ? "fixed inset-0 md:relative" : "relative"
+          } md:rounded-lg md:shadow-lg w-full md:w-11/12 flex flex-col ${
             bgWhite ? "bg-white" : "bg-surface"
           } ${
             size === "xs"
@@ -73,9 +79,13 @@ export const Dialog: React.FC<DialogProps> = ({
           }`}
           onClick={(ev) => ev.stopPropagation()}
         >
-          {!hideCloseIcon && (
+          {screenWidth > 768 && !hideCloseIcon && (
             <button
-              className={`absolute top-2 right-2 transition rounded-lg p-1 text-text-500 ${bgWhite ? "hover:bg-[#ebebeb] hover:text-[#333333]" : "hover:bg-text-100 hover:text-text-700"} z-10`}
+              className={`absolute top-2 right-2 transition rounded-lg p-1 text-text-500 ${
+                bgWhite
+                  ? "hover:bg-[#ebebeb] hover:text-[#333333]"
+                  : "hover:bg-text-100 hover:text-text-700"
+              } z-10`}
               onClick={onClose}
               type="button"
             >

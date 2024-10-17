@@ -6,6 +6,7 @@ import {
   Briefcase,
   Building,
   UserCircle,
+  ChevronLeft,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import PortalWrapper from "./PortalWrapper";
 import { Dialog } from "./ui";
 import { useSearchParams } from "next/navigation";
+import useScreen from "@/hooks/useScreen";
 
 // Updated TeamData type
 interface TeamData extends BaseTeamType {
@@ -173,27 +175,43 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
   const searchParams = useSearchParams();
   const settings = searchParams.get("settings");
 
+  const { screenWidth } = useScreen();
+
   return (
     <PortalWrapper>
       <Dialog
         onClose={onClose}
         size="xs"
         lessOverlay={settings == "teamspaces"}
+        fullMode
       >
-        <div className="space-y-6 p-6 relative">
-          <div className="flex justify-between items-center text-text-700">
-            <h1 className="font-semibold text-lg">
-              {step === 1
-                ? "Create a new teamspace"
-                : step == 2
-                ? "Tell us about your team"
-                : "Invite your teammates"}
-            </h1>
+        <div className="space-y-6 md:p-6 relative">
+          <div>
+            <div className="flex gap-3 items-center text-text-700 px-4 py-2 md:px-0 md:py-0 border-b md:border-none border-text-100">
+              {screenWidth <= 768 && (
+                <>
+                  <button onClick={onClose} className="w-6 h-6">
+                    <ChevronLeft strokeWidth={1.5} size={24} />
+                  </button>
+
+                  <h1 className="font-semibold md:text-lg">New teamspace</h1>
+                </>
+              )}
+              {screenWidth > 768 && (
+                <h1 className="font-semibold md:text-lg">
+                  {step === 1
+                    ? "Create a new teamspace"
+                    : step == 2
+                    ? "Tell us about your team"
+                    : "Invite your teammates"}
+                </h1>
+              )}
+            </div>
           </div>
 
           <form
             onSubmit={handleSubmit}
-            className="space-y-6 md:space-y-8 px-2 sm:p-0"
+            className="space-y-6 md:space-y-8 md:px-2 sm:p-0"
           >
             {step === 1 ? (
               <div className="space-y-2">
@@ -209,9 +227,15 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
                   autoComplete="off"
                   autoFocus
                 />
-                <p className="text-text-500 text-[13px]">
-                  Keep it something simple your teammates will recognize.
-                </p>
+                {screenWidth > 768 ? (
+                  <p className="text-text-500 text-[13px]">
+                    Keep it something simple your teammates will recognize.
+                  </p>
+                ) : (
+                  <p className="text-xs text-text-500 p-2 rounded-lg border border-text-100 bg-background mx-4">
+                    Keep it something simple your teammates will recognize.
+                  </p>
+                )}
               </div>
             ) : step == 2 ? (
               <>
@@ -266,32 +290,34 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
               </div>
             )}
 
-            <Button
-              type="submit"
-              fullWidth
-              disabled={
-                step == 1
-                  ? teamData.name.trim().length == 0
-                  : step == 2
-                  ? !teamData.industry ||
-                    !teamData.work_type ||
-                    !teamData.work_role ||
-                    !teamData.organization_size
-                    ? true
+            <div className="px-4 md:px-0">
+              <Button
+                type="submit"
+                fullWidth
+                disabled={
+                  step == 1
+                    ? teamData.name.trim().length == 0
+                    : step == 2
+                    ? !teamData.industry ||
+                      !teamData.work_type ||
+                      !teamData.work_role ||
+                      !teamData.organization_size
+                      ? true
+                      : false
                     : false
-                  : false
-              }
-            >
-              {step === 1
-                ? "Get started"
-                : step == 2
-                ? "Setup and continue"
-                : "Create team"}
-              {step !== 3 && <ChevronRight size={16} className="ml-2" />}
-            </Button>
+                }
+              >
+                {step === 1
+                  ? "Get started"
+                  : step == 2
+                  ? "Setup and continue"
+                  : "Create team"}
+                {step !== 3 && <ChevronRight size={16} className="ml-2" />}
+              </Button>
+            </div>
           </form>
 
-          <div className="text-xs text-text-500 whitespace-normal">
+          <div className="text-xs text-text-500 whitespace-normal px-4 md:px-0">
             By creating a team, you agree to our{" "}
             <Link href="#" className="text-primary-600 hover:underline">
               Terms of Service

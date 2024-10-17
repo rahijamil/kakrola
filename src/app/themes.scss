@@ -1,426 +1,426 @@
 // Kakrola
 :root {
-  --skeleton-base-color: var(--color-text-100);
-  --skeleton-highlight-color: var(--color-text-50);
+  --skeleton-base-color: var(--k-color-text-100);
+  --skeleton-highlight-color: var(--k-color-text-50);
 
   /* Kakrola Light Theme - adjusted */
-  /* --color-primary-25: #f5f5f5; */
+  /* --k-color-primary-25: #f5f5f5; */
 
-  --color-primary-10: #f7fbfd;
-  --color-primary-25: #f0f7fa;
-  --color-primary-50: #e1eff5;
-  --color-primary-100: #c3dfeb;
-  --color-primary-200: #a5cfe1;
-  --color-primary-300: #87bfd7;
-  --color-primary-400: #69afcd;
-  --color-primary-500: #005c83; /* Base color */
-  --color-primary-600: #004d6e;
-  --color-primary-700: #003e59;
-  --color-primary-800: #002f44;
-  --color-primary-900: #00202f;
+  --k-color-primary-10: #f7fbfd;
+  --k-color-primary-25: #f0f7fa;
+  --k-color-primary-50: #e1eff5;
+  --k-color-primary-100: #c3dfeb;
+  --k-color-primary-200: #a5cfe1;
+  --k-color-primary-300: #87bfd7;
+  --k-color-primary-400: #69afcd;
+  --k-color-primary-500: #005c83; /* Base color */
+  --k-color-primary-600: #004d6e;
+  --k-color-primary-700: #003e59;
+  --k-color-primary-800: #002f44;
+  --k-color-primary-900: #00202f;
 
-  // --color-primary-10: #f2f2f2;
-  // --color-primary-25: #e5e5e5;
-  // --color-primary-50: #cccccc;
-  // --color-primary-100: #b3b3b3;
-  // --color-primary-200: #999999;
-  // --color-primary-300: #808080;
-  // --color-primary-400: #666666;
-  // --color-primary-500: #555555; /* Base color */
-  // --color-primary-600: #444444;
-  // --color-primary-700: #333333;
-  // --color-primary-800: #222222;
-  // --color-primary-900: #000000;
+  // --k-color-primary-10: #f2f2f2;
+  // --k-color-primary-25: #e5e5e5;
+  // --k-color-primary-50: #cccccc;
+  // --k-color-primary-100: #b3b3b3;
+  // --k-color-primary-200: #999999;
+  // --k-color-primary-300: #808080;
+  // --k-color-primary-400: #666666;
+  // --k-color-primary-500: #555555; /* Base color */
+  // --k-color-primary-600: #444444;
+  // --k-color-primary-700: #333333;
+  // --k-color-primary-800: #222222;
+  // --k-color-primary-900: #000000;
 
-  --color-primary2: #0076a3;
+  --k-color-primary2: #0076a3;
 
-  --color-secondary: #ff7d36; /* Light orange for secondary highlights */
-  --color-accent: #ff4081; /* Vivid pink accent color */
-  --color-background: #ffffff; /* Soft off-white background for main content areas */
-  --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
+  --k-color-secondary: #ff7d36; /* Light orange for secondary highlights */
+  --k-color-accent: #ff4081; /* Vivid pink accent color */
+  --k-color-background: #ffffff; /* Soft off-white background for main content areas */
+  --k-color-surface: #ffffff; /* Pure white for cards, modals, etc. */
 
-  --color-text-10: #f7f7f7;
-  --color-text-50: #f5f5f5; /* Very light grey for muted text */
-  --color-text-100: #ebebeb;
-  --color-text-200: #e0e0e0;
-  --color-text-300: #cccccc;
-  --color-text-400: #b3b3b3;
-  --color-text-500: #666666; /* Darker text color for light theme */
-  --color-text-600: #4d4d4d;
-  --color-text-700: #333333;
-  --color-text-800: #1a1a1a;
-  --color-text-900: #111827; /* Black for main text */
+  --k-color-text-10: #f7f7f7;
+  --k-color-text-50: #f5f5f5; /* Very light grey for muted text */
+  --k-color-text-100: #ebebeb;
+  --k-color-text-200: #e0e0e0;
+  --k-color-text-300: #cccccc;
+  --k-color-text-400: #b3b3b3;
+  --k-color-text-500: #666666; /* Darker text color for light theme */
+  --k-color-text-600: #4d4d4d;
+  --k-color-text-700: #333333;
+  --k-color-text-800: #1a1a1a;
+  --k-color-text-900: #111827; /* Black for main text */
 }
 
 [data-theme="kakrola-dark"] {
-  --color-primary-10: #191c20;
-  --color-primary-25: #1e1e1e;
-  --color-primary-50: #23282f;
-  --color-primary-100: #2d3642;
-  --color-primary-200: #374455;
-  --color-primary-300: #415268;
-  --color-primary-400: #4b607b;
-  --color-primary-500: #a0b4de; /* Lightened for better visibility */
-  --color-primary-600: #96a6ca;
-  --color-primary-700: #a7b4d2;
-  --color-primary-800: #b7c2da;
-  --color-primary-900: #c8d0e2;
+  --k-color-primary-10: #191c20;
+  --k-color-primary-25: #1e1e1e;
+  --k-color-primary-50: #23282f;
+  --k-color-primary-100: #2d3642;
+  --k-color-primary-200: #374455;
+  --k-color-primary-300: #415268;
+  --k-color-primary-400: #4b607b;
+  --k-color-primary-500: #a0b4de; /* Lightened for better visibility */
+  --k-color-primary-600: #96a6ca;
+  --k-color-primary-700: #a7b4d2;
+  --k-color-primary-800: #b7c2da;
+  --k-color-primary-900: #c8d0e2;
 
-  --color-secondary: #bb86fc; /* Lavender for secondary highlights */
-  --color-accent: #ff4081; /* Vivid pink for notifications, success messages */
-  --color-background: #151515; /* Dark background for main content areas */
-  --color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
+  --k-color-secondary: #bb86fc; /* Lavender for secondary highlights */
+  --k-color-accent: #ff4081; /* Vivid pink for notifications, success messages */
+  --k-color-background: #151515; /* Dark background for main content areas */
+  --k-color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
 
-  --color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
-  --color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
-  --color-text-100: #2a2a2a; /* Dark grey */
-  --color-text-200: #333333; /* Darker grey for less subtle text */
-  --color-text-300: #4d4d4d; /* Medium-dark grey */
-  --color-text-400: #666666; /* Slightly lighter grey */
-  --color-text-500: #808080; /* Neutral grey */
-  --color-text-600: #999999; /* Light grey for general text */
-  --color-text-700: #b3b3b3; /* Lighter grey */
-  --color-text-800: #cccccc; /* Light grey */
-  --color-text-900: #ffffff; /* White for main text */
+  --k-color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
+  --k-color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
+  --k-color-text-100: #2a2a2a; /* Dark grey */
+  --k-color-text-200: #333333; /* Darker grey for less subtle text */
+  --k-color-text-300: #4d4d4d; /* Medium-dark grey */
+  --k-color-text-400: #666666; /* Slightly lighter grey */
+  --k-color-text-500: #808080; /* Neutral grey */
+  --k-color-text-600: #999999; /* Light grey for general text */
+  --k-color-text-700: #b3b3b3; /* Lighter grey */
+  --k-color-text-800: #cccccc; /* Light grey */
+  --k-color-text-900: #ffffff; /* White for main text */
 }
 
 [data-theme="moonstone"] {
-  --color-primary-10: #f2f4f8; /* Very light, cool grey */
-  --color-primary-25: #e6e9ef; /* Light cool grey */
-  --color-primary-50: #ccd3df; /* Soft light grey with blue undertones */
-  --color-primary-100: #99a7bf; /* Light grey-blue */
-  --color-primary-200: #66799f; /* Muted blue-grey */
-  --color-primary-300: #445a7f; /* Soft blue-grey */
-  --color-primary-400: #3c506e; /* Slightly darker blue-grey */
-  --color-primary-500: #39485e; /* Base color - dark blue-grey */
-  --color-primary-600: #313e54; /* Darker shade of blue-grey */
-  --color-primary-700: #2a3547; /* Even darker shade */
-  --color-primary-800: #222b3a; /* Deep navy blue */
-  --color-primary-900: #1b2230; /* Darkest navy shade */
+  --k-color-primary-10: #f2f4f8; /* Very light, cool grey */
+  --k-color-primary-25: #e6e9ef; /* Light cool grey */
+  --k-color-primary-50: #ccd3df; /* Soft light grey with blue undertones */
+  --k-color-primary-100: #99a7bf; /* Light grey-blue */
+  --k-color-primary-200: #66799f; /* Muted blue-grey */
+  --k-color-primary-300: #445a7f; /* Soft blue-grey */
+  --k-color-primary-400: #3c506e; /* Slightly darker blue-grey */
+  --k-color-primary-500: #39485e; /* Base color - dark blue-grey */
+  --k-color-primary-600: #313e54; /* Darker shade of blue-grey */
+  --k-color-primary-700: #2a3547; /* Even darker shade */
+  --k-color-primary-800: #222b3a; /* Deep navy blue */
+  --k-color-primary-900: #1b2230; /* Darkest navy shade */
 
-  --color-primary-10: #121820;
-  --color-primary-25: #1a2330;
-  --color-primary-50: #232d3d;
-  --color-primary-100: #2c384a;
-  --color-primary-200: #354357;
-  --color-primary-300: #3e4e64;
-  --color-primary-400: #475971;
-  --color-primary-500: #50647e;
-  --color-primary-600: #5a6f8b;
-  --color-primary-700: #647a98;
-  --color-primary-800: #7389a7;
-  --color-primary-900: #8298b6;
+  --k-color-primary-10: #121820;
+  --k-color-primary-25: #1a2330;
+  --k-color-primary-50: #232d3d;
+  --k-color-primary-100: #2c384a;
+  --k-color-primary-200: #354357;
+  --k-color-primary-300: #3e4e64;
+  --k-color-primary-400: #475971;
+  --k-color-primary-500: #50647e;
+  --k-color-primary-600: #5a6f8b;
+  --k-color-primary-700: #647a98;
+  --k-color-primary-800: #7389a7;
+  --k-color-primary-900: #8298b6;
 
-  --color-secondary: #6e5e9e; /* Muted purple for secondary highlights */
-  --color-accent: #ffb84d; /* Warm golden orange accent for contrast */
-  --color-background: #f5f7fa; /* Very light grey-blue background for main content areas */
-  --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
+  --k-color-secondary: #6e5e9e; /* Muted purple for secondary highlights */
+  --k-color-accent: #ffb84d; /* Warm golden orange accent for contrast */
+  --k-color-background: #f5f7fa; /* Very light grey-blue background for main content areas */
+  --k-color-surface: #ffffff; /* Pure white for cards, modals, etc. */
 }
 
 [data-theme="moonstone-dark"] {
-  --color-primary-10: #121820;
-  --color-primary-25: #1a2330;
-  --color-primary-50: #232d3d;
-  --color-primary-100: #2c384a;
-  --color-primary-200: #354357;
-  --color-primary-300: #3e4e64;
-  --color-primary-400: #475971;
-  --color-primary-500: #8bafd3; /* Lightened for better visibility */
-  --color-primary-600: #5a6f8b;
-  --color-primary-700: #647a98;
-  --color-primary-800: #7389a7;
-  --color-primary-900: #8298b6;
+  --k-color-primary-10: #121820;
+  --k-color-primary-25: #1a2330;
+  --k-color-primary-50: #232d3d;
+  --k-color-primary-100: #2c384a;
+  --k-color-primary-200: #354357;
+  --k-color-primary-300: #3e4e64;
+  --k-color-primary-400: #475971;
+  --k-color-primary-500: #8bafd3; /* Lightened for better visibility */
+  --k-color-primary-600: #5a6f8b;
+  --k-color-primary-700: #647a98;
+  --k-color-primary-800: #7389a7;
+  --k-color-primary-900: #8298b6;
 
-  --color-secondary: #6e5e9e; /* Muted purple for secondary highlights */
-  --color-accent: #ffb84d; /* Warm golden orange accent for contrast */
+  --k-color-secondary: #6e5e9e; /* Muted purple for secondary highlights */
+  --k-color-accent: #ffb84d; /* Warm golden orange accent for contrast */
 
-  --color-background: #151515; /* Dark background for main content areas */
-  --color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
+  --k-color-background: #151515; /* Dark background for main content areas */
+  --k-color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
 
-  --color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
-  --color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
-  --color-text-100: #2a2a2a; /* Dark grey */
-  --color-text-200: #333333; /* Darker grey for less subtle text */
-  --color-text-300: #4d4d4d; /* Medium-dark grey */
-  --color-text-400: #666666; /* Slightly lighter grey */
-  --color-text-500: #808080; /* Neutral grey */
-  --color-text-600: #999999; /* Light grey for general text */
-  --color-text-700: #b3b3b3; /* Lighter grey */
-  --color-text-800: #cccccc; /* Light grey */
-  --color-text-900: #ffffff; /* White for main text */
+  --k-color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
+  --k-color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
+  --k-color-text-100: #2a2a2a; /* Dark grey */
+  --k-color-text-200: #333333; /* Darker grey for less subtle text */
+  --k-color-text-300: #4d4d4d; /* Medium-dark grey */
+  --k-color-text-400: #666666; /* Slightly lighter grey */
+  --k-color-text-500: #808080; /* Neutral grey */
+  --k-color-text-600: #999999; /* Light grey for general text */
+  --k-color-text-700: #b3b3b3; /* Lighter grey */
+  --k-color-text-800: #cccccc; /* Light grey */
+  --k-color-text-900: #ffffff; /* White for main text */
 }
 
 [data-theme="tangerine"] {
-  --color-primary-10: #fcf8f2;
-  --color-primary-25: #faf2e6;
-  --color-primary-50: #f5e5cd;
-  --color-primary-100: #ebcb9b;
-  --color-primary-200: #e1b169;
-  --color-primary-300: #d79737;
-  --color-primary-400: #cd7d05;
-  --color-primary-500: #d17c00; /* Base color */
-  --color-primary-600: #af6800;
-  --color-primary-700: #8d5400;
-  --color-primary-800: #6b4000;
-  --color-primary-900: #492c00;
+  --k-color-primary-10: #fcf8f2;
+  --k-color-primary-25: #faf2e6;
+  --k-color-primary-50: #f5e5cd;
+  --k-color-primary-100: #ebcb9b;
+  --k-color-primary-200: #e1b169;
+  --k-color-primary-300: #d79737;
+  --k-color-primary-400: #cd7d05;
+  --k-color-primary-500: #d17c00; /* Base color */
+  --k-color-primary-600: #af6800;
+  --k-color-primary-700: #8d5400;
+  --k-color-primary-800: #6b4000;
+  --k-color-primary-900: #492c00;
 
-  --color-secondary: #ff7043; /* Bright coral for highlights */
-  --color-accent: #ffeb3b; /* Yellow accent for notifications, success messages */
-  /* --color-background: #fff3e0; Light creamy background */
-  --color-background: #ffffff; /* Light creamy background */
-  --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
+  --k-color-secondary: #ff7043; /* Bright coral for highlights */
+  --k-color-accent: #ffeb3b; /* Yellow accent for notifications, success messages */
+  /* --k-color-background: #fff3e0; Light creamy background */
+  --k-color-background: #ffffff; /* Light creamy background */
+  --k-color-surface: #ffffff; /* Pure white for cards, modals, etc. */
 }
 
 [data-theme="tangerine-dark"] {
-  --color-primary-10: #1f1709;
-  --color-primary-25: #2a200c;
-  --color-primary-50: #352910;
-  --color-primary-100: #403214;
-  --color-primary-200: #4b3b18;
-  --color-primary-300: #56441c;
-  --color-primary-400: #614d20;
-  --color-primary-500: #ffa726; /* Lightened for better visibility */
-  --color-primary-600: #775f28;
-  --color-primary-700: #82682c;
-  --color-primary-800: #8d7130;
-  --color-primary-900: #987a34;
+  --k-color-primary-10: #1f1709;
+  --k-color-primary-25: #2a200c;
+  --k-color-primary-50: #352910;
+  --k-color-primary-100: #403214;
+  --k-color-primary-200: #4b3b18;
+  --k-color-primary-300: #56441c;
+  --k-color-primary-400: #614d20;
+  --k-color-primary-500: #ffa726; /* Lightened for better visibility */
+  --k-color-primary-600: #775f28;
+  --k-color-primary-700: #82682c;
+  --k-color-primary-800: #8d7130;
+  --k-color-primary-900: #987a34;
 
-  --color-secondary: #ff7043; /* Bright coral for highlights */
-  --color-accent: #ffeb3b; /* Yellow accent for notifications, success messages */
-  /* --color-background: #fff3e0; Light creamy background */
+  --k-color-secondary: #ff7043; /* Bright coral for highlights */
+  --k-color-accent: #ffeb3b; /* Yellow accent for notifications, success messages */
+  /* --k-color-background: #fff3e0; Light creamy background */
 
-  --color-background: #151515; /* Dark background for main content areas */
-  --color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
+  --k-color-background: #151515; /* Dark background for main content areas */
+  --k-color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
 
-  --color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
-  --color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
-  --color-text-100: #2a2a2a; /* Dark grey */
-  --color-text-200: #333333; /* Darker grey for less subtle text */
-  --color-text-300: #4d4d4d; /* Medium-dark grey */
-  --color-text-400: #666666; /* Slightly lighter grey */
-  --color-text-500: #808080; /* Neutral grey */
-  --color-text-600: #999999; /* Light grey for general text */
-  --color-text-700: #b3b3b3; /* Lighter grey */
-  --color-text-800: #cccccc; /* Light grey */
-  --color-text-900: #ffffff; /* White for main text */
+  --k-color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
+  --k-color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
+  --k-color-text-100: #2a2a2a; /* Dark grey */
+  --k-color-text-200: #333333; /* Darker grey for less subtle text */
+  --k-color-text-300: #4d4d4d; /* Medium-dark grey */
+  --k-color-text-400: #666666; /* Slightly lighter grey */
+  --k-color-text-500: #808080; /* Neutral grey */
+  --k-color-text-600: #999999; /* Light grey for general text */
+  --k-color-text-700: #b3b3b3; /* Lighter grey */
+  --k-color-text-800: #cccccc; /* Light grey */
+  --k-color-text-900: #ffffff; /* White for main text */
 }
 
 [data-theme="kale"] {
-  --color-primary-10: #f3f7f3;
-  --color-primary-25: #e8efe8;
-  --color-primary-50: #d1dfd1;
-  --color-primary-100: #a3bfa3;
-  --color-primary-200: #759f75;
-  --color-primary-300: #477f47;
-  --color-primary-400: #195f19;
-  --color-primary-500: #297b2d; /* Base color */
-  --color-primary-600: #226726;
-  --color-primary-700: #1b531f;
-  --color-primary-800: #143f18;
-  --color-primary-900: #0d2b11;
+  --k-color-primary-10: #f3f7f3;
+  --k-color-primary-25: #e8efe8;
+  --k-color-primary-50: #d1dfd1;
+  --k-color-primary-100: #a3bfa3;
+  --k-color-primary-200: #759f75;
+  --k-color-primary-300: #477f47;
+  --k-color-primary-400: #195f19;
+  --k-color-primary-500: #297b2d; /* Base color */
+  --k-color-primary-600: #226726;
+  --k-color-primary-700: #1b531f;
+  --k-color-primary-800: #143f18;
+  --k-color-primary-900: #0d2b11;
 
-  --color-secondary: #558b2f; /* Olive green for secondary highlights */
-  --color-accent: #ffd700; /* Gold accent for contrast */
-  /* --color-background: #f1f8f6; Light greenish-grey background */
-  --color-background: #ffffff; /* Light greenish-grey background */
-  --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
+  --k-color-secondary: #558b2f; /* Olive green for secondary highlights */
+  --k-color-accent: #ffd700; /* Gold accent for contrast */
+  /* --k-color-background: #f1f8f6; Light greenish-grey background */
+  --k-color-background: #ffffff; /* Light greenish-grey background */
+  --k-color-surface: #ffffff; /* Pure white for cards, modals, etc. */
 }
 
 [data-theme="kale-dark"] {
-  --color-primary-10: #0f1a0f;
-  --color-primary-25: #162316;
-  --color-primary-50: #1d2c1d;
-  --color-primary-100: #243524;
-  --color-primary-200: #2b3e2b;
-  --color-primary-300: #324732;
-  --color-primary-400: #395039;
-  --color-primary-500: #66bb6a; /* Lightened for better visibility */
-  --color-primary-600: #476247;
-  --color-primary-700: #4e6b4e;
-  --color-primary-800: #557455;
-  --color-primary-900: #5c7d5c;
+  --k-color-primary-10: #0f1a0f;
+  --k-color-primary-25: #162316;
+  --k-color-primary-50: #1d2c1d;
+  --k-color-primary-100: #243524;
+  --k-color-primary-200: #2b3e2b;
+  --k-color-primary-300: #324732;
+  --k-color-primary-400: #395039;
+  --k-color-primary-500: #66bb6a; /* Lightened for better visibility */
+  --k-color-primary-600: #476247;
+  --k-color-primary-700: #4e6b4e;
+  --k-color-primary-800: #557455;
+  --k-color-primary-900: #5c7d5c;
 
-  --color-secondary: #558b2f; /* Olive green for secondary highlights */
-  --color-accent: #ffd700; /* Gold accent for contrast */
-  /* --color-background: #f1f8f6; Light greenish-grey background */
+  --k-color-secondary: #558b2f; /* Olive green for secondary highlights */
+  --k-color-accent: #ffd700; /* Gold accent for contrast */
+  /* --k-color-background: #f1f8f6; Light greenish-grey background */
 
-  --color-background: #151515; /* Dark background for main content areas */
-  --color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
+  --k-color-background: #151515; /* Dark background for main content areas */
+  --k-color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
 
-  --color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
-  --color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
-  --color-text-100: #2a2a2a; /* Dark grey */
-  --color-text-200: #333333; /* Darker grey for less subtle text */
-  --color-text-300: #4d4d4d; /* Medium-dark grey */
-  --color-text-400: #666666; /* Slightly lighter grey */
-  --color-text-500: #808080; /* Neutral grey */
-  --color-text-600: #999999; /* Light grey for general text */
-  --color-text-700: #b3b3b3; /* Lighter grey */
-  --color-text-800: #cccccc; /* Light grey */
-  --color-text-900: #ffffff; /* White for main text */
+  --k-color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
+  --k-color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
+  --k-color-text-100: #2a2a2a; /* Dark grey */
+  --k-color-text-200: #333333; /* Darker grey for less subtle text */
+  --k-color-text-300: #4d4d4d; /* Medium-dark grey */
+  --k-color-text-400: #666666; /* Slightly lighter grey */
+  --k-color-text-500: #808080; /* Neutral grey */
+  --k-color-text-600: #999999; /* Light grey for general text */
+  --k-color-text-700: #b3b3b3; /* Lighter grey */
+  --k-color-text-800: #cccccc; /* Light grey */
+  --k-color-text-900: #ffffff; /* White for main text */
 }
 
 [data-theme="blueberry"] {
-  --color-primary-10: #f3f9fd;
-  --color-primary-25: #e7f3fb;
-  --color-primary-50: #cfe7f7;
-  --color-primary-100: #9fcfef;
-  --color-primary-200: #6fb7e7;
-  --color-primary-300: #3f9fdf;
-  --color-primary-400: #1f87d7;
-  --color-primary-500: #1e88e5; /* Base color */
-  --color-primary-600: #1972c1;
-  --color-primary-700: #145c9d;
-  --color-primary-800: #0f4679;
-  --color-primary-900: #0a3055;
+  --k-color-primary-10: #f3f9fd;
+  --k-color-primary-25: #e7f3fb;
+  --k-color-primary-50: #cfe7f7;
+  --k-color-primary-100: #9fcfef;
+  --k-color-primary-200: #6fb7e7;
+  --k-color-primary-300: #3f9fdf;
+  --k-color-primary-400: #1f87d7;
+  --k-color-primary-500: #1e88e5; /* Base color */
+  --k-color-primary-600: #1972c1;
+  --k-color-primary-700: #145c9d;
+  --k-color-primary-800: #0f4679;
+  --k-color-primary-900: #0a3055;
 
-  --color-secondary: #4a90e2; /* Light blue for secondary highlights */
-  --color-accent: #ff4081; /* Vivid pink for notifications, success messages */
-  /* --color-background: #e3f2fd; Light blue background */
-  --color-background: #ffffff; /* Light blue background */
-  --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
+  --k-color-secondary: #4a90e2; /* Light blue for secondary highlights */
+  --k-color-accent: #ff4081; /* Vivid pink for notifications, success messages */
+  /* --k-color-background: #e3f2fd; Light blue background */
+  --k-color-background: #ffffff; /* Light blue background */
+  --k-color-surface: #ffffff; /* Pure white for cards, modals, etc. */
 }
 
 [data-theme="blueberry-dark"] {
-  --color-primary-10: #0a1620;
-  --color-primary-25: #0f1f2d;
-  --color-primary-50: #14283a;
-  --color-primary-100: #193147;
-  --color-primary-200: #1e3a54;
-  --color-primary-300: #234361;
-  --color-primary-400: #284c6e;
-  --color-primary-500: #64b5f6; /* Lightened for better visibility */
-  --color-primary-600: #325e88;
-  --color-primary-700: #376795;
-  --color-primary-800: #3c70a2;
-  --color-primary-900: #4179af;
+  --k-color-primary-10: #0a1620;
+  --k-color-primary-25: #0f1f2d;
+  --k-color-primary-50: #14283a;
+  --k-color-primary-100: #193147;
+  --k-color-primary-200: #1e3a54;
+  --k-color-primary-300: #234361;
+  --k-color-primary-400: #284c6e;
+  --k-color-primary-500: #64b5f6; /* Lightened for better visibility */
+  --k-color-primary-600: #325e88;
+  --k-color-primary-700: #376795;
+  --k-color-primary-800: #3c70a2;
+  --k-color-primary-900: #4179af;
 
-  --color-secondary: #4a90e2; /* Light blue for secondary highlights */
-  --color-accent: #ff4081; /* Vivid pink for notifications, success messages */
-  /* --color-background: #e3f2fd; Light blue background */
+  --k-color-secondary: #4a90e2; /* Light blue for secondary highlights */
+  --k-color-accent: #ff4081; /* Vivid pink for notifications, success messages */
+  /* --k-color-background: #e3f2fd; Light blue background */
 
-  --color-background: #151515; /* Dark background for main content areas */
-  --color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
+  --k-color-background: #151515; /* Dark background for main content areas */
+  --k-color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
 
-  --color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
-  --color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
-  --color-text-100: #2a2a2a; /* Dark grey */
-  --color-text-200: #333333; /* Darker grey for less subtle text */
-  --color-text-300: #4d4d4d; /* Medium-dark grey */
-  --color-text-400: #666666; /* Slightly lighter grey */
-  --color-text-500: #808080; /* Neutral grey */
-  --color-text-600: #999999; /* Light grey for general text */
-  --color-text-700: #b3b3b3; /* Lighter grey */
-  --color-text-800: #cccccc; /* Light grey */
-  --color-text-900: #ffffff; /* White for main text */
+  --k-color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
+  --k-color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
+  --k-color-text-100: #2a2a2a; /* Dark grey */
+  --k-color-text-200: #333333; /* Darker grey for less subtle text */
+  --k-color-text-300: #4d4d4d; /* Medium-dark grey */
+  --k-color-text-400: #666666; /* Slightly lighter grey */
+  --k-color-text-500: #808080; /* Neutral grey */
+  --k-color-text-600: #999999; /* Light grey for general text */
+  --k-color-text-700: #b3b3b3; /* Lighter grey */
+  --k-color-text-800: #cccccc; /* Light grey */
+  --k-color-text-900: #ffffff; /* White for main text */
 }
 
 [data-theme="lavender"] {
-  --color-primary-10: #f8f6ff;
-  --color-primary-25: #f1edff;
-  --color-primary-50: #e3dbff;
-  --color-primary-100: #c7b7ff;
-  --color-primary-200: #ab93ff;
-  --color-primary-300: #8f6fff;
-  --color-primary-400: #734bff;
-  --color-primary-500: #6c40ff; /* Base color */
-  --color-primary-600: #5b36d6;
-  --color-primary-700: #4a2cad;
-  --color-primary-800: #392284;
-  --color-primary-900: #28185b;
+  --k-color-primary-10: #f8f6ff;
+  --k-color-primary-25: #f1edff;
+  --k-color-primary-50: #e3dbff;
+  --k-color-primary-100: #c7b7ff;
+  --k-color-primary-200: #ab93ff;
+  --k-color-primary-300: #8f6fff;
+  --k-color-primary-400: #734bff;
+  --k-color-primary-500: #6c40ff; /* Base color */
+  --k-color-primary-600: #5b36d6;
+  --k-color-primary-700: #4a2cad;
+  --k-color-primary-800: #392284;
+  --k-color-primary-900: #28185b;
 
-  --color-secondary: #ff8e72; /* Soft coral for highlights */
-  --color-accent: #ffd700; /* Gold accent for contrast */
-  /* --color-background: #f7f5fa; Light lavender background */
-  --color-background: #ffffff; /* Light lavender background */
-  --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
+  --k-color-secondary: #ff8e72; /* Soft coral for highlights */
+  --k-color-accent: #ffd700; /* Gold accent for contrast */
+  /* --k-color-background: #f7f5fa; Light lavender background */
+  --k-color-background: #ffffff; /* Light lavender background */
+  --k-color-surface: #ffffff; /* Pure white for cards, modals, etc. */
 }
 
 [data-theme="lavender-dark"] {
-  --color-primary-10: #16131f;
-  --color-primary-25: #1f1a2d;
-  --color-primary-50: #28213b;
-  --color-primary-100: #312849;
-  --color-primary-200: #3a2f57;
-  --color-primary-300: #433665;
-  --color-primary-400: #4c3d73;
-  --color-primary-500: #b39ddb;
-  --color-primary-600: #5e4b8f;
-  --color-primary-700: #67529d;
-  --color-primary-800: #7059ab;
-  --color-primary-900: #7960b9;
+  --k-color-primary-10: #16131f;
+  --k-color-primary-25: #1f1a2d;
+  --k-color-primary-50: #28213b;
+  --k-color-primary-100: #312849;
+  --k-color-primary-200: #3a2f57;
+  --k-color-primary-300: #433665;
+  --k-color-primary-400: #4c3d73;
+  --k-color-primary-500: #b39ddb;
+  --k-color-primary-600: #5e4b8f;
+  --k-color-primary-700: #67529d;
+  --k-color-primary-800: #7059ab;
+  --k-color-primary-900: #7960b9;
 
-  --color-secondary: #ff8e72; /* Soft coral for highlights */
-  --color-accent: #ffd700; /* Gold accent for contrast */
-  /* --color-background: #f7f5fa; Light lavender background */
+  --k-color-secondary: #ff8e72; /* Soft coral for highlights */
+  --k-color-accent: #ffd700; /* Gold accent for contrast */
+  /* --k-color-background: #f7f5fa; Light lavender background */
 
-  --color-background: #151515; /* Dark background for main content areas */
-  --color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
+  --k-color-background: #151515; /* Dark background for main content areas */
+  --k-color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
 
-  --color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
-  --color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
-  --color-text-100: #2a2a2a; /* Dark grey */
-  --color-text-200: #333333; /* Darker grey for less subtle text */
-  --color-text-300: #4d4d4d; /* Medium-dark grey */
-  --color-text-400: #666666; /* Slightly lighter grey */
-  --color-text-500: #808080; /* Neutral grey */
-  --color-text-600: #999999; /* Light grey for general text */
-  --color-text-700: #b3b3b3; /* Lighter grey */
-  --color-text-800: #cccccc; /* Light grey */
-  --color-text-900: #ffffff; /* White for main text */
+  --k-color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
+  --k-color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
+  --k-color-text-100: #2a2a2a; /* Dark grey */
+  --k-color-text-200: #333333; /* Darker grey for less subtle text */
+  --k-color-text-300: #4d4d4d; /* Medium-dark grey */
+  --k-color-text-400: #666666; /* Slightly lighter grey */
+  --k-color-text-500: #808080; /* Neutral grey */
+  --k-color-text-600: #999999; /* Light grey for general text */
+  --k-color-text-700: #b3b3b3; /* Lighter grey */
+  --k-color-text-800: #cccccc; /* Light grey */
+  --k-color-text-900: #ffffff; /* White for main text */
 }
 
 [data-theme="raspberry"] {
-  --color-primary-10: #fef2f5;
-  --color-primary-25: #fce6eb;
-  --color-primary-50: #f9cdd7;
-  --color-primary-100: #f39bb0;
-  --color-primary-200: #ed6988;
-  --color-primary-300: #e73760;
-  --color-primary-400: #e10538;
-  --color-primary-500: #d1003b; /* Base color */
-  --color-primary-600: #af0032;
-  --color-primary-700: #8d0029;
-  --color-primary-800: #6b0020;
-  --color-primary-900: #490017;
+  --k-color-primary-10: #fef2f5;
+  --k-color-primary-25: #fce6eb;
+  --k-color-primary-50: #f9cdd7;
+  --k-color-primary-100: #f39bb0;
+  --k-color-primary-200: #ed6988;
+  --k-color-primary-300: #e73760;
+  --k-color-primary-400: #e10538;
+  --k-color-primary-500: #d1003b; /* Base color */
+  --k-color-primary-600: #af0032;
+  --k-color-primary-700: #8d0029;
+  --k-color-primary-800: #6b0020;
+  --k-color-primary-900: #490017;
 
-  --color-secondary: #e91e63; /* Pink for secondary highlights */
-  --color-accent: #ffeb3b; /* Bright yellow accent for contrast */
-  /* --color-background: #fff0f2; Light pinkish background */
-  --color-background: #ffffff; /* Light pinkish background */
-  --color-surface: #ffffff; /* Pure white for cards, modals, etc. */
+  --k-color-secondary: #e91e63; /* Pink for secondary highlights */
+  --k-color-accent: #ffeb3b; /* Bright yellow accent for contrast */
+  /* --k-color-background: #fff0f2; Light pinkish background */
+  --k-color-background: #ffffff; /* Light pinkish background */
+  --k-color-surface: #ffffff; /* Pure white for cards, modals, etc. */
 }
 
 [data-theme="raspberry-dark"] {
-  --color-primary-10: #1f0d14;
-  --color-primary-25: #2d131c;
-  --color-primary-50: #3b1924;
-  --color-primary-100: #491f2c;
-  --color-primary-200: #572534;
-  --color-primary-300: #652b3c;
-  --color-primary-400: #733144;
-  --color-primary-500: #ff80ab;
-  --color-primary-600: #8f3d54;
-  --color-primary-700: #9d435c;
-  --color-primary-800: #ab4964;
-  --color-primary-900: #b94f6c;
+  --k-color-primary-10: #1f0d14;
+  --k-color-primary-25: #2d131c;
+  --k-color-primary-50: #3b1924;
+  --k-color-primary-100: #491f2c;
+  --k-color-primary-200: #572534;
+  --k-color-primary-300: #652b3c;
+  --k-color-primary-400: #733144;
+  --k-color-primary-500: #ff80ab;
+  --k-color-primary-600: #8f3d54;
+  --k-color-primary-700: #9d435c;
+  --k-color-primary-800: #ab4964;
+  --k-color-primary-900: #b94f6c;
 
-  --color-secondary: #e91e63; /* Pink for secondary highlights */
-  --color-accent: #ffeb3b; /* Bright yellow accent for contrast */
-  /* --color-background: #fff0f2; Light pinkish background */
+  --k-color-secondary: #e91e63; /* Pink for secondary highlights */
+  --k-color-accent: #ffeb3b; /* Bright yellow accent for contrast */
+  /* --k-color-background: #fff0f2; Light pinkish background */
 
-  --color-background: #151515; /* Dark background for main content areas */
-  --color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
+  --k-color-background: #151515; /* Dark background for main content areas */
+  --k-color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
 
-  --color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
-  --color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
-  --color-text-100: #2a2a2a; /* Dark grey */
-  --color-text-200: #333333; /* Darker grey for less subtle text */
-  --color-text-300: #4d4d4d; /* Medium-dark grey */
-  --color-text-400: #666666; /* Slightly lighter grey */
-  --color-text-500: #808080; /* Neutral grey */
-  --color-text-600: #999999; /* Light grey for general text */
-  --color-text-700: #b3b3b3; /* Lighter grey */
-  --color-text-800: #cccccc; /* Light grey */
-  --color-text-900: #ffffff; /* White for main text */
+  --k-color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
+  --k-color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
+  --k-color-text-100: #2a2a2a; /* Dark grey */
+  --k-color-text-200: #333333; /* Darker grey for less subtle text */
+  --k-color-text-300: #4d4d4d; /* Medium-dark grey */
+  --k-color-text-400: #666666; /* Slightly lighter grey */
+  --k-color-text-500: #808080; /* Neutral grey */
+  --k-color-text-600: #999999; /* Light grey for general text */
+  --k-color-text-700: #b3b3b3; /* Lighter grey */
+  --k-color-text-800: #cccccc; /* Light grey */
+  --k-color-text-900: #ffffff; /* White for main text */
 }

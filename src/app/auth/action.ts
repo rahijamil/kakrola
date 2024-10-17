@@ -129,7 +129,6 @@ export async function signInWithProvider(
   provider:
     | "google"
     | "github"
-    | "twitter"
     | "linkedin"
     | "notion"
     | "slack_oidc",

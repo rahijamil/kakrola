@@ -49,22 +49,22 @@
           width: 1.2em;
           height: 1.2em;
           position: relative;
-          border: 2px solid var(--color-text-500);
+          border: 2px solid var(--k-color-text-500);
           margin-right: 0.3rem;
           display: grid;
           place-content: center;
 
           &:hover {
-            background-color: var(--color-surface);
+            background-color: var(--k-color-surface);
           }
 
           &:active {
-            background-color: var(--color-surface);
+            background-color: var(--k-color-surface);
           }
 
           &:checked {
-            border-color: var(--color-primary-500);
-            background-color: var(--color-primary-500);
+            border-color: var(--k-color-primary-500);
+            background-color: var(--k-color-primary-500);
           }
 
           &::before {
@@ -74,7 +74,7 @@
             transform: scale(0);
             transition: 120ms transform ease-in-out;
             box-shadow: inset 1em 1em;
-            color: var(--color-surface);
+            color: var(--k-color-surface);
             transform-origin: center;
             clip-path: polygon(
               14% 44%,

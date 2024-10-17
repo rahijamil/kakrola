@@ -16,7 +16,5 @@ export const fetchTodayUpcomingTasks = async (
     return { today: [], upcoming: [] };
   }
 
-  console.log(data);
-
   return { today: data.today, upcoming: data.upcoming };
 };
