@@ -14,25 +14,6 @@ import { TeamMemberData } from "@/lib/queries";
 import TabSwitcher from "../TabSwitcher";
 import { TabItem } from "@/types/types.utils";
 
-const tabItems: TabItem[] = [
-  {
-    id: "general",
-    name: "General",
-    icon: <Settings strokeWidth={1.5} className="w-4 h-4" />,
-  },
-  {
-    id: "member",
-    name: "Members",
-    icon: <Users strokeWidth={1.5} className="w-4 h-4" />,
-  },
-  //   {
-  //     id: 3,
-  //     name: "Security",
-  //     icon: <Fingerprint strokeWidth={1.5} className="w-4 h-4" />,
-  //     tab: TabEnum.SECURITY,
-  //   },
-];
-
 const TeamspaceModal = ({
   teamId,
   teamMembersData,
@@ -42,9 +23,30 @@ const TeamspaceModal = ({
   teamMembersData: TeamMemberData[];
   onClose: () => void;
 }) => {
-  const [activeTab, setActiveTab] = useState<TabItem["id"] | null>('member');
+  const [activeTab, setActiveTab] = useState<TabItem["id"]>("members");
   const { teams } = useSidebarDataProvider();
   const { profile } = useAuthProvider();
+
+  const tabItems: TabItem[] = [
+    {
+      id: "general",
+      name: "General",
+      icon: <Settings strokeWidth={1.5} className="w-4 h-4" />,
+      onClick: () => setActiveTab('general')
+    },
+    {
+      id: "members",
+      name: "Members",
+      icon: <Users strokeWidth={1.5} className="w-4 h-4" />,
+      onClick: () => setActiveTab('members')
+    },
+    //   {
+    //     id: 3,
+    //     name: "Security",
+    //     icon: <Fingerprint strokeWidth={1.5} className="w-4 h-4" />,
+    //     tab: TabEnum.SECURITY,
+    //   },
+  ];
 
   const team = teams.find((team) => team.id == teamId);
 
@@ -78,7 +80,6 @@ const TeamspaceModal = ({
 
         <TabSwitcher
           activeTab={activeTab}
-          setActiveTab={setActiveTab}
           tabItems={tabItems}
         />
 

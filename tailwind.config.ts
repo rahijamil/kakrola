@@ -42,7 +42,6 @@ const config: Config = {
           800: "var(--k-color-text-800)",
           900: "var(--k-color-text-900)",
         },
-
         kakrola: {
           10: "#f7fbfd",
           25: "#f0f7fa",
@@ -56,6 +55,21 @@ const config: Config = {
           700: "#003e59",
           800: "#002f44",
           900: "#00202f",
+        },
+        // Moonstone color
+        moonstone: {
+          10: "#f2f4f8",
+          25: "#e6e9ef",
+          50: "#ccd3df",
+          100: "#99a7bf",
+          200: "#66799f",
+          300: "#445a7f",
+          400: "#3c506e",
+          500: "#39485e",
+          600: "#313e54",
+          700: "#2a3547",
+          800: "#222b3a",
+          900: "#1b2230",
         },
         // Warning color
         tangerine: {

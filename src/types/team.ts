@@ -160,7 +160,7 @@ export enum InviteStatus {
 }
 
 // Invite type
-interface InviteBaseType {
+export interface InviteBaseType {
   id: number;
   team_id: number | null;
   email: string | null;

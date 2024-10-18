@@ -115,8 +115,6 @@ const TeamspaceRow = ({ team }: { team: TeamType }) => {
     enabled: !!team.id,
   });
 
-  // const isLoading = true;
-
   const getAdmin = teamMembersData.find(
     (mem) => mem.team_id == team.id && mem.team_role == TeamRoleType.TEAM_ADMIN
   );

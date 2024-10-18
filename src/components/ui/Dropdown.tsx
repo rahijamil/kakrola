@@ -15,7 +15,7 @@ import { createPortal } from "react-dom";
 interface DropdownProps {
   Label: (props: { onClick: (ev: any) => void }) => ReactNode;
   items?: {
-    id: number;
+    id: number | string;
     label: string;
     onClick: () => void;
     summary?: string;
@@ -29,6 +29,7 @@ interface DropdownProps {
     disabled?: boolean;
     rightContent?: ReactNode;
     parentTitle?: string;
+    badge?: string;
   }[];
   dataFromElement?: boolean;
   autoClose?: boolean;
@@ -46,6 +47,7 @@ interface DropdownProps {
   fullMode?: boolean;
   style?: CSSProperties;
   touchMoveClose?: boolean;
+  hideHeader?: boolean;
 }
 
 import { AnimatePresence, motion } from "framer-motion";
@@ -70,6 +72,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   fullMode,
   style,
   touchMoveClose = true,
+  hideHeader,
 }) => {
   const [position, setPosition] = useState<{
     top: string;
@@ -223,7 +226,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   const handleTouchMove = (e: any) => {
     if (isDragging && menuRef.current) {
-      e.preventDefault();
+      // e.preventDefault();
 
       const scrollTop = menuRef.current.scrollTop;
       const touchY = e.touches[0].clientY;
@@ -317,13 +320,15 @@ const Dropdown: React.FC<DropdownProps> = ({
                       data-form-element={dataFromElement}
                       onClick={(ev) => ev.stopPropagation()}
                     >
-                      <div className="px-4 py-2 mb-1 border-b border-text-100 flex items-center justify-between gap-8">
-                        <h3 className="text-text-700 text-xs font-semibold line-clamp-1">
-                          {title}
-                        </h3>
+                      {!hideHeader && (
+                        <div className="px-4 py-2 mb-1 border-b border-text-100 flex items-center justify-between gap-8">
+                          <h3 className="text-text-700 text-xs font-semibold line-clamp-1">
+                            {title}
+                          </h3>
 
-                        {titleRightAction && titleRightAction}
-                      </div>
+                          {titleRightAction && titleRightAction}
+                        </div>
+                      )}
 
                       {beforeItemsContent}
                       {items.map((item, _index) => (
@@ -340,18 +345,22 @@ const Dropdown: React.FC<DropdownProps> = ({
                             <button
                               type="button"
                               onClick={() => {
-                                if (item.onClick && !item.content) {
-                                  item.onClick();
-                                  if (autoClose) {
-                                    setIsOpen(false);
+                                if (!item.disabled) {
+                                  if (item.onClick && !item.content) {
+                                    item.onClick();
+                                    if (autoClose) {
+                                      setIsOpen(false);
+                                    }
+                                  } else if (item.content) {
+                                    toggleContent();
                                   }
-                                } else if (item.content) {
-                                  toggleContent();
                                 }
                               }}
-                              className={`w-full text-left px-4 py-1.5 hover:bg-primary-50 border-l-4 border-transparent hover:border-primary-200 transition flex items-center justify-between gap-4 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent ${
-                                item.className
-                              } ${
+                              className={`w-full text-left px-4 py-1.5 hover:bg-primary-50 border-transparent hover:border-primary-200 transition flex items-center justify-between gap-4 ${
+                                item.disabled
+                                  ? "border-l-0 cursor-not-allowed hover:bg-transparent"
+                                  : "border-l-4"
+                              } ${item.className} ${
                                 item.textColor
                                   ? item.textColor
                                   : "text-text-700"
@@ -364,12 +373,17 @@ const Dropdown: React.FC<DropdownProps> = ({
 
                                   <div className="">
                                     <p
-                                      className={`${
+                                      className={`flex items-center gap-2 ${
                                         item.summary ? "font-medium" : ""
                                       } ${item.bgColor ? item.bgColor : ""}`}
                                       style={item.style}
                                     >
                                       {item.label}
+                                      {item.badge && (
+                                        <span className="bg-primary-50 text-primary-500 rounded-lg px-1.5 text-[10px] font-semibold uppercase">
+                                          {item.badge}
+                                        </span>
+                                      )}
                                     </p>
                                     {item.summary && (
                                       <p className="text-xs text-text-500">

@@ -13,56 +13,30 @@ import { motion } from "framer-motion";
 import { fetchTodayUpcomingTasks } from "@/utils/fetchTodayUpcomingTasks";
 import useScreen from "@/hooks/useScreen";
 import Sidebar from "@/components/SidebarWrapper/Sidebar";
-
-const TabsComponent = ({
-  tabs,
-  setTabs,
-}: {
-  tabs: "today" | "upcoming";
-  setTabs: React.Dispatch<React.SetStateAction<"today" | "upcoming">>;
-}) => {
-  return (
-    <ul className="flex items-center gap-1 relative">
-      {["today", "upcoming"].map((tab) => (
-        <li key={tab} className="relative">
-          <button
-            className={`flex items-center justify-center gap-1 rounded-lg cursor-pointer flex-1 transition px-2 p-1 hover:bg-text-100 hover:text-primary-500 ${
-              tabs === tab ? "text-primary-500" : "text-text-500"
-            }`}
-            onClick={() => setTabs(tab as "today" | "upcoming")}
-          >
-            {tab === "today" ? (
-              <CalendarCheck strokeWidth={1.5} className="w-4 h-4" />
-            ) : (
-              <CalendarDays strokeWidth={1.5} className="w-4 h-4" />
-            )}
-            <span className="capitalize">{tab}</span>
-          </button>
-
-          {tabs === tab && (
-            <motion.span
-              layoutId="myTaskActiveIndicator"
-              className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-500"
-              initial={false}
-              transition={{
-                type: "spring",
-                stiffness: 500,
-                damping: 30,
-              }}
-            />
-          )}
-        </li>
-      ))}
-    </ul>
-  );
-};
+import TabSwitcher from "@/components/TabSwitcher";
+import { TabItem } from "@/types/types.utils";
 
 const MyTasksPage = () => {
   const [view, setView] = useState<ViewTypes["view"]>("List");
-  const [tabs, setTabs] = useState<"today" | "upcoming">("today");
+  const [activeTab, setActiveTab] = useState("today");
   const [todayTasks, setTodayTasks] = useState<TaskType[]>([]);
   const [upcomingTasks, setUpcomingTasks] = useState<TaskType[]>([]);
   const { profile } = useAuthProvider();
+
+  const tabItems: TabItem[] = [
+    {
+      id: "today",
+      name: "Today",
+      icon: <CalendarCheck strokeWidth={1.5} className="w-4 h-4" />,
+      onClick: () => setActiveTab("today"),
+    },
+    {
+      id: "upcoming",
+      name: "Upcoming",
+      icon: <CalendarDays strokeWidth={1.5} className="w-4 h-4" />,
+      onClick: () => setActiveTab("upcoming"),
+    },
+  ];
 
   const { screenWidth } = useScreen();
 
@@ -76,20 +50,20 @@ const MyTasksPage = () => {
   }, [profile?.id]);
 
   const renderTaskViewSwitcher = () => {
-    const tasks = tabs === "today" ? todayTasks : upcomingTasks;
+    const tasks = activeTab === "today" ? todayTasks : upcomingTasks;
     switch (view) {
       case "List":
         return (
           <ListViewForToday
             tasks={tasks}
-            setTasks={tabs === "today" ? setTodayTasks : setUpcomingTasks}
+            setTasks={activeTab === "today" ? setTodayTasks : setUpcomingTasks}
           />
         );
       case "Board":
         return (
           <BoardViewForToday
             tasks={tasks}
-            setTasks={tabs === "today" ? setTodayTasks : setUpcomingTasks}
+            setTasks={activeTab === "today" ? setTodayTasks : setUpcomingTasks}
           />
         );
       default:
@@ -113,7 +87,12 @@ const MyTasksPage = () => {
           <LayoutView view={view} setView={setView} />
         )}
 
-        <TabsComponent tabs={tabs} setTabs={setTabs} />
+        <TabSwitcher
+          tabItems={tabItems}
+          activeTab={activeTab}
+          hideBottomBorder
+          layoutId="my_task"
+        />
       </div>
 
       {renderTaskViewSwitcher()}

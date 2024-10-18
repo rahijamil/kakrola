@@ -29,5 +29,4 @@ export async function updateSubscription(
   } catch (e) {
     return { error: ErrorMessage };
   }
-  return { error: ErrorMessage };
 }

@@ -1,245 +1,180 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { getUser } from "@/utils/auth";
-import {
-  InviteStatus,
-  ProjectInviteType,
-  PageInviteType,
-  PersonalMemberForProjectType,
-  TeamMemberType,
-  PersonalMemberForPageType,
-} from "@/types/team";
+import { ProjectInviteType, PageInviteType } from "@/types/team";
 import { ProfileType } from "@/types/user";
 import { differenceInDays } from "date-fns";
 import { PersonalRoleType, TeamRoleType } from "@/types/role";
+import { updateSubscription } from "@/utils/paddle/update-subscription";
+import { getSubscription } from "@/utils/paddle/get-subscription";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const token = searchParams.get("token");
 
-  console.debug("Received token:", token);
-
   if (!token) {
-    console.error("Missing token parameter");
+    console.error("Token is missing");
     return NextResponse.json({ error: "Token is missing" }, { status: 400 });
   }
 
   const supabase = createClient();
-  const user = await getUser();
 
-  console.debug("Authenticated user:", user);
+  // Fetch invite and user in parallel
+  const [user, { data: invite, error: inviteError }] = await Promise.all([
+    getUser(),
+    supabase.from("invites").select("*").eq("token", token).single(),
+  ]);
 
-  const { data: invite, error } = await supabase
-    .from("invites")
-    .select("*")
-    .eq("token", token)
-    .single();
-
-  if (error) {
-    console.error("Error fetching invite:", error);
+  if (inviteError || !invite) {
+    console.error(
+      "Invalid invite token:",
+      inviteError?.message || "No invite found"
+    );
     return NextResponse.json(
-      { error: error.message || "Error fetching invite" },
+      { error: inviteError?.message || "Invalid invite token" },
       { status: 400 }
     );
   }
 
-  if (!invite) {
-    console.warn("No invite found for token:", token);
-    return NextResponse.json(
-      { error: "Invalid invite token" },
-      { status: 400 }
-    );
-  }
+  // Quick validation checks
+  const inviteAgeInDays = differenceInDays(
+    new Date(),
+    new Date(invite.created_at)
+  );
 
-  // Check if the invite has expired
-  const isExpired =
-    differenceInDays(new Date(), new Date(invite.created_at)) > 7;
-  if (isExpired) {
-    console.error("Invite has expired for token:", token);
+  if (inviteAgeInDays > 7) {
+    console.error("Invite has expired");
     return NextResponse.json({ error: "Invite has expired" }, { status: 400 });
   }
 
-  if (user && invite.email === user.email) {
-    console.debug("User is accepting their own invite:", invite);
+  // Handle existing user accepting their invite
+  if (user && user?.email === invite.email) {
     try {
-      await handleInviteAcceptance(invite, user);
+      await handleOptimizedInviteAcceptance(invite, user);
       return NextResponse.redirect(`${origin}/app`);
     } catch (error: any) {
-      console.error("Error handling invite acceptance:", error);
+      console.error("Error while accepting invite:", error.message);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
   }
 
-  console.debug("Fetching profile for invite email:", invite.email);
-  const { data: userProfile, error: profileError } = await supabase
+  // Check if user needs to sign up or log in
+  const { data: userProfile, error: userProfileError } = await supabase
     .from("profiles")
     .select("*")
     .eq("email", invite.email)
     .single();
 
-  if (profileError || !userProfile) {
-    console.error(
-      "Error fetching profile for email:",
-      invite.email,
-      profileError
-    );
+  console.log(
+    "User profile fetch result:",
+    userProfile,
+    "Profile fetch error:",
+    userProfileError
+  );
 
-    return NextResponse.redirect(
-      `${origin}/auth/signup?email=${invite.email}&token=${token}`
-    );
-  } else {
-    console.debug("Redirecting to login for invite email:", invite.email);
-    return NextResponse.redirect(
-      `${origin}/auth/login?email=${invite.email}&token=${token}`
-    );
-  }
+  const redirectUrl = `${origin}/auth/${
+    userProfile ? "login" : "signup"
+  }?email=${invite.email}&token=${token}`;
+  console.log("Redirecting user to:", redirectUrl);
+
+  return NextResponse.redirect(redirectUrl);
 }
 
-// Centralized function to handle invite acceptance
-async function handleInviteAcceptance(
+async function handleOptimizedInviteAcceptance(
   invite: ProjectInviteType | PageInviteType,
   profile: ProfileType
 ) {
+  const supabase = createClient();
+  const id = invite.project_id || invite.page_id;
+  const column_name = invite.project_id ? "project_id" : "page_id";
+
   try {
-    const supabase = createClient();
-    const id = invite.project_id || invite.page_id;
-    const column_name = invite.project_id ? "project_id" : "page_id";
+    const operations = [];
 
-    console.debug(
-      "Processing invite acceptance for ID:",
-      id,
-      "Column:",
-      column_name
-    );
-
-    // Insert into the appropriate members table for project
+    // Handle personal member insertion
     if (id) {
-      // check if the member is already in the project
-      const { data: member, error: memberError } = await supabase
-        .from("personal_members")
-        .select("id")
-        .eq(column_name, id)
-        .eq("profile_id", profile.id)
-        .single();
-
-      if (member) {
-        console.info("Member already exists in project:", member);
-        return;
-      }
-
-      // Fetch existing all project members to determine the new order
-      const { data: existingAllMembers, error: fetchError } = await supabase
+      const { data: memberInfo } = await supabase
         .from("personal_members")
         .select("settings->order")
         .eq(column_name, id)
-        .order("settings->order", { ascending: false }); // Order by existing order values
+        .order("settings->order", { ascending: false })
+        .limit(1);
 
-      if (fetchError) {
-        console.error("Failed to fetch project members:", fetchError);
-        throw new Error(
-          `Failed to fetch project members: ${fetchError.message}`
-        );
-      }
+      const newOrder = memberInfo?.[0]?.order
+        ? Number(memberInfo[0].order) + 1
+        : 1;
 
-      console.debug("Existing project members:", existingAllMembers);
-
-      // TypeScript will understand that `order` is a number
-      const existingMembers: { order: number }[] = existingAllMembers as any[];
-
-      const newOrder =
-        existingMembers.length > 0 ? Number(existingMembers[0].order) + 1 : 1;
-
-      const memberData: Omit<
-        PersonalMemberForProjectType | PersonalMemberForPageType,
-        "id"
-      > = {
+      const memberData = {
         [column_name]: id,
         profile_id: profile.id,
         role: invite.role as PersonalRoleType,
-        settings: {
-          is_favorite: false,
-          order: newOrder,
-        },
+        settings: { is_favorite: false, order: newOrder },
       };
 
-      console.debug("Inserting new member data:", memberData);
-      const { error: insertError } = await supabase
-        .from("personal_members")
-        .insert(memberData);
-
-      if (insertError) {
-        console.error("Failed to add to project members:", insertError);
-        throw new Error(
-          `Failed to add to project members: ${insertError.message}`
-        );
-      }
+      operations.push(supabase.from("personal_members").insert(memberData));
     }
 
+    // Handle team member insertion
     if (invite.team_id) {
-      // check if the member is already in the team
-      const { data: teamMember, error: teamMemberError } = await supabase
+      const { data: teamMember } = await supabase
         .from("team_members")
         .select("id")
         .eq("team_id", invite.team_id)
-        .eq("profile_id", profile.id);
+        .eq("profile_id", profile.id)
+        .single();
 
-      if (teamMemberError) {
-        console.error("Failed to check team members:", teamMemberError);
-        throw new Error(
-          `Failed to add to team members: ${teamMemberError.message}`
-        );
-      }
+      if (!teamMember) {
+        const teamMemberData = {
+          email: profile.email,
+          team_id: invite.team_id,
+          profile_id: profile.id,
+          team_role: invite.role as TeamRoleType,
+          settings: { projects: [], pages: [], channels: [] },
+        };
 
-      if (teamMember.length > 0) {
-        console.info("Member already exists in team:", teamMember);
-        return;
-      }
+        operations.push(supabase.from("team_members").insert(teamMemberData));
 
-      const teamMemberData: Omit<TeamMemberType, "id"> = {
-        email: profile.email,
-        team_id: invite.team_id,
-        profile_id: profile.id,
-        team_role: invite.role as TeamRoleType,
-        settings: {
-          projects: [],
-          pages: [],
-          channels: [],
-        },
-      };
+        // Check current subscription for proration
+        const { data: currentSubscription } = await supabase
+          .from("subscriptions")
+          .select("subscription_id, price_id, seats")
+          .eq("customer_profile_id", profile.id)
+          .single();
 
-      console.debug("Inserting new team member data:", teamMemberData);
-      const { error: teamInsertError } = await supabase
-        .from("team_members")
-        .insert(teamMemberData);
+        if (currentSubscription) {
+          const currentSeatsCount = await supabase
+            .from("team_members")
+            .select("id")
+            .eq("team_id", invite.team_id);
 
-      if (teamInsertError) {
-        console.error("Failed to add to team members:", teamInsertError);
-        throw new Error(
-          `Failed to add to team members: ${teamInsertError.message}`
-        );
+          const usedSeats = currentSeatsCount.data?.length || 0;
+          const totalSeats = currentSubscription.seats || 0;
+
+          // Only update subscription if no seats are available
+          if (usedSeats >= totalSeats) {
+            const newQuantity = totalSeats + 1; // Increment for the new member
+            operations.push(
+              updateSubscription(
+                currentSubscription.subscription_id,
+                currentSubscription.price_id,
+                newQuantity
+              )
+            );
+          }
+        }
       }
     }
 
-    // Update the invite status to 'accepted'
-    console.debug(
-      "Updating invite status to accepted for invite ID:",
-      invite.id
-    );
-    const { error: updateError } = await supabase
-      .from("invites")
-      .update({ status: InviteStatus.ACCEPTED })
-      .eq("id", invite.id);
+    // Delete the invite
+    operations.push(supabase.from("invites").delete().eq("id", invite.id));
 
-    if (updateError) {
-      console.error("Failed to update invite status:", updateError);
-      throw new Error(`Failed to update invite: ${updateError.message}`);
-    }
+    // Execute all necessary operations in parallel
+    await Promise.all(operations);
 
-    console.info("Invite accepted successfully:", invite.id);
-
-    return { success: true, invite };
-  } catch (error) {
-    console.error("Error accepting invite:", error);
-    throw error;
+    console.log("Invite acceptance operations completed successfully.");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Failed to accept invite:", error.message);
+    throw new Error(`Failed to accept invite: ${error.message}`);
   }
 }

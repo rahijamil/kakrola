@@ -6,27 +6,28 @@ import {
   MapPin,
   SquareKanban,
 } from "lucide-react";
-import React, { useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import Dropdown from "./ui/Dropdown";
 import AnimatedTaskCheckbox from "./TaskViewSwitcher/AnimatedCircleCheck";
 import { ProjectType, TaskPriority } from "@/types/project";
 import useScreen from "@/hooks/useScreen";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
+import TabSwitcher from "./TabSwitcher";
 
 const allViews: {
-  id: number;
+  id: ViewTypes["view"];
   name: ViewTypes["view"];
   icon: React.JSX.Element;
   visible: boolean;
 }[] = [
   {
-    id: 1,
+    id: "List",
     name: "List",
     icon: <SquareKanban size={16} strokeWidth={1.5} className="-rotate-90" />,
     visible: true, // List is always visible
   },
   {
-    id: 2,
+    id: "Board",
     name: "Board",
     icon: <SquareKanban size={16} strokeWidth={1.5} />,
     visible: true,
@@ -49,7 +50,7 @@ const allViews: {
   //   visible: true,
   // },
   {
-    id: 4,
+    id: "Dashboard",
     name: "Dashboard",
     icon: <LayoutDashboard size={16} strokeWidth={1.5} />,
     visible: true,
@@ -98,7 +99,7 @@ const LayoutView = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSelectedViews = async (v: {
-    id: number;
+    id: ViewTypes["view"];
     name: ViewTypes["view"];
   }) => {
     // Prevent toggling the "List" view
@@ -123,34 +124,23 @@ const LayoutView = ({
   return screenWidth > 768 ? (
     <div
       className={`flex items-center gap-1 ${
-       ( view !== "List" && project) && "border-b border-text-100"
+        view !== "List" && project && "border-b border-text-100"
       }`}
     >
-      <ul className={`flex items-center gap-1`}>
-        {views
+      <TabSwitcher
+        activeTab={view}
+        tabItems={views
           .filter((v) => v.visible)
-          .map(
-            (v) =>
-              !(v.name === "Calendar" && hideCalendarView) && (
-                <li
-                  key={v.id}
-                  className={`border-b-2 pb-1 ${
-                    v.name == view ? "border-text-700" : "border-transparent"
-                  }`}
-                >
-                  <button
-                    className={`flex items-center justify-center gap-1 rounded-lg cursor-pointer flex-1 transition px-2 p-1 hover:bg-text-100 hover:text-text-700 text-text-500 ${
-                      v.name === view && "text-text-700"
-                    }`}
-                    onClick={() => setView(v.name)}
-                  >
-                    {v.icon}
-                    <span className="">{v.name}</span>
-                  </button>
-                </li>
-              )
-          )}
-      </ul>
+          .filter((v) => (hideCalendarView ? v.name !== "Calendar" : v))
+          .map((item) => ({
+            id: item.id.toString(),
+            name: item.name,
+            icon: item.icon,
+            onClick: () => setView(item.id),
+          }))}
+        hideBottomBorder
+        layoutId="layout_views"
+      />
 
       {/* {!forPreview && (
       <Dropdown

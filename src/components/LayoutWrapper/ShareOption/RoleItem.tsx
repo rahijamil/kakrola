@@ -143,9 +143,12 @@ const RoleItem = ({
                     playSound={false}
                     handleCheckSubmit={() => onChange(PersonalRoleType.MEMBER)}
                     is_completed={value === PersonalRoleType.MEMBER}
+                    disabled
                   />
                 ),
                 divide: true,
+                disabled: true,
+                badge: "Plus"
               },
               {
                 id: 3,
@@ -158,7 +161,9 @@ const RoleItem = ({
                   <AnimatedTaskCheckbox
                     priority={TaskPriority.P3}
                     playSound={false}
-                    handleCheckSubmit={() => onChange(PersonalRoleType.COMMENTER)}
+                    handleCheckSubmit={() =>
+                      onChange(PersonalRoleType.COMMENTER)
+                    }
                     is_completed={value === PersonalRoleType.COMMENTER}
                   />
                 ),

@@ -1,8 +1,9 @@
 import React from "react";
 import LandingPageHeader from "./LandingPageHeader";
 import LandingPageFooter from "./LandingPageFooter";
-  import HeroSection from "./landingpage_sections/HeroSection";
-import FeatureGrid from "./FeatureGrid";
+import HeroSection from "./landingpage_sections/HeroSection";
+import { FeatureGrid, CtaSection } from "./FeatureGrid";
+import ProjectSection from "./landingpage_sections/ProjectSection";
 
 const LandingPage = () => {
   return (
@@ -12,10 +13,13 @@ const LandingPage = () => {
         {/* Hero Section */}
         <HeroSection />
 
-        {/* more... */}
+        {/* Detailed Product Sections */}
+        <ProjectSection />
 
         {/* Feature Grid */}
         <FeatureGrid />
+        {/* CTA Section */}
+        <CtaSection />
       </main>
       <LandingPageFooter />
     </div>

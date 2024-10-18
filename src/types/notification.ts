@@ -14,6 +14,7 @@ export enum NotificationTypeEnum {
 
 // Enum for related entity types in notifications
 export enum RelatedEntityTypeEnum {
+  PAGE = "page",
   PROJECT = "project",
   SECTION = "section",
   TASK = "task",

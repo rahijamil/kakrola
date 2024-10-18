@@ -1,161 +1,187 @@
 import React from "react";
+import Link from "next/link";
+import { Twitter, Github, Linkedin, LucideProps } from "lucide-react";
 import KakrolaLogo from "./kakrolaLogo";
-import BottomNav from "./BottomNav";
-import { Accordion } from "@/components/Accordion";
 
-const faqItems = [
-  {
-    title: "Can I change my plan later?",
-    content:
-      "Absolutely! You can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle, ensuring you always have the flexibility to adjust as your needs change.",
-  },
-  {
-    title: "What payment methods do you accept?",
-    content:
-      "We accept all major credit cards and PayPal. This allows you to choose the payment method that's most convenient for you or your business.",
-  },
-  {
-    title: "Is there a free trial?",
-    content:
-      "Yes, we offer a 14-day free trial for our Plus and Business plans. You can experience the full power of Kakrola risk-free, with no credit card required to start your trial.",
-  },
-  {
-    title: "What happens when I hit my storage limit?",
-    content:
-      "You'll receive a notification as you approach your storage limit. At this point, you can easily upgrade your plan for more storage or manage your existing files to free up space. We provide tools to help you identify large or unused files, making storage management simple.",
-  },
-  {
-    title: "Who's behind Kakrola?",
-    content:
-      "Kakrola is developed and maintained by a passionate solo developer committed to creating the best productivity tool possible. This means you get a streamlined product with fast, personal support. Every feature is carefully crafted with the user in mind, ensuring a focused and efficient experience.",
-  },
-  {
-    title: "How secure is my data?",
-    content:
-      "Your data's security is our top priority. We use industry-standard encryption for data in transit and at rest. Regular security audits are conducted to ensure your information remains protected. With Kakrola, you can focus on your work knowing your data is safe.",
-  },
+const footerLinks = {
+  product: [
+    // { label: "Features", href: "/features" },
+    // { label: "Solutions", href: "/solutions" },
+    // { label: "Enterprise", href: "/enterprise" },
+    { label: "Pricing", href: "/pricing" },
+    // { label: "Security", href: "/security" },
+    // { label: "What's New", href: "/updates" },
+  ],
+  resources: [
+    // { label: "Documentation", href: "/docs" },
+    // { label: "API Reference", href: "/api" },
+    // { label: "Community", href: "/community" },
+    { label: "Templates", href: "/templates" },
+    // { label: "Training", href: "/training" },
+    // { label: "Success Stories", href: "/case-studies" },
+  ],
+  company: [
+    { label: "About Us", href: "/about" },
+    // { label: "Careers", href: "/careers" },
+    { label: "Blog", href: "/blog" },
+    // { label: "Press Kit", href: "/press" },
+    { label: "Contact", href: "/contact" },
+  ],
+  legal: [
+    { label: "Terms", href: "/terms" },
+    { label: "Privacy", href: "/privacy" },
+    { label: "Cookie Settings", href: "/cookies" },
+    { label: "Status", href: "/status" },
+  ],
+};
+
+const socialLinks: {
+  icon: React.ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+  >;
+  href: string;
+  label: string;
+}[] = [
+  // {
+  //   icon: Twitter,
+  //   href: "https://twitter.com/kakrola",
+  //   label: "Follow us on Twitter",
+  // },
+  // {
+  //   icon: Github,
+  //   href: "https://github.com/kakrola",
+  //   label: "Star us on GitHub",
+  // },
+  // {
+  //   icon: Linkedin,
+  //   href: "https://linkedin.com/company/kakrola",
+  //   label: "Connect on LinkedIn",
+  // },
 ];
 
 const LandingPageFooter = () => {
   return (
     <>
-      <div>
-        {/* FAQ Section */}
-        <section className="wrapper pt-20 pb-40 md:pb-20 bg-surface border-t border-text-100">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">
-            Questions & answers
-          </h2>
-          <div className="max-w-3xl mx-auto">
-            <Accordion items={faqItems} />
-          </div>
-        </section>
-
-        {/* Horizontal Rule */}
-        <hr className="border-t border-text-200 wrapper" />
-      </div>
-      <footer className="bg-surface hidden md:block">
-        <div className="wrapper py-12 lg:py-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="space-y-6">
-              <KakrolaLogo size="lg" isTitle />
-              <p className="text-text-700">
-                Making the world more productive, one task at a time.
-              </p>
-              <div className="flex space-x-4">
-                {["Twitter", "GitHub", "LinkedIn"].map((social) => (
-                  <a
-                    key={social}
-                    href="#"
-                    className="text-text-700 hover:text-primary-600 transition-colors"
-                    aria-label={social}
-                  >
-                    <svg
-                      className="h-6 w-6"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
+      <footer className="bg-white border-t border-gray-50">
+        <div className="wrapper py-16 lg:py-24">
+          {/* Main Footer Content */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
+            {/* Brand Column */}
+            <div className="lg:col-span-4">
+              <div className="space-y-6">
+                <KakrolaLogo size="lg" isTitle />
+                <p className="text-gray-600 leading-relaxed">
+                  Remember when work felt organized and actually got done? We're
+                  bringing that back. Join thousands of teams who got their time
+                  back.
+                </p>
+                <div className="flex items-center space-x-5">
+                  {socialLinks.map((social) => (
+                    <Link
+                      key={social.label}
+                      href={social.href}
+                      className="text-gray-400 hover:text-gray-600 transition-colors"
+                      aria-label={social.label}
                     >
-                      {/* Add appropriate SVG path for each social icon */}
-                    </svg>
-                  </a>
-                ))}
+                      <social.icon className="h-5 w-5" strokeWidth={1.5} />
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
 
-            <div>
-              <h3 className="text-sm font-semibold text-text-800 tracking-wider uppercase mb-4">
-                Product
-              </h3>
-              <ul className="space-y-3">
-                {["Features", "Pricing", "Integrations", "FAQ", "Security"].map(
-                  (item) => (
-                    <li key={item}>
-                      <a
-                        href="#"
-                        className="text-text-700 hover:text-primary-600 transition-colors"
+            {/* Links Columns */}
+            {/* <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 tracking-wide uppercase mb-4">
+                  Product
+                </h3>
+                <ul className="space-y-3">
+                  {footerLinks.product.map((link) => (
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
+                        className="text-gray-500 hover:text-primary-600 transition-colors"
                       >
-                        {item}
-                      </a>
+                        {link.label}
+                      </Link>
                     </li>
-                  )
-                )}
-              </ul>
-            </div>
+                  ))}
+                </ul>
+              </div>
 
-            <div>
-              <h3 className="text-sm font-semibold text-text-800 tracking-wider uppercase mb-4">
-                Company
-              </h3>
-              <ul className="space-y-3">
-                {["About", "Blog", "Careers", "Contact", "Partners"].map(
-                  (item) => (
-                    <li key={item}>
-                      <a
-                        href="#"
-                        className="text-text-700 hover:text-primary-600 transition-colors"
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 tracking-wide uppercase mb-4">
+                  Resources
+                </h3>
+                <ul className="space-y-3">
+                  {footerLinks.resources.map((link) => (
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
+                        className="text-gray-500 hover:text-primary-600 transition-colors"
                       >
-                        {item}
-                      </a>
+                        {link.label}
+                      </Link>
                     </li>
-                  )
-                )}
-              </ul>
-            </div>
+                  ))}
+                </ul>
+              </div>
 
-            <div>
-              <h3 className="text-sm font-semibold text-text-800 tracking-wider uppercase mb-4">
-                Legal
-              </h3>
-              <ul className="space-y-3">
-                {[
-                  "Privacy Policy",
-                  "Terms of Service",
-                  "Cookie Policy",
-                  "GDPR",
-                ].map((item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      className="text-text-700 hover:text-primary-600 transition-colors"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 tracking-wide uppercase mb-4">
+                  Company
+                </h3>
+                <ul className="space-y-3">
+                  {footerLinks.company.map((link) => (
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
+                        className="text-gray-500 hover:text-primary-600 transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 tracking-wide uppercase mb-4">
+                  Legal
+                </h3>
+                <ul className="space-y-3">
+                  {footerLinks.legal.map((link) => (
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
+                        className="text-gray-500 hover:text-primary-600 transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div> */}
           </div>
 
-          <div className="mt-12 border-t border-text-200 pt-8">
-            <p className="text-text-700 text-center">
-              &copy; {new Date().getFullYear()} Kakrola, Inc. All rights
-              reserved.
-            </p>
+          {/* Bottom Bar */}
+          <div className="mt-16 pt-8 border-t border-gray-50">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <p className="text-gray-500 text-sm">
+                © {new Date().getFullYear()} Kakrola, Inc. All rights reserved.
+              </p>
+              {/* <Link
+                href="/careers"
+                className="text-gray-500 hover:text-primary-600 text-sm transition-colors"
+              >
+                We're hiring!
+              </Link> */}
+            </div>
           </div>
         </div>
       </footer>
-
-      <BottomNav />
     </>
   );
 };

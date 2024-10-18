@@ -110,7 +110,7 @@ const TeamMemberItem = ({
       setTeamMembers([...teamMembers, member]);
     }
   };
-
+  
   return (
     <>
       <div

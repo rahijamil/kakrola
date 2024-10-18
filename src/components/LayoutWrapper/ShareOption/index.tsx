@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Dropdown from "../../ui/Dropdown";
 import { UserPlus } from "lucide-react";
@@ -13,8 +13,6 @@ import {
   PersonalMemberForProjectType,
   ProjectInviteType,
   PageInviteType,
-  TeamType,
-  TeamMemberType,
 } from "@/types/team";
 import PendingItem from "./PendingItem";
 import ShareAvatar from "./ShareAvatar";

@@ -15,22 +15,24 @@ enum Id {
   Unread = "unread",
 }
 
-const tabItems: TabItem[] = [
-  {
-    id: Id.All,
-    name: "All",
-    icon: <Bell strokeWidth={1.5} className="w-4 h-4" />,
-  },
-  {
-    id: Id.Unread,
-    name: "Unread",
-    icon: <MailOpen strokeWidth={1.5} className="w-4 h-4" />,
-  },
-];
-
 const AppNotifications = () => {
   const { notifications, isLoading } = useNotifications();
   const [allUnread, setAllUnread] = useState<"all" | "unread">("all");
+
+  const tabItems: TabItem[] = [
+    {
+      id: Id.All,
+      name: "All",
+      icon: <Bell strokeWidth={1.5} className="w-4 h-4" />,
+      onClick: () => setAllUnread(Id.All),
+    },
+    {
+      id: Id.Unread,
+      name: "Unread",
+      icon: <MailOpen strokeWidth={1.5} className="w-4 h-4" />,
+      onClick: () => setAllUnread(Id.Unread),
+    },
+  ];
 
   const { screenWidth } = useScreen();
 
@@ -41,11 +43,7 @@ const AppNotifications = () => {
       >
         Notifications
       </h1>
-      <TabSwitcher
-        activeTab={allUnread}
-        setActiveTab={setAllUnread as any}
-        tabItems={tabItems}
-      />
+      <TabSwitcher activeTab={allUnread} tabItems={tabItems} />
 
       <div className="mt-4">
         {isLoading ? (

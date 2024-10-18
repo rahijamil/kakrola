@@ -5,9 +5,10 @@ export interface Subscription {
   subscription_status: string;
   price_id: string;
   product_id: string;
-  scheduled_change: string;
+  scheduled_change: string | undefined;
   customer_id: string;
   customer_profile_id: string;
+  seats: number;
 }
 
 enum SubscriptionPlan {

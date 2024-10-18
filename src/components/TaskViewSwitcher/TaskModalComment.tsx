@@ -25,19 +25,6 @@ enum TabEnum {
   activity = "activity",
 }
 
-const tabItems: TabItem[] = [
-  {
-    id: "comments",
-    name: "Comments",
-    icon: <MessageCircle strokeWidth={1.5} className="w-4 h-4" />,
-  },
-  {
-    id: "activity",
-    name: "Activity",
-    icon: <Logs strokeWidth={1.5} className="w-4 h-4" />,
-  },
-];
-
 interface CommentWithProfile extends TaskCommentType {
   profiles: {
     id: ProfileType["id"];
@@ -110,6 +97,21 @@ const TaskModalComment = ({ task }: { task: TaskType }) => {
   const searchParams = useSearchParams();
   const searchTabs = searchParams.get("tab");
   const queryClient = useQueryClient();
+
+  const tabItems: TabItem[] = [
+    {
+      id: "comments",
+      name: "Comments",
+      icon: <MessageCircle strokeWidth={1.5} className="w-4 h-4" />,
+      onClick: () => setTabs(TabEnum.comments)
+    },
+    {
+      id: "activity",
+      name: "Activity",
+      icon: <Logs strokeWidth={1.5} className="w-4 h-4" />,
+      onClick: () => setTabs(TabEnum.activity)
+    },
+  ];
 
   useEffect(() => {
     if (searchTabs) {
@@ -191,7 +193,6 @@ const TaskModalComment = ({ task }: { task: TaskType }) => {
         <TabSwitcher
           tabItems={tabItems}
           activeTab={tabs}
-          setActiveTab={setTabs as any}
         />
       </div>
 

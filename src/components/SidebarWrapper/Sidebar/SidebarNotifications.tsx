@@ -16,24 +16,26 @@ enum Id {
   Unread = "unread",
 }
 
-const tabItems: TabItem[] = [
-  {
-    id: Id.All,
-    name: "All",
-    icon: <Bell strokeWidth={1.5} className="w-4 h-4" />,
-  },
-  {
-    id: Id.Unread,
-    name: "Unread",
-    icon: <MailOpen strokeWidth={1.5} className="w-4 h-4" />,
-  },
-];
-
 const SidebarNotifications = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { notifications, isLoading } = useNotifications();
   const [allUnread, setAllUnread] = useState<Id>(Id.Unread);
   const { profile } = useAuthProvider();
+
+  const tabItems: TabItem[] = [
+    {
+      id: Id.All,
+      name: "All",
+      icon: <Bell strokeWidth={1.5} className="w-4 h-4" />,
+      onClick: () => setAllUnread(Id.All)
+    },
+    {
+      id: Id.Unread,
+      name: "Unread",
+      icon: <MailOpen strokeWidth={1.5} className="w-4 h-4" />,
+      onClick: () => setAllUnread(Id.Unread),
+    },
+  ];
 
   const { screenWidth } = useScreen();
 
@@ -77,7 +79,6 @@ const SidebarNotifications = () => {
         <div className="h-[400px] overflow-y-auto">
           <TabSwitcher
             activeTab={allUnread}
-            setActiveTab={setAllUnread as any}
             tabItems={tabItems}
           />
 

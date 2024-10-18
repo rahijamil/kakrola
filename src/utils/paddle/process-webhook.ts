@@ -7,6 +7,7 @@ import {
   SubscriptionUpdatedEvent,
 } from "@paddle/paddle-node-sdk";
 import { createClient } from "@/utils/supabase/server";
+import { Subscription } from "@/types/subscription";
 
 export class ProcessWebhook {
   async processEvent(eventData: EventEntity) {
@@ -41,17 +42,21 @@ export class ProcessWebhook {
           "Profile ID found:",
           (eventData.data.customData as any).profile_id
         );
+
+        const subscriptionData: Omit<Subscription, "id"> = {
+          subscription_id: eventData.data.id,
+          subscription_status: eventData.data.status,
+          price_id: eventData.data.items[0].price?.id ?? "",
+          product_id: eventData.data.items[0].price?.productId ?? "",
+          scheduled_change: eventData.data.scheduledChange?.effectiveAt,
+          customer_id: eventData.data.customerId,
+          customer_profile_id: (eventData.data.customData as any).profile_id,
+          seats: eventData.data.items[0].quantity,
+        };
+
         const { data, error } = await supabase
           .from("subscriptions")
-          .insert({
-            subscription_id: eventData.data.id,
-            subscription_status: eventData.data.status,
-            price_id: eventData.data.items[0].price?.id ?? "",
-            product_id: eventData.data.items[0].price?.productId ?? "",
-            scheduled_change: eventData.data.scheduledChange?.effectiveAt,
-            customer_id: eventData.data.customerId,
-            customer_profile_id: (eventData.data.customData as any).profile_id,
-          })
+          .insert(subscriptionData)
           .select();
 
         if (error) {
@@ -117,7 +122,10 @@ export class ProcessWebhook {
         .update({
           customer_id: eventData.data.id,
         })
-        .eq("customer_profile_id", (eventData.data.customData as any).profile_id)
+        .eq(
+          "customer_profile_id",
+          (eventData.data.customData as any).profile_id
+        )
         .select();
 
       if (error) {
