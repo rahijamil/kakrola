@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Poppins, Nunito } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.scss";
 import SidebarDataProvider from "@/context/SidebarDataContext";
 import AuthProvider from "@/context/AuthContext";
@@ -8,8 +8,9 @@ import GlobalOptionProvider from "@/context/GlobalOptionContext";
 import ClientProviderWrapper from "./ClientProviderWrapper";
 import RoleProvider from "@/context/RoleContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
-const inter = Inter({ subsets: ["latin"], fallback: ["Helvetica", "Arial"] });
+// const inter = Inter({ subsets: ["latin"], fallback: ["Helvetica", "Arial"] });
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -17,7 +18,7 @@ const poppins = Poppins({
   display: "swap",
 });
 
-const nunito = Nunito({ subsets: ["latin"], fallback: ["Helvetica", "Arial"] });
+// const nunito = Nunito({ subsets: ["latin"], fallback: ["Helvetica", "Arial"] });
 
 export const metadata: Metadata = {
   title: "Kakrola: Where Great Teams Get Work Done",
@@ -120,6 +121,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <GoogleAnalytics />
+
       <body className={poppins.className}>
         <ClientProviderWrapper>
           <AuthProvider>
