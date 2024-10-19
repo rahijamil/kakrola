@@ -20,46 +20,97 @@ const poppins = Poppins({
 const nunito = Nunito({ subsets: ["latin"], fallback: ["Helvetica", "Arial"] });
 
 export const metadata: Metadata = {
-  title: {
-    absolute: "Kakrola: Manage Projects, Docs, DMs, and Team Channels",
-    default: "Kakrola",
-  },
+  title: "Kakrola: Where Great Teams Get Work Done",
   description:
-    "Kakrola is the all-in-one platform for managing projects, tasks, documents, team communication through DMs and channels, and much more.",
-  keywords:
-    "Kakrola, project management, team communication, DMs, team channels, tasks, docs, all-in-one platform, collaboration, workspace",
-  robots: "index, follow",
+    "Say goodbye to scattered tools and endless app switching. Kakrola brings your team's tasks, docs, and conversations into one clean, fast workspace. Perfect for busy teams who need to stay organized without the hassle. Try it free—no credit card needed.",
+  keywords: [
+    "team organization",
+    "work management",
+    "team chat",
+    "shared documents",
+    "task tracking",
+    "team workspace",
+    "project planning",
+    "remote teams",
+    "team alignment",
+    "work tracking",
+    "team efficiency",
+    "simple project management",
+    "team communication",
+    "document sharing",
+    "organized teamwork",
+  ],
+  authors: [{ name: "Kakrola", url: "https://www.kakrola.com" }],
+  creator: "Kakrola",
+  publisher: "Kakrola",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
+    icon: "/kakrola.svg",
     shortcut: "/kakrola.svg",
+    apple: "/apple-touch-icon.png",
+    other: {
+      rel: "apple-touch-icon-precomposed",
+      url: "/apple-touch-icon-precomposed.png",
+    },
   },
   manifest: "/manifest.json",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://www.kakrola.com",
+    siteName: "Kakrola",
+    title: "Keep Your Team Organized Without the Chaos | Kakrola",
+    description:
+      "Tired of your team's work being scattered across different apps? Kakrola keeps everything in one place: tasks, docs, and team chat. It's simple, fast, and actually helps you get things done. Start free and see the difference.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "See how Kakrola helps teams stay organized with everything in one place",
+      },
+    ],
+  },
   twitter: {
     card: "summary_large_image",
     site: "@kakrola",
-    title: "Kakrola: Manage Projects, Docs, DMs, and Team Channels",
+    creator: "@kakrola",
+    title: "Finally, a Simple Way to Keep Your Team Organized | Kakrola",
     description:
-      "All your work in one place, from project management to team communication.",
-    images: "/path/to/your/twitter-image.jpg",
+      "No more juggling multiple apps or losing track of important work. Get your team on the same page with one simple, fast workspace. Try it free.",
+    images: ["/twitter-card.jpg"],
   },
-  openGraph: {
-    title: "Kakrola: Manage Projects, Docs, DMs, and Team Channels",
-    description:
-      "All your work in one place with Kakrola. Manage tasks, projects, and team communication seamlessly.",
-    url: "https://www.kakrola.com",
-    type: "website",
-    images: "/path/to/your/og-image.jpg",
-    locale: "en_US",
-    siteName: "Kakrola",
+  alternates: {
+    canonical: "https://www.kakrola.com",
+    languages: {
+      "en-US": "https://www.kakrola.com",
+    },
   },
+  verification: {
+    google: "google-site-verification-code",
+    yandex: "yandex-verification-code",
+  },
+  category: "Team Software",
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  userScalable: false,
+  userScalable: true,
   viewportFit: "cover",
   themeColor: "#ffffff",
+  colorScheme: "light",
 };
 
 export default function RootLayout({

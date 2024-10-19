@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { TabItem } from "@/types/types.utils";
 
@@ -15,7 +15,7 @@ const TabSwitcher = ({
   activeTab: string;
   size?: "sm" | "md" | "lg";
 }) => {
-  const [hoverItem, setHoverItem] = useState<TabItem | null>(null);
+  // const [hoverItem, setHoverItem] = useState<TabItem | null>(null);
 
   return (
     <ul
@@ -28,15 +28,15 @@ const TabSwitcher = ({
           <button
             className={`flex items-center justify-center gap-1 cursor-pointer flex-1 transition w-full z-10 relative ${
               activeTab === item.id ? "text-text-700" : "text-text-500"
-            } ${size == "lg" ? "py-4 text-xl font-medium" : "px-2 p-1"}`}
+            } ${size == "lg" ? "px-2 p-1 md:py-4 md:text-xl md:font-medium" : "px-2 p-1"}`}
             onClick={item.onClick}
-            onMouseOver={() => setHoverItem(item)}
-            onMouseLeave={() => setHoverItem(null)}
+            // onMouseOver={() => setHoverItem(item)}
+            // onMouseLeave={() => setHoverItem(null)}
           >
             {item.icon}
             <span className="capitalize">{item.name}</span>
           </button>
-{/* 
+          {/* 
           {hoverItem?.id === item.id && (
             <motion.span
               layoutId="hoverIndicator"

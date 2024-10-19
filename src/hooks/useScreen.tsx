@@ -1,34 +1,49 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export type Breakpoint = {
   breakpoint: "sm" | "md" | "lg" | "xl" | null;
 };
 
 const useScreen = () => {
-  const [breakpoint, setBreakpoints] = useState<Breakpoint["breakpoint"]>(null);
-  const [screenWidth, setScreenWidth] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 0
-  );
+  const [screenWidth, setScreenWidth] = useState<number>(0); // Start with 0 for SSR
+  const [breakpoint, setBreakpoint] = useState<Breakpoint["breakpoint"]>(null);
+
+  const getViewportWidth = () => {
+    if (typeof window !== "undefined") {
+      return window.visualViewport
+        ? window.visualViewport.width
+        : window.innerWidth;
+    }
+    return 0; // Return 0 or a default value if window is undefined
+  };
+
+  const updateScreenData = () => {
+    const currentWidth = getViewportWidth();
+    setScreenWidth(currentWidth);
+
+    if (currentWidth < 768) {
+      setBreakpoint("sm");
+    } else if (currentWidth < 1024) {
+      setBreakpoint("md");
+    } else if (currentWidth < 1280) {
+      setBreakpoint("lg");
+    } else {
+      setBreakpoint("xl");
+    }
+  };
 
   useEffect(() => {
-    const handleResize = () => {
-      setScreenWidth(window.innerWidth);
+    // Initial update on mount
+    updateScreenData();
 
-      if (window.innerWidth < 768) {
-        setBreakpoints("sm");
-      } else if (window.innerWidth < 1024) {
-        setBreakpoints("md");
-      } else if (window.innerWidth < 1280) {
-        setBreakpoints("lg");
-      } else {
-        setBreakpoints("xl"); // Changed to cover widths >= 1536px
-      }
+    // Add event listeners for resize and orientation changes
+    window.addEventListener("resize", updateScreenData);
+    window.addEventListener("orientationchange", updateScreenData);
+
+    return () => {
+      window.removeEventListener("resize", updateScreenData);
+      window.removeEventListener("orientationchange", updateScreenData);
     };
-
-    handleResize(); // Initial check
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return {

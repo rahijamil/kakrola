@@ -18,7 +18,7 @@ import {
 const ProjectSection = () => {
   return (
     <section className="py-20 md:pb-32 space-y-32 md:space-y-60">
-      <div className="bg-gradient-to-b from-white via-primary-50 to-white overflow-hidden">
+      <div className="bg-gradient-to-b from-white via-primary-50 to-white">
         <div className="grid md:grid-cols-2 gap-12 items-center wrapper">
           <div>
             <h3 className="font-bold text-gray-900 text-4xl sm:text-5xl leading-tight mb-6">
@@ -87,7 +87,7 @@ const ProjectSection = () => {
         </div>
       </div>
 
-      <div className="bg-gradient-to-b from-white via-primary-50 to-white overflow-hidden">
+      <div className="bg-gradient-to-b from-white via-primary-50 to-white">
         <div className="grid md:grid-cols-2 gap-16 md:gap-20 items-center wrapper">
           <div className="order-2 md:order-1 relative">
             <div className="absolute inset-0 bg-gradient-to-r from-moonstone-200 to-kakrola-200 rounded-3xl transform rotate-3"></div>
@@ -156,7 +156,7 @@ const ProjectSection = () => {
         </div>
       </div>
 
-      <div className="bg-gradient-to-b from-white via-primary-50 to-white overflow-hidden">
+      <div className="bg-gradient-to-b from-white via-primary-50 to-white">
         <div className="grid md:grid-cols-2 gap-12 items-center wrapper">
           <div>
             <h2 className="font-bold text-gray-900 text-4xl sm:text-5xl leading-tight mb-6">

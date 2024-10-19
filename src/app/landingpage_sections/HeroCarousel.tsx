@@ -2,59 +2,39 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import {
-  CheckCircle,
-  FileText,
-  Hash,
-} from "lucide-react";
+import { CheckCircle, FileText, Hash } from "lucide-react";
 import TabSwitcher from "@/components/TabSwitcher";
 import useScreen from "@/hooks/useScreen";
+
+const heroItems = [
+  {
+    id: "projects",
+    image: "/images/feature1.png",
+    alt: "Kakrola Projects",
+    buttonTitle: "Projects",
+    icon: CheckCircle,
+  },
+  {
+    id: "pages",
+    image: "/images/feature2.png",
+    alt: "Kakrola Pages",
+    buttonTitle: "Pages",
+    icon: FileText,
+  },
+  {
+    id: "channels",
+    image: "/images/feature3.png",
+    alt: "Kakrola Channels",
+    buttonTitle: "Channels",
+    icon: Hash,
+  },
+];
 
 const HeroCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoSliding, setIsAutoSliding] = useState(true);
   const { screenWidth } = useScreen();
-
-  const heroItems = [
-    {
-      id: "projects",
-      image: "/images/feature1.png",
-      alt: "Kakrola Projects",
-      buttonTitle: "Projects",
-      icon: (
-        <CheckCircle
-          className={screenWidth > 768 ? "w-6 h-6" : "w-4 h-4"}
-          strokeWidth={2}
-        />
-      ),
-    },
-    {
-      id: "pages",
-      image: "/images/feature2.png",
-      alt: "Kakrola Pages",
-      buttonTitle: "Pages",
-      icon: (
-        <FileText
-          className={screenWidth > 768 ? "w-6 h-6" : "w-4 h-4"}
-          strokeWidth={2}
-        />
-      ),
-    },
-    {
-      id: "channels",
-      image: "/images/feature3.png",
-      alt: "Kakrola Channels",
-      buttonTitle: "Channels",
-      icon: (
-        <Hash
-          className={screenWidth > 768 ? "w-6 h-6" : "w-4 h-4"}
-          strokeWidth={2}
-        />
-      ),
-    },
-  ];
 
   const stopAutoSlide = useCallback(() => {
     setIsAutoSliding(false);
@@ -128,17 +108,19 @@ const HeroCarousel = () => {
       </div>
 
       <TabSwitcher
-        size={screenWidth >= 768 ? "lg" : "md"}
+        size={"lg"}
         tabItems={heroItems.map((item, index) => ({
           id: item.id,
           name: item.buttonTitle,
-          icon: item.icon,
+          icon: (
+            <item.icon
+              className="w-4 h-4 md:w-6 md:h-6"
+              strokeWidth={2}
+            />
+          ),
           onClick: () => changeSlide(index),
         }))}
-        activeTab={
-          heroItems.find((item, index) => index == currentSlide)?.id ||
-          "projects"
-        }
+        activeTab={heroItems[currentSlide]?.id || "projects"}
         layoutId="hero_carousel"
       />
     </div>
