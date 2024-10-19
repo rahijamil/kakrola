@@ -5,7 +5,6 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { CheckCircle, FileText, Hash } from "lucide-react";
 import TabSwitcher from "@/components/TabSwitcher";
-import useScreen from "@/hooks/useScreen";
 
 const heroItems = [
   {
@@ -34,7 +33,6 @@ const heroItems = [
 const HeroCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoSliding, setIsAutoSliding] = useState(true);
-  const { screenWidth } = useScreen();
 
   const stopAutoSlide = useCallback(() => {
     setIsAutoSliding(false);

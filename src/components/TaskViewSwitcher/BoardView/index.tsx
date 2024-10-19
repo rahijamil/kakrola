@@ -425,7 +425,7 @@ const BoardView: React.FC<{
             <div
               ref={boardProvided.innerRef}
               {...boardProvided.droppableProps}
-              className="flex gap-1 h-[calc(100vh-180px)] overflow-auto px-4 md:px-6 md:py-4 scroll-smooth"
+              className="flex gap-1 h-[calc(100vh-120px)] overflow-auto px-4 md:px-6 py-4 pb-20 scroll-smooth w-screen md:w-auto"
             >
               {isLoading ? (
                 <div className="space-x-5 flex">

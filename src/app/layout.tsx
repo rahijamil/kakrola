@@ -9,6 +9,7 @@ import ClientProviderWrapper from "./ClientProviderWrapper";
 import RoleProvider from "@/context/RoleContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import OneTapComponent from "@/components/OneTapComponent";
 
 // const inter = Inter({ subsets: ["latin"], fallback: ["Helvetica", "Arial"] });
 const poppins = Poppins({
@@ -130,6 +131,7 @@ export default function RootLayout({
               <OnboardProvider>
                 <GlobalOptionProvider>
                   <RoleProvider>
+                    {/* <OneTapComponent /> */}
                     {children}
                     <SpeedInsights />
                   </RoleProvider>

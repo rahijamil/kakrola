@@ -309,46 +309,48 @@ const AddTaskForm = ({
           )}
         </div>
 
-        <div className="flex items-center flex-wrap gap-2 whitespace-nowrap">
-          <DateSelector
-            task={taskData}
-            setTask={setTaskData}
-            endDate={endDate}
-            isSmall={isSmall}
-          />
+        {!forTaskModal && (
+          <div className="flex items-center flex-wrap gap-2 whitespace-nowrap">
+            <DateSelector
+              task={taskData}
+              setTask={setTaskData}
+              endDate={endDate}
+              isSmall={isSmall}
+            />
 
-          <AssigneeSelector
-            task={taskData}
-            setTask={setTaskData}
-            isSmall={isSmall}
-            project={project}
-          />
+            <AssigneeSelector
+              task={taskData}
+              setTask={setTaskData}
+              isSmall={isSmall}
+              project={project}
+            />
 
-          <Priorities
-            taskData={taskData}
-            setTaskData={setTaskData}
-            isSmall={isSmall}
-          />
+            <Priorities
+              taskData={taskData}
+              setTaskData={setTaskData}
+              isSmall={isSmall}
+            />
 
-          <LabelSelector
-            task={taskData}
-            setTask={setTaskData}
-            isSmall={isSmall}
-          />
+            <LabelSelector
+              task={taskData}
+              setTask={setTaskData}
+              isSmall={isSmall}
+            />
 
-          {taskForEdit && setShowModal && (
-            <button
-              onClick={() => {
-                setShowModal && setShowModal(taskData.id.toString());
-                onClose();
-              }}
-              className={`px-2 py-1 transition rounded-lg hover:bg-text-100 items-center gap-1 text-text-500 flex`}
-            >
-              <PanelRight strokeWidth={1.5} className="w-4 h-4" />
-              <span className="text-[11px] uppercase font-medium">Open</span>
-            </button>
-          )}
-        </div>
+            {taskForEdit && setShowModal && (
+              <button
+                onClick={() => {
+                  setShowModal && setShowModal(taskData.id.toString());
+                  onClose();
+                }}
+                className={`px-2 py-1 transition rounded-lg hover:bg-text-100 items-center gap-1 text-text-500 flex`}
+              >
+                <PanelRight strokeWidth={1.5} className="w-4 h-4" />
+                <span className="text-[11px] uppercase font-medium">Open</span>
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="border-t border-text-100">
@@ -357,13 +359,56 @@ const AddTaskForm = ({
         )}
 
         <div className="flex items-center justify-between gap-2 p-2 whitespace-nowrap">
-          {!forTaskModal && (
+          {!forTaskModal ? (
             <ProjectsSelector
               setTask={setTaskData}
               task={taskData}
               isInbox
               isSmall={isSmall}
             />
+          ) : (
+            <div className="flex items-center flex-wrap gap-2 whitespace-nowrap">
+              <DateSelector
+                task={taskData}
+                setTask={setTaskData}
+                endDate={endDate}
+                isSmall={isSmall}
+              />
+
+              <AssigneeSelector
+                task={taskData}
+                setTask={setTaskData}
+                isSmall={isSmall}
+                project={project}
+              />
+
+              <Priorities
+                taskData={taskData}
+                setTaskData={setTaskData}
+                isSmall={isSmall}
+              />
+
+              <LabelSelector
+                task={taskData}
+                setTask={setTaskData}
+                isSmall={isSmall}
+              />
+
+              {taskForEdit && setShowModal && (
+                <button
+                  onClick={() => {
+                    setShowModal && setShowModal(taskData.id.toString());
+                    onClose();
+                  }}
+                  className={`px-2 py-1 transition rounded-lg hover:bg-text-100 items-center gap-1 text-text-500 flex`}
+                >
+                  <PanelRight strokeWidth={1.5} className="w-4 h-4" />
+                  <span className="text-[11px] uppercase font-medium">
+                    Open
+                  </span>
+                </button>
+              )}
+            </div>
           )}
 
           <div className="flex flex-1 justify-end gap-2 select-none">

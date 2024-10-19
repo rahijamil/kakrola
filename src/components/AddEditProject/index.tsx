@@ -47,7 +47,7 @@ const AddEditProject = ({
   aboveBellow?: "above" | "below" | null;
 }) => {
   const { profile } = useAuthProvider();
-  const { projects, setProjects, teams, personalMembers } =
+  const { projects, setProjects, teams, personalMembers, setPersonalMembers } =
     useSidebarDataProvider();
   const { screenWidth } = useScreen();
 
@@ -159,86 +159,46 @@ const AddEditProject = ({
   const { role } = useRole();
 
   const handleAddProject = async (ev: FormEvent) => {
-    ev.preventDefault();
+    try {
+      ev.preventDefault();
 
-    if (!profile?.id) return;
+      if (!profile?.id) return;
 
-    if (!projectData.name) {
-      setError("Project name is required.");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    if (project?.id) {
-      if (!canEditContent(role({ project, page: null }), !!project.team_id))
-        return;
-
-      const data: Partial<ProjectType> = {};
-      const fields = ["name"] as const;
-
-      fields.forEach((field) => {
-        if (projectData[field] !== project[field]) {
-          data[field] = projectData[field] as any;
-        }
-      });
-
-      if (Object.keys(data).length === 0) {
-        setLoading(false);
-        onClose();
+      if (!projectData.name) {
+        setError("Project name is required.");
         return;
       }
 
-      const { error } = await supabaseBrowser
-        .from("projects")
-        .update(data)
-        .eq("id", project.id);
+      setLoading(true);
+      setError(null);
 
-      if (error) {
-        setError(error.message);
-        setLoading(false);
-        return;
-      }
+      if (project?.id) {
+        if (!canEditContent(role({ project, page: null }), !!project.team_id))
+          return;
 
-      createActivityLog({
-        actor_id: profile.id,
-        action: ActivityAction.UPDATED_PROJECT,
-        entity: {
-          type: EntityType.PROJECT,
-          id: project.id,
-          name: project.name,
-        },
-        metadata: {
-          old_data: project,
-          new_data: data,
-        },
-      });
+        const data: Partial<ProjectType> = {};
+        const fields = ["name"] as const;
 
-      setProjects(
-        projects.map((p) => {
-          if (p.id === project.id) {
-            return {
-              ...p,
-              ...data,
-            };
+        fields.forEach((field) => {
+          if (projectData[field] !== project[field]) {
+            data[field] = projectData[field] as any;
           }
-          return p;
-        })
-      );
+        });
 
-      if (projectMembersData) {
-        const { error: projectMembersError } = await supabaseBrowser
-          .from("personal_members")
-          .update({
-            ...projectMembersData,
-          })
-          .eq("project_id", project.id);
-
-        if (projectMembersError) {
-          setError(projectMembersError.message);
+        if (Object.keys(data).length === 0) {
           setLoading(false);
-          console.error(projectMembersError);
+          onClose();
+          return;
+        }
+
+        const { error } = await supabaseBrowser
+          .from("projects")
+          .update(data)
+          .eq("id", project.id);
+
+        if (error) {
+          setError(error.message);
+          setLoading(false);
           return;
         }
 
@@ -251,57 +211,104 @@ const AddEditProject = ({
             name: project.name,
           },
           metadata: {
-            old_data: initialProjectMembersData,
-            new_data: projectMembersData,
+            old_data: project,
+            new_data: data,
           },
         });
-      }
-    } else {
-      const { data, error } = await supabaseBrowser.rpc(
-        "insert_project_with_member",
-        {
-          _team_id: projectData.team_id,
-          _profile_id: profile.id,
-          _project_name: projectData.name,
-          _project_slug: projectData.slug,
-          _project_color: projectData.settings.color,
-          _view: projectData.settings.view,
-          _selected_views: projectData.settings.selected_views,
-          _is_favorite: projectMembersData.settings.is_favorite,
-          _order: projects.length + 1,
+
+        setProjects(
+          projects.map((p) => {
+            if (p.id === project.id) {
+              return {
+                ...p,
+                ...data,
+              };
+            }
+            return p;
+          })
+        );
+
+        if (projectMembersData) {
+          const { error: projectMembersError } = await supabaseBrowser
+            .from("personal_members")
+            .update({
+              ...projectMembersData,
+            })
+            .eq("project_id", project.id);
+
+          if (projectMembersError) {
+            setError(projectMembersError.message);
+            setLoading(false);
+            console.error(projectMembersError);
+            return;
+          }
+
+          createActivityLog({
+            actor_id: profile.id,
+            action: ActivityAction.UPDATED_PROJECT,
+            entity: {
+              type: EntityType.PROJECT,
+              id: project.id,
+              name: project.name,
+            },
+            metadata: {
+              old_data: initialProjectMembersData,
+              new_data: projectMembersData,
+            },
+          });
         }
-      );
+      } else {
+        const { data, error } = await supabaseBrowser.rpc(
+          "insert_project_with_member",
+          {
+            _team_id: projectData.team_id,
+            _profile_id: profile.id,
+            _project_name: projectData.name,
+            _project_slug: projectData.slug,
+            _project_color: projectData.settings.color,
+            _view: projectData.settings.view,
+            _selected_views: projectData.settings.selected_views,
+            _is_favorite: projectMembersData.settings.is_favorite,
+            _order: projects.length + 1,
+          }
+        );
 
-      if (error) {
-        setError(error.message);
-        setLoading(false);
-        return;
+        if (error) {
+          setError(error.message);
+          setLoading(false);
+          return;
+        }
+
+        createActivityLog({
+          actor_id: profile.id,
+          action: ActivityAction.CREATED_PROJECT,
+          entity: {
+            type: EntityType.PROJECT,
+            id: data.project_id,
+            name: projectData.name,
+          },
+          metadata: {},
+        });
+
+        if (data) {
+          setProjects([
+            ...projects,
+            { ...projectData, id: data[0].project_id },
+          ]);
+          setPersonalMembers([
+            ...personalMembers,
+            { ...projectMembersData, project_id: data[0].project_id, id: data[0].member_id },
+          ]);
+          console.log("Project and member created:", { data });
+        }
       }
 
-      createActivityLog({
-        actor_id: profile.id,
-        action: ActivityAction.CREATED_PROJECT,
-        entity: {
-          type: EntityType.PROJECT,
-          id: data.project_id,
-          name: projectData.name,
-        },
-        metadata: {},
-      });
-
-      if (data) {
-        // const [newProject, newMember] = data;
-
-        // if (newProject) {
-        //   setProjects((projects) => [...projects, newProject]);
-        // }
-
-        console.log("Project and member created:", { data });
-      }
+      onClose();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
-    onClose();
   };
 
   const handleAddProjectAboveBellow = async (
@@ -425,7 +432,7 @@ const AddEditProject = ({
         )}
 
         <div className="w-full md:w-11/12 mx-auto flex flex-1 gap-16">
-          <div className="w-full space-y-6 md:space-y-8 max-w-sm">
+          <div className="w-full space-y-6 md:space-y-8 md:max-w-sm">
             {screenWidth > 768 ? (
               <h1 className="font-medium text-xl md:text-3xl">
                 {project && !aboveBellow ? "Edit project" : "New Project"}

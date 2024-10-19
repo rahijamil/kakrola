@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
@@ -59,7 +59,7 @@ export default function DesktopMenu({ menuItems }: { menuItems: MenuItem[] }) {
   return (
     <div className="hidden lg:flex items-center ml-8">
       {menuItems.map((item) => (
-        <>
+        <Fragment key={item.id}>
           {item.subItems ? (
             <DropdownItems key={item.id} item={item} />
           ) : (
@@ -88,7 +88,7 @@ export default function DesktopMenu({ menuItems }: { menuItems: MenuItem[] }) {
               )}
             </Link>
           )}
-        </>
+        </Fragment>
       ))}
     </div>
   );

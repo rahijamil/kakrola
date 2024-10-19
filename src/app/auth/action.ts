@@ -126,12 +126,7 @@ export async function updatePassword(newPassword: string) {
 }
 
 export async function signInWithProvider(
-  provider:
-    | "google"
-    | "github"
-    | "linkedin"
-    | "notion"
-    | "slack_oidc",
+  provider: "google" | "github" | "linkedin" | "notion" | "slack_oidc",
   acceptInviteToken?: string | null
 ) {
   const supabaseServer = createClient();
@@ -141,6 +136,10 @@ export async function signInWithProvider(
       provider,
       options: {
         redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback?&accept_invite_token=${acceptInviteToken}`,
+        queryParams:
+          provider === "google"
+            ? { access_type: "offline", prompt: "consent" }
+            : {},
       },
     });
 

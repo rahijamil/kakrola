@@ -38,12 +38,11 @@ import {
 } from "@/types/activitylog";
 import { useRole } from "@/context/RoleContext";
 import useScreen from "@/hooks/useScreen";
-import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
 import { useQueryClient } from "@tanstack/react-query";
 import { PermissionName } from "@/types/role";
 import withPermission from "@/utils/withPermission";
 import { canCreateContent } from "@/utils/permissionUtils";
+import LoadingRows from "./LoadingRows";
 
 interface ListViewProps {
   groupedTasks: Record<string, TaskType[]>;
@@ -567,343 +566,154 @@ const ListView: React.FC<ListViewProps> = ({
         <Droppable droppableId="list" type="column" direction="vertical">
           {(listProvided) => (
             <div
-              className="overflow-auto h-[calc(100vh-180px)] md:px-6 pb-4"
+              className="overflow-auto h-[calc(100vh-120px)] w-screen md:w-full md:min-w-[1000px] md:px-6 pb-20"
               ref={listProvided.innerRef}
               {...listProvided.droppableProps}
             >
-              <div>
-                <table
-                  className="w-full min-w-[1000px] border-collapse"
-                  ref={tableRef}
-                >
-                  <tr className="border-y border-text-100 text-xs divide-x divide-text-200 whitespace-nowrap flex sticky top-0 z-10 bg-background text-text-500">
-                    <th className="p-2 text-left w-[30%] md:w-[40%] font-medium flex items-center gap-2 pl-4 md:pl-8">
-                      <AlignLeft strokeWidth={2} className="w-4 h-4" />
-                      <span>Task name</span>
-                    </th>
-                    <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
-                      <UserPlus strokeWidth={2} className="w-4 h-4" />
-                      <span>Assignee</span>
-                    </th>
-                    <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
-                      <CalendarRange strokeWidth={2} className="w-4 h-4" />
-                      <span>Dates</span>
-                    </th>
-                    <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
-                      <CircleChevronUp strokeWidth={2} className="w-4 h-4" />
-                      <span>Priority</span>
-                    </th>
-                    <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
-                      <Tag strokeWidth={2} className="w-4 h-4" />
-                      <span>Labels</span>
-                    </th>
-                    {/* <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+              <table
+                className="border-collapse w-full"
+                ref={tableRef}
+              >
+                <tr className="border-y border-text-100 text-xs divide-x divide-text-200 whitespace-nowrap flex sticky top-0 z-10 bg-background text-text-500">
+                  <th className="p-2 text-left w-64 md:w-[40%] font-medium flex items-center gap-2 pl-4 md:pl-8">
+                    <AlignLeft strokeWidth={2} className="w-4 h-4" />
+                    <span>Task name</span>
+                  </th>
+                  <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
+                    <UserPlus strokeWidth={2} className="w-4 h-4" />
+                    <span>Assignee</span>
+                  </th>
+                  <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
+                    <CalendarRange strokeWidth={2} className="w-4 h-4" />
+                    <span>Dates</span>
+                  </th>
+                  <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
+                    <CircleChevronUp strokeWidth={2} className="w-4 h-4" />
+                    <span>Priority</span>
+                  </th>
+                  <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
+                    <Tag strokeWidth={2} className="w-4 h-4" />
+                    <span>Labels</span>
+                  </th>
+                  {/* <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
                     <MapPin strokeWidth={2} className="w-4 h-4" />
                     <span>Location</span>
                   </th> */}
-                  </tr>
+                </tr>
 
-                  <tbody>
-                    {isLoading ? (
-                      <>
+                <tbody>
+                  {isLoading ? (
+                    <LoadingRows />
+                  ) : (
+                    <>
+                      {columns.filter((c) => c.id !== "ungrouped").length ==
+                        0 && (
                         <tr>
-                          <td colSpan={5} className="p-0 w-full pb-4">
-                            <tr className="border-b border-text-100 block">
-                              <td colSpan={5} className="p-2">
-                                <Skeleton width={100} />
-                              </td>
-                            </tr>
-                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                            </tr>
-                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                            </tr>
-                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                            </tr>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colSpan={5} className="p-0 w-full pb-4">
-                            <tr className="border-b border-text-100 block">
-                              <td colSpan={5} className="p-2">
-                                <Skeleton width={100} />
-                              </td>
-                            </tr>
-                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                            </tr>
-                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                            </tr>
-                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                            </tr>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colSpan={5} className="p-0 w-full pb-12">
-                            <tr className="border-b border-text-100 block">
-                              <td colSpan={5} className="p-2">
-                                <Skeleton width={100} />
-                              </td>
-                            </tr>
-                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                            </tr>
-                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                            </tr>
-                            <tr className="grid grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                              <td className="p-2">
-                                <Skeleton width={"60%"} />
-                              </td>
-                            </tr>
-                          </td>
-                        </tr>
-                      </>
-                    ) : (
-                      <>
-                        {columns.filter((c) => c.id !== "ungrouped").length ==
-                          0 && (
-                          <tr>
-                            <td colSpan={5} className="p-0">
-                              <UngroupedTasks
-                                tasks={unGroupedTasks}
-                                showUngroupedAddTask={showUngroupedAddTask}
-                                setShowUngroupedAddTask={
-                                  setShowUngroupedAddTask
-                                }
-                                project={project}
-                                setTasks={setTasks}
-                                showTaskItemModal={showTaskItemModal}
-                                setShowTaskItemModal={setShowTaskItemModal}
+                          <td colSpan={5} className="p-0">
+                            <UngroupedTasks
+                              tasks={unGroupedTasks}
+                              showUngroupedAddTask={showUngroupedAddTask}
+                              setShowUngroupedAddTask={setShowUngroupedAddTask}
+                              project={project}
+                              setTasks={setTasks}
+                              showTaskItemModal={showTaskItemModal}
+                              setShowTaskItemModal={setShowTaskItemModal}
+                            />
+
+                            {screenWidth > 768 && (
+                              <AddNewSection
+                                section={{
+                                  id: "ungrouped",
+                                  title: "Ungrouped",
+                                  tasks: [],
+                                }}
+                                index={0}
+                                newSectionName={newSectionName}
+                                setNewSectionName={setNewSectionName}
+                                handleAddSection={handleAddSection}
+                                setShowAddSection={setShowAddSection}
+                                showAddSection={showAddSection}
+                                sectionAddLoading={sectionAddLoading}
                               />
+                            )}
+                          </td>
+                        </tr>
+                      )}
 
-                              {screenWidth > 768 && (
-                                <AddNewSection
-                                  section={{
-                                    id: "ungrouped",
-                                    title: "Ungrouped",
-                                    tasks: [],
+                      {columns
+                        .filter((c) => c.id !== "ungrouped")
+                        .map((column, columnIndex) => (
+                          <Draggable
+                            key={column.id}
+                            draggableId={column.id}
+                            index={columnIndex}
+                            isDragDisabled={!!showTaskItemModal}
+                          >
+                            {(provided) => (
+                              <tr
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                              >
+                                <td
+                                  colSpan={5}
+                                  className={`p-0 pb-4 md:pb-0 bg-background`}
+                                  style={{
+                                    minWidth:
+                                      tableRef.current?.scrollWidth + "px",
                                   }}
-                                  index={0}
-                                  newSectionName={newSectionName}
-                                  setNewSectionName={setNewSectionName}
-                                  handleAddSection={handleAddSection}
-                                  setShowAddSection={setShowAddSection}
-                                  showAddSection={showAddSection}
-                                  sectionAddLoading={sectionAddLoading}
-                                />
-                              )}
-                            </td>
-                          </tr>
-                        )}
-
-                        {columns
-                          .filter((c) => c.id !== "ungrouped")
-                          .map((column, columnIndex) => (
-                            <Draggable
-                              key={column.id}
-                              draggableId={column.id}
-                              index={columnIndex}
-                              isDragDisabled={!!showTaskItemModal}
-                            >
-                              {(provided) => (
-                                <tr
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
                                 >
-                                  <td
-                                    colSpan={5}
-                                    className={`p-0 pb-4 md:pb-0 bg-background`}
-                                    style={{
-                                      minWidth:
-                                        tableRef.current?.scrollWidth + "px",
-                                    }}
-                                  >
-                                    <ListViewSection
-                                      section={
-                                        sections.find(
-                                          (s) => s.id.toString() === column.id
-                                        )!
-                                      }
-                                      sections={sections}
-                                      setSections={setSections}
-                                      toggleSection={toggleSection}
-                                      groupedTasks={groupedTasks}
-                                      showSectionMoreOptions={
-                                        showSectionMoreOptions
-                                      }
-                                      setShowSectionMoreOptions={
-                                        setShowSectionMoreOptions
-                                      }
-                                      setShowDeleteConfirm={
-                                        setShowDeleteConfirm
-                                      }
-                                      setShowArchiveConfirm={
-                                        setShowArchiveConfirm
-                                      }
-                                      setShowAddTask={setShowAddTask}
-                                      setTasks={setTasks}
-                                      showAddTask={showAddTask}
-                                      tasks={tasks}
-                                      project={project}
-                                      showTaskItemModal={showTaskItemModal}
-                                      setShowTaskItemModal={
-                                        setShowTaskItemModal
-                                      }
+                                  <ListViewSection
+                                    section={
+                                      sections.find(
+                                        (s) => s.id.toString() === column.id
+                                      )!
+                                    }
+                                    sections={sections}
+                                    setSections={setSections}
+                                    toggleSection={toggleSection}
+                                    groupedTasks={groupedTasks}
+                                    showSectionMoreOptions={
+                                      showSectionMoreOptions
+                                    }
+                                    setShowSectionMoreOptions={
+                                      setShowSectionMoreOptions
+                                    }
+                                    setShowDeleteConfirm={setShowDeleteConfirm}
+                                    setShowArchiveConfirm={
+                                      setShowArchiveConfirm
+                                    }
+                                    setShowAddTask={setShowAddTask}
+                                    setTasks={setTasks}
+                                    showAddTask={showAddTask}
+                                    tasks={tasks}
+                                    project={project}
+                                    showTaskItemModal={showTaskItemModal}
+                                    setShowTaskItemModal={setShowTaskItemModal}
+                                  />
+                                  {screenWidth > 768 && (
+                                    <AddNewSection
+                                      section={column}
+                                      index={columnIndex}
+                                      newSectionName={newSectionName}
+                                      setNewSectionName={setNewSectionName}
+                                      handleAddSection={handleAddSection}
+                                      setShowAddSection={setShowAddSection}
+                                      showAddSection={showAddSection}
+                                      sectionAddLoading={sectionAddLoading}
                                     />
-                                    {screenWidth > 768 && (
-                                      <AddNewSection
-                                        section={column}
-                                        index={columnIndex}
-                                        newSectionName={newSectionName}
-                                        setNewSectionName={setNewSectionName}
-                                        handleAddSection={handleAddSection}
-                                        setShowAddSection={setShowAddSection}
-                                        showAddSection={showAddSection}
-                                        sectionAddLoading={sectionAddLoading}
-                                      />
-                                    )}
-                                  </td>
-                                </tr>
-                              )}
-                            </Draggable>
-                          ))}
+                                  )}
+                                </td>
+                              </tr>
+                            )}
+                          </Draggable>
+                        ))}
 
-                        {listProvided.placeholder}
-                      </>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                      {listProvided.placeholder}
+                    </>
+                  )}
+                </tbody>
+              </table>
             </div>
           )}
         </Droppable>

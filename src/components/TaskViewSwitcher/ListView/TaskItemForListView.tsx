@@ -34,6 +34,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { useQueryClient } from "@tanstack/react-query";
 import { canDeleteContent, canEditContent } from "@/utils/permissionUtils";
+import useScreen from "@/hooks/useScreen";
 
 const TaskItemForListView = ({
   task,
@@ -264,11 +265,13 @@ const TaskItemForListView = ({
             createNotification({
               recipients: addedAssignees.map((a) => ({
                 profile_id: a.profile_id,
-                is_read: false
+                is_read: false,
               })),
               triggered_by: {
                 id: profile.id,
-                first_name: profile.full_name?.split(' ')[0] || profile.email?.split('@')[0],
+                first_name:
+                  profile.full_name?.split(" ")[0] ||
+                  profile.email?.split("@")[0],
                 avatar_url: profile.avatar_url,
               },
               type: NotificationTypeEnum.ASSIGNMENT,
@@ -276,10 +279,12 @@ const TaskItemForListView = ({
               redirect_url: `/app/project/${project?.slug}?task=${task.id}`,
               api_url: null,
               data: {
-                triggered_by: profile.full_name?.split(' ')[0] || profile.email?.split('@')[0],
+                triggered_by:
+                  profile.full_name?.split(" ")[0] ||
+                  profile.email?.split("@")[0],
                 entityName: task.title,
-              }
-            })
+              },
+            });
           }
 
           // Log activity for removed assignees
@@ -419,6 +424,8 @@ const TaskItemForListView = ({
     }
   }, [searchTask]);
 
+  const { screenWidth } = useScreen();
+
   return (
     <div className="w-full">
       {addTaskAboveBellow?.position == "above" && (
@@ -448,21 +455,21 @@ const TaskItemForListView = ({
         <Draggable draggableId={task.id?.toString()} index={index}>
           {(provided, snapshot) => (
             <tr
-              onContextMenu={(ev) => {
-                ev.preventDefault();
-                setShowContextMenu(true);
-                setStyle({
-                  top:
-                    window.innerHeight -
-                      (triggerRef.current?.getBoundingClientRect().bottom ||
-                        0) -
-                      50 >
-                    (triggerRef.current?.clientHeight || 0)
-                      ? ev.clientY + "px"
-                      : ev.clientY + "px",
-                  left: ev.clientX + "px",
-                });
-              }}
+              // onContextMenu={(ev) => {
+              //   ev.preventDefault();
+              //   setShowContextMenu(true);
+              //   setStyle({
+              //     top:
+              //       window.innerHeight -
+              //         (triggerRef.current?.getBoundingClientRect().bottom ||
+              //           0) -
+              //         50 >
+              //       (triggerRef.current?.clientHeight || 0)
+              //         ? ev.clientY + "px"
+              //         : ev.clientY + "px",
+              //     left: ev.clientX + "px",
+              //   });
+              // }}
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
@@ -476,7 +483,7 @@ const TaskItemForListView = ({
             >
               <>
                 <td
-                  className={`w-[30%] md:w-[40%] pl-4 md:pl-8 flex items-center justify-between gap-4 group ring-1 ring-transparent h-10 ${
+                  className={`w-64 md:w-[40%] pl-4 md:pl-8 flex items-center justify-between gap-4 group ring-1 ring-transparent h-10 truncate ${
                     editTaskTitle ? "bg-primary-10" : "hover:ring-primary-300"
                   }`}
                   onClick={() => setShowAddTask && setShowAddTask(null)}
@@ -490,15 +497,24 @@ const TaskItemForListView = ({
                     <div
                       className="flex items-center gap-2 w-full"
                       onClick={() => {
-                        setShowModal && setShowModal(task.id.toString());
+                        if (screenWidth <= 768) {
+                          setShowModal && setShowModal(task.id.toString());
+                          window.history.pushState(
+                            null,
+                            "",
+                            `${pathname}?task=${task.id}`
+                          );
+                        }
                       }}
                     >
                       <div className="w-full">
                         {!editTaskTitle ? (
                           <h2
                             onClick={(ev) => {
-                              ev.stopPropagation();
-                              setEditTaskTitle(true);
+                              if (screenWidth > 768) {
+                                ev.stopPropagation();
+                                setEditTaskTitle(true);
+                              }
                             }}
                             className={`${
                               task.is_completed
@@ -546,28 +562,30 @@ const TaskItemForListView = ({
                     </div>
                   </div>
 
-                  <div className="pr-1">
-                    <button
-                      onClick={() => {
-                        setShowModal && setShowModal(task.id.toString());
-                        window.history.pushState(
-                          null,
-                          "",
-                          `${pathname}?task=${task.id}`
-                        );
-                      }}
-                      className={`px-2 py-1 transition rounded-lg hover:bg-text-100 items-center gap-1 text-text-500 ${
-                        !editTaskTitle ? "hidden group-hover:flex" : "flex"
-                      }`}
-                    >
-                      <PanelRight strokeWidth={1.5} className="w-4 h-4" />
-                      <span className="text-[11px] uppercase font-medium">
-                        Open
-                      </span>
-                    </button>
-                  </div>
+                  {screenWidth > 768 && (
+                    <div className="pr-1">
+                      <button
+                        onClick={() => {
+                          setShowModal && setShowModal(task.id.toString());
+                          window.history.pushState(
+                            null,
+                            "",
+                            `${pathname}?task=${task.id}`
+                          );
+                        }}
+                        className={`px-2 py-1 transition rounded-lg hover:bg-text-100 items-center gap-1 text-text-500 ${
+                          !editTaskTitle ? "hidden group-hover:flex" : "flex"
+                        }`}
+                      >
+                        <PanelRight strokeWidth={1.5} className="w-4 h-4" />
+                        <span className="text-[11px] uppercase font-medium">
+                          Open
+                        </span>
+                      </button>
+                    </div>
+                  )}
                 </td>
-                <td className="w-[15%]">
+                <td className="w-32 md:w-[15%]">
                   <AssigneeSelector
                     task={taskData}
                     setTask={setTaskData}
@@ -575,7 +593,7 @@ const TaskItemForListView = ({
                     project={project}
                   />
                 </td>
-                <td className="w-[15%]">
+                <td className="w-32 md:w-[15%] truncate">
                   <div onClick={(ev) => ev.stopPropagation()}>
                     <DateSelector
                       task={taskData}
@@ -584,14 +602,14 @@ const TaskItemForListView = ({
                     />
                   </div>
                 </td>
-                <td className="w-[15%]">
+                <td className="w-32 md:w-[15%]">
                   <Priorities
                     taskData={taskData}
                     setTaskData={setTaskData}
                     forListView
                   />
                 </td>
-                <td className="w-[15%]">
+                <td className="w-32 md:w-[15%]">
                   <LabelSelector
                     task={taskData}
                     setTask={setTaskData}
