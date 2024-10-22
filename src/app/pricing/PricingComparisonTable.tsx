@@ -308,7 +308,7 @@ const PricingComparisonTable = () => {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto bg-white shadow-xl rounded-xl overflow-hidden">
+    <div className="w-full wrapper bg-white shadow-xl rounded-xl overflow-hidden">
       <Table>
         <TableHeader className="bg-gray-50">
           <TableRow>

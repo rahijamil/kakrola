@@ -21,16 +21,12 @@ const CheckoutSettings = ({
   setSelectedPlan: Dispatch<SetStateAction<Tier | null>>;
   tab: string | null;
 }) => {
-  const [billingCycle, setBillingCycle] = useState<"annually" | "monthly">(
-    "monthly"
-  );
   const { teamMembers } = useSidebarDataProvider();
   const [showDetails, setShowDetails] = useState(false);
   const paddleFrameRef = useRef<HTMLDivElement>(null);
 
   const { checkoutData } = usePaddleCheckout({
-    priceId:
-      selectedPlan.priceId[billingCycle === "annually" ? "year" : "month"],
+    priceId: selectedPlan.priceId,
     quantity: teamMembers.length,
     id: selectedPlan.id as "plus" | "business",
     paddleFrameRef,
@@ -69,7 +65,7 @@ const CheckoutSettings = ({
           <div className="order-1 md:order-2 p-6 md:pl-3 space-y-6">
             <div className="flex gap-8">
               <div className="flex-1 space-y-6">
-                <div className="space-y-4">
+                {/* <div className="space-y-4">
                   <RadioGroup
                     value={billingCycle}
                     onValueChange={(value) =>
@@ -132,26 +128,8 @@ const CheckoutSettings = ({
                     </Label>
                   </RadioGroup>
 
-                  {/* <div className="relative">
-            <select className="w-full p-3 pr-10 border border-text-[#e0e0e0] rounded-lg appearance-none">
-              <option>US Dollar (USD)</option>
-              <option>Euro (EUR)</option>
-              <option>British Pound (GBP)</option>
-              <option>Japanese Yen (JPY)</option>
-              <option>Canadian Dollar (CAD)</option>
-              <option>Australian Dollar (AUD)</option>
-              <option>Swiss Franc (CHF)</option>
-              <option>Chinese Yuan (CNY)</option>
-              <option>Swedish Krona (SEK)</option>
-              <option>New Zealand Dollar (NZD)</option>
-              
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#666666]" />
-          </div>
-          <p className="text-xs text-[#666666]">
-            You cannot change your currency after upgrading.
-          </p> */}
-                </div>
+          
+                </div> */}
 
                 {checkoutData && (
                   <div className="space-y-2 text-[#666666]">
@@ -200,9 +178,7 @@ const CheckoutSettings = ({
                                 (checkoutData.items[0].billing_cycle?.frequency
                                   ? checkoutData.items[0].billing_cycle
                                       ?.frequency
-                                  : billingCycle == "annually"
-                                  ? 12
-                                  : 1)}{" "}
+                                  : 12)}{" "}
                               / month / member
                             </span>
 
@@ -213,9 +189,7 @@ const CheckoutSettings = ({
                                 (checkoutData.items[0].billing_cycle?.frequency
                                   ? checkoutData.items[0].billing_cycle
                                       ?.frequency
-                                  : billingCycle == "annually"
-                                  ? 12
-                                  : 1)
+                                  : 12)
                               ).toFixed(2)}
                             </span>
                           </p>

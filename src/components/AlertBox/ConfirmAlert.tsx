@@ -59,11 +59,11 @@ const ConfirmAlert = memo(({
   return (
     <AlertDialog open={true}>
       <AlertDialogOverlay 
-        className="fixed inset-0 z-[100] bg-black/60 pt-40"
+        className="z-[100] bg-black/20"
         onClick={handleCancel}
       >
         <AlertDialogContent
-          className="border-l-4 border-primary-200 p-4 bg-white dark:bg-gray-800 rounded-lg space-y-5 w-11/12 max-w-[450px] mx-auto transform-gpu"
+          className="border-l-4 border-primary-200 p-4 bg-white dark:bg-gray-800 rounded-lg space-y-5 w-11/12 max-w-[450px] mx-auto transform-gpu top-0 mt-80"
           onClick={(e: React.MouseEvent) => e.stopPropagation()}
         >
           <div className={`space-y-1 ${!title ? 'pt-2' : ''}`}>

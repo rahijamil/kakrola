@@ -112,8 +112,8 @@ const TaskItemModal = ({
   subTasks: TaskType[];
   onClose: () => void;
   onCheckClick: () => void;
-  project: ProjectType;
-  setTasks: React.Dispatch<React.SetStateAction<TaskType[]>>;
+  project: ProjectType | null;
+  setTasks: (tasks: TaskType[]) => void;
   tasks: TaskType[];
 }) => {
   const { profile } = useAuthProvider();

@@ -15,8 +15,6 @@ const TabSwitcher = ({
   activeTab: string;
   size?: "sm" | "md" | "lg";
 }) => {
-  // const [hoverItem, setHoverItem] = useState<TabItem | null>(null);
-
   return (
     <ul
       className={`flex items-center gap-1 relative overflow-hidden ${
@@ -40,20 +38,6 @@ const TabSwitcher = ({
             {item.icon}
             <span className="capitalize">{item.name}</span>
           </button>
-
-          {hoverItem?.id === item.id && (
-            <motion.span
-              layoutId="hoverIndicator"
-              className="absolute top-1 left-1/2 translate-x-1/2 h-1 w-1 rounded-full bg-primary-500 z-10"
-              initial={false}
-              transition={{
-                type: "spring",
-                stiffness: 500,
-                damping: 30,
-                duration: size == "lg" ? 0.5 : 0.2,
-              }}
-            />
-          )}
 
           {activeTab === item.id && (
             <>

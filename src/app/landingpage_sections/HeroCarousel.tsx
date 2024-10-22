@@ -102,7 +102,7 @@ const HeroCarousel = () => {
           </motion.div>
         ))}
 
-        {/* <div className="aboslute bg-primary-100 w-full max-w-7xl mx-auto aspect-[4/2.5] rounded-lg rounded-b-none"></div> */}
+        {/* <div className="aboslute bg-primary-100 w-full wrapper aspect-[4/2.5] rounded-lg rounded-b-none"></div> */}
       </div>
 
       <TabSwitcher

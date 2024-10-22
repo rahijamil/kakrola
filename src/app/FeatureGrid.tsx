@@ -105,14 +105,14 @@ export const FeatureGrid = () => {
 
   return (
     <section className="py-20 relative overflow-hidden">
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 wrapper">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">
             Everything you need to succeed
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -126,7 +126,7 @@ export const FeatureGrid = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12"
+          className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-8 lg:gap-y-12"
         >
           {features.map((feature) => (
             <motion.div

@@ -202,12 +202,12 @@ const SettingsModal = () => {
           param: "teamspaces",
           icon: Building2,
         },
-        {
-          id: 3,
-          name: "Import",
-          param: "import",
-          icon: ArrowDownToLine,
-        },
+        // {
+        //   id: 3,
+        //   name: "Import",
+        //   param: "import",
+        //   icon: ArrowDownToLine,
+        // },
       ],
     },
   ];
@@ -232,8 +232,8 @@ const SettingsModal = () => {
         return <IntegrationsSettings />;
       case "teamspaces":
         return <TeamspaceSettings />;
-      case "import":
-        return <ImportSettings />;
+      // case "import":
+      //   return <ImportSettings />;
       default:
         return null;
     }
@@ -253,8 +253,8 @@ const SettingsModal = () => {
         return "Integrations";
       case "teamspaces":
         return "Teamspaces settings";
-      case "import":
-        return "Import data";
+      // case "import":
+      //   return "Import data";
       default:
         return null;
     }

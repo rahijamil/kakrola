@@ -49,13 +49,13 @@ const RecentUpdates = () => (
 
 const BuiltInPublicSection = () => {
   return (
-    <section className="space-y-20">
+    <section className="space-y-20 md:py-20 wrapper">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-2xl font-bold mb-4">
+          <h2 className="font-bold text-gray-900 text-4xl leading-tight mb-4">
             Built in Public, Built for You
           </h2>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-xl max-w-2xl mx-auto">
             Follow along as we build and improve Kakrola together
           </p>
         </div>

@@ -4,7 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Shield, Clock, Star } from "lucide-react";
+import { Shield, Clock, Star, Rocket } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -15,7 +15,7 @@ import {
 const CtaSection = () => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-white via-primary-50 to-white">
-      <div className="wrapper px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
+      <div className="wrapper py-20 md:pb-32">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -30,10 +30,16 @@ const CtaSection = () => {
             meetings, and gotten more done
           </p>
 
-          <div className="mb-12 flex justify-center">
-            <Link href="/pricing">
-              <Button size="lg" className="text-lg px-8">
-                View Pricing Plans
+          <div className="mb-12 flex justify-center items-center flex-wrap gap-4">
+            <Link href="/auth/signup" className="w-full sm:w-fit">
+              <Button size="lg" className="shadow-lg w-full sm:w-fit">
+                <Rocket className="w-5 h-5 mr-2" />
+                Start 14-Day Trial
+              </Button>
+            </Link>
+            <Link href="/pricing" className="w-full sm:w-fit">
+              <Button size="lg" className="text-lg px-8 w-full sm:w-fit" variant="outline">
+                Explore Pricing
               </Button>
             </Link>
           </div>

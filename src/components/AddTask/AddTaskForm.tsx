@@ -343,20 +343,19 @@ const AddTaskForm = ({
             isSmall={screenWidth <= 768 ? true : isSmall}
           />
 
-            {taskForEdit && setShowModal && (
-              <button
-                onClick={() => {
-                  setShowModal && setShowModal(taskData.id.toString());
-                  onClose();
-                }}
-                className={`px-2 py-1 transition rounded-lg hover:bg-text-100 items-center gap-1 text-text-500 flex`}
-              >
-                <PanelRight strokeWidth={1.5} className="w-4 h-4" />
-                <span className="text-[11px] uppercase font-medium">Open</span>
-              </button>
-            )}
-          </div>
-        )}
+          {taskForEdit && setShowModal && (
+            <button
+              onClick={() => {
+                setShowModal && setShowModal(taskData.id.toString());
+                onClose();
+              }}
+              className={`px-2 py-1 transition rounded-lg hover:bg-text-100 items-center gap-1 text-text-500 flex`}
+            >
+              <PanelRight strokeWidth={1.5} className="w-4 h-4" />
+              <span className="text-[11px] uppercase font-medium">Open</span>
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="border-t border-text-100">

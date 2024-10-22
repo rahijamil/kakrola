@@ -3,33 +3,45 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Rocket, ArrowRight, CheckCircle2, FileText, Hash, Building2, Users, Zap } from "lucide-react";
+import {
+  Rocket,
+  ArrowRight,
+  CheckCircle2,
+  FileText,
+  Hash,
+  Building2,
+  Users,
+  Zap,
+} from "lucide-react";
 
 const features = [
   {
     id: "project",
     title: "Project Management",
-    description: "Track projects with multiple views, custom fields, and automated workflows",
+    description:
+      "Track projects with multiple views, custom fields, and automated workflows",
     icon: <CheckCircle2 className="w-6 h-6" />,
     stat: "50% fewer meetings",
-    color: "bg-blue-500"
+    color: "bg-blue-500",
   },
   {
     id: "docs",
     title: "Document Collaboration",
-    description: "Real-time collaboration with rich-text editing and version history",
+    description:
+      "Real-time collaboration with rich-text editing and version history",
     icon: <FileText className="w-6 h-6" />,
     stat: "30% faster documentation",
-    color: "bg-purple-500"
+    color: "bg-purple-500",
   },
   {
     id: "chat",
     title: "Team Communication",
-    description: "Organized discussions with threads, channels, and file sharing",
+    description:
+      "Organized discussions with threads, channels, and file sharing",
     icon: <Hash className="w-6 h-6" />,
     stat: "40% less context switching",
-    color: "bg-green-500"
-  }
+    color: "bg-green-500",
+  },
 ];
 
 export default function HeroSection() {
@@ -37,20 +49,20 @@ export default function HeroSection() {
 
   return (
     <div className="relative overflow-hidden bg-gradient-to-b from-white via-primary-50 to-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
+      <div className="wrapper py-20 md:pb-32">
         <div className="relative z-10">
           {/* Top Stats Bar */}
-          <div className="flex justify-center gap-8 mb-16">
+          <div className="flex justify-center flex-wrap gap-8 mb-16 whitespace-nowrap">
             <div className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-primary-600" />
+              <Users className="w-5 h-5 min-h-5 min-w-5 text-primary-600" />
               <span className="text-sm">1,234+ Active Teams</span>
             </div>
             <div className="flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-primary-600" />
+              <Building2 className="w-5 h-5 min-h-5 min-w-5 text-primary-600" />
               <span className="text-sm">99.9% Uptime</span>
             </div>
             <div className="flex items-center gap-2">
-              <Zap className="w-5 h-5 text-primary-600" />
+              <Zap className="w-5 h-5 min-h-5 min-w-5 text-primary-600" />
               <span className="text-sm">2h Support Response</span>
             </div>
           </div>
@@ -60,7 +72,9 @@ export default function HeroSection() {
             {/* Left Column */}
             <div className="space-y-8">
               <div className="inline-flex items-center px-4 py-2 bg-primary-100 rounded-full">
-                <span className="text-primary-700 text-sm font-medium">30-Day Money-Back Guarantee</span>
+                <span className="text-primary-700 text-sm font-medium">
+                  30-Day Money-Back Guarantee
+                </span>
                 <ArrowRight className="w-4 h-4 ml-2 text-primary-700" />
               </div>
 
@@ -81,24 +95,25 @@ export default function HeroSection() {
               </h1>
 
               <p className="text-xl text-gray-600">
-                Join growing teams who've simplified their workflow, reduced meetings, and gotten more done with our all-in-one solution.
+                Join growing teams who've simplified their workflow, reduced
+                meetings, and gotten more done with our all-in-one solution.
               </p>
 
-              <div className="flex items-center gap-6">
-                <Link href="/auth/signup">
-                  <Button size="lg" className="shadow-lg">
+              <div className="flex items-center flex-wrap gap-6">
+                <Link href="/auth/signup" className="w-full sm:w-fit">
+                  <Button size="lg" className="shadow-lg w-full sm:w-fit">
                     <Rocket className="w-5 h-5 mr-2" />
                     Start 14-Day Trial
                   </Button>
                 </Link>
-                <span className="text-sm text-gray-500">
+                {/* <span className="text-sm text-gray-500">
                   From $10/month per user
-                </span>
+                </span> */}
               </div>
             </div>
 
             {/* Right Column - Feature Showcase */}
-            <div className="relative">
+            <div className="relative hidden lg:block">
               <div className="bg-white rounded-xl shadow-xl p-8">
                 <div className="space-y-6">
                   {features.map((feature) => (
@@ -112,11 +127,15 @@ export default function HeroSection() {
                       onClick={() => setActiveFeature(feature)}
                     >
                       <div className="flex items-start gap-4">
-                        <div className={`p-3 rounded-lg ${feature.color} bg-opacity-10`}>
+                        <div
+                          className={`p-3 rounded-lg ${feature.color} bg-opacity-10`}
+                        >
                           {feature.icon}
                         </div>
                         <div className="space-y-2">
-                          <h3 className="font-semibold text-lg">{feature.title}</h3>
+                          <h3 className="font-semibold text-lg">
+                            {feature.title}
+                          </h3>
                           <p className="text-gray-600">{feature.description}</p>
                           <div className="inline-flex items-center gap-2 bg-green-100 px-3 py-1 rounded-full">
                             <CheckCircle2 className="w-4 h-4 text-green-600" />

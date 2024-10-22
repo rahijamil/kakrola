@@ -23,6 +23,7 @@ const buttonVariants = cva(
       size: {
         default: "h-9 px-4 py-2",
         sm: "h-8 rounded-md px-3 text-xs",
+        xs: "h-7 px-2 text-[12px]",
         lg: "h-10 rounded-md px-8",
         icon: "h-9 w-9",
       },
@@ -39,24 +40,55 @@ const buttonVariants = cva(
   }
 );
 
+
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  icon?: React.ElementType; // Optional icon on the left
+  leftAlign?: boolean; // Align the content to the left
+  rightContent?: React.ReactNode; // Add the rightContent prop
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      icon: Icon,
+      leftAlign = false,
+      rightContent, // Right content (e.g., icons or custom elements)
+      children,
+      ...props
+    },
+    ref
+  ) => {
     const Comp = asChild ? Slot : "button";
+
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(
+          buttonVariants({ variant, size, className }),
+          leftAlign && "justify-start" // Align the content to the left if required
+        )}
         ref={ref}
         {...props}
-      />
+      >
+        {/* Render left icon if provided */}
+        {Icon && <Icon className="w-4 h-4" />}
+
+        {/* Main content (children) */}
+        {children}
+
+        {/* Render right content if provided */}
+        {rightContent && <div className="ml-2">{rightContent}</div>}
+      </Comp>
     );
   }
 );
+
 Button.displayName = "Button";
 
 export { Button, buttonVariants };

@@ -4,49 +4,41 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { 
-  Menu, 
-  Rocket, 
-  ChevronDown,
-  X
-} from "lucide-react";
+import { Menu, Rocket, ChevronDown, X } from "lucide-react";
 import { useAuthProvider } from "@/context/AuthContext";
 import KakrolaLogo from "../kakrolaLogo";
 
-const menuItems = [
-  { id: 1, label: "Pricing", path: "/pricing" },
-];
+const menuItems = [{ id: 1, label: "Pricing", path: "/pricing" }];
 
 export default function LandingPageHeader({ forAuth }: { forAuth?: boolean }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { profile } = useAuthProvider();
   const pathname = usePathname();
-  
+
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <header>
-      <nav className={`fixed top-0 left-0 right-0 z-30 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-white/95 backdrop-blur-md shadow-sm' 
-          : 'bg-transparent'
-      }`}>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-30 transition-all duration-300 ${
+          isScrolled
+            ? "bg-white/95 backdrop-blur-md shadow-sm"
+            : "bg-transparent"
+        }`}
+      >
         <div className="wrapper">
           <div className="flex justify-between items-center h-16 md:h-20">
             {/* Logo */}
-            <Link 
-              href="/" 
-              className="relative flex items-center group"
-            >
+            <Link href="/" className="relative flex items-center group">
               <KakrolaLogo size="md" isTitle />
               <motion.div
                 className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary-500 origin-left"
@@ -71,15 +63,19 @@ export default function LandingPageHeader({ forAuth }: { forAuth?: boolean }) {
                         layoutId="activeTab"
                         className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary-500"
                         initial={false}
-                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 500,
+                          damping: 30,
+                        }}
                       />
                     )}
                   </Link>
                 ))}
-                
+
                 {profile ? (
                   <Link href="/app">
-                    <Button 
+                    <Button
                       variant="default"
                       size="sm"
                       className="relative group overflow-hidden"
@@ -99,22 +95,18 @@ export default function LandingPageHeader({ forAuth }: { forAuth?: boolean }) {
                 ) : (
                   <div className="flex items-center gap-4">
                     <Link href="/auth/login">
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
+                      <Button
+                        variant="ghost"
                         className="text-gray-700 hover:text-primary-600"
                       >
                         Log in
                       </Button>
                     </Link>
                     <Link href="/auth/signup">
-                      <Button 
-                        size="sm"
-                        className="relative group overflow-hidden shadow-lg hover:shadow-xl transition-all"
-                      >
+                      <Button className="relative group overflow-hidden shadow-lg hover:shadow-xl transition-all">
                         <span className="relative z-10 flex items-center gap-2">
                           <Rocket className="w-4 h-4" strokeWidth={1.5} />
-                          Start Free Trial
+                          Start 14-Day Trial
                         </span>
                         <motion.div
                           className="absolute inset-0 bg-primary-600"
@@ -163,35 +155,25 @@ export default function LandingPageHeader({ forAuth }: { forAuth?: boolean }) {
                     {item.label}
                   </Link>
                 ))}
-                
+
                 {!profile ? (
                   <div className="space-y-3 pt-4 border-t">
                     <Link href="/auth/login" className="block">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        className="w-full"
-                      >
+                      <Button variant="outline" size="sm" className="w-full">
                         Log in
                       </Button>
                     </Link>
                     <Link href="/auth/signup" className="block">
-                      <Button 
-                        size="sm"
-                        className="w-full"
-                      >
+                      <Button size="sm" className="w-full">
                         <Rocket className="w-4 h-4 mr-2" strokeWidth={1.5} />
-                        Start Free Trial
+                        Start 14-Day Trial
                       </Button>
                     </Link>
                   </div>
                 ) : (
                   <div className="pt-4 border-t">
                     <Link href="/app">
-                      <Button 
-                        size="sm"
-                        className="w-full"
-                      >
+                      <Button size="sm" className="w-full">
                         <Rocket className="w-4 h-4 mr-2" strokeWidth={1.5} />
                         Open Kakrola
                       </Button>

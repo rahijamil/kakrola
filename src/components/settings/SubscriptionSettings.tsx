@@ -329,9 +329,6 @@ const SubscriptionSettings = ({
                     <span className="text-xs font-medium text-text-600">
                       {plan.price1}
                     </span>
-                    <span className="text-xs font-medium text-text-600 opacity-70">
-                      {plan.price2}
-                    </span>
                   </p>
 
                   <div>
@@ -435,7 +432,7 @@ const SubscriptionSettings = ({
                             <div
                               key={index}
                               className={`px-6 py-3 text-center text-xs font-medium text-text-700 uppercase tracking-wider w-1/4 border-x h-14 ${
-                                 plan.highlighted
+                                plan.highlighted
                                   ? "border-kakrola-500 bg-kakrola-10 dark:border-[#8698c2] dark:bg-[#8698c2]/10"
                                   : "border-text-100 bg-background"
                               }`}

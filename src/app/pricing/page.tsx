@@ -42,10 +42,10 @@ const faqItems = [
 
 const PricingPage = () => {
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-white via-primary-25 to-white">
+    <div className="relative overflow-hidden min-h-screen bg-gradient-to-br from-white via-primary-25 to-white">
       <LandingPageHeader />
       <main className="pb-28">
-        <div className="wrapper max-w-6xl py-20 sm:pt-32 space-y-20">
+        <div className="wrapper py-20 sm:pt-32 space-y-20">
           <div className="text-center space-y-6">
             <h1 className="font-bold text-4xl sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
               Everything Your Team <br /> Needs to Work Better Together
@@ -75,7 +75,9 @@ const PricingPage = () => {
               <PricingCard plan={plan} key={index} />
             ))}
           </div>
+        </div>
 
+        <div className="pb-20">
           {/* Built in Public section */}
           <BuiltInPublicSection />
         </div>

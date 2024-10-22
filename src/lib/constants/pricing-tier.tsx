@@ -18,9 +18,7 @@ export interface Tier {
   period: string;
   cta: "Start 14-day trial" | "Contact sales";
   highlighted?: boolean;
-  priceId: {
-    year: string;
-  };
+  priceId: string;
   badge?: string;
   price1: ReactNode;
   idealFor?: string;
@@ -66,9 +64,7 @@ export const pricingTiers: Tier[] = [
     price: "$120",
     period: "per seat/year",
     cta: "Start 14-day trial",
-    priceId: {
-      year: "pri_01j8wqntqppsyw4ce6z65yc9ry",
-    },
+    priceId: "pri_01j8wqntqppsyw4ce6z65yc9ry",
     price1: <>$120 per member / year</>,
   },
   {
@@ -115,9 +111,8 @@ export const pricingTiers: Tier[] = [
     cta: "Start 14-day trial",
     highlighted: true,
     badge: "Most popular",
-    priceId: {
-      year: "pri_01j8wqrmqq2s336f4ehjwpxzqj",
-    },
+    priceId: "pri_01j8wqrmqq2s336f4ehjwpxzqj",
+
     price1: <>$180 per member / year</>,
   },
 ];

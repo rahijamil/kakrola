@@ -8,35 +8,64 @@ export interface InputProps
   Icon?: React.ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
   >;
-  howBig?: "sm" | "md" | "lg"; // Add howBig prop with size options
+  howBig?: "xs" | "sm" | "md" | "lg";
+  showFocusInMobile?: boolean;
+  fullWidth?: boolean;
+  borderLess?: boolean;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ label, Icon, howBig = "md", className, type, ...props }, ref) => {
-    // Define base class and adjust size classes based on howBig
+  (
+    {
+      label,
+      Icon,
+      howBig = "md",
+      showFocusInMobile = false,
+      className,
+      type,
+      fullWidth = false,
+      borderLess = false,
+      ...props
+    },
+    ref
+  ) => {
+    // Define size classes for the input sizes
     const sizeClasses = {
+      xs: "h-7 text-xs px-2 py-0.5",
       sm: "h-8 text-sm px-2 py-1",
       md: "h-9 text-sm px-3 py-1",
       lg: "h-10 text-base px-4 py-2",
     };
+
+    // Conditional focus styles for mobile devices
+    const focusClasses = showFocusInMobile
+      ? "focus-within:ring-2 focus-within:ring-primary-300" // Mobile focus styles
+      : "md:focus-within:ring-2 md:focus-within:ring-primary-300"; // Desktop focus styles
 
     return (
       <div className="flex flex-col">
         {label && (
           <label
             htmlFor={props.id}
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1 block text-sm font-medium text-text-700"
           >
             {label}
           </label>
         )}
-        <div className="flex items-center border border-input rounded-md">
-          {Icon && <Icon className="ml-2" />} {/* Render the icon if provided */}
+        <div
+          className={cn(
+            "flex items-center border border-input rounded-md",
+            focusClasses
+          )}
+        >
+          {Icon && <Icon className="ml-2 text-text-500" strokeWidth={1.5} />}{" "}
+          {/* Render the icon if provided */}
           <input
             type={type}
             className={cn(
-              "flex w-full rounded-md border-0 bg-transparent transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+              "flex rounded-md border-none outline-none bg-transparent transition-colors placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
               sizeClasses[howBig], // Use size classes based on howBig prop
+              fullWidth ? "w-full" : "w-full",
               className
             )}
             ref={ref}
