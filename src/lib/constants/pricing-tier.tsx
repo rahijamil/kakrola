@@ -7,141 +7,117 @@ enum ProductId {
 
 export interface Tier {
   name: string;
-  id: "free" | "plus" | "business";
+  id: "plus" | "business";
   product_id: ProductId | null;
   icon: string;
   description: string;
   features: string[];
   featured: boolean;
-  price: (isAnnual: boolean) => "$0" | "$10" | "$12" | "$15" | "$18";
-  period: "forever" | "per seat/month";
-  cta: "Sign up" | "Get started";
+  featureHeading?: string;
+  price: string;
+  period: string;
+  cta: "Start 14-day trial" | "Contact sales";
   highlighted?: boolean;
-  businessHighlight?: boolean;
   priceId: {
-    month: string;
     year: string;
   };
-  badge?: "Popular";
+  badge?: string;
   price1: ReactNode;
-  price2?: string;
-  featureHeading?: "Everything in Free +" | "Everything in Plus +";
+  idealFor?: string;
 }
 
 export const pricingTiers: Tier[] = [
   {
-    name: "Free",
-    id: "free",
-    product_id: null,
-    icon: "/assets/icons/price-tiers/free-icon.svg",
-    description: "For individuals to organize personal projects and life",
-    features: [
-      // "1 workspace",
-      "Personal space with unlimited projects and pages",
-      "1 teamspace",
-      "Up to 3 projects per teamspace",
-      "Up to 5 pages per teamspace",
-      "1 channel per teamspace",
-      "Thread discussions in channels",
-      "Up to 5 team members",
-      "List and Board views for projects",
-      "Unlimited tasks",
-      "Direct messaging",
-      "Basic page editor",
-      // "100MB file storage",
-      // "Email support",
-    ],
-    featured: false,
-    price: () => "$0",
-    period: "forever",
-    cta: "Sign up",
-    highlighted: false,
-    priceId: {
-      month: "",
-      year: "",
-    },
-    price1: <>$0 per member / month</>,
-  },
-  {
     name: "Plus",
     id: "plus",
     product_id: ProductId.PRO,
-    icon: "/assets/icons/price-tiers/basic-icon.svg",
-    description: "For small teams and professionals to work together",
+    icon: "/icons/price-tiers/plus.svg",
+    description: "The complete workspace that grows with your team",
+    idealFor: "Perfect for teams of 5-100 looking to centralize their work",
     features: [
-      // "Up to 3 workspaces",
-      // "Unlimited teamspaces per workspace",
-      "Unlimited teamspaces",
-      "Unlimited projects, pages and channels per teamspace",
-      // "Up to 50 team members per workspace",
-      // "Custom permissions for roles",
-      // "Calendar, Dashboard Views",
-      "Dashboard Views",
-      "Advanced page editor with collaborative editing",
-      // "5GB file storage per workspace",
-      // "Custom project templates",
-      // "Task dependencies",
-      // "Recurring tasks",
-      // "Time tracking",
-      // "Basic integrations (Google Drive, Dropbox)",
-      // "Priority email support",
+      "Project Management",
+      "• Unlimited projects and tasks",
+      "• Multiple views (List, Board, Calendar)",
+      "• Custom task fields and labels",
+      "• Due dates and priorities",
+      "• Subtasks and dependencies",
+
+      "Document Collaboration",
+      "• Rich-text page editor",
+      "• Real-time collaboration",
+      "• Page organization & hierarchy",
+      "• Custom page templates",
+
+      "Team Communication",
+      "• Public & private channels",
+      "• Direct messages",
+      "• Thread discussions",
+      "• Emoji reactions",
+      "• File sharing",
+
+      "General Features",
+      "• Up to 100 team members",
+      "• 10 GB storage per workspace",
+      "• Basic automation",
+      "• Standard integrations",
+      "• Community support",
     ],
-    featureHeading: "Everything in Free +",
     featured: true,
-    price: (isAnnual) => (isAnnual ? "$10" : "$12"),
-    period: "per seat/month",
-    cta: "Get started",
-    highlighted: true,
+    price: "$120",
+    period: "per seat/year",
+    cta: "Start 14-day trial",
     priceId: {
-      month: "pri_01j8wqm8x8w7gnmbax9wdeqpjf",
       year: "pri_01j8wqntqppsyw4ce6z65yc9ry",
     },
-    badge: "Popular",
-    price1: (
-      <>
-        $10 per member / month <br /> billed annually
-      </>
-    ),
-    price2: "$12 billed monthly",
+    price1: <>$120 per member / year</>,
   },
   {
     name: "Business",
     id: "business",
     product_id: ProductId.BUSINESS,
-    icon: "/assets/icons/price-tiers/pro-icon.svg",
-    description: "For organizations that need more control and support",
+    icon: "/icons/price-tiers/business.svg",
+    description: "Advanced features for scaling organizations",
+    idealFor: "Ideal for teams of 50+ needing advanced tools",
     features: [
-      // "Unlimited workspaces",
-      "Unlimited team members",
-      // "Guest access with limited permissions",
-      // "Single Sign-On (SSO)",
-      // "Advanced security features",
-      // "Unlimited file storage",
-      // "Custom fields for tasks and projects",
-      // "Advanced reporting and analytics",
-      // "Workload management",
-      // "Goal tracking",
-      // "Advanced integrations (Salesforce, Jira, etc.)",
-      // "API access for custom integrations",
-      // "Dedicated account manager",
-      // "24/7 priority support",
-      // "Custom onboarding and training",
+      "Advanced Project Management",
+      "• Custom project databases",
+      "• Advanced Gantt charts",
+      "• Resource management",
+      "• Workload balancing",
+      "• Time tracking",
+      "• Custom project templates",
+
+      "Enhanced Collaboration",
+      "• Advanced page permissions",
+      "• Version history",
+      "• Page analytics",
+      "• Multi-team management",
+
+      "Team Administration",
+      "• Advanced team roles",
+      "• Audit logs",
+      "• Usage analytics",
+      "• Custom workflows",
+      "• Advanced automations",
+
+      "Additional Features",
+      "• Unlimited team members",
+      "• Unlimited storage",
+      "• API access",
+      "• Priority bug fixes",
+      "• Early access to new features",
+      "• Private feedback channel",
     ],
     featureHeading: "Everything in Plus +",
     featured: false,
-    price: (isAnnual) => (isAnnual ? "$15" : "$18"),
-    period: "per seat/month",
-    cta: "Get started",
-    businessHighlight: true,
+    price: "$180",
+    period: "per seat/year",
+    cta: "Start 14-day trial",
+    highlighted: true,
+    badge: "Most popular",
     priceId: {
-      month: "pri_01j8wqqssqgy137net5xa76djm",
       year: "pri_01j8wqrmqq2s336f4ehjwpxzqj",
     },
-    price1: (
-      <>
-        $15 per member / month <br /> billed annually
-      </>
-    ),
-    price2: "$18 billed monthly",
+    price1: <>$180 per member / year</>,
   },
 ];

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Background -->
+  <rect width="200" height="200" rx="16" fill="#ffffff"/>
+  
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="bizGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#005c83;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#004d6e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="bizGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#69afcd;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#4a8fb1;stop-opacity:0.1" />
+    </linearGradient>
+    <filter id="bizShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="3" dy="3" stdDeviation="3" flood-color="#005c83" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Background Shape -->
+  <circle cx="100" cy="100" r="80" fill="url(#bizGrad2)"/>
+  
+  <!-- Business Building Shape -->
+  <g filter="url(#bizShadow)" fill="url(#bizGrad1)">
+    <!-- Base Building -->
+    <path d="M60 140h80V70H60v70zm10-60h60v50H70V80z"/>
+    <!-- Windows -->
+    <rect x="75" y="85" width="15" height="15" rx="2"/>
+    <rect x="110" y="85" width="15" height="15" rx="2"/>
+    <rect x="75" y="105" width="15" height="15" rx="2"/>
+    <rect x="110" y="105" width="15" height="15" rx="2"/>
+    <!-- Crown -->
+    <path d="M55 70l25-20h40l25 20H55z"/>
+  </g>
+  
+  <!-- Decorative Elements -->
+  <circle cx="50" cy="50" r="6" fill="#69afcd" opacity="0.3"/>
+  <circle cx="150" cy="150" r="6" fill="#69afcd" opacity="0.3"/>
+  <circle cx="150" cy="50" r="6" fill="#69afcd" opacity="0.3"/>
+  <circle cx="50" cy="150" r="6" fill="#69afcd" opacity="0.3"/>
+</svg>

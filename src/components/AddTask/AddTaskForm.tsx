@@ -42,6 +42,7 @@ import useScreen from "@/hooks/useScreen";
 import LabelSelector from "./LabelSelector";
 import { PersonalRoleType } from "@/types/role";
 import { canEditContent } from "@/utils/permissionUtils";
+import StatusSelector from "./StatusSelector";
 
 const AddTaskForm = ({
   onClose,
@@ -309,33 +310,38 @@ const AddTaskForm = ({
           )}
         </div>
 
-        {!forTaskModal && (
-          <div className="flex items-center flex-wrap gap-2 whitespace-nowrap">
-            <DateSelector
-              task={taskData}
-              setTask={setTaskData}
-              endDate={endDate}
-              isSmall={isSmall}
-            />
+        <div className="flex items-center overflow-x-auto scrollbar-hide gap-2 whitespace-nowrap">
+          <DateSelector
+            task={taskData}
+            setTask={setTaskData}
+            endDate={endDate}
+            isSmall={screenWidth <= 768 ? true : isSmall}
+          />
 
-            <AssigneeSelector
-              task={taskData}
-              setTask={setTaskData}
-              isSmall={isSmall}
-              project={project}
-            />
+          <AssigneeSelector
+            task={taskData}
+            setTask={setTaskData}
+            isSmall={screenWidth <= 768 ? true : isSmall}
+            project={project}
+          />
 
-            <Priorities
-              taskData={taskData}
-              setTaskData={setTaskData}
-              isSmall={isSmall}
-            />
+          <Priorities
+            taskData={taskData}
+            setTaskData={setTaskData}
+            isSmall={screenWidth <= 768 ? true : isSmall}
+          />
 
-            <LabelSelector
-              task={taskData}
-              setTask={setTaskData}
-              isSmall={isSmall}
-            />
+          <StatusSelector
+            taskData={taskData}
+            setTaskData={setTaskData}
+            isSmall={screenWidth <= 768 ? true : isSmall}
+          />
+
+          <LabelSelector
+            task={taskData}
+            setTask={setTaskData}
+            isSmall={screenWidth <= 768 ? true : isSmall}
+          />
 
             {taskForEdit && setShowModal && (
               <button

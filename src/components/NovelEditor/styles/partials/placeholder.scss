@@ -67,9 +67,9 @@
   }
 }
 
-// .comment-editor {
-//   .is-editor-empty::before {
-//     content: "Comment..." !important;
-//     @apply select-none;
-//   }
-// }
+.comment-editor {
+  .is-editor-empty::before {
+    content: "Add a comment..." !important;
+    @apply select-none;
+  }
+}

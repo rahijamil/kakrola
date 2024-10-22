@@ -14,6 +14,7 @@ import Link from "next/link";
 import { Dialog, RadioGroup, RadioGroupItem, Label } from "../ui";
 import {
   AlarmClock,
+  ArrowDownToLine,
   ArrowLeft,
   BellIcon,
   Blocks,
@@ -33,6 +34,7 @@ import {
   SlidersHorizontal,
   SquarePlusIcon,
   TargetIcon,
+  UploadIcon,
   UserIcon,
   Users,
   WalletIcon,
@@ -53,6 +55,8 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import TeamspaceSettings from "./TeamspaceSettings";
 import { Tier } from "@/lib/constants/pricing-tier";
+import IntegrationsSettings from "./IntegrationsSettings";
+import ImportSettings from "./ImportSettings";
 
 const SettingsModal = () => {
   const router = useRouter();
@@ -86,8 +90,7 @@ const SettingsModal = () => {
 
   const subscriptionId = subscriptionData ?? null;
 
-  const [selectedPlan, setSelectedPlan] =
-    useState<Tier | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<Tier | null>(null);
 
   const closeSettings = useCallback(() => {
     window.history.pushState(null, "", pathname);
@@ -127,12 +130,12 @@ const SettingsModal = () => {
         //   path: "/app/settings/advanched",
         //   icon: SlidersHorizontal,
         // },
-        {
-          id: 5,
-          name: "Theme",
-          param: "theme",
-          icon: PaletteIcon,
-        },
+        // {
+        //   id: 5,
+        //   name: "Theme",
+        //   param: "theme",
+        //   icon: PaletteIcon,
+        // },
         // {
         //   id: 6,
         //   name: "Sidebar",
@@ -157,24 +160,24 @@ const SettingsModal = () => {
         //   path: "/app/settings/reminders",
         //   icon: AlarmClock,
         // },
-        {
-          id: 10,
-          name: "Notifications",
-          param: "notifications",
-          icon: BellIcon,
-        },
+        // {
+        //   id: 10,
+        //   name: "Notifications",
+        //   param: "notifications",
+        //   icon: BellIcon,
+        // },
         // {
         //   id: 11,
         //   name: "Backup",
         //   path: "/app/settings/backup",
         //   icon: CloudUploadIcon,
         // },
-        {
-          id: 12,
-          name: "Integrations",
-          param: "integrations",
-          icon: Blocks,
-        },
+        // {
+        //   id: 12,
+        //   name: "Integrations",
+        //   param: "integrations",
+        //   icon: Blocks,
+        // },
         // {
         //   id: 13,
         //   name: "Calendars",
@@ -199,6 +202,12 @@ const SettingsModal = () => {
           param: "teamspaces",
           icon: Building2,
         },
+        {
+          id: 3,
+          name: "Import",
+          param: "import",
+          icon: ArrowDownToLine,
+        },
       ],
     },
   ];
@@ -215,14 +224,16 @@ const SettingsModal = () => {
             subscriptionId={subscriptionId}
           />
         );
-      case "theme":
-        return <ThemeSettingsPage />;
+      // case "theme":
+      //   return <ThemeSettingsPage />;
       case "notifications":
         return "<NotificationsSettings />";
       case "integrations":
-        return "<IntegrationsSettings />";
+        return <IntegrationsSettings />;
       case "teamspaces":
         return <TeamspaceSettings />;
+      case "import":
+        return <ImportSettings />;
       default:
         return null;
     }
@@ -234,14 +245,16 @@ const SettingsModal = () => {
         return tab == "password" ? "Password" : "Account";
       case "subscription":
         return tab === "billing" ? "Billing" : "Subscription";
-      case "theme":
-        return "Theme";
+      // case "theme":
+      //   return "Theme";
       case "notifications":
         return "Notifications";
       case "integrations":
         return "Integrations";
       case "teamspaces":
         return "Teamspaces settings";
+      case "import":
+        return "Import data";
       default:
         return null;
     }
@@ -346,7 +359,7 @@ const SettingsModal = () => {
                   <ArrowLeft strokeWidth={1.5} size={20} />
                 </button>
               )}
-              <p className="font-bold flex items-center gap-4">
+              <p className="font-semibold flex items-center gap-4">
                 <ChevronLeft
                   strokeWidth={1.5}
                   className="w-6 h-6 block md:hidden"

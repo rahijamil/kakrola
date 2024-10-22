@@ -7,6 +7,7 @@ import TaskItemForListView from "./ListView/TaskItemForListView";
 import {
   AlignLeft,
   CalendarRange,
+  CircleArrowRight,
   CircleChevronUp,
   MapPin,
   Tag,
@@ -44,34 +45,38 @@ const ListViewForToday = ({
         <div
           ref={provided.innerRef}
           {...provided.droppableProps}
-          className="overflow-auto h-[calc(100vh-186px)] md:px-6 pb-4"
+          className="overflow-auto h-[calc(100vh-120px)] w-screen md:w-full md:min-w-[1000px] md:px-6 pb-20"
         >
-          <table className="w-full min-w-[1000px] border-collapse">
+          <table className="border-collapse w-full">
             <tr className="border-y border-text-100 text-xs divide-x divide-text-200 whitespace-nowrap flex sticky top-0 z-10 bg-background text-text-500">
-              <th className="p-2 text-left w-[30%] md:w-[40%] font-medium flex items-center gap-2 pl-4 md:pl-8">
+              <th className="p-2 text-left w-64 md:w-[40%] font-medium flex items-center gap-2 pl-4 md:pl-8">
                 <AlignLeft strokeWidth={2} className="w-4 h-4" />
                 <span>Task name</span>
               </th>
-              <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+              <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
                 <UserPlus strokeWidth={2} className="w-4 h-4" />
                 <span>Assignee</span>
               </th>
-              <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+              <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
                 <CalendarRange strokeWidth={2} className="w-4 h-4" />
                 <span>Dates</span>
               </th>
-              <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+              <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
                 <CircleChevronUp strokeWidth={2} className="w-4 h-4" />
                 <span>Priority</span>
               </th>
-              <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+              <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
+                <CircleArrowRight strokeWidth={2} className="w-4 h-4" />
+                <span>Status</span>
+              </th>
+              <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
                 <Tag strokeWidth={2} className="w-4 h-4" />
                 <span>Labels</span>
               </th>
               {/* <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
-                <MapPin strokeWidth={2} className="w-4 h-4" />
-                <span>Location</span>
-              </th> */}
+                    <MapPin strokeWidth={2} className="w-4 h-4" />
+                    <span>Location</span>
+                  </th> */}
             </tr>
 
             <tbody>

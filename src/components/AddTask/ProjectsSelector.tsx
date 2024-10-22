@@ -58,6 +58,8 @@ const ProjectsSelector = ({
 
   return (
     <Dropdown
+      fullMode
+      title="Select Project"
       triggerRef={triggerRef}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
@@ -152,7 +154,7 @@ const ProjectsSelector = ({
         )
       }
       beforeItemsContent={
-        <div className="p-2">
+        <div className="px-4 py-2">
           <Input
             howBig="xs"
             fullWidth
@@ -164,7 +166,7 @@ const ProjectsSelector = ({
         </div>
       }
       content={
-        <div className="max-h-[300px] overflow-y-auto text-text-700 pb-2">
+        <div className="max-h-[300px]overflow-y-auto text-text-700 pb-2">
           {/* Show Inbox if it matches the search query */}
           {isInbox && inboxMatches && (
             <div

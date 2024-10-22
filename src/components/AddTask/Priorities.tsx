@@ -1,16 +1,10 @@
-import React, {
-  Dispatch,
-  LegacyRef,
-  ReactNode,
-  SetStateAction,
-  useRef,
-  useState,
-} from "react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 
 import { TaskPriority, TaskType } from "@/types/project";
-import { Check, ChevronDown, Flag, X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import Dropdown from "../ui/Dropdown";
 import { priorities, PriorityIcon } from "@/utils/utility_functions";
+import AnimatedTaskCheckbox from "../TaskViewSwitcher/AnimatedCircleCheck";
 
 const Priorities = ({
   taskData,
@@ -33,15 +27,12 @@ const Priorities = ({
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const onClose = () => {
-    setIsOpen(false);
-  };
-
   const triggerRef = useRef(null);
 
   return (
     <Dropdown
-      title="Priority"
+      fullMode
+      title="Select Priority"
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       triggerRef={triggerRef}
@@ -168,33 +159,29 @@ const Priorities = ({
           )}
         </>
       )}
-      content={
-        <ul className="text-xs" data-form-element={dataFromElement}>
-          {priorities.map((priority) => (
-            <li
-              key={priority.value}
-              className={`flex items-center px-2 py-2 transition-colors hover:bg-text-100 cursor-pointer text-text-700 rounded-lg`}
-              onClick={() => {
-                setTaskData({
-                  ...taskData,
-                  priority: priority.value as TaskType["priority"],
-                });
-                onClose();
-              }}
-            >
-              <PriorityIcon priority={priority.value} />
-              <span className="ml-2">{priority.label}</span>
-              {taskData.priority === priority.value && (
-                <Check
-                  strokeWidth={2}
-                  className="w-4 h-4 ml-auto text-primary-600"
-                />
-              )}
-            </li>
-          ))}
-        </ul>
-      }
-      contentWidthClass="w-[200px] py-1"
+      items={priorities.map((priority, id) => ({
+        id,
+        label: priority.label,
+        onClick: () =>
+          setTaskData({
+            ...taskData,
+            priority: priority.value as TaskType["priority"],
+          }),
+        icon: <PriorityIcon priority={priority.value} />,
+        rightContent: taskData.priority == priority.value && (
+          <AnimatedTaskCheckbox
+            priority={TaskPriority.P3}
+            playSound={false}
+            handleCheckSubmit={() =>
+              setTaskData({
+                ...taskData,
+                priority: priority.value as TaskType["priority"],
+              })
+            }
+            is_completed={taskData.priority == priority.value}
+          />
+        ),
+      }))}
     />
   );
 };

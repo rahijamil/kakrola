@@ -1,4 +1,4 @@
-import React, { KeyboardEvent, useRef, useState } from "react";
+import React, { KeyboardEvent, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { TaskType } from "@/types/project";
@@ -16,6 +16,7 @@ import { getTextFromContent } from "@/lib/getTextFromContent";
 import dynamic from "next/dynamic";
 import { canEditContent } from "@/utils/permissionUtils";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
+import { debounce } from "lodash";
 const NovelEditor = dynamic(() => import("@/components/NovelEditor"), {
   ssr: false,
 });
@@ -37,7 +38,7 @@ const TaskDescription = ({
   const { screenWidth } = useScreen();
 
   const [content, setContent] = useState(taskData.description);
-  const [isEdit, setIsEdit] = useState(false);
+  // const [isEdit, setIsEdit] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const { profile } = useAuthProvider();
@@ -102,97 +103,100 @@ const TaskDescription = ({
       console.error(`Error updating task description: ${error}`);
     } finally {
       setLoading(false);
-      setIsEdit(false);
+      // setIsEdit(false);
     }
   };
 
+  useEffect(() => {
+    debounce(handleSaveTaskDescription, 500);
+  }, [taskData.description]);
+
   return (
     <>
-      {isEdit ? (
-        <motion.div
-          initial={{
-            scaleY: 0.8,
-            y: -10,
-            opacity: 0,
-            transformOrigin: "top", // Change origin
-            height: 0,
-          }}
-          animate={{
-            scaleY: 1,
-            y: [0, -5, 0], // Subtle bounce in the respective direction
-            opacity: 1,
-            transformOrigin: "top",
-            height: "auto",
-          }}
-          exit={{
-            scaleY: 0.8,
-            y: -10,
-            opacity: 0,
-            transformOrigin: "top",
-            height: 0,
-          }}
-          transition={{
-            duration: 0.2,
-            ease: [0.25, 0.1, 0.25, 1],
-            y: {
-              type: "spring",
-              stiffness: 300,
-              damping: 15,
-            },
-          }}
-          className="space-y-4 mt-2"
-        >
-          <div className="description-editor hide-some-command relative rounded-lg transition cursor-text border border-text-200 focus-within:border-text-300 focus-within:shadow bg-background">
-            <NovelEditor
-              editorRef={editorRef}
-              content={content}
-              handleSave={(content) => setContent(content)}
-              setCharsCount={setCharsCount}
-              hideContentItemMenu
-            />
-          </div>
-
-          <div className="flex justify-end gap-2 text-xs">
-            <Button
-              variant="secondary"
-              type="button"
-              size="sm"
-              onClick={() => setIsEdit(false)}
-            >
-              Cancel
-            </Button>
-
-            <Button
-              type="button"
-              size="sm"
-              onClick={handleSaveTaskDescription}
-              disabled={
-                taskData.description === content || loading || charsCount == 0
-              }
-              // variant={charsCount == 0 ? "ghost" : "default"}
-            >
-              {loading ? (
-                <>
-                  <Spinner color="white" size="sm" /> Saving...
-                </>
-              ) : (
-                "Save"
-              )}
-            </Button>
-          </div>
-        </motion.div>
-      ) : (
-        <div
-          onClick={() => setIsEdit(true)}
-          className="cursor-pointer hover:bg-text-100 transition rounded-lg p-2 px-4 w-full text-left"
-        >
-          <div className={`line-clamp-1 ${charsCount == 0 && "text-text-500"}`}>
-            {charsCount > 0 && content
-              ? getTextFromContent(content).substring(0, 40)
-              : "No description"}
-          </div>
+      <motion.div
+        initial={{
+          scaleY: 0.8,
+          y: -10,
+          opacity: 0,
+          transformOrigin: "top", // Change origin
+          height: 0,
+        }}
+        animate={{
+          scaleY: 1,
+          y: [0, -5, 0], // Subtle bounce in the respective direction
+          opacity: 1,
+          transformOrigin: "top",
+          height: "auto",
+        }}
+        exit={{
+          scaleY: 0.8,
+          y: -10,
+          opacity: 0,
+          transformOrigin: "top",
+          height: 0,
+        }}
+        transition={{
+          duration: 0.2,
+          ease: [0.25, 0.1, 0.25, 1],
+          y: {
+            type: "spring",
+            stiffness: 300,
+            damping: 15,
+          },
+        }}
+        className="space-y-4 mt-2"
+      >
+        <div className="description-editor relative cursor-text bg-background">
+          <NovelEditor
+            editorRef={editorRef}
+            content={content}
+            handleSave={(content) => setContent(content)}
+            setCharsCount={setCharsCount}
+            autofocus={false}
+            hideContentItemMenu={screenWidth <= 768 ? true : false}
+          />
         </div>
-      )}
+
+        {/* <div className="flex justify-end gap-2 text-xs">
+          <Button
+            variant="secondary"
+            type="button"
+            size="sm"
+            onClick={() => setIsEdit(false)}
+          >
+            Cancel
+          </Button>
+
+          <Button
+            type="button"
+            size="sm"
+            onClick={handleSaveTaskDescription}
+            disabled={
+              taskData.description === content || loading || charsCount == 0
+            }
+            // variant={charsCount == 0 ? "ghost" : "default"}
+          >
+            {loading ? (
+              <>
+                <Spinner color="white" size="sm" /> Saving...
+              </>
+            ) : (
+              "Save"
+            )}
+          </Button>
+        </div> */}
+      </motion.div>
+
+      {/* <div
+        onClick={() => setIsEdit(true)}
+        className="cursor-pointer hover:bg-text-100 transition rounded-lg p-2 px-4 w-full text-left"
+      >
+        <div className={`line-clamp-1 ${charsCount == 0 && "text-text-500"}`}>
+          {charsCount > 0 && content
+            ? getTextFromContent(content).substring(0, 40)
+            : "No description"}
+        </div>
+      </div> */}
     </>
   );
 };

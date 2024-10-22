@@ -20,9 +20,9 @@ const SubTasks = ({
 }) => {
   const [showAddSubtask, setShowAddSubtask] = useState<boolean>(false);
   return (
-    <div className={`grid grid-cols-[20%_80%] items-start gap-3`}>
+    <div className={`grid grid-cols-[20%_80%] items-start gap-3 px-4 md:px-24`}>
       <div className="flex items-center gap-2 mt-2 text-text-500">
-        <Workflow strokeWidth={2} size={16} />
+        <Workflow strokeWidth={2} size={16} className="min-w-4 min-h-4" />
         <p className="font-medium text-xs">Subtasks</p>
       </div>
 

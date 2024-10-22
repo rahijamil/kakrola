@@ -40,7 +40,7 @@ const InviteLink = ({ team_id }: { team_id: TeamType["id"] }) => {
         onClick={handleCopyInviteLink}
         disabled={loading}
         fullWidth
-        variant="gray"
+        variant="ghost"
       >
         {loading ? <Spinner /> : "Copy Invite Link"}
       </Button>

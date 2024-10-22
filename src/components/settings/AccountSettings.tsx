@@ -1,15 +1,44 @@
 "use client";
 
 import { ChangeEvent, useState } from "react";
-import { AtSign, TrashIcon, User } from "lucide-react";
-import { ToggleSwitch } from "@/components/ui/ToggleSwitch";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { AtSign, Camera, Pencil, Trash2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import Image from "next/image";
 import { useAuthProvider } from "@/context/AuthContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import Spinner from "@/components/ui/Spinner";
+import { Loader2 } from "lucide-react";
 import { avatarUploader } from "@/utils/avatarUploader";
 import {
   ActivityAction,
@@ -18,18 +47,65 @@ import {
 } from "@/types/activitylog";
 import { usePathname } from "next/navigation";
 
+// Form validation schema
+const accountFormSchema = z.object({
+  full_name: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
+  }),
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+});
+
+type AccountFormValues = z.infer<typeof accountFormSchema>;
+
 export default function AccountSettings() {
   const { profile } = useAuthProvider();
-  const [name, setName] = useState(profile?.full_name || "");
-  const [email, setEmail] = useState(profile?.email);
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url);
-  const [twoFactorAuth, setTwoFactorAuth] = useState(false);
-
   const [uploadLoading, setUploadLoading] = useState(false);
   const [removeLoading, setRemoveLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const pathname = usePathname();
+
+  // Initialize form with default values
+  const form = useForm<AccountFormValues>({
+    resolver: zodResolver(accountFormSchema),
+    defaultValues: {
+      full_name: profile?.full_name || "",
+      email: profile?.email || "",
+    },
+  });
+
+  const onSubmit = async (data: AccountFormValues) => {
+    if (!profile?.id) return;
+    setError(null);
+
+    try {
+      const { error: updateError } = await supabaseBrowser
+        .from("profiles")
+        .update({ full_name: data.full_name })
+        .eq("id", profile?.id);
+
+      if (updateError) throw updateError;
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.UPDATED_PROFILE,
+        entity: {
+          type: EntityType.USER,
+          id: profile.id,
+          name: profile.full_name,
+        },
+        metadata: {
+          old_data: { full_name: profile.full_name },
+          new_data: { full_name: data.full_name },
+        },
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setError("Failed to update profile. Please try again.");
+    }
+  };
 
   const uploadAvatar = async (event: ChangeEvent<HTMLInputElement>) => {
     setUploadLoading(true);
@@ -39,7 +115,22 @@ export default function AccountSettings() {
       const file = event.target.files?.[0];
       if (!file || !profile) return;
 
-      setAvatarUrl(await avatarUploader(file, profile?.id));
+      const newAvatarUrl = await avatarUploader(file, profile.id);
+      setAvatarUrl(newAvatarUrl);
+
+      createActivityLog({
+        actor_id: profile.id,
+        action: ActivityAction.UPDATED_PROFILE,
+        entity: {
+          type: EntityType.USER,
+          id: profile.id,
+          name: profile.full_name,
+        },
+        metadata: {
+          old_data: { avatar_url: profile.avatar_url },
+          new_data: { avatar_url: newAvatarUrl },
+        },
+      });
     } catch (error) {
       console.error("Error uploading avatar:", error);
       setError("Failed to upload avatar. Please try again.");
@@ -51,35 +142,23 @@ export default function AccountSettings() {
 
   const removeAvatar = async () => {
     if (!profile?.id) return;
-
     setRemoveLoading(true);
     setError(null);
 
     try {
-      // Get the current avatar URL from the profile
-      const avatarUrl = profile?.avatar_url;
-
-      if (avatarUrl) {
-        // Extract the file name from the URL
-        const fileName = avatarUrl.split("/").pop();
-
+      // Remove from storage
+      if (profile.avatar_url) {
+        const fileName = profile.avatar_url.split("/").pop();
         if (fileName) {
-          // Remove the avatar from Supabase storage
-          const { error: removeError } = await supabaseBrowser.storage
-            .from("avatars")
-            .remove([fileName]);
-
-          if (removeError) throw removeError;
+          await supabaseBrowser.storage.from("avatars").remove([fileName]);
         }
       }
 
-      // Update profile to remove avatar URL
-      const { error: updateError } = await supabaseBrowser
+      // Update profile
+      await supabaseBrowser
         .from("profiles")
         .update({ avatar_url: null })
-        .eq("id", profile?.id);
-
-      if (updateError) throw updateError;
+        .eq("id", profile.id);
 
       setAvatarUrl("/default_avatar.png");
 
@@ -89,15 +168,11 @@ export default function AccountSettings() {
         entity: {
           type: EntityType.USER,
           id: profile.id,
-          name: profile?.full_name,
+          name: profile.full_name,
         },
         metadata: {
-          old_data: {
-            avatar_url: profile?.avatar_url,
-          },
-          new_data: {
-            avatar_url: null,
-          },
+          old_data: { avatar_url: profile.avatar_url },
+          new_data: { avatar_url: null },
         },
       });
     } catch (error) {
@@ -108,80 +183,42 @@ export default function AccountSettings() {
     }
   };
 
-  const [isUpdatingName, setIsUpdatingName] = useState(false);
-
-  const handleNameChange = async () => {
-    if (!profile?.id) return;
-
-    setIsUpdatingName(true);
-    setError(null);
-
-    try {
-      const { error: updateError } = await supabaseBrowser
-        .from("profiles")
-        .update({ full_name: name })
-        .eq("id", profile?.id);
-
-      if (updateError) throw updateError;
-
-      createActivityLog({
-        actor_id: profile.id,
-        action: ActivityAction.UPDATED_PROFILE,
-        entity: {
-          type: EntityType.USER,
-          id: profile?.id,
-          name: profile.full_name
-        },
-        metadata: {
-          old_data: {
-            full_name: profile?.full_name,
-          },
-          new_data: {
-            full_name: name,
-          },
-        },
-      });
-    } catch (error) {
-      console.error("Error updating name:", error);
-      setError("Failed to update name. Please try again.");
-    } finally {
-      setIsUpdatingName(false);
-    }
-  };
-
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex-1">
-        {/* <section className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">Plan</h2>
-          <p className="text-sm text-text-500">Beginner</p>
-        </div>
-        <Button variant="outline" size="sm">
-          Manage plan
-        </Button>
-      </section>
+    <div>
+      <CardHeader>
+        <CardTitle>Account Settings</CardTitle>
+        <CardDescription>
+          Manage your account settings and preferences
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
-      <div className="h-[1px] bg-text-100"></div> */}
-
-        {error && <p className="text-red-500">{error}</p>}
-
-        <section className="space-y-4 max-w-sm">
-          <div>
-            <label className="font-semibold">Profile</label>
-
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 min-w-16 min-h-16 rounded-lg relative bg-text-100 overflow-hidden">
-                <Image
-                  src={avatarUrl || "/default_avatar.png"}
-                  alt="Profile Picture"
-                  fill
-                  objectFit="cover"
-                />
-              </div>
-
-              <div>
-                <div className="flex items-center justify-center">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Avatar Section */}
+            <div className="space-y-4">
+              <FormLabel>Profile Picture</FormLabel>
+              <div className="flex items-center gap-6">
+                <div className="relative">
+                  <div className="w-24 h-24 rounded-lg overflow-hidden bg-muted">
+                    <Image
+                      src={avatarUrl || "/default_avatar.png"}
+                      alt="Profile Picture"
+                      fill
+                      className="object-cover rounded-lg"
+                    />
+                  </div>
+                  <label
+                    htmlFor="avatar-upload"
+                    className="absolute bottom-0 right-0 p-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white cursor-pointer"
+                  >
+                    <Camera className="w-4 h-4" />
+                  </label>
                   <input
                     type="file"
                     id="avatar-upload"
@@ -190,175 +227,115 @@ export default function AccountSettings() {
                     onChange={uploadAvatar}
                     disabled={uploadLoading}
                   />
-                  <label
-                    htmlFor="avatar-upload"
-                    className={`border cursor-pointer h-9 inline-flex items-center justify-center gap-2 rounded-lg px-3 border-primary-600 text-primary-600 ${
-                      uploadLoading ? "opacity-50" : "hover:bg-text-100"
-                    }`}
-                  >
-                    {uploadLoading ? (
-                      <>
-                        <Spinner /> <span>Changing...</span>
-                      </>
-                    ) : (
-                      "Change photo"
-                    )}
-                  </label>
-                  <Button
-                    variant="outline"
-                    color="red"
-                    size="sm"
-                    className="ml-2"
-                    onClick={removeAvatar}
-                    disabled={removeLoading}
-                  >
-                    {removeLoading ? (
-                      <>
-                        <Spinner /> <span>Removing...</span>
-                      </>
-                    ) : (
-                      "Remove photo"
-                    )}
-                  </Button>
                 </div>
-                <p className="text-xs text-text-500 mt-1">
-                  Pick a photo up to 4MB. Your avatar photo will be public.
-                </p>
+
+                <div className="space-y-2">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        {removeLoading ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-4 h-4 mr-2" />
+                        )}
+                        Remove Photo
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Remove Profile Picture
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will remove your profile picture and reset it to
+                          the default avatar.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={removeAvatar}>
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                  <FormDescription>
+                    Upload a photo up to 4MB. Your avatar will be public.
+                  </FormDescription>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <Input
-              id="name"
-              label="Name"
-              placeholder="Enter your name"
-              Icon={User}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+            {/* Name Field */}
+            <FormField
+              control={form.control}
+              name="full_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Full Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your name"
+                      {...field}
+                      className="max-w-sm"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {name?.trim().length > 0 && name !== profile?.full_name && (
+
+            {/* Email Field */}
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email Address</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      {...field}
+                      readOnly
+                      className="max-w-sm"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Your email address is used for account-related
+                    notifications.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Password Change Button */}
+            <div className="grid gap-2">
+              <FormLabel>Password</FormLabel>
               <Button
+                type="button"
                 variant="outline"
-                size="sm"
-                className="w-fit"
-                onClick={handleNameChange}
-                disabled={isUpdatingName}
+                className="max-w-sm"
+                onClick={() =>
+                  window.history.pushState(
+                    null,
+                    "",
+                    `${pathname}?settings=account&tab=password`
+                  )
+                }
               >
-                {isUpdatingName ? (
-                  <>
-                    <Spinner /> <span>Updating...</span>
-                  </>
-                ) : (
-                  "Update name"
-                )}
+                Change Password
               </Button>
-            )}
-          </div>
+            </div>
 
-          <div className="flex flex-col space-y-1">
-            <Input
-              id="email"
-              label="Email"
-              placeholder="Enter your email"
-              Icon={AtSign}
-              value={email}
-              // onChange={(e) => setEmail(e.target.value)}
-              readOnly
-            />
-            {/* <Button variant="outline" size="sm" className="w-fit">
-            Change email
-          </Button> */}
-          </div>
-
-          <div className="flex flex-col space-y-1">
-            <label className="font-semibold">Password</label>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-fit"
-              onClick={() =>
-                window.history.pushState(
-                  null,
-                  "",
-                  `${pathname}?settings=account&tab=password`
-                )
-              }
-            >
-              Add Password
+            {/* Submit Button */}
+            <Button type="submit" className="mt-6">
+              Save Changes
             </Button>
-          </div>
-
-          {/* <div className="space-y-1">
-          <p className="font-semibold">Two-factor authentication</p>
-          <ToggleSwitch
-            id="2fa"
-            size="sm"
-            checked={twoFactorAuth}
-            onCheckedChange={() => setTwoFactorAuth(!twoFactorAuth)}
-          />
-          <p className="text-sm text-text-500">
-            2FA is {twoFactorAuth ? "enabled" : "disabled"} on your Todoist
-            account.
-          </p>
-        </div> */}
-        </section>
-
-        {/* <div className="h-[1px] bg-text-100"></div> */}
-
-        {/* <section className="space-y-3">
-        <div className="space-y-1">
-          <h3 className="font-semibold">Connected accounts</h3>
-          <p className="text-xs text-text-500">
-            Log in to Todoist with your Google, Facebook, or Apple account.
-          </p>
-        </div>
-        <p className="text-sm text-text-700">
-          You can log in to Todoist with your Google account {email}.
-        </p>
-        <p className="text-sm text-text-500">
-          Your password is not set, so we cannot disconnect you from your Google
-          account. If you want to disconnect, please{" "}
-          <a href="#" className="text-blue-500">
-            set up your password
-          </a>{" "}
-          first.
-        </p>
-
-        <div className="space-y-2 max-w-sm">
-          <Button variant="outline" size="sm" className="w-full mt-2">
-            <div className="flex items-center justify-center space-x-2">
-              <i className="fab fa-facebook-square"></i>{" "}
-              <span>Connect with Facebook</span>
-            </div>
-          </Button>
-
-          <Button variant="outline" size="sm" className="w-full mt-2">
-            <div className="flex items-center justify-center space-x-2">
-              <i className="fab fa-apple"></i>{" "}
-              <span>Connect with Apple</span>
-            </div>
-          </Button>
-        </div>
-      </section>
-
-      <div className="h-[1px] bg-text-100"></div> */}
-
-        {/* <section className="space-y-3">
-        <div className="space-y-1">
-          {" "}
-          <h3 className="font-semibold">Delete account</h3>
-          <p className="text-text-500 text-xs">
-            This will immediately delete all of your data including tasks,
-            projects, comments, and more. This can’t be undone.
-          </p>
-        </div>
-        <Button variant="outline" color="red" size="sm" className="mt-2">
-          <TrashIcon className="w-5 h-5 mr-2" />
-          Delete account
-        </Button>
-      </section> */}
-      </div>
+          </form>
+        </Form>
+      </CardContent>
     </div>
   );
 }

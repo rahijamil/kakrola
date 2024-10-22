@@ -35,6 +35,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useQueryClient } from "@tanstack/react-query";
 import { canDeleteContent, canEditContent } from "@/utils/permissionUtils";
 import useScreen from "@/hooks/useScreen";
+import StatusSelector from "@/components/AddTask/StatusSelector";
 
 const TaskItemForListView = ({
   task,
@@ -349,6 +350,29 @@ const TaskItemForListView = ({
           );
         }
 
+        if (taskData.status !== task.status) {
+          const { data, error } = await supabaseBrowser
+            .from("tasks")
+            .update({
+              status: taskData.status,
+            })
+            .eq("id", task.id);
+
+          if (error) {
+            throw error;
+          }
+
+          logActivity(
+            ActivityAction.UPDATED_TASK_STATUS,
+            {
+              status: task.status,
+            },
+            {
+              status: taskData.status,
+            }
+          );
+        }
+
         if (
           taskData.task_labels.flatMap((label) => label.id).join(",") !==
           task.task_labels.flatMap((label) => label.id).join(",")
@@ -403,6 +427,7 @@ const TaskItemForListView = ({
     taskData.assignees,
     taskData.dates,
     taskData.priority,
+    taskData.status,
     taskData.task_labels,
     task.id,
   ]);
@@ -604,6 +629,13 @@ const TaskItemForListView = ({
                 </td>
                 <td className="w-32 md:w-[15%]">
                   <Priorities
+                    taskData={taskData}
+                    setTaskData={setTaskData}
+                    forListView
+                  />
+                </td>
+                <td className="w-32 md:w-[15%]">
+                  <StatusSelector
                     taskData={taskData}
                     setTaskData={setTaskData}
                     forListView

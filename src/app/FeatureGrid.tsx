@@ -1,4 +1,6 @@
+"use client";
 import React from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {
@@ -8,183 +10,156 @@ import {
   Users,
   Zap,
   MessagesSquare,
-  CreditCard,
-  DownloadCloud,
+  Building2,
+  Shield,
   Clock,
   Rocket,
+  ArrowRight,
+  Star,
 } from "lucide-react";
 
 const features = [
   {
     icon: CheckCircle,
     title: "Projects",
-    description: "Efficiently organize and track tasks across teams.",
+    description:
+      "Track tasks, set milestones, and hit deadlines with powerful project tools.",
     color: "text-kakrola-400",
+    bgColor: "bg-kakrola-50",
   },
   {
     icon: FileText,
     title: "Pages",
-    description: "Real-time collaboration on docs with version control.",
+    description:
+      "Collaborative documentation with real-time editing and version control.",
     color: "text-moonstone-400",
+    bgColor: "bg-moonstone-50",
   },
   {
     icon: Hash,
     title: "Channels",
-    description: "Organize conversations into channels for focus and clarity.",
+    description:
+      "Keep discussions organized with dedicated spaces for every topic.",
     color: "text-kale-400",
+    bgColor: "bg-kale-50",
   },
   {
     icon: MessagesSquare,
     title: "DMs",
-    description: "Direct messaging for quick team communication.",
+    description: "Quick, secure messaging for direct team communication.",
     color: "text-tangerine-400",
+    bgColor: "bg-tangerine-50",
   },
   {
     icon: Users,
     title: "Team Collaboration",
-    description: "Seamlessly collaborate with team members in one place.",
+    description:
+      "Built for teams with roles, permissions, and shared workspaces.",
     color: "text-lavender-400",
+    bgColor: "bg-lavender-50",
   },
   {
     icon: Zap,
     title: "Integrations",
-    description: "Extend functionality with your favorite integrations.",
+    description:
+      "Connect with your favorite tools through our extensive integration hub.",
     color: "text-raspberry-400",
+    bgColor: "bg-raspberry-50",
   },
 ];
 
-const faqs = [
+const pricingHighlights = [
   {
-    title: "How does the free plan work?",
-    content:
-      "Our free plan includes all core features for up to 10 team members. You get 5GB storage, basic project management tools, and essential communication features. No credit card required to start.",
+    icon: Building2,
+    title: "Professional",
+    description: "Starting at $10/user/month",
   },
   {
-    title: "Can I upgrade or downgrade at any time?",
-    content:
-      "Yes! You can upgrade, downgrade, or cancel your subscription at any time. We'll prorate any payments automatically.",
-  },
-  {
-    title: "What kind of support do you offer?",
-    content:
-      "All plans include community support. Pro plans get priority email support, while Enterprise plans receive 24/7 phone and email support with a dedicated success manager.",
-  },
-  {
-    title: "Do you offer a discount for non-profits?",
-    content:
-      "Yes! We offer special pricing for non-profit organizations. Please contact our sales team for more information.",
+    icon: Shield,
+    title: "Enterprise",
+    description: "Custom pricing for large teams",
   },
 ];
 
 export const FeatureGrid = () => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
+
   return (
     <section className="py-20 relative overflow-hidden">
-      <div className="relative z-10 wrapper">
-        <div className="text-center mb-16">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            One platform, endless possibilities
+            Everything you need to succeed
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Everything your team needs to stay productive, aligned, and moving
-            forward together.
+            Powerful features designed to help your team collaborate,
+            communicate, and deliver results.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12"
+        >
           {features.map((feature) => (
-            <div
+            <motion.div
               key={feature.title}
-              className="group hover:-translate-y-1 transition-all duration-300"
+              variants={itemVariants}
+              className="group relative"
             >
-              <div className="flex items-start space-x-6">
-                <div className="flex-shrink-0">
-                  <feature.icon
-                    className={`h-10 w-10 ${feature.color} group-hover:scale-110 transition-transform duration-300`}
-                    strokeWidth={1.5}
-                  />
-                </div>
-                <div className="flex flex-col space-y-4">
-                  <h3 className="text-xl font-semibold text-gray-900">
-                    {feature.title}
-                  </h3>
-                  <p className="text-base text-gray-600 leading-relaxed">
-                    {feature.description}
-                  </p>
+              <div className="relative p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100">
+                <div className="flex items-start space-x-5">
+                  <div className={`${feature.bgColor} p-3 rounded-xl`}>
+                    <feature.icon
+                      className={`h-6 w-6 ${feature.color} group-hover:scale-110 transition-transform duration-300`}
+                      strokeWidth={1.5}
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-3">
+                    <h3 className="text-xl font-semibold text-gray-900">
+                      {feature.title}
+                    </h3>
+                    <p className="text-base text-gray-600 leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
 
       {/* Background decoration */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 inset-0">
-        <div className="absolute inset-0 bg-gradient-to-tr from-kakrola-50 to-lavender-50 rounded-full blur-3xl" />
-      </div>
-    </section>
-  );
-};
-
-export const CtaSection = () => {
-  return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-white via-kakrola-25 to-white">
-      <div className="wrapper py-20 pt-10 sm:py-32">
-        <div className="relative z-10 max-w-3xl mx-auto text-center">
-          <h2 className="font-bold text-4xl sm:text-5xl md:text-6xl leading-tight mb-6">
-            Start with free. <br /> Scale when ready.
-          </h2>
-          <p className="text-xl text-gray-600 mb-10">
-            No credit card required. Set up in 2 minutes.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/auth/signup">
-              <Button
-                size="lg"
-                className="bg-kakrola-500 hover:bg-kakrola-600 text-white shadow-lg hover:shadow-xl transition-all w-full sm:w-auto"
-              >
-                <Rocket className="w-5 h-5 mr-2" strokeWidth={1.5} />
-                Start for Free
-              </Button>
-            </Link>
-            <Link href="/pricing">
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full sm:w-auto border-kakrola-200 hover:bg-kakrola-50"
-              >
-                View Pricing
-              </Button>
-            </Link>
-          </div>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
-              <CreditCard className="h-4 w-4 text-kale-500" />
-              <span>Free Plan Available</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-moonstone-500" />
-              <span>Cancel anytime</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <DownloadCloud className="h-4 w-4 text-tangerine-500" />
-              <span>Data export included</span>
-            </div>
-          </div>
-        </div>
-        {/* Multiple decorative elements */}
-        <div className="absolute inset-0 -z-10">
-          {/* Main center gradient */}
-          <div
-            className="absolute right-1/2 bottom-0 transform translate-x-1/2 w-[800px] h-[800px]"
-            style={{
-              background: `radial-gradient(circle, rgba(133,191,215,0.2) 0%, rgba(159,147,255,0.1) 100%)`,
-              filter: "blur(60px)",
-            }}
-          />
-          {/* Additional decorative elements */}
-          <div className="absolute top-20 left-20 w-72 h-72 bg-kakrola-200 rounded-full opacity-20 blur-3xl" />
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-lavender-200 rounded-full opacity-20 blur-3xl" />
-        </div>
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-tr from-kakrola-50/30 to-lavender-50/30 rounded-full blur-3xl" />
       </div>
     </section>
   );

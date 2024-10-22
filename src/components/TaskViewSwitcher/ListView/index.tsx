@@ -26,6 +26,7 @@ import {
   AlignLeft,
   AtSign,
   CalendarRange,
+  CircleArrowRight,
   CircleChevronUp,
   MapPin,
   Tag,
@@ -570,36 +571,39 @@ const ListView: React.FC<ListViewProps> = ({
               ref={listProvided.innerRef}
               {...listProvided.droppableProps}
             >
-              <table
-                className="border-collapse w-full"
-                ref={tableRef}
-              >
-                <tr className="border-y border-text-100 text-xs divide-x divide-text-200 whitespace-nowrap flex sticky top-0 z-10 bg-background text-text-500">
-                  <th className="p-2 text-left w-64 md:w-[40%] font-medium flex items-center gap-2 pl-4 md:pl-8">
-                    <AlignLeft strokeWidth={2} className="w-4 h-4" />
-                    <span>Task name</span>
-                  </th>
-                  <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
-                    <UserPlus strokeWidth={2} className="w-4 h-4" />
-                    <span>Assignee</span>
-                  </th>
-                  <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
-                    <CalendarRange strokeWidth={2} className="w-4 h-4" />
-                    <span>Dates</span>
-                  </th>
-                  <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
-                    <CircleChevronUp strokeWidth={2} className="w-4 h-4" />
-                    <span>Priority</span>
-                  </th>
-                  <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
-                    <Tag strokeWidth={2} className="w-4 h-4" />
-                    <span>Labels</span>
-                  </th>
-                  {/* <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
+              <table className="border-collapse w-full" ref={tableRef}>
+                {!isLoading && (
+                  <tr className="border-y border-text-100 text-xs divide-x divide-text-200 whitespace-nowrap flex sticky top-0 z-10 bg-background text-text-500">
+                    <th className="p-2 text-left w-64 md:w-[40%] font-medium flex items-center gap-2 pl-4 md:pl-8">
+                      <AlignLeft strokeWidth={2} className="w-4 h-4" />
+                      <span>Task name</span>
+                    </th>
+                    <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
+                      <UserPlus strokeWidth={2} className="w-4 h-4" />
+                      <span>Assignee</span>
+                    </th>
+                    <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
+                      <CalendarRange strokeWidth={2} className="w-4 h-4" />
+                      <span>Dates</span>
+                    </th>
+                    <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
+                      <CircleChevronUp strokeWidth={2} className="w-4 h-4" />
+                      <span>Priority</span>
+                    </th>
+                    <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
+                      <CircleArrowRight strokeWidth={2} className="w-4 h-4" />
+                      <span>Status</span>
+                    </th>
+                    <th className="p-2 text-left w-32 md:w-[15%] font-medium flex items-center gap-2">
+                      <Tag strokeWidth={2} className="w-4 h-4" />
+                      <span>Labels</span>
+                    </th>
+                    {/* <th className="p-2 text-left w-[15%] font-medium flex items-center gap-2">
                     <MapPin strokeWidth={2} className="w-4 h-4" />
                     <span>Location</span>
                   </th> */}
-                </tr>
+                  </tr>
+                )}
 
                 <tbody>
                   {isLoading ? (

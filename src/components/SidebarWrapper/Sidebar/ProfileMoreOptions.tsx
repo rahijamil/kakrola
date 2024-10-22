@@ -250,7 +250,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
                 height={20}
                 className="rounded-md object-cover max-w-5 max-h-5 min-w-5 min-h-5"
               />
-              <p className="font-medium">
+              <p className="font-semibold text-text-700">
                 {profile?.full_name?.split(" ")[0] || profile?.username}
               </p>
             </div>
@@ -272,7 +272,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
             />
 
             <div>
-              <h2 className="font-bold">{profile?.full_name}</h2>
+              <h2 className="font-semibold text-text-700">{profile?.full_name}</h2>
               <p className="text-xs text-text-500 line-clamp-1">
                 {profile?.email}
               </p>

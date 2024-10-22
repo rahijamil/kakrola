@@ -5,7 +5,7 @@ import { TeamType } from "./team";
 // Project types
 export interface ProjectType {
   id: number;
-  team_id: TeamType['id'] | null;
+  team_id: TeamType["id"] | null;
   profile_id: string; // UUID
   name: string;
   slug: string;
@@ -62,9 +62,11 @@ export enum TaskPriority {
 }
 
 export enum TaskStatus {
-  OnTrack = "On Track",
-  AtRisk = "At Risk",
-  OffTrack = "Off Track",
+  ON_TRACK = "ON_TRACK",
+  AT_RISK = "AT_RISK",
+  OFF_TRACK = "OFF_TRACK",
+  ON_HOLD = "ON_HOLD",
+  COMPLETE = "COMPLETE",
 }
 
 // Task types

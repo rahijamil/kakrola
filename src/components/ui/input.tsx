@@ -1,93 +1,47 @@
+import * as React from "react";
+import { cn } from "@/lib/utils";
 import { LucideProps } from "lucide-react";
-import React, {
-  ForwardRefExoticComponent,
-  ReactNode,
-  RefAttributes,
-} from "react";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  fullWidth?: boolean;
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
-  labelRight?: ReactNode;
-  Icon?: ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+  Icon?: React.ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
   >;
-  rightIcon?: ReactNode;
-  howBig?: "xs" | "sm" | "md" | "lg";
-  showFocusInMobile?: boolean;
-  borderLess?: boolean;
+  howBig?: "sm" | "md" | "lg"; // Add howBig prop with size options
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  (
-    {
-      className,
-      fullWidth = false,
-      label,
-      Icon,
-      id,
-      labelRight,
-      rightIcon,
-      howBig = "md",
-      showFocusInMobile = false,
-      type,
-      borderLess,
-      ...props
-    },
-    ref
-  ) => {
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ label, Icon, howBig = "md", className, type, ...props }, ref) => {
+    // Define base class and adjust size classes based on howBig
+    const sizeClasses = {
+      sm: "h-8 text-sm px-2 py-1",
+      md: "h-9 text-sm px-3 py-1",
+      lg: "h-10 text-base px-4 py-2",
+    };
+
     return (
-      <div className={`space-y-2 ${fullWidth && "w-full"}`}>
+      <div className="flex flex-col">
         {label && (
-          <div className="flex items-center justify-between">
-            <label
-              htmlFor={id}
-              className="font-semibold text-text-700 pl-4 md:p-0"
-            >
-              {label}
-            </label>
-
-            {labelRight}
-          </div>
+          <label
+            htmlFor={props.id}
+            className="mb-1 block text-sm font-medium text-gray-700"
+          >
+            {label}
+          </label>
         )}
-
-        <div className="relative">
-          {Icon && (
-            <Icon
-              strokeWidth={1.5}
-              className="h-5 w-5 text-text-400 absolute top-1/2 left-3 -translate-y-1/2 pointer-events-none"
-            />
-          )}
+        <div className="flex items-center border border-input rounded-md">
+          {Icon && <Icon className="ml-2" />} {/* Render the icon if provided */}
           <input
-            className={`flex w-full bg-transparent ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-text-500 focus:outline-none focus:ring-offset-2 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-50 read-only:bg-primary-10 read-only:cursor-default ${
-              borderLess
-                ? "border-none outline-none"
-                : "border-text-300 hover:border-text-400 focus:border-text-300"
-            } ${
-              showFocusInMobile
-                ? `rounded-lg ${type !== "radio" && "border focus:ring-2"}`
-                : `${borderLess ? "md:rounded-md" : "md:rounded-lg"} ${
-                    type !== "radio" && "border-b md:border md:focus:ring-2"
-                  }`
-            } ${
-              type !== "radio" &&
-              (howBig == "xs"
-                ? borderLess
-                  ? "px-1 h-5"
-                  : "px-3 h-8"
-                : howBig == "sm"
-                ? "px-3 h-10"
-                : howBig == "md"
-                ? "px-4 py-2 h-10"
-                : "px-4 py-3 h-14")
-            } ${fullWidth ? "w-full" : ""} ${className} ${Icon && "pl-10"}`}
-            ref={ref}
-            id={id}
             type={type}
+            className={cn(
+              "flex w-full rounded-md border-0 bg-transparent transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+              sizeClasses[howBig], // Use size classes based on howBig prop
+              className
+            )}
+            ref={ref}
             {...props}
           />
-
-          {rightIcon}
         </div>
       </div>
     );
@@ -95,5 +49,3 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 
 Input.displayName = "Input";
-
-export { Input };

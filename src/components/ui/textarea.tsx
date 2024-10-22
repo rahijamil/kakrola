@@ -1,42 +1,29 @@
-import { LucideProps } from "lucide-react";
-import React, { ForwardRefExoticComponent, RefAttributes } from "react";
+import * as React from "react";
 
-interface TextareaProps extends React.InputHTMLAttributes<HTMLTextAreaElement> {
-  fullWidth?: boolean;
+import { cn } from "@/lib/utils";
+
+export interface TextareaProps
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
-  Icon?: ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
-  >;
-  rows?: number;
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, fullWidth = false, label, Icon, id, rows, ...props }, ref) => {
+  ({ label, className, ...props }, ref) => {
     return (
-      <div className="space-y-1">
+      <div>
         {label && (
-          <label htmlFor={id} className="font-semibold text-text-700">
+          <label className="mb-1 block text-sm font-medium text-gray-700">
             {label}
           </label>
         )}
-
-        <div className="relative">
-          {Icon && (
-            <Icon
-              strokeWidth={1.5}
-              className="h-5 w-5 text-text-400 absolute top-1/2 left-3 -translate-y-1/2"
-            />
+        <textarea
+          className={cn(
+            "flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+            className
           )}
-          <textarea
-            className={`flex w-full rounded-lg border border-text-300 hover:border-text-400 focus-visible:border-text-300 bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-primary-300 disabled:cursor-not-allowed disabled:opacity-50 ${
-              fullWidth ? "w-full" : ""
-            } ${className} ${Icon && "pl-10"}`}
-            ref={ref}
-            id={id}
-            rows={rows ? rows : 2}
-            {...props}
-          ></textarea>
-        </div>
+          ref={ref}
+          {...props}
+        />
       </div>
     );
   }
@@ -44,4 +31,4 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 
 Textarea.displayName = "Textarea";
 
-export default Textarea;
+export { Textarea };

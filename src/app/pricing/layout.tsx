@@ -2,25 +2,25 @@ import { Metadata } from "next";
 import React, { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Simple, Transparent Pricing | Start Free, Scale When Ready | Kakrola",
+  title: "Simple Team Plans | Plus & Business | Kakrola",
   description:
-    "Start with Kakrola's free plan - no credit card needed. Our straightforward pricing grows with your team. Get all the tools you need - tasks, docs, and team chat - without the enterprise price tag.",
+    "Choose the perfect plan for your team - Plus or Business. Try any plan free for 14 days. Get everything your team needs in one powerful workspace.",
   keywords: [
-    "team software pricing",
-    "free project management",
-    "affordable team tools",
-    "business collaboration cost",
-    "team chat pricing",
-    "document sharing plans",
-    "task management cost",
-    "startup team software",
-    "small business tools",
-    "flexible team pricing",
-    "collaborative workspace cost",
-    "monthly team plans",
-    "annual team discount",
-    "free team tools",
-    "business software pricing",
+    "team workspace plans",
+    "business collaboration tools",
+    "document sharing platform",
+    "team chat software",
+    "project management tools",
+    "remote team platform",
+    "task management system",
+    "team communication hub",
+    "workspace solution",
+    "professional collaboration",
+    "enterprise workspace",
+    "team organization tools",
+    "business planning software",
+    "productivity platform",
+    "secure team workspace",
   ],
   robots: {
     index: true,
@@ -34,9 +34,9 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Pricing That Makes Sense | Free & Flexible Team Plans | Kakrola",
+    title: "Professional Team Plans | 14-Day Trial | Kakrola",
     description:
-      "Why pay for features you won't use? Kakrola's pricing is simple: start free, then pay only when you need more. Perfect for growing teams who need the right tools without breaking the bank.",
+      "Choose between Plus and Business plans. Each plan includes a 14-day trial to explore our complete workspace solution. Perfect for teams who mean business.",
     url: "https://www.kakrola.com/pricing",
     type: "website",
     images: [
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
         url: "/pricing-overview.jpg",
         width: 1200,
         height: 630,
-        alt: "Simple, transparent pricing plans for teams of all sizes",
+        alt: "Professional team workspace plans with 14-day trial",
       },
     ],
     locale: "en_US",
@@ -53,9 +53,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     site: "@kakrola",
-    title: "Team Software That Fits Your Budget | Kakrola Pricing",
+    title: "Professional Team Workspace Plans | Kakrola",
     description:
-      "Start free, no surprises. Get all your team tools in one place - tasks, docs, chat - at a price that works for you. Scale up only when you need to.",
+      "Two powerful plans for serious teams. Try Plus or Business free for 14 days. All the tools you need to work better together.",
     images: ["/pricing-twitter.jpg"],
     creator: "@kakrola",
   },
@@ -76,7 +76,7 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.json",
   other: {
-    "og:price:amount": ["0", "10", "18"],
+    "og:price:amount": ["120", "180"],
     "og:price:currency": "USD",
     "og:availability": "in stock",
   },
@@ -84,7 +84,7 @@ export const metadata: Metadata = {
     google: "google-site-verification-code",
     yandex: "yandex-verification-code",
   },
-  category: "Team Software",
+  category: "Team Workspace",
 };
 
 const PricingLayout = ({ children }: { children: ReactNode }) => {

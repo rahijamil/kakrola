@@ -1,7 +1,7 @@
 import ColorSelector from "@/components/AddEditProject/ColorSelector";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/Spinner";
-import Textarea from "@/components/ui/textarea";
+import {Textarea} from "@/components/ui/textarea";
 import { useAuthProvider } from "@/context/AuthContext";
 import { ProjectType } from "@/types/project";
 import {

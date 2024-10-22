@@ -257,7 +257,7 @@ const AddNewSectionBoardView = ({
               }}
               disabled={loading}
               size="xs"
-              variant="gray"
+              variant="ghost"
             >
               Cancel
             </Button>

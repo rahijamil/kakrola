@@ -99,7 +99,8 @@ const AssigneeSelector = ({
 
   return (
     <Dropdown
-      title="Assignee"
+      title="Select Assignee"
+      fullMode
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       triggerRef={triggerRef}
@@ -284,7 +285,7 @@ const AssigneeSelector = ({
           })),
       ]}
       beforeItemsContent={
-        <div className="p-2">
+        <div className="px-4 py-2">
           <Input
             placeholder="Search users..."
             value={searchQuery}

@@ -20,3 +20,23 @@ export interface ProfileType {
     avatar_url?: string;
   }[];
 }
+
+export enum OAuthTokenProvider {
+  NOTION = "notion",
+  TRELLO = "trello",
+  SLACK = "slack",
+  ASANA = "asana",
+}
+
+export interface OAuthTokenType {
+  id: string; // UUID
+  profile_id: ProfileType["id"]; // Foreign key to Profiles table
+  provider: OAuthTokenProvider;
+  token: string; // Access token
+  refresh_token?: string; // Refresh token, if needed
+  expires_at: Date | null; // Token expiration date, if available
+  metadata?: {
+    workspace_name?: string; // Optional: name of workspace or account
+    linked_at?: Date; // When the account was linked
+  };
+}

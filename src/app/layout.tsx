@@ -16,13 +16,13 @@ const poppins = Poppins({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   fallback: ["Helvetica", "Arial", "sans-serif"],
-  display: "swap",
+  // display: "swap",
 });
 
 // const nunito = Nunito({ subsets: ["latin"], fallback: ["Helvetica", "Arial"] });
 
 export const metadata: Metadata = {
-  title: "Kakrola: Where Great Teams Get Work Done",
+  title: "Kakrola: The Complete Workspace for Teams",
   description:
     "Say goodbye to scattered tools and endless app switching. Kakrola brings your team's tasks, docs, and conversations into one clean, fast workspace. Perfect for busy teams who need to stay organized without the hassle. Try it free—no credit card needed.",
   keywords: [

@@ -7,12 +7,12 @@ const LoadingRows = () => {
     <>
       <tr>
         <td colSpan={5} className="p-0 w-full pb-4">
-          <tr className="border-b border-text-100 block">
+          {/* <tr className="border-b border-text-100 block">
             <td colSpan={5} className="p-2">
               <Skeleton width={100} />
             </td>
-          </tr>
-          <tr className="grid grid-cols-[16rem_8rem_8rem_8rem_8rem] md:grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-b border-text-100">
+          </tr> */}
+          <tr className="grid grid-cols-[16rem_8rem_8rem_8rem_8rem] md:grid-cols-[40%_15%_15%_15%_15%] divide-x divide-text-200 border-y border-text-100">
             <td className="p-2">
               <Skeleton width={"60%"} />
             </td>
