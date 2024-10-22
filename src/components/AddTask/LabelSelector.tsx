@@ -170,7 +170,7 @@ const LabelSelector = ({
             entity: {
               type: EntityType.LABEL,
               id: data.id,
-              name: labelData.name
+              name: labelData.name,
             },
             metadata: {
               new_data: data,
@@ -216,7 +216,7 @@ const LabelSelector = ({
             entity: {
               type: EntityType.LABEL,
               id: data.id,
-              name: labelData.name
+              name: labelData.name,
             },
             metadata: {
               new_data: data,
@@ -235,6 +235,7 @@ const LabelSelector = ({
 
   return (
     <Dropdown
+      fullMode
       title={
         createLabel ? "Create label" : editLabelId ? "Edit label" : "Labels"
       }
@@ -411,7 +412,7 @@ const LabelSelector = ({
       beforeItemsContent={
         !createLabel &&
         !editLabelId && (
-          <div className="p-2">
+          <div className="px-4 py-2">
             <Input
               placeholder="Search labels..."
               value={searchQuery}

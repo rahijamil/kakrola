@@ -151,9 +151,10 @@ const Sidebar = ({
             </div>
           ) : (
             <div
-              className={`flex items-center justify-end w-full transition duration-150 ${
+              className={`flex items-center transition duration-150 ${
                 sidebarWidth > 220 ? "gap-2" : "gap-1"
               }`}
+              onClick={(ev) => ev.stopPropagation()}
             >
               <SidebarNotifications />
 

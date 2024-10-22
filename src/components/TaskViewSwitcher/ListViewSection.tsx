@@ -194,6 +194,7 @@ const ListViewSection = ({
               className={`${
                 !editColumnTitle && "md:opacity-0 md:group-hover:opacity-100"
               }`}
+              onClick={(ev) => ev.stopPropagation()}
             >
               <SectionMoreOptions
                 column={{

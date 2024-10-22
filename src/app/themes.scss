@@ -19,19 +19,6 @@
   --k-color-primary-800: #002f44;
   --k-color-primary-900: #00202f;
 
-  // --k-color-primary-10: #f2f2f2;
-  // --k-color-primary-25: #e5e5e5;
-  // --k-color-primary-50: #cccccc;
-  // --k-color-primary-100: #b3b3b3;
-  // --k-color-primary-200: #999999;
-  // --k-color-primary-300: #808080;
-  // --k-color-primary-400: #666666;
-  // --k-color-primary-500: #555555; /* Base color */
-  // --k-color-primary-600: #444444;
-  // --k-color-primary-700: #333333;
-  // --k-color-primary-800: #222222;
-  // --k-color-primary-900: #000000;
-
   --k-color-primary2: #0076a3;
 
   --k-color-secondary: #ff7d36; /* Light orange for secondary highlights */
@@ -50,6 +37,40 @@
   --k-color-text-700: #333333;
   --k-color-text-800: #1a1a1a;
   --k-color-text-900: #111827; /* Black for main text */
+
+  /* Add these new variables for shadcn components */
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+
+  // --primary: 222.2 47.4% 11.2%;
+  // --primary-foreground: 210 40% 98%;
+
+  --primary: 200 100% 25.6%; /* This matches your --k-color-primary-500 */
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+
+  --radius: 0.5rem;
 }
 
 [data-theme="kakrola-dark"] {
@@ -82,6 +103,35 @@
   --k-color-text-700: #b3b3b3; /* Lighter grey */
   --k-color-text-800: #cccccc; /* Light grey */
   --k-color-text-900: #ffffff; /* White for main text */
+
+  /* Add these new variables for shadcn components */
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+
+  --primary: 210 40% 98%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
 }
 
 [data-theme="moonstone"] {

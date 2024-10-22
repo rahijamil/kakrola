@@ -291,7 +291,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
       onClose={onClose}
       content={
         <div className={`w-full space-y-6 md:space-y-8 max-w-sm p-6 py-12`}>
-          <div className={`max-w-xs ${onClose ? "text-center" : ""}`}>
+          <div className={`md:max-w-xs ${onClose ? "text-center" : ""}`}>
             <h2
               className={`${
                 onClose ? "text-xl md:text-2xl" : "text-2xl md:text-3xl"

@@ -96,18 +96,17 @@
 
 .description-editor {
   .ProseMirror {
-    @apply min-h-64;
+    @apply min-h-[40vh] px-4 md:px-24;
   }
 }
 
 .comment-editor {
   .ProseMirror {
-    @apply min-h-20 max-h-[200px] overflow-y-auto px-4 md:px-3 py-2.5 md:py-2;
+    @apply max-h-[200px] overflow-y-auto;
   }
 }
 
-.reply-editor,
-.description-editor {
+.reply-editor {
   .ProseMirror {
     @apply max-h-[500px] overflow-y-auto px-4 md:px-3 py-2.5 md:py-2;
   }

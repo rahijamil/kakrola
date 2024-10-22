@@ -1,0 +1,14 @@
+/* Basic editor styles */
+.tiptap {
+  :first-child {
+    margin-top: 0;
+  }
+
+  .mention {
+    background-color: #c7b7ff;
+    border-radius: 0.4rem;
+    box-decoration-break: clone;
+    color: var(--k-color-secondary);
+    padding: 0.1rem 0.3rem;
+  }
+}

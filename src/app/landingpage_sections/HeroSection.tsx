@@ -1,74 +1,144 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Rocket, Sparkles } from "lucide-react";
-import HeroCarousel from "./HeroCarousel";
+import { Rocket, ArrowRight, CheckCircle2, FileText, Hash, Building2, Users, Zap } from "lucide-react";
 
-const HeroSection = () => {
+const features = [
+  {
+    id: "project",
+    title: "Project Management",
+    description: "Track projects with multiple views, custom fields, and automated workflows",
+    icon: <CheckCircle2 className="w-6 h-6" />,
+    stat: "50% fewer meetings",
+    color: "bg-blue-500"
+  },
+  {
+    id: "docs",
+    title: "Document Collaboration",
+    description: "Real-time collaboration with rich-text editing and version history",
+    icon: <FileText className="w-6 h-6" />,
+    stat: "30% faster documentation",
+    color: "bg-purple-500"
+  },
+  {
+    id: "chat",
+    title: "Team Communication",
+    description: "Organized discussions with threads, channels, and file sharing",
+    icon: <Hash className="w-6 h-6" />,
+    stat: "40% less context switching",
+    color: "bg-green-500"
+  }
+];
+
+export default function HeroSection() {
+  const [activeFeature, setActiveFeature] = useState(features[0]);
+
   return (
-    <section className="relative bg-gradient-to-b from-white via-primary-25 to-white overflow-hidden">
-      <div className="wrapper pt-20 pb-10 sm:py-32 space-y-16 sm:space-y-24">
-        <div className="flex md:items-center justify-center flex-col text-center">
-          <h1 className="font-bold text-gray-900 text-5xl sm:text-6xl md:text-7xl leading-tight">
-            Your team's <br className="hidden sm:block" />
-            <span className="text-primary relative">
-              command
-              <svg
-                className="absolute w-full h-3 -bottom-1 left-0 text-primary-300"
-                viewBox="0 0 100 20"
-                preserveAspectRatio="none"
-              >
-                <path
-                  d="M0,10 Q50,20 100,10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  fill="none"
-                />
-              </svg>
-            </span>{" "}
-            center
-          </h1>
-          <p className="mt-6 text-xl text-gray-600 sm:text-2xl md:max-w-2xl">
-            Stop switching between tools. Kakrola brings tasks, docs, and team
-            chat into one lightning-fast workspace.
-          </p>
+    <div className="relative overflow-hidden bg-gradient-to-b from-white via-primary-50 to-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
+        <div className="relative z-10">
+          {/* Top Stats Bar */}
+          <div className="flex justify-center gap-8 mb-16">
+            <div className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-primary-600" />
+              <span className="text-sm">1,234+ Active Teams</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-primary-600" />
+              <span className="text-sm">99.9% Uptime</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Zap className="w-5 h-5 text-primary-600" />
+              <span className="text-sm">2h Support Response</span>
+            </div>
+          </div>
 
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/auth/signup">
-              <Button
-                size="lg"
-                className="shadow-lg hover:shadow-xl transition-all bg-primary hover:bg-primary/90 text-white w-full sm:w-auto"
-              >
-                <Rocket className="w-5 h-5 mr-2" strokeWidth={1.5} />
-                Start for Free
-              </Button>
-            </Link>
-            {/* <Link href="#features">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                <Sparkles className="w-5 h-5 mr-2" strokeWidth={1.5} />
-                See it in action
-              </Button>
-            </Link> */}
+          {/* Main Content */}
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left Column */}
+            <div className="space-y-8">
+              <div className="inline-flex items-center px-4 py-2 bg-primary-100 rounded-full">
+                <span className="text-primary-700 text-sm font-medium">30-Day Money-Back Guarantee</span>
+                <ArrowRight className="w-4 h-4 ml-2 text-primary-700" />
+              </div>
+
+              <h1 className="text-5xl sm:text-6xl font-bold text-gray-900 leading-tight">
+                The Complete
+                <br />
+                <span className="relative inline-block">
+                  Workspace
+                  <motion.div
+                    className="absolute -bottom-2 left-0 w-full h-3 bg-primary-200 -z-10"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 0.8 }}
+                  />
+                </span>
+                <br />
+                for Teams
+              </h1>
+
+              <p className="text-xl text-gray-600">
+                Join growing teams who've simplified their workflow, reduced meetings, and gotten more done with our all-in-one solution.
+              </p>
+
+              <div className="flex items-center gap-6">
+                <Link href="/auth/signup">
+                  <Button size="lg" className="shadow-lg">
+                    <Rocket className="w-5 h-5 mr-2" />
+                    Start 14-Day Trial
+                  </Button>
+                </Link>
+                <span className="text-sm text-gray-500">
+                  From $10/month per user
+                </span>
+              </div>
+            </div>
+
+            {/* Right Column - Feature Showcase */}
+            <div className="relative">
+              <div className="bg-white rounded-xl shadow-xl p-8">
+                <div className="space-y-6">
+                  {features.map((feature) => (
+                    <motion.div
+                      key={feature.id}
+                      className={`p-6 rounded-lg cursor-pointer transition-all ${
+                        activeFeature.id === feature.id
+                          ? "bg-primary-50 border border-primary-200"
+                          : "hover:bg-gray-50"
+                      }`}
+                      onClick={() => setActiveFeature(feature)}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className={`p-3 rounded-lg ${feature.color} bg-opacity-10`}>
+                          {feature.icon}
+                        </div>
+                        <div className="space-y-2">
+                          <h3 className="font-semibold text-lg">{feature.title}</h3>
+                          <p className="text-gray-600">{feature.description}</p>
+                          <div className="inline-flex items-center gap-2 bg-green-100 px-3 py-1 rounded-full">
+                            <CheckCircle2 className="w-4 h-4 text-green-600" />
+                            <span className="text-sm font-medium text-green-700">
+                              {feature.stat}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <HeroCarousel />
+        {/* Background Decoration */}
+        <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 blur-3xl opacity-20">
+          <div className="aspect-square h-96 rounded-full bg-gradient-to-br from-primary-400 to-purple-400" />
+        </div>
       </div>
-
-      <div
-        className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
-        aria-hidden="true"
-      >
-        <div
-          className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-primary-300 to-secondary-300 opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
-          style={{
-            clipPath:
-              "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
-          }}
-        />
-      </div>
-    </section>
+    </div>
   );
-};
-
-export default HeroSection;
+}

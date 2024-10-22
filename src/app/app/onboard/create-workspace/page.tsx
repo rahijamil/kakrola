@@ -72,7 +72,7 @@ const Step3CreateWorkspace = () => {
                 router.push("/app");
               }}
               disabled={skipLoading}
-              variant="gray"
+              variant="ghost"
               fullWidth
             >
               {skipLoading ? <Spinner color="current" /> : "Skip for now"}

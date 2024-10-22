@@ -115,9 +115,7 @@ const LocationSelector = ({
           >
             {task.task_labels && task.task_labels.length > 0 ? (
               task.task_labels.map((label) => (
-                <div key={label.id} className="flex items-center gap-1">
-                 
-                </div>
+                <div key={label.id} className="flex items-center gap-1"></div>
               ))
             ) : (
               <div>
@@ -162,13 +160,15 @@ const LocationSelector = ({
       autoClose={false}
       items={[]}
       beforeItemsContent={
-        <Input
-          placeholder="Search labels..."
-          value={searchQuery}
-          onChange={handleSearchChange}
-          className="mb-2"
-          howBig="xs"
-        />
+        <div className="px-4 py-2">
+          <Input
+            placeholder="Search labels..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="mb-2"
+            howBig="xs"
+          />
+        </div>
       }
     />
   );

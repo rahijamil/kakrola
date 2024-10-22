@@ -26,7 +26,7 @@ import {
 import { useAuthProvider } from "@/context/AuthContext";
 import CustomSelect from "./ui/CustomSelect";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import Textarea from "./ui/textarea";
+import {Textarea} from "./ui/textarea";
 import Link from "next/link";
 import { TeamRoleType } from "@/types/role";
 import {

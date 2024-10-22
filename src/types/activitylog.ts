@@ -38,6 +38,7 @@ export enum ActivityAction {
   UNASSIGNED_TASK = "unassigned_task",
   REORDERED_TASK = "reordered_section",
   UPDATED_TASK_PRIORITY = "updated_task_priority",
+  UPDATED_TASK_STATUS = "updated_task_status",
   ADDED_TASK_LABELS = "added_task_labels",
   REMOVED_TASK_LABELS = "removed_task_labels",
   UPDATED_TASK_DATES = "updated_task_dates",

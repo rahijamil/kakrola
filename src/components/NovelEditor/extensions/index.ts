@@ -17,8 +17,6 @@ import {
 
 import Emoji from "@tiptap-pro/extension-emoji";
 import Text from "@tiptap/extension-text";
-import Mention from "@tiptap/extension-mention";
-
 import Details from "@tiptap-pro/extension-details";
 import DetailsContent from "@tiptap-pro/extension-details-content";
 import DetailsSummary from "@tiptap-pro/extension-details-summary";
@@ -46,6 +44,7 @@ import { TableOfContentsNode } from "./TableOfContentsNode";
 import { ImageBlock } from "./ImageBlock";
 import { ImageUpload } from "./ImageUpload";
 import TableOfContents from "@tiptap-pro/extension-table-of-contents";
+import Mention from "./Mention";
 
 // create a lowlight instance
 const lowlight = createLowlight(all);
@@ -173,20 +172,6 @@ const details = Details.configure({
   persist: true,
 });
 
-const mention = Mention.configure({
-  HTMLAttributes: {
-    class: cx("rounded-md bg-text-100 px-1.5 py-1 font-mono font-medium"),
-  },
-  suggestion: {
-    char: "@",
-    items: () => [],
-  },
-  renderText({ options, node }) {
-    return `${options.suggestion.char}${node.attrs.label ?? node.attrs.id}`;
-  },
-  deleteTriggerWithBackspace: true,
-});
-
 export const defaultExtensions = [
   autoJoiner,
   codeBlockLowlight,
@@ -221,5 +206,5 @@ export const defaultExtensions = [
   MarkdownExtension,
   Text,
   TiptapUnderline,
-  // mention,
+  // Mention,
 ];

@@ -42,7 +42,7 @@ const SidebarCreateMore = ({
       Label={({ onClick }) =>
         screenWidth > 768 ? (
           <button
-          ref={triggerRef}
+            ref={triggerRef}
             onClick={onClick}
             className={`flex items-center justify-center w-7 h-7 text-primary-600 font-semibold rounded-lg transition-colors duration-150 z-10 ${
               isOpen ? "bg-primary-50" : "hover:bg-primary-100"

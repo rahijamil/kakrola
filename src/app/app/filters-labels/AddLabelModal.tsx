@@ -152,7 +152,7 @@ const AddLabelModal = ({ onClose }: { onClose: () => void }) => {
           <div className="flex items-center justify-end gap-4 border-t border-text-100 p-4">
             <Button
               type="button"
-              variant="gray"
+              variant="ghost"
               disabled={loading}
               size="sm"
               onClick={onClose}

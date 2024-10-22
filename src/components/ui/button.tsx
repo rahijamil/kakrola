@@ -1,139 +1,62 @@
-import React, { ReactNode } from "react";
-import { LucideProps } from "lucide-react";
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
 
-// Simplified utility function to combine class names
-const cn = (...classes: (string | undefined)[]) => {
-  return classes.filter(Boolean).join(" ");
-};
+import { cn } from "@/lib/utils";
 
-// Simplified types for button variants and colors
-type ButtonVariant = "default" | "outline" | "ghost" | "secondary" | "gray";
-type ButtonColor = "primary" | "kakrola" | "text" | "red" | "gray";
-type ButtonSize = "default" | "xs" | "sm" | "lg" | "icon";
-
-const getButtonClasses = (
-  variant: ButtonVariant = "default",
-  color: ButtonColor = "primary",
-  size: ButtonSize = "default",
-  fullWidth: boolean = false,
-  className?: string,
-  leftAlign?: boolean,
-  rightContent?: boolean
-) => {
-  const baseClasses = `inline-flex items-center gap-2 rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ${
-    leftAlign ? "justify-start text-left" : "justify-center"
-  }`;
-
-  const variantClasses = {
-    default: {
-      primary:
-        "text-surface bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-400 hover:to-primary-500",
-      kakrola:
-        "text-surface bg-gradient-to-r from-kakrola-500 to-kakrola-600 hover:from-kakrola-400 hover:to-kakrola-500 dark:from-[#8698c2] dark:to-[#96a6ca] dark:hover:from-[#4b607b] dark:hover:to-[#8698c2]",
-      text: "text-surface bg-gradient-to-r from-text-500 to-text-600 hover:from-text-400 hover:to-text-500",
-      red: "text-surface bg-gradient-to-r from-red-700 to-red-600 hover:to-red-700",
-      gray: "",
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  {
+    variants: {
+      variant: {
+        default:
+          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+        outline:
+          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-9 px-4 py-2",
+        sm: "h-8 rounded-md px-3 text-xs",
+        lg: "h-10 rounded-md px-8",
+        icon: "h-9 w-9",
+      },
+      fullWidth: {
+        true: "w-full",
+        false: "",
+      },
     },
-    outline: {
-      primary: "border border-primary-600 text-primary-600 hover:bg-primary-50",
-      kakrola: "border border-kakrola-600 text-kakrola-600 hover:bg-kakrola-50",
-      text: "border border-text-600 text-text-600 hover:bg-text-100",
-      red: "border border-red-600 text-red-600 hover:bg-red-50",
-      gray: "border border-text-300 hover:border-text-400 focus:border-text-300",
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+      fullWidth: false,
     },
-    ghost: {
-      primary: "text-primary-600 hover:bg-primary-50",
-      kakrola: "text-kakrola-600 hover:bg-kakrola-50",
-      text: "text-text-600 hover:bg-text-50",
-      red: "text-red-600 hover:bg-red-50",
-      gray: "text-text-600 hover:bg-text-100",
-    },
-    secondary: {
-      primary: "bg-surface text-primary-600 hover:bg-text-100",
-      kakrola: "bg-surface text-kakrola-600 hover:bg-text-100",
-      text: "bg-surface text-text-600 hover:bg-text-100",
-      red: "bg-surface text-red-600 hover:bg-text-100",
-      gray: "",
-    },
-    gray: {
-      primary:
-        "bg-gradient-to-r from-text-300 to-text-200 text-text-600 hover:to-text-300",
-      kakrola:
-        "bg-gradient-to-r from-text-300 to-text-200 text-text-600 hover:to-text-300",
-      text: "bg-gradient-to-r from-text-300 to-text-200 text-text-600 hover:to-text-300",
-      red: "bg-gradient-to-r from-text-300 to-text-200 text-text-600 hover:to-text-300",
-      gray: "",
-    },
-  };
-
-  const sizeClasses = {
-    default: rightContent ? "pl-5 h-10 pr-2 gap-4" : "px-6 h-10",
-    xs: "h-7 px-3",
-    sm: "h-8 px-4",
-    lg: "h-10 px-6",
-    icon: "h-10 w-10",
-  };
-
-  return cn(
-    baseClasses,
-    variantClasses[variant][color],
-    sizeClasses[size],
-    fullWidth ? "w-full" : "",
-    className
-  );
-};
-
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: ButtonVariant;
-  color?: ButtonColor;
-  size?: ButtonSize;
-  fullWidth?: boolean;
-  icon?: React.ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
-  >;
-  leftAlign?: boolean;
-  rightContent?: ReactNode;
-}
-
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      className,
-      variant = "default",
-      color = "primary",
-      size = "default",
-      fullWidth = false,
-      icon: Icon,
-      children,
-      leftAlign,
-      rightContent,
-      ...props
-    },
-    ref
-  ) => {
-    return (
-      <button
-        className={getButtonClasses(
-          variant,
-          color,
-          size,
-          fullWidth,
-          className,
-          leftAlign,
-          !!rightContent
-        )}
-        ref={ref}
-        tabIndex={0}
-        {...props}
-      >
-        {Icon && <Icon className="h-5 w-5" />}
-        {children}
-        {rightContent}
-      </button>
-    );
   }
 );
 
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button";
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
 Button.displayName = "Button";
 
-export { Button };
+export { Button, buttonVariants };

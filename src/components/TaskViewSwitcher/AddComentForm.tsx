@@ -12,13 +12,6 @@ import { ProfileType } from "@/types/user";
 import { useAuthProvider } from "@/context/AuthContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { TaskCommentType } from "@/types/comment";
-import {
-  ActivityAction,
-  createActivityLog,
-  EntityType,
-} from "@/types/activitylog";
-import Spinner from "../ui/Spinner";
-import { useRole } from "@/context/RoleContext";
 import { v4 as uuidv4 } from "uuid";
 import { useQueryClient } from "@tanstack/react-query";
 import { PersonalMemberForProjectType } from "@/types/team";
@@ -30,6 +23,8 @@ import {
 import { createNotification } from "@/types/notification";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { getTextFromContent } from "@/lib/getTextFromContent";
+import { debounce } from "lodash";
+import { Send } from "lucide-react";
 const NovelEditor = dynamic(() => import("@/components/NovelEditor"), {
   ssr: false,
 });
@@ -39,11 +34,13 @@ const MentionInput = ({
   setContent,
   assigneeProfiles,
   editorRef,
+  handleComment,
 }: {
   content: string | null;
   setContent: React.Dispatch<React.SetStateAction<string | null>>;
   assigneeProfiles: ProfileType[];
   editorRef: MutableRefObject<HTMLDivElement | null>;
+  handleComment: (charsCount: number) => void;
 }) => {
   const [mentionQuery, setMentionQuery] = useState<string | null>(null);
   const [filteredProfiles, setFilteredProfiles] = useState<ProfileType[]>([]);
@@ -102,14 +99,30 @@ const MentionInput = ({
 
   return (
     <div className="relative">
-      <div className="comment-editor hide-some-command relative rounded-lg transition cursor-text border border-text-200 focus-within:border-text-300 focus-within:shadow bg-background">
-        <NovelEditor
-          editorRef={editorRef}
-          content={content ? JSON.parse(content) : null}
-          handleSave={(saveContent) => setContent(JSON.stringify(saveContent))}
-          setCharsCount={setCharsCount}
-          hideContentItemMenu
-        />
+      <div className="flex items-end">
+        <div className="comment-editor hide-some-command relative cursor-text w-full">
+          <NovelEditor
+            editorRef={editorRef}
+            content={content ? JSON.parse(content) : null}
+            handleSave={(saveContent) =>
+              setContent(JSON.stringify(saveContent))
+            }
+            setCharsCount={setCharsCount}
+            hideContentItemMenu
+            autofocus={false}
+            handleEnterWithoutShift={() => handleComment(charsCount)}
+          />
+        </div>
+
+        <Button
+          disabled={charsCount == 0}
+          type="button"
+          size="xs"
+          onClick={() => handleComment(charsCount)}
+          className="aspect-square"
+        >
+          <Send strokeWidth={1.5} className="w-4 h-4" />
+        </Button>
       </div>
 
       {showMentionList && filteredProfiles.length > 0 && (
@@ -169,8 +182,8 @@ const AddComentForm = ({
 
   const { projects } = useSidebarDataProvider();
 
-  const handleComment = async () => {
-    if (!content || !profile) return;
+  const handleComment = debounce(async (charsCount: number) => {
+    if (!content || !profile || charsCount == 0) return;
 
     try {
       const tempId = uuidv4();
@@ -245,7 +258,10 @@ const AddComentForm = ({
         data: {
           triggered_by:
             profile.full_name?.split(" ")[0] || profile.email?.split("@")[0],
-          entityName: getTextFromContent(JSON.parse(commentData.content)).slice(0, 20),
+          entityName: getTextFromContent(JSON.parse(commentData.content)).slice(
+            0,
+            20
+          ),
         },
       });
     } catch (error) {
@@ -253,7 +269,7 @@ const AddComentForm = ({
     } finally {
       setIsCommenting(false);
     }
-  };
+  }, 100);
 
   const assignees: MemberData[] =
     queryClient.getQueryData(["membersData", task.project_id, undefined]) || [];
@@ -305,9 +321,10 @@ const AddComentForm = ({
         setContent={setContent}
         editorRef={editorRef}
         assigneeProfiles={assigneeProfiles}
+        handleComment={handleComment}
       />
 
-      <div className="flex justify-end gap-2 text-xs">
+      {/* <div className="flex justify-end gap-2 text-xs">
         {onCancelClick && (
           <Button
             variant="ghost"
@@ -333,7 +350,7 @@ const AddComentForm = ({
             "Comment"
           )}
         </Button>
-      </div>
+      </div> */}
     </motion.div>
   );
 };

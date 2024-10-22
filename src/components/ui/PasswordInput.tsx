@@ -36,26 +36,26 @@ const PasswordInput = ({
       name="password"
       type={showPassword ? "text" : "password"}
       required={required}
-      Icon={LockClosedIcon}
-      rightIcon={
-        <button
-          type="button"
-          className="absolute top-1/2 -translate-y-1/2 right-0 pr-3 flex items-center cursor-pointer"
-          onClick={togglePasswordVisibility}
-        >
-          {showPassword ? (
-            <EyeSlashIcon className="h-5 w-5 text-text-400" />
-          ) : (
-            <EyeIcon className="h-5 w-5 text-text-400" />
-          )}
-        </button>
-      }
-      className="pl-10 w-full pr-10" // Added pr-10 for spacing
+      // Icon={LockClosedIcon}
+      // rightIcon={
+      //   <button
+      //     type="button"
+      //     className="absolute top-1/2 -translate-y-1/2 right-0 pr-3 flex items-center cursor-pointer"
+      //     onClick={togglePasswordVisibility}
+      //   >
+      //     {showPassword ? (
+      //       <EyeSlashIcon className="h-5 w-5 text-text-400" />
+      //     ) : (
+      //       <EyeIcon className="h-5 w-5 text-text-400" />
+      //     )}
+      //   </button>
+      // }
+      className="pl-10 w-full pr-10"
       placeholder={label ? label : "Password"}
       value={password}
       onChange={(e) => setPassword(e.target.value)}
-      label={label}
-      labelRight={labelRight}
+      // label={label}
+      // labelRight={labelRight}
       autoFocus={autoFocus}
     />
   );

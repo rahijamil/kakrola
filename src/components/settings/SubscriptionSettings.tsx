@@ -203,14 +203,10 @@ const SubscriptionSettings = ({
             <div
               className={`flex gap-4 border border-l-4 p-4 rounded-lg ${
                 pricingTiers.find(
-                  (item) => item.id === product?.name.toLowerCase()
-                )?.businessHighlight
-                  ? "border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface"
-                  : pricingTiers.find(
-                      (item) =>
-                        item.id ===
-                        activeSubscription?.items[0].product.name.toLowerCase()
-                    )?.highlighted
+                  (item) =>
+                    item.id ===
+                    activeSubscription?.items[0].product.name.toLowerCase()
+                )?.highlighted
                   ? "border-kakrola-500 bg-kakrola-10 dark:border-[#8698c2] dark:bg-[#8698c2]/10"
                   : "border-text-100 bg-background"
               }`}
@@ -312,9 +308,7 @@ const SubscriptionSettings = ({
                 <div
                   key={index}
                   className={`rounded-lg overflow-hidden border border-t-5 bg-background p-6 space-y-6 flex flex-col ${
-                    plan.businessHighlight
-                      ? "border-text-500 dark:border-text-500"
-                      : plan.highlighted
+                    plan.highlighted
                       ? "border-kakrola-500 dark:border-[#8698c2]"
                       : "border-text-100"
                   }`}
@@ -340,44 +334,37 @@ const SubscriptionSettings = ({
                     </span>
                   </p>
 
-                  {plan.cta !== "Sign up" ? (
-                    <div>
-                      <Button
-                        variant={
-                          product?.id == plan.product_id ||
-                          index < currentPlanIndex
-                            ? "outline"
-                            : plan.highlighted
-                            ? "default"
-                            : "outline"
-                        }
-                        color={
-                          product?.id == plan.product_id ||
-                          index < currentPlanIndex
-                            ? "text"
-                            : plan.highlighted
-                            ? "kakrola"
-                            : plan.businessHighlight
-                            ? "text"
-                            : "primary"
-                        }
-                        // fullWidth
-                        size="sm"
-                        onClick={() =>
-                          product?.id != plan.product_id &&
-                          setSelectedPlan(plan)
-                        }
-                      >
-                        {product?.id == plan.product_id
-                          ? "Current plan"
-                          : index < currentPlanIndex
-                          ? "Downgrade"
-                          : "Upgrade"}
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="h-[75px]"></div>
-                  )}
+                  <div>
+                    <Button
+                      variant={
+                        product?.id == plan.product_id ||
+                        index < currentPlanIndex
+                          ? "outline"
+                          : plan.highlighted
+                          ? "default"
+                          : "outline"
+                      }
+                      color={
+                        product?.id == plan.product_id ||
+                        index < currentPlanIndex
+                          ? "text"
+                          : plan.highlighted
+                          ? "kakrola"
+                          : "primary"
+                      }
+                      // fullWidth
+                      size="sm"
+                      onClick={() =>
+                        product?.id != plan.product_id && setSelectedPlan(plan)
+                      }
+                    >
+                      {product?.id == plan.product_id
+                        ? "Current plan"
+                        : index < currentPlanIndex
+                        ? "Downgrade"
+                        : "Upgrade"}
+                    </Button>
+                  </div>
 
                   <ul className="space-y-2 flex-1">
                     {plan.features.map((feature, featureIndex) => (
@@ -437,9 +424,7 @@ const SubscriptionSettings = ({
                             <div
                               key={index}
                               className={`px-6 py-3 text-center text-xs font-medium text-text-700 uppercase tracking-wider w-1/4 rounded-t-lg border border-b-0 border-t-5 h-20 md:h-14 ${
-                                plan.businessHighlight
-                                  ? "border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface"
-                                  : plan.highlighted
+                                plan.highlighted
                                   ? "border-kakrola-500 bg-kakrola-10 dark:border-[#8698c2] dark:bg-[#8698c2]/10"
                                   : "border-text-100 bg-background"
                               }`}
@@ -450,9 +435,7 @@ const SubscriptionSettings = ({
                             <div
                               key={index}
                               className={`px-6 py-3 text-center text-xs font-medium text-text-700 uppercase tracking-wider w-1/4 border-x h-14 ${
-                                plan.businessHighlight
-                                  ? "border-text-500 bg-text-10 dark:border-text-500 dark:bg-surface"
-                                  : plan.highlighted
+                                 plan.highlighted
                                   ? "border-kakrola-500 bg-kakrola-10 dark:border-[#8698c2] dark:bg-[#8698c2]/10"
                                   : "border-text-100 bg-background"
                               }`}

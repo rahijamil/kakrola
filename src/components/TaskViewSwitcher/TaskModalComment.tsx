@@ -103,13 +103,13 @@ const TaskModalComment = ({ task }: { task: TaskType }) => {
       id: "comments",
       name: "Comments",
       icon: <MessageCircle strokeWidth={1.5} className="w-4 h-4" />,
-      onClick: () => setTabs(TabEnum.comments)
+      onClick: () => setTabs(TabEnum.comments),
     },
     {
       id: "activity",
       name: "Activity",
       icon: <Logs strokeWidth={1.5} className="w-4 h-4" />,
-      onClick: () => setTabs(TabEnum.activity)
+      onClick: () => setTabs(TabEnum.activity),
     },
   ];
 
@@ -188,12 +188,16 @@ const TaskModalComment = ({ task }: { task: TaskType }) => {
   }, []);
 
   return (
-    <div className="">
-      <div className="mb-4">
+    <div className="space-y-4">
+      {/* <div className="mb-4">
         <TabSwitcher
           tabItems={tabItems}
           activeTab={tabs}
         />
+      </div> */}
+
+      <div className="px-4 md:px-24">
+        <div className="h-px bg-text-100 w-full" />
       </div>
 
       {tabs === TabEnum.comments ? (
@@ -269,45 +273,45 @@ const TaskModalComment = ({ task }: { task: TaskType }) => {
         </div>
       )}
 
-      <div className="sticky bottom-0 bg-surface">
-        <div className="bg-text-100 h-px my-4" />
+      <div className="px-4 md:px-24">
+        {/* {!showCommentForm && (
+          <div className="flex items-center gap-2">
+            <Image
+              src={profile?.avatar_url || "/default_avatar.png"}
+              width={28}
+              height={28}
+              alt={profile?.full_name || profile?.username || "avatar"}
+              className="rounded-md object-cover max-w-[28px] max-h-[28px]"
+            />
 
-        <div className="px-8 pb-4 pt-0">
-          {!showCommentForm && (
-            <div className="flex items-center gap-2">
-              <Image
-                src={profile?.avatar_url || "/default_avatar.png"}
-                width={28}
-                height={28}
-                alt={profile?.full_name || profile?.username || "avatar"}
-                className="rounded-md object-cover max-w-[28px] max-h-[28px]"
-              />
-
-              <div
-                className="flex items-center justify-between w-full border border-text-100 rounded-lg py-2 px-4 bg-background hover:bg-text-100 dark:hover:bg-surface cursor-pointer transition text-xs"
-                onClick={() => setShowCommentForm(true)}
-              >
-                <p className="text-text-500">Write a comment</p>
-              </div>
+            <div
+              className="flex items-center justify-between w-full border border-text-100 rounded-lg py-2 px-4 bg-background hover:bg-text-100 dark:hover:bg-surface cursor-pointer transition text-xs"
+              onClick={() => setShowCommentForm(true)}
+            >
+              <p className="text-text-500">Write a comment</p>
             </div>
-          )}
+          </div>
+        )} */}
 
-          {showCommentForm && (
-            <div className="flex items-start gap-2 w-full">
-              <Image
-                src={profile?.avatar_url || "/default_avatar.png"}
-                width={28}
-                height={28}
-                alt={profile?.full_name || profile?.username || "avatar"}
-                className="rounded-md object-cover max-w-[28px] max-h-[28px]"
-              />
-              <AddComentForm
-                onCancelClick={() => setShowCommentForm(false)}
-                task={task}
-              />
-            </div>
-          )}
+        {/* {showCommentForm && ( */}
+        <div className="flex items-start gap-2 w-full">
+          <Image
+            src={profile?.avatar_url || "/default_avatar.png"}
+            width={28}
+            height={28}
+            alt={profile?.full_name || profile?.username || "avatar"}
+            className="rounded-md object-cover max-w-[28px] max-h-[28px]"
+          />
+          <AddComentForm
+            onCancelClick={() => setShowCommentForm(false)}
+            task={task}
+          />
         </div>
+        {/* )} */}
+      </div>
+
+      <div className="px-4 md:px-24">
+        <div className="h-px bg-text-100 w-full" />
       </div>
     </div>
   );

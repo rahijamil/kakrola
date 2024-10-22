@@ -176,7 +176,7 @@ const AddPassword = () => {
       <div className="flex items-center justify-center gap-4">
         <Button
           type="button"
-          variant="gray"
+          variant="ghost"
           className="w-full disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={loading}
           onClick={() => router.back()}

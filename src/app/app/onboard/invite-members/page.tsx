@@ -139,7 +139,7 @@ const Step5InviteMembers = () => {
               }}
               disabled={skipLoading}
               fullWidth
-              variant="gray"
+              variant="ghost"
             >
               {skipLoading ? <Spinner color="current" /> : "Skip for now"}
             </Button>

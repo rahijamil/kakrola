@@ -330,7 +330,8 @@ const DateSelector = ({
 
   return (
     <Dropdown
-      title="Dates"
+      title="Select Dates"
+      fullMode
       triggerRef={triggerRef}
       isOpen={isOpen}
       setIsOpen={setIsOpen}

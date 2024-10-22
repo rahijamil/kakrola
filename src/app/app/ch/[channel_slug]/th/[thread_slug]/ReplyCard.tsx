@@ -164,7 +164,7 @@ const ReplyCard: React.FC<ReplyCardProps> = ({
                 <div className={`flex-1`}>
                   {index === 0 && (
                     <div className="flex gap-2 items-center">
-                      <h3 className="font-bold">
+                      <h3 className="font-semibold">
                         {profile?.full_name || "Unknown User"}
                       </h3>
                       <p className="text-xs text-text-500">

@@ -135,7 +135,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ profile, comment }) => {
         //       }
         //     : {}
         // }
-        className={`relative group md:hover:bg-text-10dark:md:hover:bg-background transition px-4 md:px-6 select-none md:select-auto py-1`}
+        className={`relative group md:hover:bg-text-10dark:md:hover:bg-background transition px-4 md:px-[calc(6rem-4px)] select-none md:select-auto py-1`}
         onTouchStart={(ev) => {
           ev.currentTarget.classList.add("bg-text-100");
           handleTouchStart(comment.id.toString());
@@ -159,7 +159,7 @@ const CommentCard: React.FC<CommentCardProps> = ({ profile, comment }) => {
 
           <div className={`flex-1`}>
             <div className="flex gap-2 items-center">
-              <h3 className="font-bold">
+              <h3 className="font-semibold">
                 {profile?.full_name || "Unknown User"}
               </h3>
               <p className="text-xs text-text-500">

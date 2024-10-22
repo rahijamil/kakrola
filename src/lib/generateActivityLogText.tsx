@@ -1,13 +1,19 @@
 import { ActivityAction, ActivityWithProfile } from "@/types/activitylog";
 import { ActivityLogType } from "@/types/activitylog";
-import { TaskAssigneeType, TaskLabelType, TaskPriority } from "@/types/project";
+import {
+  TaskAssigneeType,
+  TaskLabelType,
+  TaskPriority,
+  TaskStatus,
+} from "@/types/project";
 import { ProfileType } from "@/types/user";
 import { colors } from "@/utils/colors";
 import { format } from "date-fns";
 import Image from "next/image";
 import { Theme } from "./theme.types";
 import { ReactNode } from "react";
-import { PriorityIcon } from "@/utils/utility_functions";
+import { PriorityIcon, taskStatus, TaskStatusColor } from "@/utils/utility_functions";
+import { Square, SquareCheck } from "lucide-react";
 
 export function generateActivityLogText(
   log: ActivityWithProfile,
@@ -252,6 +258,41 @@ export function generateActivityLogText(
       return (
         <div className="flex gap-1">
           {actorName} updated the priority {prioritySpan} of the task.
+        </div>
+      );
+    case ActivityAction.UPDATED_TASK_STATUS:
+      const status: TaskStatus = log.metadata?.new_data.status;
+
+      const statusSpan = (
+        <div className="flex items-center gap-1 text-xs rounded-lg transition bg-text-200 px-1 font-medium">
+          {status == TaskStatus.COMPLETE ? (
+            <SquareCheck className="w-4 h-4 text-green-500" />
+          ) : (
+            status && (
+              <div className="w-4 h-4 rounded-lg overflow-hidden">
+                <Square
+                  fill={TaskStatusColor[status]}
+                  strokeWidth={0}
+                  className="w-4 h-4"
+                />
+              </div>
+            )
+          )}
+          <span
+            className={`text-xs ${
+              status == TaskStatus.COMPLETE && "text-green-500"
+            }`}
+          >
+            {taskStatus.find(
+                            (item) => item.status === status
+                          )?.label || "No status"}
+          </span>
+        </div>
+      );
+
+      return (
+        <div className="flex gap-1">
+          {actorName} updated the status {statusSpan} of the task.
         </div>
       );
     case ActivityAction.ADDED_TASK_LABELS:
