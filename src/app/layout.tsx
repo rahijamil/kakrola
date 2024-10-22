@@ -14,16 +14,13 @@ const poppins = Poppins({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   fallback: ["Helvetica", "Arial", "sans-serif"],
-  display: "swap",
+  // display: "swap",
 });
 
 const nunito = Nunito({ subsets: ["latin"], fallback: ["Helvetica", "Arial"] });
 
 export const metadata: Metadata = {
-  title: {
-    absolute: "Kakrola: Manage Projects, Docs, DMs, and Team Channels",
-    default: "Kakrola",
-  },
+  title: "Kakrola: The Complete Workspace for Teams",
   description:
     "Kakrola is the all-in-one platform for managing projects, tasks, documents, team communication through DMs and channels, and much more.",
   keywords:

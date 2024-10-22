@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { TabItem } from "@/types/types.utils";
 
@@ -28,7 +28,11 @@ const TabSwitcher = ({
           <button
             className={`flex items-center justify-center gap-1 cursor-pointer flex-1 transition w-full z-10 relative ${
               activeTab === item.id ? "text-text-700" : "text-text-500"
-            } ${size == "lg" ? "py-4 text-xl font-medium" : "px-2 p-1"}`}
+            } ${
+              size == "lg"
+                ? "px-2 p-1 md:py-4 md:text-xl md:font-medium"
+                : "px-2 p-1"
+            }`}
             onClick={item.onClick}
             onMouseOver={() => setHoverItem(item)}
             onMouseLeave={() => setHoverItem(null)}
@@ -36,7 +40,7 @@ const TabSwitcher = ({
             {item.icon}
             <span className="capitalize">{item.name}</span>
           </button>
-{/* 
+
           {hoverItem?.id === item.id && (
             <motion.span
               layoutId="hoverIndicator"
@@ -49,7 +53,7 @@ const TabSwitcher = ({
                 duration: size == "lg" ? 0.5 : 0.2,
               }}
             />
-          )} */}
+          )}
 
           {activeTab === item.id && (
             <>
