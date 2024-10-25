@@ -127,6 +127,7 @@ const TeamProjects = ({
             onTouchEnd={(ev) =>
               ev.currentTarget.classList.remove("bg-text-100")
             }
+            data-state="teamspace"
           >
             <div
               // href={`/app/${team.id}`}
@@ -175,7 +176,7 @@ const TeamProjects = ({
                 !showAddProjectModal &&
                 !showAddChannel &&
                 !isOpen &&
-                "opacity-0 group-hover:opacity-100"
+                "opacity-0 group-data-[state=teamspace]:group-hover:opacity-100"
               } transition flex items-center`}
               onClick={(ev) => ev.stopPropagation()}
             >

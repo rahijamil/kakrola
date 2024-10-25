@@ -95,23 +95,14 @@ const ActivePageMoreOptions = ({
           onClick: handleCopyProjectLink,
           divide: true,
         },
-        // {
-        //   id: 4,
-        //   label: "Save as template",
-        //   icon: <Copy strokeWidth={1.5} className="w-4 h-4" />,
-        //   onClick: () => {
-        //     setSaveTemplate(true);
-        //   },
-        // },
-        // {
-        //   id: 5,
-        //   label: "Templates",
-        //   icon: <SwatchBook strokeWidth={1.5} className="w-4 h-4" />,
-        //   onClick: () => {
-        //     router.push("/app/templates");
-        //   },
-        //   divide: true,
-        // },
+        {
+          id: 4,
+          label: "Save as template",
+          icon: <Copy strokeWidth={1.5} className="w-4 h-4" />,
+          onClick: () => {
+            setSaveTemplate(true);
+          },
+        },
         // {
         //   id: 6,
         //   label: "Import from CSV",

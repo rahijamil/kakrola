@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from "react";
-import { Dialog } from "../ui";
+import { Dialog } from "../ui/dialog";
 import { HashtagIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import AddComentForm from "../TaskViewSwitcher/AddComentForm";
 import Image from "next/image";
@@ -27,7 +27,7 @@ const CommentOrActivityModal = ({
   channel?: ChannelType | null;
 }) => {
   return (
-    <Dialog onClose={onClose} size="md">
+    <Dialog open onOpenChange={onClose}>
       <div className="p-2 px-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <HashtagIcon className="w-4 h-4" />

@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
-import { Dialog } from "@/components/ui";
+import { Dialog } from "@/components/ui/dialog";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Tier } from "@/lib/constants/pricing-tier";
 
@@ -15,8 +15,8 @@ const CheckoutSuccess = ({
 
   return (
     <Dialog
-      size="md"
-      onClose={() => {
+      open
+      onOpenChange={() => {
         setSelectedPlan(null);
         window.history.pushState(null, "", `${pathname}?settings=${settings}`);
         window.dispatchEvent(new Event("popstate"));

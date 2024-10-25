@@ -8,7 +8,7 @@ import { ViewTypes } from "@/types/viewTypes";
 import { TaskPriority } from "@/types/project";
 import AnimatedCircleCheck from "@/components/TaskViewSwitcher/AnimatedCircleCheck";
 import useScreen from "@/hooks/useScreen";
-import { Dialog } from "./ui";
+import { Dialog } from "./ui/dialog";
 
 const AuthWrapper = ({
   content,
@@ -23,7 +23,7 @@ const AuthWrapper = ({
   const { screenWidth } = useScreen();
 
   return onClose ? (
-    <Dialog onClose={onClose}>
+    <Dialog open onOpenChange={onClose}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

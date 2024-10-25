@@ -34,7 +34,7 @@ const CtaSection = () => {
             <Link href="/auth/signup" className="w-full sm:w-fit">
               <Button size="lg" className="shadow-lg w-full sm:w-fit">
                 <Rocket className="w-5 h-5 mr-2" />
-                Start 14-Day Trial
+                Start 7-Day Trial
               </Button>
             </Link>
             <Link href="/pricing" className="w-full sm:w-fit">
@@ -60,7 +60,7 @@ const CtaSection = () => {
                     <p>Try all features risk-free</p>
                   </TooltipContent>
                 </Tooltip>
-                <span>14-day free trial</span>
+                <span>7-day free trial</span>
               </motion.div>
 
               <motion.div

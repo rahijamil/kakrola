@@ -121,15 +121,6 @@ const ActiveProjectMoreOptions = ({
           },
         },
         {
-          id: 5,
-          label: "Templates",
-          icon: <SwatchBook strokeWidth={1.5} className="w-4 h-4" />,
-          onClick: () => {
-            router.push("/app/templates");
-          },
-          divide: true,
-        },
-        {
           id: 6,
           label: "Import from CSV",
           icon: <ArrowDownToLine strokeWidth={1.5} className="w-4 h-4" />,

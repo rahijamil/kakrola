@@ -10,6 +10,12 @@ import AddTaskModal from "../AddTask/AddTaskModal";
 import ConfirmAlert from "../AlertBox/ConfirmAlert";
 import axios from "axios";
 import AddAnotherAccount from "./AddAnotherAccount";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 const SidebarWrapper = ({
   props: {
@@ -83,14 +89,14 @@ const SidebarWrapper = ({
   return (
     <div className="select-none">
       {screenWidth > 768 ? (
-        <div className="flex h-screen">
+        <div className="flex h-screen group" data-state="sidebar">
           <>
-            {!isCollapsed && (
+            {/* {!isCollapsed && (
               <div
                 className="fixed md:static inset-0 bg-black bg-opacity-50 z-10"
                 onClick={toggleSidebar}
               />
-            )}
+            )} */}
 
             <div
               className={`fixed md:relative flex transition-all duration-300 h-screen whitespace-nowrap origin-left z-10 desktop_sidebar ${
@@ -127,27 +133,39 @@ const SidebarWrapper = ({
                     ? "bg-primary-200"
                     : ` ${
                         isCollapsed
-                          ? "bg-text-100 group-hover:bg-primary-50"
+                          ? "bg-text-100 group-data-[state=sidebar]:group-hover:bg-primary-50"
                           : "bg-transparent cursor-col-resize hover:bg-primary-200"
                       }`
                 }`}
                 onMouseDown={handleMouseDown}
               ></div>
 
-              <button
-                className={`w-6 h-6 items-center justify-center absolute bottom-12 left-[calc(100%-14px)] z-10 rounded-lg bg-background border border-primary-500 hover:bg-primary-500 hover:text-surface text-primary-500 shadow-md cursor-pointer ${
-                  isCollapsed
-                    ? "flex group-hover:bg-primary-500 group-hover:border-primary-500 group-hover:text-surface"
-                    : "hidden group-hover:flex"
-                }`}
-                onClick={toggleSidebar}
-              >
-                {isCollapsed ? (
-                  <ChevronRight strokeWidth={1.5} size={16} />
-                ) : (
-                  <ChevronLeft strokeWidth={1.5} size={16} />
-                )}
-              </button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <button
+                      className={`w-6 h-6 items-center justify-center absolute bottom-12 left-[calc(100%-14px)] z-10 rounded-lg bg-background border border-primary-500 hover:bg-primary-500 hover:text-surface text-primary-500 shadow-md cursor-pointer ${
+                        isCollapsed
+                          ? "flex group-data-[state=sidebar]:group-hover:bg-primary-500 group-data-[state=sidebar]:group-hover:border-primary-500 group-data-[state=sidebar]:group-hover:text-surface"
+                          : "hidden group-data-[state=sidebar]:group-hover:flex"
+                      }`}
+                      onClick={toggleSidebar}
+                    >
+                      {isCollapsed ? (
+                        <ChevronRight strokeWidth={1.5} size={16} />
+                      ) : (
+                        <ChevronLeft strokeWidth={1.5} size={16} />
+                      )}
+                    </button>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    <p className="text-xs font-medium">
+                      {isCollapsed ? "Expand" : "Collapse"}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import OnboardWrapper from "./app/onboard/OnboardWrapper";
+import OnboardWrapper from "./app/onboarding/OnboardWrapper";
 import { Button } from "@/components/ui/button";
 
 const ErrorPage = ({ error, reset }: { error: Error; reset: () => void }) => {

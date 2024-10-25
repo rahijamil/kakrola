@@ -327,7 +327,7 @@ const SubscriptionSettings = ({
 
                   <p className="mt-4 flex flex-col">
                     <span className="text-xs font-medium text-text-600">
-                      {plan.price1}
+                      {plan.price}
                     </span>
                   </p>
 

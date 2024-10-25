@@ -1,7 +1,5 @@
-import { ReactNode } from "react";
-
 enum ProductId {
-  PRO = "pro_01j8wqee2kcdsxsezwdpk22rc5",
+  PLUS = "pro_01j8wqee2kcdsxsezwdpk22rc5",
   BUSINESS = "pro_01j8wqq3n58nykxgrmxkhqe0f4",
 }
 
@@ -16,26 +14,25 @@ export interface Tier {
   featureHeading?: string;
   price: string;
   period: string;
-  cta: "Start 14-day trial" | "Contact sales";
+  cta: "Start 7-day trial" | "Contact sales";
   highlighted?: boolean;
   priceId: string;
   badge?: string;
-  price1: ReactNode;
   idealFor?: string;
 }
 
-export const pricingTiers: Tier[] = [
+export const pricingTiersForFure: Tier[] = [
   {
     name: "Plus",
     id: "plus",
-    product_id: ProductId.PRO,
+    product_id: ProductId.PLUS,
     icon: "/icons/price-tiers/plus.svg",
     description: "The complete workspace that grows with your team",
     idealFor: "Perfect for teams of 5-100 looking to centralize their work",
     features: [
       "Project Management",
       "• Unlimited projects and tasks",
-      "• Multiple views (List, Board, Calendar)",
+      "• Multiple views (List, Board, Dashboard)",
       "• Custom task fields and labels",
       "• Due dates and priorities",
       "• Subtasks and dependencies",
@@ -60,12 +57,11 @@ export const pricingTiers: Tier[] = [
       "• Standard integrations",
       "• Community support",
     ],
-    featured: true,
-    price: "$120",
-    period: "per seat/year",
-    cta: "Start 14-day trial",
+    featured: false,
+    price: "$10",
+    period: "per member/month",
+    cta: "Start 7-day trial",
     priceId: "pri_01j8wqntqppsyw4ce6z65yc9ry",
-    price1: <>$120 per member / year</>,
   },
   {
     name: "Business",
@@ -105,14 +101,55 @@ export const pricingTiers: Tier[] = [
       "• Private feedback channel",
     ],
     featureHeading: "Everything in Plus +",
-    featured: false,
-    price: "$180",
-    period: "per seat/year",
-    cta: "Start 14-day trial",
-    highlighted: true,
+    featured: true,
+    price: "$15",
+    period: "per member/month",
+    cta: "Start 7-day trial",
     badge: "Most popular",
     priceId: "pri_01j8wqrmqq2s336f4ehjwpxzqj",
+  },
+];
 
-    price1: <>$180 per member / year</>,
+export const pricingTiers: Tier[] = [
+  {
+    name: "Plus",
+    id: "plus",
+    product_id: ProductId.PLUS,
+    icon: "/icons/price-tiers/plus.svg",
+    description: "Essential workspace tools for growing teams",
+    idealFor: "Perfect for teams of 2-20 looking to streamline their work",
+    features: [
+      "Project Management",
+      "• Unlimited projects and tasks",
+      "• List Board, Dashboard views",
+      "• Basic task fields and priorities",
+      "• Due dates and reminder",
+      "• Subtasks, assignees, labels",
+      "• Project templates",
+
+      "Document Basics",
+      "• Block page editor",
+      "• Headings, Lists, Toggle Lists, Tables, Columns, etc",
+      "• Real-time collaboration",
+      "• Basic page organization",
+      "• Starter templates",
+
+      "Team Communication",
+      "• Public channels",
+      "• Direct messages",
+      "• Thread discussions",
+      "• Emoji reactions",
+
+      "General Features",
+      "• Up to 20 team members",
+      "• 5 GB storage per workspace",
+      "• Email support",
+    ],
+    featured: true,
+    badge: "Most popular",
+    price: "$8",
+    period: "per member/month",
+    cta: "Start 7-day trial",
+    priceId: "pri_01j8wqntqppsyw4ce6z65yc9ry",
   },
 ];

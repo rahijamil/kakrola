@@ -70,7 +70,7 @@ const PricingPage = () => {
             </div>
           </div>
 
-          <div className="grid gap-8 lg:grid-cols-2 max-w-4xl mx-auto">
+          <div className="gridgap-8lg:grid-cols-2 max-w-4xl mx-auto">
             {pricingTiers.map((plan, index) => (
               <PricingCard plan={plan} key={index} />
             ))}

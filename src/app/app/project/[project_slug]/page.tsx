@@ -177,6 +177,7 @@ const ProjectDetails = ({
         project={currentProject}
         setTasks={setTasks}
         tasks={tasks || []}
+        sections={sections}
         showNoDateTasks={showNoDateTasks}
       >
         <TaskViewSwitcher

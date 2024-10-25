@@ -11,7 +11,6 @@ import {
 } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Dialog, RadioGroup, RadioGroupItem, Label } from "../ui";
 import {
   AlarmClock,
   ArrowDownToLine,
@@ -57,6 +56,7 @@ import TeamspaceSettings from "./TeamspaceSettings";
 import { Tier } from "@/lib/constants/pricing-tier";
 import IntegrationsSettings from "./IntegrationsSettings";
 import ImportSettings from "./ImportSettings";
+import { Dialog, DialogContent } from "../ui/dialog";
 
 const SettingsModal = () => {
   const router = useRouter();
@@ -266,15 +266,16 @@ const SettingsModal = () => {
 
   return (
     <AnimatePresence>
-      <Dialog size="lg" onClose={closeSettings} hideCloseIcon>
-        <div className="flex h-full rounded-lg overflow-hidden bg-gradient-to-br from-primary-10 via-background to-primary-50 text-text-700">
-          <div
-            className={`w-full md:w-64 flex flex-col divide-y divide-text-100 overflow-y-auto ${
-              settings == "mobile" ? "bg-background pb-2" : "hidden md:block"
-            }`}
-          >
-            <div className="flex-1 divide-y divide-text-100">
-              {/* <div className="p-4 md:p-6 pb-3 h-[58px] flex items-center gap-4">
+      <Dialog open onOpenChange={closeSettings}>
+        <DialogContent className="p-0 w-[100vw] sm:max-w-7xl h-full sm:h-[80%] [&>button]:hidden">
+          <div className="flex flex-col sm:flex-row rounded-lg overflow-hidden bg-gradient-to-br from-primary-10 via-background to-primary-50 text-text-700">
+            <div
+              className={`w-full md:w-64 flex flex-col divide-y divide-text-100 overflow-y-auto ${
+                settings == "mobile" ? "bg-background pb-2" : "hidden md:block"
+              }`}
+            >
+              <div className="flex-1 divide-y divide-text-100">
+                {/* <div className="p-4 md:p-6 pb-3 h-[58px] flex items-center gap-4">
                 <ChevronLeft
                   strokeWidth={1.5}
                   className="w-6 h-6 block md:hidden"
@@ -284,95 +285,96 @@ const SettingsModal = () => {
                 <h2 className="font-bold">Settings</h2>
               </div> */}
 
-              <nav className="divide-y divide-text-100 pt-2">
-                <div className="py-2 space-y-1">
-                  <ul className="divide-y divide-text-100">
-                    {menuGroups.map((group) => (
-                      <li key={group.id} className="py-2 space-y-1">
-                        <p
-                          className={`font-medium text-xs transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis px-5 pb-1 text-text-700`}
-                        >
-                          {group.name}
-                        </p>
+                <nav className="divide-y divide-text-100 pt-2">
+                  <div className="py-2 space-y-1">
+                    <ul className="divide-y divide-text-100">
+                      {menuGroups.map((group) => (
+                        <li key={group.id} className="py-2 space-y-1">
+                          <p
+                            className={`font-medium text-xs transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis px-5 pb-1 text-text-700`}
+                          >
+                            {group.name}
+                          </p>
 
-                        {group.items.length > 0 && (
-                          <ul>
-                            {group.items.map((item) => (
-                              <li key={item.id}>
-                                {item.param && (
-                                  <button
-                                    onClick={() =>
-                                      window.history.pushState(
-                                        null,
-                                        "",
-                                        `${pathname}?settings=${item.param}`
-                                      )
-                                    }
-                                    className={`flex items-center p-2 px-4 transition-colors duration-150 font-medium md:font-normal w-full border-l-4 ${
-                                      settings === item.param
-                                        ? "bg-primary-100 text-text-900 border-primary-300"
-                                        : "md:hover:bg-primary-50 border-transparent md:hover:border-primary-200 text-text-700 py-2.5 md:py-2"
-                                    }`}
-                                    onTouchStart={(ev) =>
-                                      ev.currentTarget.classList.add(
-                                        "bg-text-100"
-                                      )
-                                    }
-                                    onTouchEnd={(ev) =>
-                                      ev.currentTarget.classList.remove(
-                                        "bg-text-100"
-                                      )
-                                    }
-                                  >
-                                    <item.icon
-                                      strokeWidth={1.5}
-                                      className="w-5 h-5 mr-3 text-primary-500"
-                                    />
-                                    {item.name}
-                                  </button>
-                                )}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </nav>
-            </div>
-          </div>
-
-          <div
-            className={`flex-1 bg-background md:rounded-lg shadow-[1px_1px_.5rem_0_rgba(0,0,0,0.1)] md:border border-text-100 overflow-y-auto ${
-              settings !== "mobile"
-                ? "md:m-1.5 md:ml-0"
-                : "hidden md:m-2 md:ml-0 md:block"
-            }`}
-          >
-            <div className="p-4 md:p-6 border-b border-text-100 flex items-center gap-2 h-[54px]">
-              {tab && !teamId && (
-                <button
-                  className="p-1 rounded-lg hover:bg-primary-50 transition"
-                  onClick={() => router.back()}
-                >
-                  <ArrowLeft strokeWidth={1.5} size={20} />
-                </button>
-              )}
-              <p className="font-semibold flex items-center gap-4">
-                <ChevronLeft
-                  strokeWidth={1.5}
-                  className="w-6 h-6 block md:hidden"
-                  onClick={() => router.back()}
-                />
-
-                {renderSettingsTitle}
-              </p>
+                          {group.items.length > 0 && (
+                            <ul>
+                              {group.items.map((item) => (
+                                <li key={item.id}>
+                                  {item.param && (
+                                    <button
+                                      onClick={() =>
+                                        window.history.pushState(
+                                          null,
+                                          "",
+                                          `${pathname}?settings=${item.param}`
+                                        )
+                                      }
+                                      className={`flex items-center p-2 px-4 transition-colors duration-150 font-medium md:font-normal w-full border-l-4 ${
+                                        settings === item.param
+                                          ? "bg-primary-100 text-text-900 border-primary-300"
+                                          : "md:hover:bg-primary-50 border-transparent md:hover:border-primary-200 text-text-700 py-2.5 md:py-2"
+                                      }`}
+                                      onTouchStart={(ev) =>
+                                        ev.currentTarget.classList.add(
+                                          "bg-text-100"
+                                        )
+                                      }
+                                      onTouchEnd={(ev) =>
+                                        ev.currentTarget.classList.remove(
+                                          "bg-text-100"
+                                        )
+                                      }
+                                    >
+                                      <item.icon
+                                        strokeWidth={1.5}
+                                        className="w-5 h-5 mr-3 text-primary-500"
+                                      />
+                                      {item.name}
+                                    </button>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </nav>
+              </div>
             </div>
 
-            <div className="overflow-y-auto p-6">{renderSettings}</div>
+            <div
+              className={`flex-1 bg-background md:rounded-lg shadow-[1px_1px_.5rem_0_rgba(0,0,0,0.1)] md:border border-text-100 overflow-y-auto ${
+                settings !== "mobile"
+                  ? "md:m-1.5 md:ml-0"
+                  : "hidden md:m-2 md:ml-0 md:block"
+              }`}
+            >
+              <div className="p-4 md:p-6 border-b border-text-100 flex items-center gap-2 h-[54px]">
+                {tab && !teamId && (
+                  <button
+                    className="p-1 rounded-lg hover:bg-primary-50 transition"
+                    onClick={() => router.back()}
+                  >
+                    <ArrowLeft strokeWidth={1.5} size={20} />
+                  </button>
+                )}
+                <p className="font-semibold flex items-center gap-4">
+                  <ChevronLeft
+                    strokeWidth={1.5}
+                    className="w-6 h-6 block md:hidden"
+                    onClick={() => router.back()}
+                  />
+
+                  {renderSettingsTitle}
+                </p>
+              </div>
+
+              <div className="overflow-y-auto p-6">{renderSettings}</div>
+            </div>
           </div>
-        </div>
+        </DialogContent>
       </Dialog>
 
       {tab !== "checkout-success" && selectedPlan && (

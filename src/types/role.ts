@@ -11,6 +11,11 @@ export enum TeamRoleType {
   TEAM_MEMBER = "TEAM_MEMBER",
 }
 
+export enum WorkspaceRoleType {
+  Workspace_ADMIN = "Workspace_ADMIN",
+  Workspace_MEMBER = "Workspace_MEMBER",
+}
+
 enum ContentType {
   PROJECT = "PROJECT",
   PAGE = "PAGE",

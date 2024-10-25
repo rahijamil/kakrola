@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 
-export default function useSidebarWidth() {
+export default function useSidebarCollapse() {
   const [sidebarWidth, setSidebarWidth] = useState(260);
   const [sidebarLeft, setSidebarLeft] = useState(0);
   const [isResizing, setIsResizing] = useState(false);
@@ -99,6 +99,6 @@ export default function useSidebarWidth() {
     setIsResizing,
     toggleSidebar,
     handleMouseDown,
-    isCollapsed
+    isCollapsed,
   };
 }

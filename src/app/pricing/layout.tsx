@@ -34,9 +34,9 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Professional Team Plans | 14-Day Trial | Kakrola",
+    title: "Professional Team Plans | 7-Day Trial | Kakrola",
     description:
-      "Choose between Plus and Business plans. Each plan includes a 14-day trial to explore our complete workspace solution. Perfect for teams who mean business.",
+      "Choose between Plus and Business plans. Each plan includes a 7-day trial to explore our complete workspace solution. Perfect for teams who mean business.",
     url: "https://www.kakrola.com/pricing",
     type: "website",
     images: [
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
         url: "/pricing-overview.jpg",
         width: 1200,
         height: 630,
-        alt: "Professional team workspace plans with 14-day trial",
+        alt: "Professional team workspace plans with 7-day trial",
       },
     ],
     locale: "en_US",

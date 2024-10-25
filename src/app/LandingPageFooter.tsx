@@ -5,17 +5,16 @@ import KakrolaLogo from "./kakrolaLogo";
 
 const footerLinks = {
   product: [
-    // { label: "Features", href: "/features" },
-    // { label: "Solutions", href: "/solutions" },
-    // { label: "Enterprise", href: "/enterprise" },
+    { label: "Features", href: "/features" },
+    { label: "Solutions", href: "/solutions" },
     { label: "Pricing", href: "/pricing" },
-    // { label: "Security", href: "/security" },
-    // { label: "What's New", href: "/updates" },
+    { label: "Security", href: "/security" },
+    { label: "What's New", href: "/updates" },
   ],
   resources: [
     // { label: "Documentation", href: "/docs" },
     // { label: "API Reference", href: "/api" },
-    // { label: "Community", href: "/community" },
+    { label: "Community", href: "/community" },
     { label: "Templates", href: "/templates" },
     // { label: "Training", href: "/training" },
     // { label: "Success Stories", href: "/case-studies" },
@@ -25,7 +24,7 @@ const footerLinks = {
     // { label: "Careers", href: "/careers" },
     { label: "Blog", href: "/blog" },
     // { label: "Press Kit", href: "/press" },
-    { label: "Contact", href: "/contact" },
+    // { label: "Contact", href: "/contact" },
   ],
   legal: [
     { label: "Terms", href: "/terms" },
@@ -91,7 +90,7 @@ const LandingPageFooter = () => {
             </div>
 
             {/* Links Columns */}
-            {/* <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8">
               <div>
                 <h3 className="text-sm font-semibold text-gray-900 tracking-wide uppercase mb-4">
                   Product
@@ -163,7 +162,7 @@ const LandingPageFooter = () => {
                   ))}
                 </ul>
               </div>
-            </div> */}
+            </div>
           </div>
 
           {/* Bottom Bar */}

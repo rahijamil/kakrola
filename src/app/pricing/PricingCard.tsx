@@ -43,13 +43,13 @@ const PricingCard = ({ plan }: { plan: Tier }) => {
 
   return (
     <Card
-      className={`relative w-full max-w-lg transition-all duration-300 hover:shadow-xl flex flex-col ${
-        plan.highlighted
+      className={`relative w-fullmax-w-lg max-w-2xl mx-auto transition-all duration-300 hover:shadow-xl flex flex-col ${
+        plan.featured
           ? "border-primary shadow-md hover:shadow-primary/20"
           : "border-muted hover:border-primary/50"
       }`}
     >
-      {plan.highlighted && (
+      {plan.featured && (
         <div className="absolute -top-px left-0 right-0 h-1.5 bg-gradient-to-r from-primary/60 via-primary to-primary/60 rounded-t-lg" />
       )}
 
@@ -85,6 +85,9 @@ const PricingCard = ({ plan }: { plan: Tier }) => {
               <div className="text-sm text-muted-foreground mt-1">
                 {plan.period}
               </div>
+              <div className="text-sm text-muted-foreground mt-1">
+                billed annually
+              </div>
             </div>
           </div>
 
@@ -100,18 +103,18 @@ const PricingCard = ({ plan }: { plan: Tier }) => {
           )}
         </CardHeader>
 
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6d grid grid-cols-2 gap-6">
           {plan.featureHeading && (
             <h4 className="font-semibold text-sm">{plan.featureHeading}</h4>
           )}
 
           {Object.entries(groupedFeatures).map(([group, features], index) => (
-            <div key={group} className={index !== 0 ? "pt-4" : ""}>
+            <div key={group} className={index !== 0 ? "pt-4d" : ""}>
               {group !== "General" && (
                 <>
                   <div className="flex items-center gap-2 mb-4">
                     <h4 className="font-semibold text-sm">{group}</h4>
-                    <TooltipProvider>
+                    {/* <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
                           <Info className="w-4 h-4 text-muted-foreground" />
@@ -122,7 +125,7 @@ const PricingCard = ({ plan }: { plan: Tier }) => {
                           </p>
                         </TooltipContent>
                       </Tooltip>
-                    </TooltipProvider>
+                    </TooltipProvider> */}
                   </div>
                   <Separator className="mb-4" />
                 </>
@@ -145,15 +148,15 @@ const PricingCard = ({ plan }: { plan: Tier }) => {
       <CardFooter className="pt-6">
         <Link href="/auth/signup" className="w-full">
           <Button
-            variant={plan.highlighted ? "default" : "outline"}
+            variant={plan.featured ? "default" : "outline"}
             size="lg"
             className={`w-full font-medium transition-all duration-200 ${
-              plan.highlighted
+              plan.featured
                 ? "shadow-lg shadow-primary/20 hover:shadow-primary/30"
                 : "hover:bg-primary/5"
             }`}
           >
-            {plan.highlighted && (
+            {plan.featured && (
               <Rocket className="w-4 h-4 mr-2 animate-pulse" />
             )}
             {plan.cta}

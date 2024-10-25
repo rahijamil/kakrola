@@ -106,6 +106,7 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
           onClick={() => setShowProjects(!showProjects)}
           onTouchStart={(ev) => ev.currentTarget.classList.add("bg-text-100")}
           onTouchEnd={(ev) => ev.currentTarget.classList.remove("bg-text-100")}
+          data-state="personal"
         >
           <div
             className={`w-full flex items-center justify-between py-2 pl-4 gap-1`}
@@ -144,7 +145,7 @@ const Personal = ({ sidebarWidth }: { sidebarWidth: number }) => {
               screenWidth > 768 &&
               !showAddProjectModal &&
               !isOpen &&
-              "opacity-0 group-hover:opacity-100"
+              "opacity-0 group-data-[state=personal]:group-hover:opacity-100"
             } transition flex items-center`}
             onClick={(ev) => ev.stopPropagation()}
           >

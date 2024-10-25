@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Dialog, Label, RadioGroup, RadioGroupItem } from "../../ui";
+import { Dialog } from "../../ui/dialog";
 import { usePaddleCheckout } from "../../Paddle/usePaddleCheckout";
 import { ChevronDown, Rocket } from "lucide-react";
 import Link from "next/link";
@@ -34,13 +34,12 @@ const CheckoutSettings = ({
 
   return (
     <Dialog
-      onClose={() => {
+      open
+      onOpenChange={() => {
         setSelectedPlan(null);
       }}
-      size="md"
-      bgWhite
     >
-      <div className="overflow-y-auto text-[#111827]">
+      <div className="overflow-y-auto text-[#111827] bg-white">
         <div className="space-y-1 p-6 pb-0">
           <Rocket className="w-8 h-8" strokeWidth={1.5} />
 

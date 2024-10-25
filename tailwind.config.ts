@@ -11,6 +11,8 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
           "10": "var(--k-color-primary-10)",
           "25": "var(--k-color-primary-25)",
           "50": "var(--k-color-primary-50)",
@@ -23,8 +25,6 @@ const config: Config = {
           "700": "var(--k-color-primary-700)",
           "800": "var(--k-color-primary-800)",
           "900": "var(--k-color-primary-900)",
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
         },
         primary2: "var(--k-color-primary2)",
         secondary: {
@@ -35,7 +35,7 @@ const config: Config = {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
-        background: "hsl(var(--background))",
+        background: "var(--k-color-background)",
         surface: "var(--k-color-surface)",
         text: {
           "10": "var(--k-color-text-10)",
@@ -300,15 +300,6 @@ const config: Config = {
 
     "text-indigo-500",
     "text-pink-500",
-
-    "bg-background",
-    "bg-foreground",
-    "bg-card",
-    "bg-card-foreground",
-    "bg-popover",
-    "bg-popover-foreground",
-    "bg-primary",
-    "bg-primary-foreground",
   ],
   plugins: [
     nextui(),

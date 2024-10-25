@@ -69,7 +69,7 @@ export const Upload: React.FC<UploadProps> = ({
       />
       <button
         type="button"
-        className="flex items-center h-10 border border-text-300 hover:border-text-400 focus:border-text-300 px-3 rounded-lg gap-2 w-full focus:outline-none focus:ring-2 focus:ring-primary-300 ring-offset-2"
+        className="flex items-center h-10 border border-text-300 hover:border-text-400 focus:border-text-300 px-3 rounded-lg gap-2 w-full focus:outline-none focus:ring-2 focus:ring-primary-300"
         onClick={handleClick}
       >
         {fileUrl ? (

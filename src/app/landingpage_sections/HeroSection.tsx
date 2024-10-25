@@ -103,7 +103,7 @@ export default function HeroSection() {
                 <Link href="/auth/signup" className="w-full sm:w-fit">
                   <Button size="lg" className="shadow-lg w-full sm:w-fit">
                     <Rocket className="w-5 h-5 mr-2" />
-                    Start 14-Day Trial
+                    Start 7-Day Trial
                   </Button>
                 </Link>
                 {/* <span className="text-sm text-gray-500">

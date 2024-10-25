@@ -33,21 +33,6 @@ import DmSidebar from "@/app/app/dms/DmSidebar";
 import DmDropdown from "./DmDropdown";
 import KakrolaLogo from "@/app/kakrolaLogo";
 
-const menuItems: {
-  id: number;
-  icon: React.ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
-  >;
-  text: "My Tasks" | "Inbox" | "Search" | "DMs";
-  path?: string;
-  onClick?: () => void;
-}[] = [
-  { id: 1, icon: CheckSquare, text: "My Tasks", path: "/app" },
-  { id: 2, icon: Inbox, text: "Inbox", path: "/app/inbox" },
-  { id: 3, icon: Search, text: "Search", path: "#" },
-  { id: 4, icon: MessagesSquare, text: "DMs", path: "/app/dms" },
-];
-
 const Sidebar = ({
   sidebarWidth,
   setShowAddTeam,
@@ -89,6 +74,27 @@ const Sidebar = ({
   const [addTeam, setAddTeam] = useState(false);
 
   const [isProfileMoreOpen, setIsProfileOpen] = useState(false);
+
+  const menuItems: {
+    id: number;
+    icon: React.ForwardRefExoticComponent<
+      Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+    >;
+    text: "My Tasks" | "Inbox" | "Search" | "DMs" | "Templates";
+    path?: string;
+    onClick?: () => void;
+  }[] = [
+    { id: 1, icon: CheckSquare, text: "My Tasks", path: "/app" },
+    { id: 2, icon: Inbox, text: "Inbox", path: "/app/inbox" },
+    { id: 3, icon: Search, text: "Search", path: "#" },
+    { id: 4, icon: MessagesSquare, text: "DMs", path: "/app/dms" },
+    {
+      id: 5,
+      icon: SwatchBook,
+      text: "Templates",
+      path: pathname + "?templates=mobile",
+    },
+  ];
 
   return (
     <aside className="h-full flex flex-col w-full select-none">
@@ -166,10 +172,14 @@ const Sidebar = ({
           ))}
       </div>
 
-      <nav className="flex-grow overflow-y-auto space-y-4">
+      <nav className="flex-grow overflow-y-auto space-y-4 ">
         <ul>
           {menuItems
-            .filter((item) => (screenWidth > 768 ? item : item.text == "Inbox"))
+            .filter((item) =>
+              screenWidth > 768
+                ? item.text != "Templates"
+                : item.text == "Inbox" || item.text == "Templates"
+            )
             .map((item) =>
               sidebarLoading ? (
                 <Skeleton
@@ -255,6 +265,7 @@ const Sidebar = ({
                 onTouchEnd={(ev) =>
                   ev.currentTarget.classList.remove("bg-text-100")
                 }
+                data-state="teamspace"
               >
                 <div
                   className={`flex items-center py-2 pl-4 ${
@@ -281,7 +292,8 @@ const Sidebar = ({
 
                 <div
                   className={`${
-                    screenWidth > 768 && "opacity-0 group-hover:opacity-100"
+                    screenWidth > 768 &&
+                    "opacity-0 group-data-[state=teamspace]:group-hover:opacity-100"
                   } transition flex items-center`}
                   onClick={(ev) => ev.stopPropagation()}
                 >
@@ -327,7 +339,7 @@ const Sidebar = ({
         </div>
       </nav>
 
-      <div className="py-2">
+      <div className="py-2 hidden md:block">
         {sidebarLoading ? (
           <Skeleton
             height={16}
@@ -336,10 +348,21 @@ const Sidebar = ({
             style={{ marginBottom: ".5rem" }}
           />
         ) : (
-          <Link
-            href={"/app/templates"}
+          <button
+            onClick={() => {
+              window.history.pushState(
+                null,
+                "",
+                `${pathname}?templates=${screenWidth > 768 ? "show" : "mobile"}`
+              );
+              window.dispatchEvent(new Event("popstate"));
+            }}
             className={`flex items-center p-2 px-4 transition-colors duration-150 font-medium md:font-normal w-full border-l-4 ${
-              pathname.startsWith("/app/templates")
+              pathname.startsWith(
+                pathname +
+                  "?templates=" +
+                  (screenWidth > 768 ? "show" : "mobile")
+              )
                 ? "bg-primary-100 text-text-900 border-primary-300"
                 : "md:hover:bg-primary-50 border-transparent hover:border-primary-200 text-text-700"
             }`}
@@ -349,7 +372,7 @@ const Sidebar = ({
               className="w-5 h-5 mr-3 text-primary-500"
             />
             Templates
-          </Link>
+          </button>
         )}
       </div>
 

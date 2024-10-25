@@ -125,7 +125,7 @@ const useAddPage = ({ teamId }: { teamId?: number }) => {
       if (data) {
         const updatedPages = allPages.map((page) => {
           if (page.id == tempId) {
-            return { ...page, id: data.page_id }; // Update with the actual ID from the DB
+            return { ...page, id: data[0].page_id }; // Update with the actual ID from the DB
           }
           return page;
         });
@@ -135,7 +135,7 @@ const useAddPage = ({ teamId }: { teamId?: number }) => {
 
         const updatedMembers = allMembers.map((member) => {
           if (member.id == tempId) {
-            return { ...member, id: data.member_id, page_id: data.page_id };
+            return { ...member, id: data[0].member_id, page_id: data.page_id };
           }
           return member;
         });

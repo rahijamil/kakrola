@@ -3,7 +3,7 @@ import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { CheckCircle, ChevronLeft, SlidersHorizontal } from "lucide-react";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import { ProjectType, TaskType } from "@/types/project";
+import { ProjectType, SectionType, TaskType } from "@/types/project";
 import { ViewTypes } from "@/types/viewTypes";
 import ShareOption from "./ShareOption";
 import FilterOptions from "./FilterOptions";
@@ -16,7 +16,7 @@ import ImportCSVModal from "../SidebarWrapper/Sidebar/SidebarProjectMoreOptions/
 import AddEditProject from "../AddEditProject";
 import NoDueDate from "../TaskViewSwitcher/CalendarView/NoDueDate";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
-import SaveTemplateModal from "../SidebarWrapper/Sidebar/SidebarProjectMoreOptions/SaveTemplateModal";
+import SaveTemplateModal from "../SidebarWrapper/Sidebar/TemplateManager";
 import LayoutView from "../LayoutView";
 import Link from "next/link";
 import { useGlobalOption } from "@/context/GlobalOptionContext";
@@ -31,6 +31,7 @@ import useScreen from "@/hooks/useScreen";
 import { useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { canEditContent } from "@/utils/permissionUtils";
+import { SaveProjectAsTemplate } from "../SidebarWrapper/Sidebar/SidebarProjectMoreOptions/SaveProjectAsTemplate";
 
 const LayoutWrapper = ({
   children,
@@ -41,6 +42,7 @@ const LayoutWrapper = ({
   hideCalendarView,
   setTasks,
   tasks,
+  sections,
   showNoDateTasks,
 }: {
   children: React.ReactNode;
@@ -51,6 +53,7 @@ const LayoutWrapper = ({
   hideCalendarView?: boolean;
   setTasks?: (tasks: TaskType[]) => void;
   tasks?: TaskType[];
+  sections?: SectionType[];
   showNoDateTasks?: boolean;
 }) => {
   const [modalState, setModalState] = useState({
@@ -442,9 +445,11 @@ const LayoutWrapper = ({
       )}
 
       {modalState.saveTemplate && project && (
-        <SaveTemplateModal
-          onClose={() => toggleModal("saveTemplate", false)}
+        <SaveProjectAsTemplate
           project={project}
+          sections={sections || []}
+          tasks={tasks || []}
+          onClose={() => toggleModal("saveTemplate", false)}
         />
       )}
 

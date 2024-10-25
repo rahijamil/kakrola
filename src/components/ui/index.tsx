@@ -18,112 +18,112 @@ import { createPortal } from "react-dom";
 import PortalWrapper from "../PortalWrapper";
 import useScreen from "@/hooks/useScreen";
 
-// Dialog Component
-interface DialogProps {
-  children: ReactNode;
-  onClose?: () => void;
-  size?: "xs" | "sm" | "md" | "lg";
-  position?: "top" | "center";
-  bgWhite?: boolean;
-  lessOverlay?: boolean;
-  hideCloseIcon?: boolean;
-  fullMode?: boolean;
-}
+// // Dialog Component
+// interface DialogProps {
+//   children: ReactNode;
+//   onClose?: () => void;
+//   size?: "xs" | "sm" | "md" | "lg";
+//   position?: "top" | "center";
+//   bgWhite?: boolean;
+//   lessOverlay?: boolean;
+//   hideCloseIcon?: boolean;
+//   fullMode?: boolean;
+// }
 
-export const Dialog: React.FC<DialogProps> = ({
-  children,
-  onClose,
-  size = "sm",
-  position = "center",
-  bgWhite,
-  lessOverlay,
-  hideCloseIcon,
-  fullMode,
-}) => {
-  const { screenWidth } = useScreen();
-  return (
-    <PortalWrapper>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2, ease: "easeInOut" }}
-        className={`fixed inset-0 z-50 cursor-default flex justify-center bg-black ${
-          bgWhite
-            ? "bg-opacity-70 backdrop-blur-sm"
-            : lessOverlay
-            ? "bg-opacity-70"
-            : "bg-opacity-80 dark:bg-opacity-90"
-        } ${position == "center" ? "items-center" : "items-start pt-40"}`}
-        onClick={onClose}
-      >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.99 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.99 }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-          className={`${
-            fullMode ? "fixed inset-0 md:relative" : "relative"
-          } md:rounded-lg md:shadow-lg w-full md:w-11/12 flex flex-col ${
-            bgWhite ? "bg-white" : "bg-surface"
-          } ${
-            size === "xs"
-              ? "max-w-md"
-              : size === "sm"
-              ? "max-w-lg"
-              : size === "md"
-              ? "max-w-[800px] h-full md:h-auto md:aspect-[4/2.5]"
-              : size === "lg"
-              ? "max-w-7xl h-full md:h-auto md:aspect-[4/2.5]"
-              : "max-w-3xl h-[90%]"
-          }`}
-          onClick={(ev) => ev.stopPropagation()}
-        >
-          {screenWidth > 768 && !hideCloseIcon && (
-            <button
-              className={`absolute top-2 right-2 transition rounded-lg p-1 text-text-500 ${
-                bgWhite
-                  ? "hover:bg-[#ebebeb] hover:text-[#333333]"
-                  : "hover:bg-text-100 hover:text-text-700"
-              } z-10`}
-              onClick={onClose}
-              type="button"
-            >
-              <X strokeWidth={1.5} size={16} />
-            </button>
-          )}
-          {children}
-        </motion.div>
-      </motion.div>
-    </PortalWrapper>
-  );
-};
+// export const Dialog: React.FC<DialogProps> = ({
+//   children,
+//   onClose,
+//   size = "sm",
+//   position = "center",
+//   bgWhite,
+//   lessOverlay,
+//   hideCloseIcon,
+//   fullMode,
+// }) => {
+//   const { screenWidth } = useScreen();
+//   return (
+//     <PortalWrapper>
+//       <motion.div
+//         initial={{ opacity: 0 }}
+//         animate={{ opacity: 1 }}
+//         exit={{ opacity: 0 }}
+//         transition={{ duration: 0.2, ease: "easeInOut" }}
+//         className={`fixed inset-0 z-50 cursor-default flex justify-center bg-black ${
+//           bgWhite
+//             ? "bg-opacity-70 backdrop-blur-sm"
+//             : lessOverlay
+//             ? "bg-opacity-70"
+//             : "bg-opacity-80 dark:bg-opacity-90"
+//         } ${position == "center" ? "items-center" : "items-start pt-40"}`}
+//         onClick={onClose}
+//       >
+//         <motion.div
+//           initial={{ opacity: 0, scale: 0.99 }}
+//           animate={{ opacity: 1, scale: 1 }}
+//           exit={{ opacity: 0, scale: 0.99 }}
+//           transition={{ duration: 0.2, ease: "easeInOut" }}
+//           className={`${
+//             fullMode ? "fixed inset-0 md:relative" : "relative"
+//           } md:rounded-lg md:shadow-lg w-full md:w-11/12 flex flex-col ${
+//             bgWhite ? "bg-white" : "bg-surface"
+//           } ${
+//             size === "xs"
+//               ? "max-w-md"
+//               : size === "sm"
+//               ? "max-w-lg"
+//               : size === "md"
+//               ? "max-w-[800px] h-full md:h-auto md:aspect-[4/2.5]"
+//               : size === "lg"
+//               ? "max-w-7xl h-full md:h-auto md:aspect-[4/2.5]"
+//               : "max-w-3xl h-[90%]"
+//           }`}
+//           onClick={(ev) => ev.stopPropagation()}
+//         >
+//           {screenWidth > 768 && !hideCloseIcon && (
+//             <button
+//               className={`absolute top-2 right-2 transition rounded-lg p-1 text-text-500 ${
+//                 bgWhite
+//                   ? "hover:bg-[#ebebeb] hover:text-[#333333]"
+//                   : "hover:bg-text-100 hover:text-text-700"
+//               } z-10`}
+//               onClick={onClose}
+//               type="button"
+//             >
+//               <X strokeWidth={1.5} size={16} />
+//             </button>
+//           )}
+//           {children}
+//         </motion.div>
+//       </motion.div>
+//     </PortalWrapper>
+//   );
+// };
 
-interface DialogHeaderProps {
-  children: ReactNode;
-}
+// interface DialogHeaderProps {
+//   children: ReactNode;
+// }
 
-export const DialogHeader: React.FC<DialogHeaderProps> = ({ children }) => (
-  <div className="flex items-center justify-between gap-8 border-b border-text-100 p-4 py-2">
-    {children}
-  </div>
-);
+// export const DialogHeader: React.FC<DialogHeaderProps> = ({ children }) => (
+//   <div className="flex items-center justify-between gap-8 border-b border-text-100 p-4 py-2">
+//     {children}
+//   </div>
+// );
 
-interface DialogTitleProps {
-  children: ReactNode;
-}
+// interface DialogTitleProps {
+//   children: ReactNode;
+// }
 
-export const DialogTitle: React.FC<DialogTitleProps> = ({ children }) => (
-  <h2 className="text-xl font-semibold">{children}</h2>
-);
+// export const DialogTitle: React.FC<DialogTitleProps> = ({ children }) => (
+//   <h2 className="text-xl font-semibold">{children}</h2>
+// );
 
-interface DialogFooterProps {
-  children: ReactNode;
-}
+// interface DialogFooterProps {
+//   children: ReactNode;
+// }
 
-export const DialogFooter: React.FC<DialogFooterProps> = ({ children }) => (
-  <div className="mt-6 flex justify-end space-x-2">{children}</div>
-);
+// export const DialogFooter: React.FC<DialogFooterProps> = ({ children }) => (
+//   <div className="mt-6 flex justify-end space-x-2">{children}</div>
+// );
 
 type RadioGroupContextType = {
   value: string;

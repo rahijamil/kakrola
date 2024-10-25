@@ -95,7 +95,53 @@ const MyTasksPage = () => {
         />
       </div>
 
-      {renderTaskViewSwitcher()}
+      {activeTab == "today" ? (
+        todayTasks?.length === 0 && view === "List" ? (
+          <div className="flex items-center justify-center flex-col gap-1 h-[40vh] select-none">
+            <Image
+              src="/project.png"
+              width={220}
+              height={200}
+              alt="Empty project"
+              className="rounded-md object-cover"
+              draggable={false}
+            />
+            <div className="text-center space-y-1 max-w-sm">
+              <h3 className="font-medium text-base">
+                Task assigned to you for today
+              </h3>
+              <p className="text-sm text-text-600">
+                Add your tasks or find a template to get started with your
+                project.
+              </p>
+            </div>
+          </div>
+        ) : (
+          renderTaskViewSwitcher()
+        )
+      ) : upcomingTasks?.length === 0 && view === "List" ? (
+        <div className="flex items-center justify-center flex-col gap-1 h-[40vh] select-none">
+          <Image
+            src="/project.png"
+            width={220}
+            height={200}
+            alt="Empty project"
+            className="rounded-md object-cover"
+            draggable={false}
+          />
+          <div className="text-center space-y-1 max-w-sm">
+            <h3 className="font-medium text-base">
+              Task assigned to you for upcoming days
+            </h3>
+            <p className="text-sm text-text-600">
+              Add your tasks or find a template to get started with your
+              project.
+            </p>
+          </div>
+        </div>
+      ) : (
+        renderTaskViewSwitcher()
+      )}
     </LayoutWrapper>
   ) : (
     <Sidebar sidebarWidth={screenWidth} />

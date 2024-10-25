@@ -16,7 +16,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import useScreen from "@/hooks/useScreen";
 import PortalWrapper from "../PortalWrapper";
 
-interface DropdownProps {
+export interface DropdownProps {
   Label: (props: { onClick: (ev: any) => void }) => ReactNode;
   items?: {
     id: number | string;
@@ -55,7 +55,7 @@ interface DropdownProps {
 }
 
 // Memoized dropdown item component
-const DropdownItem = memo(
+export const DropdownItem = memo(
   ({
     item,
     showContent,
@@ -170,6 +170,8 @@ const DropdownItem = memo(
     );
   }
 );
+
+DropdownItem.displayName = "DropdownItem";
 
 const Dropdown: React.FC<DropdownProps> = ({
   Label,
@@ -377,8 +379,9 @@ const Dropdown: React.FC<DropdownProps> = ({
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.12 }}
                   data-form-element="true"
-                  className="fixed inset-0 z-[60]"
-                  onClick={() => {
+                  className="fixed inset-0 z-[60] pointer-events-auto"
+                  onClick={(ev) => {
+                    ev.stopPropagation();
                     setIsOpen(false);
                     setOverlayOpen(false);
                   }}

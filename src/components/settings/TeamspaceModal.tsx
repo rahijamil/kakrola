@@ -1,6 +1,5 @@
 import { TeamType } from "@/types/team";
 import React, { Dispatch, SetStateAction, useState } from "react";
-import { Dialog } from "../ui";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import Image from "next/image";
 import { Settings, Users } from "lucide-react";
@@ -13,6 +12,7 @@ import { useAuthProvider } from "@/context/AuthContext";
 import { TeamMemberData } from "@/lib/queries";
 import TabSwitcher from "../TabSwitcher";
 import { TabItem } from "@/types/types.utils";
+import { Dialog, DialogContent } from "../ui/dialog";
 
 const TeamspaceModal = ({
   teamId,
@@ -32,13 +32,13 @@ const TeamspaceModal = ({
       id: "general",
       name: "General",
       icon: <Settings strokeWidth={1.5} className="w-4 h-4" />,
-      onClick: () => setActiveTab('general')
+      onClick: () => setActiveTab("general"),
     },
     {
       id: "members",
       name: "Members",
       icon: <Users strokeWidth={1.5} className="w-4 h-4" />,
-      onClick: () => setActiveTab('members')
+      onClick: () => setActiveTab("members"),
     },
     //   {
     //     id: 3,
@@ -53,8 +53,8 @@ const TeamspaceModal = ({
   if (!team) return;
 
   return (
-    <Dialog onClose={onClose} lessOverlay>
-      <div className="h-[500px] overflow-hidden">
+    <Dialog open onOpenChange={onClose}>
+      <DialogContent className="h-[500px] overflow-hidden p-0">
         <div className="p-6 pb-4">
           <div className={`flex items-center gap-2`}>
             {team.avatar_url ? (
@@ -78,10 +78,7 @@ const TeamspaceModal = ({
           {/* right header option */}
         </div>
 
-        <TabSwitcher
-          activeTab={activeTab}
-          tabItems={tabItems}
-        />
+        <TabSwitcher activeTab={activeTab} tabItems={tabItems} />
 
         <div className="overflow-y-auto h-[405px] py-4">
           {activeTab == "general" ? (
@@ -163,7 +160,7 @@ const TeamspaceModal = ({
             <></>
           )}
         </div>
-      </div>
+      </DialogContent>
     </Dialog>
   );
 };

@@ -1,29 +1,28 @@
+// theme.scss
+
 // Kakrola
 :root {
   --skeleton-base-color: var(--k-color-text-100);
   --skeleton-highlight-color: var(--k-color-text-50);
 
-  /* Kakrola Light Theme - adjusted */
-  /* --k-color-primary-25: #f5f5f5; */
-
-  --k-color-primary-10: #f7fbfd;
-  --k-color-primary-25: #f0f7fa;
-  --k-color-primary-50: #e1eff5;
-  --k-color-primary-100: #c3dfeb;
-  --k-color-primary-200: #a5cfe1;
-  --k-color-primary-300: #87bfd7;
-  --k-color-primary-400: #69afcd;
-  --k-color-primary-500: #005c83; /* Base color */
-  --k-color-primary-600: #004d6e;
-  --k-color-primary-700: #003e59;
-  --k-color-primary-800: #002f44;
-  --k-color-primary-900: #00202f;
+  --k-color-primary-10: hsl(200, 60%, 98%);
+  --k-color-primary-25: hsl(198, 50%, 96%);
+  --k-color-primary-50: hsl(198, 50%, 92%);
+  --k-color-primary-100: hsl(198, 50%, 84%);
+  --k-color-primary-200: hsl(198, 50%, 76%);
+  --k-color-primary-300: hsl(198, 50%, 69%);
+  --k-color-primary-400: hsl(198, 50%, 61%);
+  --k-color-primary-500: hsl(198, 100%, 26%); /* Base color */
+  --k-color-primary-600: hsl(198, 100%, 22%);
+  --k-color-primary-700: hsl(198, 100%, 17%);
+  --k-color-primary-800: hsl(199, 100%, 13%);
+  --k-color-primary-900: hsl(199, 100%, 9%);
 
   --k-color-primary2: #0076a3;
 
   --k-color-secondary: #ff7d36; /* Light orange for secondary highlights */
   --k-color-accent: #ff4081; /* Vivid pink accent color */
-  --k-color-background: #ffffff; /* Soft off-white background for main content areas */
+  --k-color-background: hsl(0, 0%, 100%); /* Soft off-white background for main content areas */
   --k-color-surface: #ffffff; /* Pure white for cards, modals, etc. */
 
   --k-color-text-10: #f7f7f7;
@@ -32,74 +31,40 @@
   --k-color-text-200: #e0e0e0;
   --k-color-text-300: #cccccc;
   --k-color-text-400: #b3b3b3;
-  --k-color-text-500: #666666; /* Darker text color for light theme */
+  --k-color-text-500: hsl(0, 0%, 40%); /* Darker text color for light theme */
   --k-color-text-600: #4d4d4d;
   --k-color-text-700: #333333;
   --k-color-text-800: #1a1a1a;
-  --k-color-text-900: #111827; /* Black for main text */
-
-  /* Add these new variables for shadcn components */
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-
-  // --primary: 222.2 47.4% 11.2%;
-  // --primary-foreground: 210 40% 98%;
-
-  --primary: 200 100% 25.6%; /* This matches your --k-color-primary-500 */
-  --primary-foreground: 0 0% 100%;
-
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 222.2 84% 4.9%;
-
-  --radius: 0.5rem;
+  --k-color-text-900: hsl(221, 39%, 11%); /* Black for main text */
 }
 
 [data-theme="kakrola-dark"] {
-  --k-color-primary-10: #191c20;
-  --k-color-primary-25: #1e1e1e;
-  --k-color-primary-50: #23282f;
-  --k-color-primary-100: #2d3642;
-  --k-color-primary-200: #374455;
-  --k-color-primary-300: #415268;
-  --k-color-primary-400: #4b607b;
-  --k-color-primary-500: #a0b4de; /* Lightened for better visibility */
-  --k-color-primary-600: #96a6ca;
-  --k-color-primary-700: #a7b4d2;
-  --k-color-primary-800: #b7c2da;
-  --k-color-primary-900: #c8d0e2;
+  --k-color-primary-10: hsl(214, 12%, 11%);
+  --k-color-primary-25: hsl(0, 0%, 12%);
+  --k-color-primary-50: hsl(215, 15%, 16%);
+  --k-color-primary-100: hsl(214, 19%, 22%);
+  --k-color-primary-200: hsl(214, 21%, 27%);
+  --k-color-primary-300: hsl(214, 23%, 33%);
+  --k-color-primary-400: hsl(214, 24%, 39%);
+  --k-color-primary-500: hsl(221, 48%, 75%); /* Lightened for better visibility */
+  --k-color-primary-600: hsl(222, 33%, 69%);
+  --k-color-primary-700: hsl(222, 32%, 74%);
+  --k-color-primary-800: hsl(221, 32%, 79%);
+  --k-color-primary-900: hsl(222, 31%, 84%);
 
   --k-color-secondary: #bb86fc; /* Lavender for secondary highlights */
   --k-color-accent: #ff4081; /* Vivid pink for notifications, success messages */
-  --k-color-background: #151515; /* Dark background for main content areas */
-  --k-color-surface: #1f1f1f; /* Slightly lighter shade for cards, modals, etc. */
+  --k-color-background: hsl(0, 0%, 8%); /* Dark background for main content areas */
+  --k-color-surface: hsl(0, 0%, 12%); /* Slightly lighter shade for cards, modals, etc. */
 
   --k-color-text-10: #1f1f1f; /* Very dark grey/black for subtle text in dark mode */
   --k-color-text-50: #0d0d0d; /* Darkest grey for most subtle text */
-  --k-color-text-100: #2a2a2a; /* Dark grey */
+  --k-color-text-100: hsl(0, 0%, 16%); /* Dark grey */
   --k-color-text-200: #333333; /* Darker grey for less subtle text */
   --k-color-text-300: #4d4d4d; /* Medium-dark grey */
   --k-color-text-400: #666666; /* Slightly lighter grey */
-  --k-color-text-500: #808080; /* Neutral grey */
-  --k-color-text-600: #999999; /* Light grey for general text */
+  --k-color-text-500: hsl(0, 0%, 50%); /* Neutral grey */
+  --k-color-text-600: hsl(0, 0%, 60%); /* Light grey for general text */
   --k-color-text-700: #b3b3b3; /* Lighter grey */
   --k-color-text-800: #cccccc; /* Light grey */
   --k-color-text-900: #ffffff; /* White for main text */

@@ -70,6 +70,7 @@ const BuiltInPublicSection = () => {
                 <Link
                   href="https://github.com/rahijamil/kakrola-public"
                   className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-primary hover:bg-primary/5 transition-colors"
+                  target="_blank"
                 >
                   <div className="flex items-center gap-3">
                     <Github className="w-5 h-5" />
@@ -84,6 +85,7 @@ const BuiltInPublicSection = () => {
                 <Link
                   href="https://x.com/rahijamil_"
                   className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-primary hover:bg-primary/5 transition-colors"
+                  target="_blank"
                 >
                   <div className="flex items-center gap-3">
                     <FaXTwitter className="w-5 h-5" />

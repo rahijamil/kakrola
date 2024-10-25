@@ -81,7 +81,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (data && !data.is_onboarded) {
-      router.push("/app/onboard/create-profile");
+      router.push("/app/onboarding");
     }
   }, [data, error]);
 

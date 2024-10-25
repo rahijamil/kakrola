@@ -47,23 +47,16 @@ const ThreadWrapper = ({
     charsCount,
   } = useAddThread({ channel });
 
-  const motionProps = {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    exit: { opacity: 0 },
-    transition: {
-      duration: 0.2,
-      ease: "easeInOut",
-      type: "spring",
-      stiffness: 100,
-      damping: 10,
-    },
-  };
-
   const motionPropsForMobile = {
-    initial: { x: 100, opacity: 0 },
+    initial: {
+      x: screenWidth <= 768 ? 100 : 0,
+      opacity: screenWidth <= 768 ? 0 : 1,
+    },
     animate: { x: 0, opacity: 1 },
-    exit: { x: 100, opacity: 0 },
+    exit: {
+      x: screenWidth <= 768 ? 100 : 0,
+      opacity: screenWidth <= 768 ? 0 : 1,
+    },
     transition: { duration: 0.3, ease: "easeInOut", type: "spring" },
   };
 
@@ -95,7 +88,7 @@ const ThreadWrapper = ({
   return (
     <>
       <motion.div
-        {...(screenWidth > 768 ? motionProps : motionPropsForMobile)}
+        {...motionPropsForMobile}
         className={`flex flex-col h-full w-full flex-1 fixed inset-0 bg-background z-10 md:z-auto md:inset-auto md:static ${
           !thread ? "thread-wrapper" : ""
         }`}

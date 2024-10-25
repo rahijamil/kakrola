@@ -90,7 +90,7 @@ const BoardViewForToday = ({
           )}
         </Droppable>
 
-        <div className={`${!foundFixedDropdown && "sticky"} bottom-0 p-2 pt-0`}>
+        {/* <div className={`${!foundFixedDropdown && "sticky"} bottom-0 p-2 pt-0`}>
           <SectionAddTask
             isSmall
             project={null}
@@ -100,7 +100,7 @@ const BoardViewForToday = ({
             setShowUngroupedAddTask={setShowUngroupedAddTask}
             view={"Board"}
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );

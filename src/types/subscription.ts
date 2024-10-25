@@ -1,3 +1,5 @@
+import { WorkspaceType } from "./workspace";
+
 export interface Subscription {
   id: number;
   created_at?: string;
@@ -9,19 +11,24 @@ export interface Subscription {
   customer_id: string;
   customer_profile_id: string;
   seats: number;
+  workspace_id: WorkspaceType["id"];
 }
 
 enum SubscriptionPlan {
-  FREE = "FREE",
   PLUS = "PLUS",
   BUSINESS = "BUSINESS",
 }
 
 enum SubscriptionPermission {}
 
-// Define role permissions
 const PlanPermission: Record<SubscriptionPlan, SubscriptionPermission[]> = {
-  [SubscriptionPlan.FREE]: [],
-  [SubscriptionPlan.PLUS]: [],
-  [SubscriptionPlan.BUSINESS]: [],
+  [SubscriptionPlan.PLUS]: [
+    // SubscriptionPermission.CREATE_PROJECTS,
+    // SubscriptionPermission.INVITE_MEMBERS,
+  ],
+  [SubscriptionPlan.BUSINESS]: [
+    // SubscriptionPermission.CREATE_PROJECTS,
+    // SubscriptionPermission.INVITE_MEMBERS,
+    // SubscriptionPermission.ACCESS_ADVANCED_FEATURES,
+  ],
 };

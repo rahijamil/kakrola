@@ -17,7 +17,7 @@ import {
   Smartphone,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuthProvider } from "@/context/AuthContext";
 import Image from "next/image";
 import Dropdown from "@/components/ui/Dropdown";
@@ -133,6 +133,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
   const { profile } = useAuthProvider();
   const { sidebarLoading } = useSidebarDataProvider();
   const pathname = usePathname();
+  const router = useRouter();
 
   const linkedAccounts = profile?.linked_accounts || [];
 
@@ -148,12 +149,11 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
             window.dispatchEvent(new Event("popstate"));
           },
         },
-        // {
-        //   icon: Plus,
-        //   label: "Add workspace",
-        //   // onClick: () => setShowAddTeam(true),
-        //   onClick: () => {},
-        // },
+        {
+          icon: Plus,
+          label: "Add workspace",
+          onClick: () => router.push("/app/onboarding"),
+        },
       ],
     },
     // {
@@ -272,7 +272,9 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
             />
 
             <div>
-              <h2 className="font-semibold text-text-700">{profile?.full_name}</h2>
+              <h2 className="font-semibold text-text-700">
+                {profile?.full_name}
+              </h2>
               <p className="text-xs text-text-500 line-clamp-1">
                 {profile?.email}
               </p>

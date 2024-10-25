@@ -58,7 +58,12 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             focusClasses
           )}
         >
-          {Icon && <Icon className="ml-2 text-text-500" strokeWidth={1.5} />}{" "}
+          {Icon && (
+            <Icon
+              className="ml-2 text-text-500 pointer-events-none"
+              strokeWidth={1.5}
+            />
+          )}{" "}
           {/* Render the icon if provided */}
           <input
             type={type}

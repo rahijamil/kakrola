@@ -24,6 +24,7 @@ import DeleteConfirm from "@/components/SidebarWrapper/Sidebar/DeleteConfirm";
 import ArchiveConfirm from "@/components/SidebarWrapper/Sidebar/ArchiveConfirm";
 import CommentOrActivityModal from "@/components/LayoutWrapper/CommentOrActivityModal";
 import useFavorite from "@/hooks/useFavorite";
+import { SavePageAsTemplate } from "./SavePageAsTemplate";
 
 const PageWrapper = ({
   children,
@@ -286,6 +287,13 @@ const PageWrapper = ({
           <div className={`flex-1`}>{children}</div>
         </div>
       </div>
+
+      {modalState.saveTemplate && page && (
+        <SavePageAsTemplate
+          page={page}
+          onClose={() => toggleModal("saveTemplate", false)}
+        />
+      )}
 
       {modalState.leaveConfirm && (
         <LeaveConfirm

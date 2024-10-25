@@ -111,7 +111,7 @@ const ListViewForToday = ({
 
               {provided.placeholder}
 
-              {screenWidth > 768 && (
+              {/* {screenWidth > 768 && (
                 <SectionAddTask
                   showUngroupedAddTask={showUngroupedAddTask}
                   setShowUngroupedAddTask={setShowUngroupedAddTask}
@@ -120,7 +120,7 @@ const ListViewForToday = ({
                   tasks={tasks}
                   view={"List"}
                 />
-              )}
+              )} */}
             </tbody>
           </table>
         </div>

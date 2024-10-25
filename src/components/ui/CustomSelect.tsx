@@ -83,7 +83,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
 
   return (
     <Dropdown
-      title={placeholder}
+      title={placeholder || "Select"}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       triggerRef={triggerRef}
@@ -92,7 +92,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           {label && isShowLabel && (
             <label
               htmlFor={id}
-              className="block font-semibold text-text-700 mb-2 pl-4 md:pl-0"
+              className="mb-1 block text-sm font-medium text-text-700"
             >
               {label}
             </label>

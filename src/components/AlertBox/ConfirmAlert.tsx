@@ -57,9 +57,9 @@ const ConfirmAlert = memo(({
   }, [loading, onCancel]);
 
   return (
-    <AlertDialog open={true}>
+    <AlertDialog open>
       <AlertDialogOverlay 
-        className="z-[100] bg-black/20"
+        className="z-[100] bg-black/20 pointer-events-auto"
         onClick={handleCancel}
       >
         <AlertDialogContent
