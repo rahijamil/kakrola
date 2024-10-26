@@ -1,11 +1,13 @@
 import { TaskCommentType } from "./comment";
+import { TeamType } from "./team";
+import { WorkspaceType } from "./workspace";
 
 export interface ChannelType {
   id: number;
   created_at?: string;
   updated_at?: string;
   profile_id: string;
-  team_id: number;
+  team_id: TeamType['id'];
   name: string;
   slug: string;
   description: string;
@@ -15,6 +17,7 @@ export interface ChannelType {
     color: string;
     order: number;
   };
+  workspace_id: WorkspaceType["id"];
 }
 
 export interface ReactionType {

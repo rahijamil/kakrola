@@ -235,7 +235,7 @@ const TemplatesModal = () => {
       <DialogContent className="p-0 w-[100vw] sm:max-w-7xl h-full sm:h-[80%] [&>button]:hidden">
         <div className="flex flex-col sm:flex-row rounded-lg overflow-hidden bg-gradient-to-br from-primary-10 via-background to-primary-50 text-text-700">
           {/* Sidebar */}
-          <div
+          {/* <div
             className={`w-full md:w-64 flex flex-col overflow-y-auto scrollbar-hide divide-y divide-text-100 ${
               templatesParam == "mobile"
                 ? "bg-background pb-2"
@@ -284,7 +284,7 @@ const TemplatesModal = () => {
                 ))}
               </ul>
             </nav>
-          </div>
+          </div> */}
 
           {/* Main Content */}
           <div

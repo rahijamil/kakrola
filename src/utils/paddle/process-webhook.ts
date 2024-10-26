@@ -52,6 +52,7 @@ export class ProcessWebhook {
           customer_id: eventData.data.customerId,
           customer_profile_id: (eventData.data.customData as any).profile_id,
           seats: eventData.data.items[0].quantity,
+          workspace_id: (eventData.data.customData as any).workspace_id,
         };
 
         const { data, error } = await supabase

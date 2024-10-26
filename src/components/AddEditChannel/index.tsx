@@ -12,6 +12,7 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import { ChannelType } from "@/types/channel";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import PortalWrapper from "../PortalWrapper";
+import { TeamType } from "@/types/team";
 
 const AddEditChannel = ({
   teamId,
@@ -20,7 +21,7 @@ const AddEditChannel = ({
   page,
   aboveBellow,
 }: {
-  teamId: number;
+  teamId: TeamType['id'];
   channel?: ChannelType;
   onClose: () => void;
   page?: PageType;
@@ -45,7 +46,7 @@ const AddEditChannel = ({
   const forEdit = !!channel && !aboveBellow;
 
   const handleAddChannel = async () => {
-    if (!profile?.id || !teamId) return;
+    if (!profile?.id || !teamId || !profile.metadata?.current_workspace_id) return;
 
     if (!channelName) {
       setError("Channel name is required.");
@@ -95,6 +96,7 @@ const AddEditChannel = ({
           color: "gray-500",
           order: newOrder,
         },
+        workspace_id: profile.metadata.current_workspace_id
       };
 
       if (forEdit) {

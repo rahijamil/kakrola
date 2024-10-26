@@ -47,7 +47,7 @@ const AddTaskFormForProject = ({
   const { projects, activeProject } = useSidebarDataProvider();
   const { profile } = useAuthProvider();
 
-  const [taskData, setTaskData] = useState<TaskType>(
+  const [taskData, setTaskData] = useState<Omit<TaskType, "workspace_id">>(
     taskForEdit ||
       getInitialTaskData({
         project: activeProject ? activeProject : project,
@@ -123,7 +123,7 @@ const AddTaskFormForProject = ({
       return;
     }
 
-    if (!profile?.id) {
+    if (!profile?.id || !profile.metadata?.current_workspace_id) {
       return;
     }
 
@@ -188,6 +188,7 @@ const AddTaskFormForProject = ({
           id: uuidv4(), // temporary ID
           updated_at: new Date().toISOString(),
           parent_task_id: parentTaskIdForSubTask || null,
+          workspace_id: profile.metadata.current_workspace_id,
         };
 
         if (addTaskAboveBellow) {
@@ -277,64 +278,83 @@ const AddTaskFormForProject = ({
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="w-full">
-      <div className="border-b border-text-100 bg-transparent flex items-center font-medium h-10 overflow-hidden text-xs divide-x divide-text-200 pl-7 whitespace-nowrap">
-        <div className={`w-[30%] md:w-[40%] flex items-center gap-2 py-2 pr-4`}>
-          <AnimatedCircleCheck
-            handleCheckSubmit={() => {}}
-            priority={taskData.priority}
-            is_completed={taskData.is_completed}
-          />
+      {profile?.metadata?.current_workspace_id && (
+        <div className="border-b border-text-100 bg-transparent flex items-center font-medium h-10 overflow-hidden text-xs divide-x divide-text-200 pl-7 whitespace-nowrap">
+          <div
+            className={`w-[30%] md:w-[40%] flex items-center gap-2 py-2 pr-4`}
+          >
+            <AnimatedCircleCheck
+              handleCheckSubmit={() => {}}
+              priority={taskData.priority}
+              is_completed={taskData.is_completed}
+            />
 
-          <TaskInput
-            projects={projects}
-            taskData={taskData}
-            setTaskData={setTaskData}
-            handleSubmit={handleSubmit}
-            titleEditableRef={titleEditableRef}
-            className="bg-transparent px-1"
-          />
-        </div>
+            <TaskInput
+              projects={projects}
+              taskData={{
+                ...taskData,
+                workspace_id: profile.metadata.current_workspace_id,
+              }}
+              setTaskData={setTaskData as any}
+              handleSubmit={handleSubmit}
+              titleEditableRef={titleEditableRef}
+              className="bg-transparent px-1"
+            />
+          </div>
 
-        <div className="w-[15%]">
-          <AssigneeSelector
-            task={taskData}
-            setTask={setTaskData}
-            isSmall={isSmall}
-            forListView
-            dataFromElement
-            project={project}
-          />
-        </div>
+          <div className="w-[15%]">
+            <AssigneeSelector
+              task={{
+                ...taskData,
+                workspace_id: profile.metadata.current_workspace_id,
+              }}
+              setTask={setTaskData as any}
+              isSmall={isSmall}
+              forListView
+              dataFromElement
+              project={project}
+            />
+          </div>
 
-        <div className="w-[15%]">
-          <DateSelector
-            task={taskData}
-            setTask={setTaskData}
-            forListView
-            dataFromElement
-          />
-        </div>
+          <div className="w-[15%]">
+            <DateSelector
+              task={{
+                ...taskData,
+                workspace_id: profile.metadata.current_workspace_id,
+              }}
+              setTask={setTaskData as any}
+              forListView
+              dataFromElement
+            />
+          </div>
 
-        <div className="w-[15%]">
-          <Priorities
-            taskData={taskData}
-            setTaskData={setTaskData}
-            isSmall={isSmall}
-            forListView
-            dataFromElement
-          />
-        </div>
+          <div className="w-[15%]">
+            <Priorities
+              taskData={{
+                ...taskData,
+                workspace_id: profile.metadata.current_workspace_id,
+              }}
+              setTaskData={setTaskData as any}
+              isSmall={isSmall}
+              forListView
+              dataFromElement
+            />
+          </div>
 
-        <div className="w-[15%]">
-          <LabelSelector
-            task={taskData}
-            setTask={setTaskData}
-            isSmall={isSmall}
-            forListView
-            dataFromElement
-          />
+          <div className="w-[15%]">
+            <LabelSelector
+              task={{
+                ...taskData,
+                workspace_id: profile.metadata.current_workspace_id,
+              }}
+              setTask={setTaskData as any}
+              isSmall={isSmall}
+              forListView
+              dataFromElement
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {error && (
         <p className="text-red-500 pt-3 text-center text-xs">{error}</p>

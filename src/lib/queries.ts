@@ -10,6 +10,7 @@ import {
 } from "@/types/team";
 import { PageType } from "@/types/pageTypes";
 import { ChannelType } from "@/types/channel";
+import { WorkspaceType } from "@/types/workspace";
 
 export const getProfileById = async (id: string) => {
   const { data, error } = await supabaseBrowser
@@ -23,7 +24,8 @@ export const getProfileById = async (id: string) => {
 
 // Fetching merged data for projects, teams, sections, and pages
 export const fetchSidebarData = async (
-  profileId?: string
+  profileId?: string,
+  current_workspace_id?: WorkspaceType["id"]
 ): Promise<{
   personal_members: (
     | PersonalMemberForProjectType
@@ -38,10 +40,11 @@ export const fetchSidebarData = async (
 }> => {
   try {
     if (!profileId) throw new Error("No profile ID provided");
+    if (!current_workspace_id) throw new Error("No Workspace ID provided");
 
     const { data, error } = await supabaseBrowser.rpc(
       "fetch_sidebar_data_for_profile",
-      { _profile_id: profileId }
+      { _profile_id: profileId, _workspace_id: current_workspace_id }
     );
 
     if (error) {
@@ -95,7 +98,6 @@ export async function getNotifications({
 export interface TeamMemberData extends TeamMemberType {
   profile: ProfileType;
 }
-
 
 export const fetchTeamMembersData = async (teamId?: TeamType["id"]) => {
   const { data: members, error: membersError } = await supabaseBrowser

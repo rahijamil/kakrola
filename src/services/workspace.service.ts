@@ -3,7 +3,7 @@ import {
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
-import { TeamRoleType, WorkspaceRoleType } from "@/types/role";
+import { WorkspaceRoleType } from "@/types/role";
 import { ProfileType } from "@/types/user";
 import { WorkspaceType, WorkspaceMemberType } from "@/types/workspace";
 import { supabaseBrowser } from "@/utils/supabase/client";
@@ -12,7 +12,7 @@ export const createNewWorkspace = async ({
   workspaceData,
   profile,
 }: {
-  workspaceData: Omit<WorkspaceType, "id" | "created_at">;
+  workspaceData: Omit<WorkspaceType, "id" | "created_at" | "updated_at">;
   profile: ProfileType;
 }) => {
   // Create the team
@@ -56,4 +56,52 @@ export const createNewWorkspace = async ({
   }
 
   return data;
+};
+
+export const fetchWorkspaces = async (
+  profile_id?: ProfileType["id"]
+): Promise<
+  | {
+      workspace_member: {
+        id: any;
+        workspace_role: any;
+        profile_id: any;
+      };
+      workspace: {
+        id: any;
+        name: any;
+        avatar_url: any;
+        is_archived: any;
+        subscription: {
+          id: any;
+          product_id: any;
+        } | null;
+      };
+    }[]
+> => {
+  try {
+    if (!profile_id) throw new Error("No profile ID provided");
+    const { data, error } = await supabaseBrowser
+      .from("workspace_members")
+      .select(
+        "id, workspace_role, workspaces (id, name, avatar_url, is_archived, subscriptions (id, product_id))"
+      )
+      .eq("profile_id", profile_id);
+
+    if (error) throw error;
+
+    const returnData = data.map((item) => ({
+      workspace_members: {
+        id: item.id,
+        workspace_role: item.workspace_role,
+        profile_id,
+      },
+      workspace: item.workspaces,
+    }));
+
+    return returnData as any;
+  } catch (error) {
+    console.error("Error fetching workspaces:", error);
+    return [];
+  }
 };

@@ -1,6 +1,6 @@
 "use client";
 import { useAuthProvider } from "@/context/AuthContext";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import KakrolaLogo from "../kakrolaLogo";
 import SidebarWrapper from "@/components/SidebarWrapper";
 import MainContent from "./MainContent";
@@ -46,16 +46,24 @@ const AppLayoutWrapper = ({ children }: { children: React.ReactNode }) => {
 
   if (!loading) {
     return (
-      <main className="fixed inset-0 flex h-full bg-primary-10d bg-gradient-to-br from-primary-10 via-background to-primary-50">
-        {pathname.startsWith("/app/onboarding") ? null : (
-          <SidebarWrapper
-            props={{ isCollapsed, sidebarWidth, ...sidebarProps }}
-          />
-        )}
-        <MainContent isCollapsed={isCollapsed}>{children}</MainContent>
-        {showSettings ? <SettingsModal /> : null}
-        {showTemplates ? <TemplatesModal /> : null}
-      </main>
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center w-full h-screen bg-background">
+            <KakrolaLogo size="2xl" />
+          </div>
+        }
+      >
+        <main className="fixed inset-0 flex h-full bg-primary-10d bg-gradient-to-br from-primary-10 via-background to-primary-50">
+          {pathname.startsWith("/app/onboarding") ? null : (
+            <SidebarWrapper
+              props={{ isCollapsed, sidebarWidth, ...sidebarProps }}
+            />
+          )}
+          <MainContent isCollapsed={isCollapsed}>{children}</MainContent>
+          {showSettings ? <SettingsModal /> : null}
+          {showTemplates ? <TemplatesModal /> : null}
+        </main>
+      </Suspense>
     );
   } else {
     return (

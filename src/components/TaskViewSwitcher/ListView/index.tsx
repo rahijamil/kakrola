@@ -327,7 +327,7 @@ const ListView: React.FC<ListViewProps> = ({
   ) => {
     ev.preventDefault();
 
-    if (!profile?.id || !newSectionName.trim() || !project?.id) {
+    if (!profile?.id || !newSectionName.trim() || !project?.id || !profile.metadata?.current_workspace_id) {
       return;
     }
 
@@ -378,6 +378,7 @@ const ListView: React.FC<ListViewProps> = ({
       is_archived: false,
       order: newOrder,
       updated_at: new Date().toISOString(),
+      workspace_id: profile.metadata.current_workspace_id
     };
 
     // Optimistically update the state

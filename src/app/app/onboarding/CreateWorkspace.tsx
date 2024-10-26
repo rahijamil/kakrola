@@ -1,123 +1,232 @@
 "use client";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import OnboardWrapper from "./OnboardWrapper";
 import { Button } from "@/components/ui/button";
-import createWorkspace from "./create_workspace.png";
-import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
 import { useOnboard } from "@/context/OnboardContext";
 import Spinner from "@/components/ui/Spinner";
-import { useAuthProvider } from "@/context/AuthContext";
-import { supabaseBrowser } from "@/utils/supabase/client";
 import { OnboardingStep } from "./page";
+import { useAuthProvider } from "@/context/AuthContext";
+import { PersonalMemberForPageType, TeamType } from "@/types/team";
+import { createTeam } from "@/services/addteam.service";
+import { createNewWorkspace } from "@/services/workspace.service";
+import { WorkspaceType } from "@/types/workspace";
+import { supabaseBrowser } from "@/utils/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { ProfileType } from "@/types/user";
+import { PageTemplate, templateService } from "@/types/templateTypes";
+import { SidebarData } from "@/hooks/useSidebarData";
+import { PageType } from "@/types/pageTypes";
+
+// Constants
+const TEMPLATE_SLUG = "getting-started-1729961731190-lhbq";
+
+// Types
+interface WorkspaceCreationResult {
+  workspace: WorkspaceType;
+  team: TeamType;
+  template: PageTemplate;
+  page: PageType;
+  member: PersonalMemberForPageType;
+}
+
+// Utility functions
+const createWorkspaceData = (
+  workspaceName: string,
+  profileId: string
+): Omit<WorkspaceType, "id" | "updated_at"> => ({
+  name: workspaceName.trim(),
+  description: "",
+  avatar_url: null,
+  profile_id: profileId,
+  is_archived: false,
+  subscription_id: null,
+});
+
+const createTeamData = (
+  workspaceName: string,
+  profileId: string,
+  workspaceId: WorkspaceType["id"]
+): Omit<TeamType, "id"> => ({
+  name: `${workspaceName.trim()} HQ`,
+  description: "",
+  avatar_url: null,
+  profile_id: profileId,
+  updated_at: new Date().toISOString(),
+  is_archived: false,
+  workspace_id: workspaceId,
+});
+
+// Async operations
+const createWorkspaceOperations = async (
+  workspaceName: string,
+  profile: ProfileType
+): Promise<WorkspaceCreationResult> => {
+  // Run these operations in parallel
+  const [workspace, templateData] = await Promise.all([
+    createNewWorkspace({
+      workspaceData: createWorkspaceData(workspaceName, profile.id),
+      profile,
+    }),
+    supabaseBrowser
+      .from("templates")
+      .select("*")
+      .eq("slug", TEMPLATE_SLUG)
+      .single()
+      .then(({ data }) => {
+        if (!data) throw new Error("Template not found");
+        return data;
+      }),
+  ]);
+
+  // After workspace is created, run these operations in parallel
+  const [team, templateResult] = await Promise.all([
+    createTeam({
+      teamData: createTeamData(workspaceName, profile.id, workspace.id),
+      profile,
+    }),
+    templateService.createPageFromTemplate(templateData, {
+      workspace_id: workspace.id,
+      team_id: null,
+      profile_id: profile.id,
+      pagesLength: 0,
+    }),
+  ]);
+
+  return {
+    workspace: workspace as WorkspaceType,
+    team: team as TeamType,
+    template: templateData,
+    page: templateResult.page,
+    member: templateResult.member,
+  };
+};
+
+const updateCacheAndProfile = async (
+  queryClient: ReturnType<typeof useQueryClient>,
+  profile: ProfileType,
+  results: WorkspaceCreationResult
+) => {
+  const updatedMetadata = {
+    ...profile.metadata,
+    current_workspace_id: results.workspace.id,
+  };
+
+  await Promise.all([
+    // Update sidebar data
+    queryClient.setQueryData(
+      ["sidebar_data", profile.id, results.workspace.id],
+      (oldData: SidebarData) => ({
+        ...oldData,
+        pages: [...(oldData?.pages || []), results.page],
+        personal_members: [
+          ...(oldData?.personal_members || []),
+          results.member,
+        ],
+      })
+    ),
+    // Update profile data
+    queryClient.setQueryData(
+      ["profile", profile.id],
+      (oldProfile: ProfileType) => ({
+        ...oldProfile,
+        metadata: updatedMetadata,
+      })
+    ),
+    // Update profile in database
+    supabaseBrowser
+      .from("profiles")
+      .update({ metadata: updatedMetadata })
+      .eq("id", profile.id),
+  ]);
+};
 
 const CreateWorkspace = ({
   setStep,
 }: {
   setStep: Dispatch<SetStateAction<OnboardingStep>>;
 }) => {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [skipLoading, setSkipLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
   const { profile } = useAuthProvider();
-
   const {
     dispatch,
-    state: { work_role, team_name },
+    state: { workspace_name },
   } = useOnboard();
 
-  const handleSubmit = () => {
-    setLoading(true);
-    setStep("workspace-profile");
-  };
+  const isSubmitDisabled = useMemo(
+    () => !workspace_name.trim() || !profile || isLoading,
+    [workspace_name, profile, isLoading]
+  );
 
-  // useEffect(() => {
-  //   if (!work_role) {
-  //     window.history.pushState(
-  //       null,
-  //       "",
-  //       "/app/onboarding?step=customize-kakrola"
-  //     );
-  //   }
-  // }, [work_role]);
+  const handleWorkspaceNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      dispatch({
+        type: "SET_WORKSPACE_NAME",
+        payload: e.target.value,
+      });
+    },
+    [dispatch]
+  );
 
-  // if (!work_role) return null;
+  const handleSubmit = useCallback(async () => {
+    if (isSubmitDisabled || !profile) return;
 
-  const handleSkip = async () => {
     try {
-      if (!profile?.id) throw new Error("Profile not found");
-      setSkipLoading(true);
+      setIsLoading(true);
 
-      const { data, error } = await supabaseBrowser
-        .from("profiles")
-        .update({ is_onboarded: true })
-        .eq("id", profile.id);
+      // Create workspace and related resources
+      const results = await createWorkspaceOperations(workspace_name, profile);
 
-      if (error) throw error;
+      // Update cache and profile
+      await updateCacheAndProfile(queryClient, profile, results);
 
-      router.push("/app");
+      setStep("invite-members");
     } catch (error) {
-      console.error(error);
-      setSkipLoading(false);
+      console.error("Failed to create workspace:", error);
+      // Add proper error handling here - could use a toast or error message
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [workspace_name, profile, queryClient, setStep, isSubmitDisabled]);
 
   return (
-    <OnboardWrapper
-      leftSide={
-        <>
-          <div className="space-y-3">
-            <h1 className="text-3xl font-bold text-text-900">Create a team</h1>
-            <p className="text-text-500">
-              We'll set up a shared workspace for your team's projects alongside
-              your personal ones.
-            </p>
-          </div>
-          <div className="space-y-4">
-            <div className="space-y-1">
-              <Input
-                id="workspaceName"
-                label="Team name"
-                placeholder="e.g, Awesome Inc."
-                value={team_name}
-                onChange={(e) =>
-                  dispatch({ type: "SET_TEAM_NAME", payload: e.target.value })
-                }
-              />
-              <p className="text-xs text-text-500">
-                Keep it something simple your teammates will recognize.
-              </p>
-            </div>
+    <OnboardWrapper>
+      <div className="space-y-6">
+        <div className="space-y-1 text-center">
+          <h1 className="text-lg font-semibold text-text-900">
+            Give your workspace a name
+          </h1>
+          <p className="text-text-500 text-lg">
+            Details help any collaborators that join
+          </p>
+        </div>
 
-            <div className="flex items-center gap-4">
-              <Button
-                onClick={handleSubmit}
-                disabled={!team_name.trim() || loading}
-                fullWidth
-              >
-                {loading ? <Spinner color="white" /> : "Continue"}
-              </Button>
-              <Button
-                onClick={handleSkip}
-                disabled={skipLoading}
-                variant="ghost"
-                fullWidth
-              >
-                {skipLoading ? <Spinner color="current" /> : "Skip for now"}
-              </Button>
-            </div>
+        <div className="space-y-1">
+          <Input
+            id="workspaceName"
+            label="Workspace name"
+            placeholder="e.g, Awesome Inc."
+            value={workspace_name}
+            onChange={handleWorkspaceNameChange}
+            disabled={isLoading}
+          />
+          <p className="text-xs text-text-500">
+            The name of your company or organization
+          </p>
+        </div>
 
-            <p className="text-xs text-text-500">
-              By creating a team, you agree to our{" "}
-              <span className="underline">Terms of Service</span> <br />{" "}
-              regarding team workspaces.
-            </p>
-          </div>
-        </>
-      }
-      currentStep={2}
-    />
+        <Button onClick={handleSubmit} disabled={isSubmitDisabled} fullWidth>
+          {isLoading ? <Spinner color="white" /> : "Continue"}
+        </Button>
+      </div>
+    </OnboardWrapper>
   );
 };
 

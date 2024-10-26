@@ -47,8 +47,8 @@ const TemplatesGrid = ({ category }: { category: string }) => {
   const onTemplateUse = async (
     template: ProjectTemplate | PageTemplate | ChannelTemplate
   ) => {
-    if (!profile?.id) {
-      console.error("No profile ID available");
+    if (!profile?.id || !profile.metadata?.current_workspace_id) {
+      console.error("No Workspace available");
       return;
     }
 
@@ -63,12 +63,17 @@ const TemplatesGrid = ({ category }: { category: string }) => {
               team_id: null,
               profile_id: profile.id,
               projectsLength: projects.length,
+              workspace_id: profile.metadata.current_workspace_id,
             }
           );
 
         // Update query cache
         queryClient.setQueryData(
-          ["sidebar_data", profile.id],
+          [
+            "sidebar_data",
+            profile?.id,
+            profile?.metadata?.current_workspace_id,
+          ],
           (oldData: {
             personal_members: (
               | PersonalMemberForProjectType
@@ -98,6 +103,7 @@ const TemplatesGrid = ({ category }: { category: string }) => {
           template,
           {
             team_id: null,
+            workspace_id: profile.metadata.current_workspace_id,
             profile_id: profile.id,
             pagesLength: projects.length,
           }
@@ -105,7 +111,11 @@ const TemplatesGrid = ({ category }: { category: string }) => {
 
         // Update query cache
         queryClient.setQueryData(
-          ["sidebar_data", profile.id],
+          [
+            "sidebar_data",
+            profile?.id,
+            profile?.metadata?.current_workspace_id,
+          ],
           (oldData: {
             personal_members: (
               | PersonalMemberForProjectType

@@ -103,6 +103,7 @@ export const metadata: Metadata = {
     yandex: "yandex-verification-code",
   },
   category: "Team Software",
+  metadataBase: new URL("https://www.kakrola.com"),
 };
 
 export const viewport: Viewport = {

@@ -8,6 +8,7 @@ import { ViewTypes } from "@/types/viewTypes";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useAuthProvider } from "@/context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "@/hooks/use-toast";
 
 const fetchInboxSectionsAndTasks = async (_profile_id?: string) => {
   if (!_profile_id) return { sections: [], tasks: [] };
@@ -29,7 +30,7 @@ const fetchInboxSectionsAndTasks = async (_profile_id?: string) => {
 const InboxPage = () => {
   const { profile } = useAuthProvider();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["inbox", profile?.id],
     queryFn: () => fetchInboxSectionsAndTasks(profile?.id),
     enabled: !!profile?.id,
@@ -46,6 +47,15 @@ const InboxPage = () => {
       setInboxSections(data.sections);
     }
   }, [data]);
+
+  if (error) {
+    console.error("Error fetching inbox data:", error);
+    toast({
+      title: "Error loading inbox data.",
+      variant: "destructive",
+    });
+    return <div>Error loading inbox data.</div>;
+  }
 
   return (
     <LayoutWrapper headline="Inbox" setView={setView} view={view}>

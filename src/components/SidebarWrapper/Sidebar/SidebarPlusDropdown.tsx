@@ -2,6 +2,7 @@ import useAddPage from "@/app/app/page/[page_slug]/useAddPage";
 import AddEditChannel from "@/components/AddEditChannel";
 import AddEditProject from "@/components/AddEditProject";
 import Dropdown from "@/components/ui/Dropdown";
+import { TeamType } from "@/types/team";
 import { AnimatePresence } from "framer-motion";
 import { CheckCircle, FileText, Hash, Plus, UserPlus } from "lucide-react";
 import React, { Dispatch, SetStateAction, useRef } from "react";
@@ -17,7 +18,7 @@ const SidebarPlusDropdown = ({
   isOpen,
   setIsOpen,
 }: {
-  teamId?: number;
+  teamId?: TeamType['id'];
   modalStates: {
     showAddProjectModal: boolean;
     setShowAddProjectModal: Dispatch<SetStateAction<boolean>>;
@@ -105,7 +106,7 @@ const SidebarPlusDropdown = ({
 
         {teamId && showAddProjectModal && (
           <AddEditProject
-            workspaceId={teamId}
+            team_id={teamId}
             onClose={() => {
               setShowAddProjectModal(false);
             }}

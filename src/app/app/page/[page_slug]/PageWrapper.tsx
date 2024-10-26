@@ -25,6 +25,7 @@ import ArchiveConfirm from "@/components/SidebarWrapper/Sidebar/ArchiveConfirm";
 import CommentOrActivityModal from "@/components/LayoutWrapper/CommentOrActivityModal";
 import useFavorite from "@/hooks/useFavorite";
 import { SavePageAsTemplate } from "./SavePageAsTemplate";
+import { supabaseBrowser } from "@/utils/supabase/client";
 
 const PageWrapper = ({
   children,
@@ -65,12 +66,12 @@ const PageWrapper = ({
       // if (!canEditContent(role({ project, page: null }), !!project.team_id))
       //   return;
 
-      // const { error } = await supabaseBrowser
-      //   .from("projects")
-      //   .update({ name: projectTitle.trim() })
-      //   .eq("id", project.id);
+      const { error } = await supabaseBrowser
+        .from("pages")
+        .update({ title: pageTitle.trim() })
+        .eq("id", page.id);
 
-      // if (error) console.log(error);
+      if (error) console.log(error);
 
       // createActivityLog({
       //   actor_id: profile.id,

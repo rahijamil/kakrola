@@ -170,6 +170,7 @@ const emoji = Emoji.configure({
 
 const details = Details.configure({
   persist: true,
+  
 });
 
 export const defaultExtensions = [

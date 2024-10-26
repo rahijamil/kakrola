@@ -9,10 +9,11 @@ import { v4 as uuid4 } from "uuid";
 import {
   PersonalMemberForPageType,
   PersonalMemberForProjectType,
+  TeamType,
 } from "@/types/team";
 import { PersonalRoleType } from "@/types/role";
 
-const useAddPage = ({ teamId }: { teamId?: number }) => {
+const useAddPage = ({ teamId }: { teamId?: TeamType['id'] }) => {
   const { profile } = useAuthProvider();
   const { setPages, pages, personalMembers, setPersonalMembers } =
     useSidebarDataProvider();
@@ -26,7 +27,7 @@ const useAddPage = ({ teamId }: { teamId?: number }) => {
     currentPageOrder?: number;
   }) => {
     try {
-      if (!profile?.id) return;
+      if (!profile?.id || !profile.metadata?.current_workspace_id) return;
 
       const tempId = uuid4();
       const title = `Untitled Page ${pages.length + 1}`;
@@ -43,6 +44,7 @@ const useAddPage = ({ teamId }: { teamId?: number }) => {
         },
         profile_id: profile.id,
         team_id: teamId || null,
+        workspace_id: profile.metadata.current_workspace_id
       };
 
       // Calculate the new order
@@ -104,6 +106,7 @@ const useAddPage = ({ teamId }: { teamId?: number }) => {
         "insert_page_with_member",
         {
           _team_id: teamId || null,
+          _workspace_id: profile.metadata.current_workspace_id,
           _profile_id: profile.id,
           _title: title,
           _slug: slug,

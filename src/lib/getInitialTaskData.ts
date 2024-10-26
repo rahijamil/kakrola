@@ -4,7 +4,6 @@ import {
   TaskPriority,
   TaskType,
 } from "@/types/project";
-import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 
 export const getInitialTaskData = ({
@@ -14,8 +13,10 @@ export const getInitialTaskData = ({
 }: {
   project: ProjectType | null;
   section_id?: SectionType["id"] | null;
-  profile: { id: string } | null;
-}): TaskType => ({
+  profile: {
+    id: string;
+  } | null;
+}): Omit<TaskType, "workspace_id"> => ({
   id: uuidv4(),
   title: "",
   description: null,
@@ -38,5 +39,5 @@ export const getInitialTaskData = ({
   completed_at: null,
   updated_at: new Date().toISOString(),
   status: null,
-  task_labels: []
+  task_labels: [],
 });

@@ -11,7 +11,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
-  BaseTeamType,
   TeamMemberType,
   TeamType,
   Industry,
@@ -39,9 +38,12 @@ import { Dialog, DialogContent } from "./ui/dialog";
 import { useSearchParams } from "next/navigation";
 import useScreen from "@/hooks/useScreen";
 import { createTeam } from "@/services/addteam.service";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSidebarDataProvider } from "@/context/SidebarDataContext";
+import { v4 as uuidv4 } from "uuid";
 
 // Updated TeamData type
-interface TeamData extends BaseTeamType {
+interface TeamData extends TeamType {
   industry: {
     value: Industry;
     label: string;
@@ -62,22 +64,26 @@ interface TeamData extends BaseTeamType {
 
 const AddTeam = ({ onClose }: { onClose: () => void }) => {
   const { profile } = useAuthProvider();
-  const [teamData, setTeamData] = useState<Omit<TeamData, "created_at">>({
+  const { teams, setTeams } = useSidebarDataProvider();
+  const [teamData, setTeamData] = useState<
+    Omit<TeamType, "id" | "workspace_id" | "created_at">
+  >({
     name: "",
     description: "",
-    industry: null,
-    work_type: null,
-    work_role: {
-      value: WorkRole.Owner,
-      label: "I own or run the company",
-    },
-    organization_size: null,
+    // industry: null,
+    // work_type: null,
+    // work_role: {
+    //   value: WorkRole.Owner,
+    //   label: "I own or run the company",
+    // },
+    // organization_size: null,
     avatar_url: "",
     profile_id: profile?.id || "",
     updated_at: new Date().toISOString(),
     is_archived: false,
   });
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2>(1);
+  const queryClient = useQueryClient();
 
   const handleInputChange = (
     e:
@@ -97,40 +103,58 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!profile) return;
+    const tempId = uuidv4();
 
     try {
       if (step === 1) {
         setStep(2);
-      } else if (step === 2) {
-        setStep(3);
-      } else {
-        if (
-          teamData.name &&
-          teamData.profile_id &&
-          teamData.industry &&
-          teamData.work_type &&
-          teamData.work_role &&
-          teamData.organization_size
-        ) {
-          // Prepare data for Supabase insertion
-          const supabaseData: Omit<TeamType, "id" | "created_at"> = {
-            ...teamData,
-            industry: teamData.industry.value,
-            work_type: teamData.work_type.value,
-            work_role: teamData.work_role.value,
-            organization_size: teamData.organization_size.value,
-          };
+      } else if (
+        teamData.name &&
+        teamData.profile_id &&
+        profile.metadata?.current_workspace_id
+        // teamData.industry &&
+        // teamData.work_type &&
+        // teamData.work_role &&
+        // teamData.organization_size
+      ) {
+        // Prepare data for Supabase insertion
+        const supabaseData: Omit<TeamType, "id" | "created_at"> = {
+          ...teamData,
+          workspace_id: profile.metadata.current_workspace_id,
+          // industry: teamData.industry.value,
+          // work_type: teamData.work_type.value,
+          // work_role: teamData.work_role.value,
+          // organization_size: teamData.organization_size.value,
+        };
 
-          await createTeam({
-            teamData: supabaseData,
-            profile,
-          });
-        }
+        // optimistic update
+        const allTeams = [
+          ...teams,
+          {
+            ...supabaseData,
+            id: tempId,
+          },
+        ];
+        setTeams(allTeams);
+
+        const insertedTeam = await createTeam({
+          teamData: supabaseData,
+          profile,
+        });
+
+        // update original id
+        setTeams(
+          allTeams.map((team) =>
+            team.id == tempId ? { ...team, id: insertedTeam.id } : team
+          )
+        );
 
         onClose();
       }
     } catch (error) {
       console.error(error);
+      // revert optimistic update
+      setTeams(teams.filter((team) => team.id != tempId));
     }
   };
 
@@ -159,8 +183,6 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
                   <h1 className="font-semibold md:text-lg">
                     {step === 1
                       ? "Create a new teamspace"
-                      : step == 2
-                      ? "Tell us about your team"
                       : "Invite your teammates"}
                   </h1>
                 )}
@@ -195,46 +217,48 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
                     </p>
                   )}
                 </div>
-              ) : step == 2 ? (
-                <>
-                  <CustomSelect
-                    id="industry"
-                    label="What industry do you work in?"
-                    Icon={Briefcase}
-                    value={teamData.industry?.value}
-                    onChange={(data) => handleInputChange(data)}
-                    options={industryOptions}
-                    placeholder="Select your answer"
-                  />
-                  <CustomSelect
-                    id="work_type"
-                    label="What work do you do?"
-                    Icon={Building}
-                    value={teamData.work_type?.value}
-                    onChange={(data) => handleInputChange(data)}
-                    options={workTypeOptions}
-                    placeholder="Select your answer"
-                  />
-                  <CustomSelect
-                    id="work_role"
-                    label="What's your role?"
-                    Icon={UserCircle}
-                    value={teamData.work_role?.value}
-                    onChange={(data) => handleInputChange(data)}
-                    options={roleOptions}
-                    placeholder="Select your answer"
-                  />
-                  <CustomSelect
-                    id="organization_size"
-                    label="How big is your organization"
-                    Icon={Users}
-                    value={teamData.organization_size?.value}
-                    onChange={(data) => handleInputChange(data)}
-                    options={organizationSizeOptions}
-                    placeholder="Select your answer"
-                  />
-                </>
               ) : (
+                //  : step == 2 ? (
+                //   <>
+                //     <CustomSelect
+                //       id="industry"
+                //       label="What industry do you work in?"
+                //       Icon={Briefcase}
+                //       value={teamData.industry?.value}
+                //       onChange={(data) => handleInputChange(data)}
+                //       options={industryOptions}
+                //       placeholder="Select your answer"
+                //     />
+                //     <CustomSelect
+                //       id="work_type"
+                //       label="What work do you do?"
+                //       Icon={Building}
+                //       value={teamData.work_type?.value}
+                //       onChange={(data) => handleInputChange(data)}
+                //       options={workTypeOptions}
+                //       placeholder="Select your answer"
+                //     />
+                //     <CustomSelect
+                //       id="work_role"
+                //       label="What's your role?"
+                //       Icon={UserCircle}
+                //       value={teamData.work_role?.value}
+                //       onChange={(data) => handleInputChange(data)}
+                //       options={roleOptions}
+                //       placeholder="Select your answer"
+                //     />
+                //     <CustomSelect
+                //       id="organization_size"
+                //       label="How big is your organization"
+                //       Icon={Users}
+                //       value={teamData.organization_size?.value}
+                //       onChange={(data) => handleInputChange(data)}
+                //       options={organizationSizeOptions}
+                //       placeholder="Select your answer"
+                //     />
+                //   </>
+                // )
+
                 <div className="space-y-2">
                   <Textarea
                     label="Invite members"
@@ -255,22 +279,18 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
                   disabled={
                     step == 1
                       ? teamData.name.trim().length == 0
-                      : step == 2
-                      ? !teamData.industry ||
-                        !teamData.work_type ||
-                        !teamData.work_role ||
-                        !teamData.organization_size
-                        ? true
-                        : false
-                      : false
+                      : // : step == 2
+                        // ? !teamData.industry ||
+                        //   !teamData.work_type ||
+                        //   !teamData.work_role ||
+                        //   !teamData.organization_size
+                        //   ? true
+                        //   : false
+                        false
                   }
                 >
-                  {step === 1
-                    ? "Get started"
-                    : step == 2
-                    ? "Setup and continue"
-                    : "Create team"}
-                  {step !== 3 && <ChevronRight size={16} className="ml-2" />}
+                  {step === 1 ? "Get started" : "Create team"}
+                  {step !== 2 && <ChevronRight size={16} className="ml-2" />}
                 </Button>
               </div>
             </form>

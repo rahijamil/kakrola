@@ -2,6 +2,7 @@ import { ChannelType } from "./channel";
 import { PageType } from "./pageTypes";
 import { ProjectType } from "./project";
 import { PersonalRoleType, TeamRoleType } from "./role";
+import { WorkspaceType } from "./workspace";
 
 // Enums for predefined options
 export enum Industry {
@@ -88,7 +89,9 @@ export const organizationSizeOptions = Object.values(OrganizationSize).map(
   })
 );
 
-export interface BaseTeamType {
+// Team type
+export interface TeamType {
+  id: number | string;
   name: string;
   description: string;
   avatar_url: string | null;
@@ -96,15 +99,7 @@ export interface BaseTeamType {
   is_archived: boolean;
   updated_at: string;
   created_at?: string;
-}
-
-// Team type
-export interface TeamType extends BaseTeamType {
-  id: number;
-  industry: string;
-  work_type: string;
-  work_role: string;
-  organization_size: string;
+  workspace_id: WorkspaceType["id"];
 }
 
 // Team member type

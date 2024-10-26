@@ -1,6 +1,7 @@
 import { JSONContent } from "novel";
 import { ViewTypes } from "./viewTypes";
 import { TeamType } from "./team";
+import { WorkspaceType } from "./workspace";
 
 // Project types
 export interface ProjectType {
@@ -17,6 +18,7 @@ export interface ProjectType {
     view: ViewTypes["view"];
     selected_views: ViewTypes["view"][];
   };
+  workspace_id: WorkspaceType["id"];
 }
 
 // Section types
@@ -32,6 +34,7 @@ export interface SectionType {
   updated_at: string;
   created_at?: string;
   color?: string;
+  workspace_id: WorkspaceType["id"];
 }
 
 // Task Label types
@@ -95,4 +98,5 @@ export interface TaskType {
   updated_at?: string;
   created_at?: string;
   task_labels: TaskLabelType[];
+  workspace_id: WorkspaceType["id"];
 }

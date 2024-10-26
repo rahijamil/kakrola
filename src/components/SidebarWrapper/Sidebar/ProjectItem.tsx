@@ -209,7 +209,7 @@ const ProjectItem = ({
             onClose={() => setAboveBellow(null)}
             aboveBellow={aboveBellow}
             project={project}
-            workspaceId={project.team_id}
+            team_id={project.team_id}
           />
         )}
       </AnimatePresence>

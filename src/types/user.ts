@@ -1,3 +1,5 @@
+import { WorkspaceType } from "./workspace";
+
 // Profile type
 export interface ProfileType {
   id: string; // UUID
@@ -11,6 +13,8 @@ export interface ProfileType {
   is_onboarded?: boolean;
   metadata?: {
     last_active_contact_profile_id?: string | null;
+    current_workspace_id?: WorkspaceType["id"];
+    is_toured?: boolean; // joy-ride tour
   };
   linked_accounts?: {
     profile_id: string;

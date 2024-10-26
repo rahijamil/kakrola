@@ -13,6 +13,7 @@ import {
   PersonalMemberForProjectType,
   ProjectInviteType,
   PageInviteType,
+  TeamType,
 } from "@/types/team";
 import PendingItem from "./PendingItem";
 import ShareAvatar from "./ShareAvatar";
@@ -22,6 +23,8 @@ import { PersonalRoleType, TeamRoleType } from "@/types/role";
 import TeamMemberItem from "./TeamMemberItem";
 import { fetchTeamMembersData } from "@/lib/queries";
 import { TeamMemberData } from "@/lib/queries";
+import { PageType } from "@/types/pageTypes";
+import { ProjectType } from "@/types/project";
 
 // Define types
 interface MemberData extends PersonalMemberForProjectType {
@@ -30,9 +33,9 @@ interface MemberData extends PersonalMemberForProjectType {
 
 // Fetching pending users
 const fetchPendingUsers = async (
-  projectId?: number,
-  pageId?: number,
-  teamId?: number
+  projectId?: ProjectType['id'],
+  pageId?: PageType['id'],
+  teamId?: TeamType['id']
 ) => {
   const column_name = projectId ? "project_id" : pageId ? "page_id" : "team_id";
   const id = projectId || pageId || teamId;
@@ -48,7 +51,10 @@ const fetchPendingUsers = async (
 };
 
 // Fetching members data
-const fetchMembersData = async (projectId?: number, pageId?: number) => {
+const fetchMembersData = async (
+  projectId?: ProjectType["id"],
+  pageId?: PageType["id"]
+) => {
   const column_name = projectId ? "project_id" : "page_id";
   const id = projectId || pageId;
 
@@ -81,9 +87,9 @@ const ShareOption = ({
   triggerRef,
   pageId,
 }: {
-  projectId?: number;
-  pageId?: number;
-  teamId?: number;
+  projectId?: ProjectType["id"];
+  pageId?: PageType["id"];
+  teamId?: TeamType["id"];
   triggerRef: React.RefObject<HTMLDivElement>;
 }) => {
   const { profile } = useAuthProvider();

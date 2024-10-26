@@ -41,8 +41,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const [userId, setUserId] = useState<ProfileType["id"] | null>(null);
   const queryClient = useQueryClient();
-  const pathname = usePathname();
-
+  
   useEffect(() => {
     const { data: authListener } = supabaseBrowser.auth.onAuthStateChange(
       (event, session) => {
@@ -86,14 +85,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [data, error]);
 
   useEffect(() => {
-    if (userId) {
+    if (data?.id && data?.metadata?.current_workspace_id) {
       queryClient.prefetchQuery({
-        queryKey: ["sidebar_data", userId],
-        queryFn: () => fetchSidebarData(userId),
+        queryKey: ["sidebar_data", data.id, data.metadata.current_workspace_id],
+        queryFn: () => fetchSidebarData(data.id),
         staleTime: 1000 * 60 * 60,
       });
     }
-  }, [userId]);
+  }, [data]);
 
   // useEffect(() => {
   //   if (pathname.startsWith("/app/project/") && userId) {

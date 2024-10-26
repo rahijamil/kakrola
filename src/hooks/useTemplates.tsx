@@ -10,11 +10,11 @@ export const useTemplates = (category?: string) => {
         .from("templates")
         .select("*");
       
-      if (category && category !== 'featured') {
-        query = query.eq('category', category);
-      } else if (category === 'featured') {
-        query = query.eq('is_featured', true);
-      }
+      // if (category && category !== 'featured') {
+      //   query = query.eq('category', category);
+      // } else if (category === 'featured') {
+      //   query = query.eq('is_featured', true);
+      // }
 
       const { data, error } = await query;
       

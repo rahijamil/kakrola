@@ -68,7 +68,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             type={type}
             className={cn(
-              "flex rounded-md border-none outline-none bg-transparent transition-colors placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
+              "flex rounded-md border-none outline-none bg-transparent transition-colors placeholder:text-text-400 disabled:cursor-not-allowed disabled:opacity-50",
               sizeClasses[howBig], // Use size classes based on howBig prop
               fullWidth ? "w-full" : "w-full",
               className

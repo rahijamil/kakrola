@@ -98,7 +98,7 @@ export const GROUPS: Group[] = [
         label: "To-do List",
         iconName: "ListTodo",
         description: "Track tasks with a to-do list.",
-        aliases: ["todo"],
+        aliases: ["todo", "task"],
         action: (editor) => {
           editor.chain().focus().toggleTaskList().run();
         },

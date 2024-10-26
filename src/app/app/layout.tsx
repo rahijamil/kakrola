@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import React from "react";
 import AppLayoutWrapper from "./AppLayoutWrapper";
+import { FeedbackDialog } from "@/components/feedback/FeedbackDialog";
 
 export const metadata: Metadata = {
   title: "My Tasks - Kakrola",
@@ -12,5 +13,10 @@ export default function AppLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <AppLayoutWrapper>{children}</AppLayoutWrapper>;
+  return (
+    <AppLayoutWrapper>
+      {children}
+      <FeedbackDialog />
+    </AppLayoutWrapper>
+  );
 }

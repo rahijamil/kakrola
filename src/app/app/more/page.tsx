@@ -26,7 +26,7 @@ import AddEditProject from "@/components/AddEditProject";
 import ProfileMoreOptions from "@/components/SidebarWrapper/Sidebar/ProfileMoreOptions";
 import FavoriteProjects from "@/components/SidebarWrapper/Sidebar/FavoriteProjects";
 import Personal from "@/components/SidebarWrapper/Sidebar/Personal";
-import TeamProjects from "@/components/SidebarWrapper/Sidebar/TeamProjects";
+import TeamspaceForSidebar from "@/components/SidebarWrapper/Sidebar/TeamspaceForSidebar";
 import useScreen from "@/hooks/useScreen";
 import Image from "next/image";
 import { useAuthProvider } from "@/context/AuthContext";

@@ -12,7 +12,7 @@ const fetchPageDetails = async (
     const { data, error } = await supabaseBrowser
       .from("pages")
       .select(
-        "id, title, slug, content, team_id, profile_id, settings, is_archived"
+        "id, title, slug, content, team_id, profile_id, settings, is_archived, workspace_id"
       )
       .eq("id", pageId)
       .single();

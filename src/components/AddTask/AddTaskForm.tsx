@@ -76,7 +76,7 @@ const AddTaskForm = ({
   const { projects, activeProject } = useSidebarDataProvider();
   const { profile } = useAuthProvider();
 
-  const [taskData, setTaskData] = useState<TaskType>(
+  const [taskData, setTaskData] = useState<Omit<TaskType, "workspace_id">>(
     taskForEdit ||
       getInitialTaskData({
         project: activeProject ? activeProject : project,
@@ -127,7 +127,7 @@ const AddTaskForm = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!profile?.id) return;
+    if (!profile?.id || !profile.metadata?.current_workspace_id) return;
 
     if (!taskData.title) {
       return;
@@ -196,6 +196,7 @@ const AddTaskForm = ({
           id: uuidv4(), // temporary ID
           updated_at: new Date().toISOString(),
           parent_task_id: parentTaskIdForSubTask || null,
+          workspace_id: profile.metadata.current_workspace_id,
         };
 
         if (tasks && setTasks) {
@@ -296,52 +297,84 @@ const AddTaskForm = ({
     <form onSubmit={handleSubmit}>
       <div className="space-y-2 p-2">
         <div>
-          <TaskInput
-            projects={projects}
-            taskData={taskData}
-            setTaskData={setTaskData}
-            biggerTitle={biggerTitle}
-            handleSubmit={handleSubmit}
-            titleEditableRef={titleEditableRef}
-          />
+          {profile?.metadata?.current_workspace_id && (
+            <>
+              <TaskInput
+                projects={projects}
+                taskData={{
+                  ...taskData,
+                  workspace_id: profile.metadata.current_workspace_id,
+                }}
+                setTaskData={setTaskData as any}
+                biggerTitle={biggerTitle}
+                handleSubmit={handleSubmit}
+                titleEditableRef={titleEditableRef}
+              />
 
-          {!taskForEdit && (
-            <DescriptionInput taskData={taskData} setTaskData={setTaskData} />
+              {!taskForEdit && (
+                <DescriptionInput
+                  taskData={{
+                    ...taskData,
+                    workspace_id: profile.metadata.current_workspace_id,
+                  }}
+                  setTaskData={setTaskData as any}
+                />
+              )}
+            </>
           )}
         </div>
 
         <div className="flex items-center overflow-x-auto scrollbar-hide gap-2 whitespace-nowrap">
-          <DateSelector
-            task={taskData}
-            setTask={setTaskData}
-            endDate={endDate}
-            isSmall={screenWidth <= 768 ? true : isSmall}
-          />
+          {profile?.metadata?.current_workspace_id && (
+            <>
+              <DateSelector
+                task={{
+                  ...taskData,
+                  workspace_id: profile.metadata.current_workspace_id,
+                }}
+                setTask={setTaskData as any}
+                endDate={endDate}
+                isSmall={screenWidth <= 768 ? true : isSmall}
+              />
 
-          <AssigneeSelector
-            task={taskData}
-            setTask={setTaskData}
-            isSmall={screenWidth <= 768 ? true : isSmall}
-            project={project}
-          />
+              <AssigneeSelector
+                task={{
+                  ...taskData,
+                  workspace_id: profile.metadata.current_workspace_id,
+                }}
+                setTask={setTaskData as any}
+                isSmall={screenWidth <= 768 ? true : isSmall}
+                project={project}
+              />
 
-          <Priorities
-            taskData={taskData}
-            setTaskData={setTaskData}
-            isSmall={screenWidth <= 768 ? true : isSmall}
-          />
+              <Priorities
+                taskData={{
+                  ...taskData,
+                  workspace_id: profile.metadata.current_workspace_id,
+                }}
+                setTaskData={setTaskData as any}
+                isSmall={screenWidth <= 768 ? true : isSmall}
+              />
 
-          <StatusSelector
-            taskData={taskData}
-            setTaskData={setTaskData}
-            isSmall={screenWidth <= 768 ? true : isSmall}
-          />
+              <StatusSelector
+                taskData={{
+                  ...taskData,
+                  workspace_id: profile.metadata.current_workspace_id,
+                }}
+                setTaskData={setTaskData as any}
+                isSmall={screenWidth <= 768 ? true : isSmall}
+              />
 
-          <LabelSelector
-            task={taskData}
-            setTask={setTaskData}
-            isSmall={screenWidth <= 768 ? true : isSmall}
-          />
+              <LabelSelector
+                task={{
+                  ...taskData,
+                  workspace_id: profile.metadata.current_workspace_id,
+                }}
+                setTask={setTaskData as any}
+                isSmall={screenWidth <= 768 ? true : isSmall}
+              />
+            </>
+          )}
 
           {taskForEdit && setShowModal && (
             <button
@@ -363,105 +396,122 @@ const AddTaskForm = ({
           <p className="text-red-500 pt-3 text-center text-xs">{error}</p>
         )}
 
-        <div className="flex items-center justify-between gap-2 p-2 whitespace-nowrap">
-          {!forTaskModal ? (
-            <ProjectsSelector
-              setTask={setTaskData}
-              task={taskData}
-              isInbox
-              isSmall={isSmall}
-            />
-          ) : (
-            <div className="flex items-center flex-wrap gap-2 whitespace-nowrap">
-              <DateSelector
-                task={taskData}
-                setTask={setTaskData}
-                endDate={endDate}
+        {profile?.metadata?.current_workspace_id && (
+          <div className="flex items-center justify-between gap-2 p-2 whitespace-nowrap">
+            {!forTaskModal ? (
+              <ProjectsSelector
+                task={{
+                  ...taskData,
+                  workspace_id: profile.metadata.current_workspace_id,
+                }}
+                setTask={setTaskData as any}
+                isInbox
                 isSmall={isSmall}
               />
+            ) : (
+              <div className="flex items-center flex-wrap gap-2 whitespace-nowrap">
+                <DateSelector
+                  task={{
+                    ...taskData,
+                    workspace_id: profile.metadata.current_workspace_id,
+                  }}
+                  setTask={setTaskData as any}
+                  endDate={endDate}
+                  isSmall={isSmall}
+                />
 
-              <AssigneeSelector
-                task={taskData}
-                setTask={setTaskData}
-                isSmall={isSmall}
-                project={project}
-              />
+                <AssigneeSelector
+                  task={{
+                    ...taskData,
+                    workspace_id: profile.metadata.current_workspace_id,
+                  }}
+                  setTask={setTaskData as any}
+                  isSmall={isSmall}
+                  project={project}
+                />
 
-              <Priorities
-                taskData={taskData}
-                setTaskData={setTaskData}
-                isSmall={isSmall}
-              />
+                <Priorities
+                  taskData={{
+                    ...taskData,
+                    workspace_id: profile.metadata.current_workspace_id,
+                  }}
+                  setTaskData={setTaskData as any}
+                  isSmall={isSmall}
+                />
 
-              <LabelSelector
-                task={taskData}
-                setTask={setTaskData}
-                isSmall={isSmall}
-              />
+                <LabelSelector
+                  task={{
+                    ...taskData,
+                    workspace_id: profile.metadata.current_workspace_id,
+                  }}
+                  setTask={setTaskData as any}
+                  isSmall={isSmall}
+                />
 
-              {taskForEdit && setShowModal && (
+                {taskForEdit && setShowModal && (
+                  <button
+                    onClick={() => {
+                      setShowModal && setShowModal(taskData.id.toString());
+                      onClose();
+                    }}
+                    className={`px-2 py-1 transition rounded-lg hover:bg-text-100 items-center gap-1 text-text-500 flex`}
+                  >
+                    <PanelRight strokeWidth={1.5} className="w-4 h-4" />
+                    <span className="text-[11px] uppercase font-medium">
+                      Open
+                    </span>
+                  </button>
+                )}
+              </div>
+            )}
+
+            <div className="flex flex-1 justify-end gap-2 select-none">
+              {screenWidth > 768 && (
                 <button
+                  type="button"
                   onClick={() => {
-                    setShowModal && setShowModal(taskData.id.toString());
+                    resetTaskData();
                     onClose();
                   }}
-                  className={`px-2 py-1 transition rounded-lg hover:bg-text-100 items-center gap-1 text-text-500 flex`}
+                  className="px-3 py-[6px] text-[13px] text-text-600 transition bg-text-100 hover:bg-text-100 rounded-lg"
+                  disabled={loading}
                 >
-                  <PanelRight strokeWidth={1.5} className="w-4 h-4" />
-                  <span className="text-[11px] uppercase font-medium">
-                    Open
-                  </span>
+                  {isSmall ? (
+                    <X strokeWidth={1.5} className="w-5 h-5" />
+                  ) : (
+                    "Cancel"
+                  )}
                 </button>
               )}
-            </div>
-          )}
-
-          <div className="flex flex-1 justify-end gap-2 select-none">
-            {screenWidth > 768 && (
               <button
-                type="button"
-                onClick={() => {
-                  resetTaskData();
-                  onClose();
-                }}
-                className="px-3 py-[6px] text-[13px] text-text-600 transition bg-text-100 hover:bg-text-100 rounded-lg"
-                disabled={loading}
+                type="submit"
+                className="px-3 py-[6px] text-[13px] text-surface bg-primary-500 rounded-lg hover:bg-primary-700 disabled:bg-primary-600 disabled:cursor-not-allowed transition disabled:opacity-50"
+                disabled={!taskData.title.trim() || loading}
               >
-                {isSmall ? (
-                  <X strokeWidth={1.5} className="w-5 h-5" />
+                {loading ? (
+                  <>
+                    {isSmall || screenWidth <= 768 ? (
+                      <Spinner color="white" />
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Spinner color="white" />
+                        <span>Adding...</span>
+                      </div>
+                    )}
+                  </>
                 ) : (
-                  "Cancel"
+                  <>
+                    {isSmall || screenWidth <= 768 ? (
+                      <SendHorizonal strokeWidth={1.5} className="w-5 h-5" />
+                    ) : (
+                      "Add task"
+                    )}
+                  </>
                 )}
               </button>
-            )}
-            <button
-              type="submit"
-              className="px-3 py-[6px] text-[13px] text-surface bg-primary-500 rounded-lg hover:bg-primary-700 disabled:bg-primary-600 disabled:cursor-not-allowed transition disabled:opacity-50"
-              disabled={!taskData.title.trim() || loading}
-            >
-              {loading ? (
-                <>
-                  {isSmall || screenWidth <= 768 ? (
-                    <Spinner color="white" />
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Spinner color="white" />
-                      <span>Adding...</span>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <>
-                  {isSmall || screenWidth <= 768 ? (
-                    <SendHorizonal strokeWidth={1.5} className="w-5 h-5" />
-                  ) : (
-                    "Add task"
-                  )}
-                </>
-              )}
-            </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </form>
   );

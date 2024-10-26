@@ -60,6 +60,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       leftAlign = false,
       rightContent,
       children,
+      fullWidth,
       ...props
     },
     ref
@@ -69,7 +70,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <Comp
         className={cn(
-          buttonVariants({ variant, size, className }),
+          buttonVariants({ variant, size, className, fullWidth }),
           leftAlign && "justify-start" // Align the content to the left if required
         )}
         ref={ref}

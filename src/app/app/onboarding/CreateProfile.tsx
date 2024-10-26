@@ -95,59 +95,56 @@ const CreateProfile = ({
   };
 
   return (
-    <OnboardWrapper
-      leftSide={
-        <>
-          <div className="space-y-3 text-center">
-            <h1 className="text-xl md:text-3xl font-bold text-text-900">
-              Create your profile
-            </h1>
-            <p className="text-text-500">
-              This is how you&apos;ll appear in Kakrola
-            </p>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="upload-photo"
-                className="mb-1 block text-sm font-medium text-text-700"
-              >
-                Upload your photo
-              </label>
-              <Upload
-                id="upload-photo"
-                className="w-full"
-                Icon={UploadIcon}
-                accept="image/*"
-                onChange={handleFileChange}
-                fileUrl={fileUrl}
-                setFileUrl={setFileUrl}
-              >
-                Upload your photo
-              </Upload>
-            </div>
-
-            <Input
-              type="text"
-              id="name"
-              label="Your name"
-              placeholder="E.g. Rahi Jamil"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-
-            <Button
-              onClick={handleSubmit}
-              disabled={!name.trim() || loading}
-              fullWidth
+    <OnboardWrapper>
+      <>
+        <div className="space-y-1 text-center">
+          <h1 className="text-lg font-semibold text-text-900">
+            Create your profile
+          </h1>
+          <p className="text-text-500 text-lg">
+            This is how you&apos;ll appear in Kakrola
+          </p>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <label
+              htmlFor="upload-photo"
+              className="mb-1 block text-sm font-medium text-text-700"
             >
-              {loading ? <Spinner color="white" /> : "Continue"}
-            </Button>
+              Upload your photo
+            </label>
+            <Upload
+              id="upload-photo"
+              className="w-full"
+              Icon={UploadIcon}
+              accept="image/*"
+              onChange={handleFileChange}
+              fileUrl={fileUrl}
+              setFileUrl={setFileUrl}
+            >
+              Upload your photo
+            </Upload>
           </div>
-        </>
-      }
-      currentStep={1}
-    />
+
+          <Input
+            type="text"
+            id="name"
+            label="Your name"
+            placeholder="E.g. Rahi Jamil"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+
+        <Button
+          onClick={handleSubmit}
+          disabled={!name.trim() || loading}
+          fullWidth
+        >
+          {loading ? <Spinner color="white" /> : "Continue"}
+        </Button>
+      </>
+    </OnboardWrapper>
   );
 };
 

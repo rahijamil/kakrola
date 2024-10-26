@@ -11,7 +11,7 @@ import React, {
 
 type State = {
   work_role: { label: string; value: WorkRole } | null;
-  team_name: string;
+  workspace_name: string;
   industry: { label: string; value: Industry } | null;
   work_type: { label: string; value: WorkType } | null;
   organization_size: { label: string; value: OrganizationSize } | null;
@@ -19,7 +19,7 @@ type State = {
 
 type Action =
   | { type: "SET_WORK_ROLE"; payload: { label: string; value: WorkRole } }
-  | { type: "SET_TEAM_NAME"; payload: string }
+  | { type: "SET_WORKSPACE_NAME"; payload: string }
   | { type: "SET_INDUSTRY"; payload: { label: string; value: Industry } }
   | { type: "SET_WORK_TYPE"; payload: { label: string; value: WorkType } }
   | {
@@ -29,7 +29,7 @@ type Action =
 
 const initialState: State = {
   work_role: null,
-  team_name: "",
+  workspace_name: "",
   industry: null,
   work_type: null,
   organization_size: null,
@@ -39,8 +39,8 @@ const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "SET_WORK_ROLE":
       return { ...state, work_role: action.payload };
-    case "SET_TEAM_NAME":
-      return { ...state, team_name: action.payload };
+    case "SET_WORKSPACE_NAME":
+      return { ...state, workspace_name: action.payload };
     case "SET_INDUSTRY":
       return { ...state, industry: action.payload };
     case "SET_WORK_TYPE":

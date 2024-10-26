@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import RoleItem from "./RoleItem";
 import Spinner from "@/components/ui/Spinner";
 import { PersonalRoleType, TeamRoleType } from "@/types/role";
+import { TeamType } from "@/types/team";
+import { PageType } from "@/types/pageTypes";
+import { ProjectType } from "@/types/project";
 
 const InviteEmailInput = ({
   projectId,
@@ -19,9 +22,9 @@ const InviteEmailInput = ({
   fetchPendingUsers,
   pageId,
 }: {
-  projectId?: number | null;
-  pageId?: number | null;
-  teamId?: number | null;
+  projectId?: ProjectType['id'] | null;
+  pageId?: PageType['id'] | null;
+  teamId?: TeamType['id'] | null;
   error: string | null;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
   searchQuery: string;

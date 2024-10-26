@@ -26,18 +26,18 @@ const useSidebarData = () => {
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["sidebar_data", profile?.id],
-    queryFn: () => fetchSidebarData(profile?.id),
+    queryKey: ["sidebar_data", profile?.id, profile?.metadata?.current_workspace_id],
+    queryFn: () => fetchSidebarData(profile?.id, profile?.metadata?.current_workspace_id),
     staleTime: 1800000, // 30 minutes
     refetchOnWindowFocus: false,
-    enabled: !!profile?.id,
+    enabled: !!profile?.id || !!profile?.metadata?.current_workspace_id,
   });
 
   return {
     projects: data?.projects || [],
     setProjects: (newProjects: ProjectType[]) =>
       queryClient.setQueryData(
-        ["sidebar_data", profile?.id],
+        ["sidebar_data", profile?.id, profile?.metadata?.current_workspace_id],
         (
           oldData: SidebarData = {
             personal_members: [],
@@ -58,7 +58,7 @@ const useSidebarData = () => {
       members: (PersonalMemberForProjectType | PersonalMemberForPageType)[]
     ) =>
       queryClient.setQueryData(
-        ["sidebar_data", profile?.id],
+        ["sidebar_data", profile?.id, profile?.metadata?.current_workspace_id],
         (
           oldData: SidebarData = {
             personal_members: [],
@@ -78,7 +78,7 @@ const useSidebarData = () => {
     teams: data?.teams || [],
     setTeams: (teams: TeamType[]) =>
       queryClient.setQueryData(
-        ["sidebar_data", profile?.id],
+        ["sidebar_data", profile?.id, profile?.metadata?.current_workspace_id],
         (
           oldData: SidebarData = {
             personal_members: [],
@@ -97,7 +97,7 @@ const useSidebarData = () => {
     teamMembers: data?.team_members || [],
     setTeamMembers: (members: TeamMemberType[]) =>
       queryClient.setQueryData(
-        ["sidebar_data", profile?.id],
+        ["sidebar_data", profile?.id, profile?.metadata?.current_workspace_id],
         (
           oldData: SidebarData = {
             personal_members: [],
@@ -116,7 +116,7 @@ const useSidebarData = () => {
     pages: data?.pages || [],
     setPages: (newPages: PageType[]) =>
       queryClient.setQueryData(
-        ["sidebar_data", profile?.id],
+        ["sidebar_data", profile?.id, profile?.metadata?.current_workspace_id],
         (
           oldData: SidebarData = {
             personal_members: [],
@@ -135,7 +135,7 @@ const useSidebarData = () => {
     channels: data?.channels || [],
     setChannels: (newChannels: ChannelType[]) =>
       queryClient.setQueryData(
-        ["sidebar_data", profile?.id],
+        ["sidebar_data", profile?.id, profile?.metadata?.current_workspace_id],
         (
           oldData: SidebarData = {
             personal_members: [],

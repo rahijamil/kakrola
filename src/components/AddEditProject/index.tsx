@@ -14,11 +14,11 @@ import { useAuthProvider } from "@/context/AuthContext";
 import Spinner from "../ui/Spinner";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
-import WorkspaceSelector from "./WorkspaceSelector";
+import TeamspaceSelector from "./TeamspaceSelector";
 import ColorSelector from "./ColorSelector";
 import { generateSlug } from "@/utils/generateSlug";
 import AnimatedCircleCheck from "@/components/TaskViewSwitcher/AnimatedCircleCheck";
-import { PersonalMemberForProjectType } from "@/types/team";
+import { PersonalMemberForProjectType, TeamType } from "@/types/team";
 import { PersonalRoleType } from "@/types/role";
 import {
   ActivityAction,
@@ -36,12 +36,12 @@ import { createPortal } from "react-dom";
 import { canEditContent } from "@/utils/permissionUtils";
 
 const AddEditProject = ({
-  workspaceId,
+  team_id,
   onClose,
   project,
   aboveBellow,
 }: {
-  workspaceId?: number | null;
+  team_id?: TeamType['id'] | null;
   onClose: () => void;
   project?: ProjectType;
   aboveBellow?: "above" | "below" | null;
@@ -59,12 +59,12 @@ const AddEditProject = ({
     setPortalContainer(document.body);
   }, []);
 
-  const initialProjectData: Omit<ProjectType, "id"> = useMemo(
+  const initialProjectData: Omit<ProjectType, "id" | "workspace_id"> = useMemo(
     () =>
       project && !aboveBellow
         ? project
         : {
-            team_id: workspaceId || null,
+            team_id: team_id || null,
             profile_id: profile?.id || "",
             name: "",
             slug: "",
@@ -76,7 +76,7 @@ const AddEditProject = ({
             updated_at: new Date().toISOString(),
             is_archived: false,
           },
-    [project, workspaceId, aboveBellow, profile?.id]
+    [project, team_id, aboveBellow, profile?.id]
   );
 
   const findProjectMember = useCallback(
@@ -100,14 +100,14 @@ const AddEditProject = ({
   );
 
   const [projectData, setProjectData] =
-    useState<Omit<ProjectType, "id">>(initialProjectData);
+    useState<Omit<ProjectType, "id" | "workspace_id">>(initialProjectData);
   const [projectMembersData, setPersonalMembersData] = useState(
     initialProjectMembersData
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const workspaces = useMemo(() => {
+  const teamspaces = useMemo(() => {
     const initialWorkspaces = [
       {
         team_id: null,
@@ -126,11 +126,11 @@ const AddEditProject = ({
     ];
   }, [teams, profile?.avatar_url]);
 
-  const currentWorkspace = useMemo(
+  const currentTeamspace = useMemo(
     () =>
-      workspaces.find((w) => w.team_id === projectData?.team_id) ||
-      workspaces[0],
-    [workspaces, projectData?.team_id]
+      teamspaces.find((team) => team.team_id === projectData?.team_id) ||
+      teamspaces[0],
+    [teamspaces, projectData?.team_id]
   );
 
   const handleProjectDataChange = useCallback(
@@ -162,7 +162,7 @@ const AddEditProject = ({
     try {
       ev.preventDefault();
 
-      if (!profile?.id) return;
+      if (!profile?.id || !profile.metadata?.current_workspace_id) return;
 
       if (!projectData.name) {
         setError("Project name is required.");
@@ -262,6 +262,7 @@ const AddEditProject = ({
           "insert_project_with_member",
           {
             _team_id: projectData.team_id,
+            _workspace_id: profile.metadata.current_workspace_id,
             _profile_id: profile.id,
             _project_name: projectData.name,
             _project_slug: projectData.slug,
@@ -293,11 +294,19 @@ const AddEditProject = ({
         if (data) {
           setProjects([
             ...projects,
-            { ...projectData, id: data[0].project_id },
+            {
+              ...projectData,
+              id: data[0].project_id,
+              workspace_id: profile.metadata?.current_workspace_id,
+            },
           ]);
           setPersonalMembers([
             ...personalMembers,
-            { ...projectMembersData, project_id: data[0].project_id, id: data[0].member_id },
+            {
+              ...projectMembersData,
+              project_id: data[0].project_id,
+              id: data[0].member_id,
+            },
           ]);
           console.log("Project and member created:", { data });
         }
@@ -316,6 +325,8 @@ const AddEditProject = ({
     position: "above" | "below"
   ) => {
     ev.preventDefault();
+
+    if(!profile?.metadata?.current_workspace_id) return;
 
     if (!projectData.name) {
       setError("Project name is required.");
@@ -362,6 +373,7 @@ const AddEditProject = ({
         "insert_project_with_member",
         {
           _team_id: projectData.team_id,
+          _workspace_id: profile.metadata.current_workspace_id,
           _profile_id: profile.id,
           _project_name: projectData.name,
           _project_slug: projectData.slug,
@@ -508,11 +520,11 @@ const AddEditProject = ({
                 Icon={CheckCircle}
               />
 
-              <WorkspaceSelector
-                currentWorkspace={currentWorkspace}
-                workspaces={workspaces}
-                onSelect={(workspace) =>
-                  handleProjectDataChange("team_id", workspace.team_id)
+              <TeamspaceSelector
+                currentTeamspace={currentTeamspace}
+                teamspaces={teamspaces}
+                onSelect={(teamspace) =>
+                  handleProjectDataChange("team_id", teamspace.team_id)
                 }
               />
 
@@ -633,12 +645,17 @@ const AddEditProject = ({
             </form>
           </div>
 
-          {screenWidth > 768 && (
-            <ViewSkeleton
-              projectData={projectData}
-              activeView={projectData.settings.view}
-            />
-          )}
+          {screenWidth > 768 &&
+            profile?.metadata &&
+            profile.metadata.current_workspace_id && (
+              <ViewSkeleton
+                projectData={{
+                  ...projectData,
+                  workspace_id: profile.metadata.current_workspace_id,
+                }}
+                activeView={projectData.settings.view}
+              />
+            )}
         </div>
       </motion.div>,
       portalContainer

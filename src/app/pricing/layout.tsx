@@ -85,6 +85,7 @@ export const metadata: Metadata = {
     yandex: "yandex-verification-code",
   },
   category: "Team Workspace",
+  metadataBase: new URL("https://www.kakrola.com"),
 };
 
 const PricingLayout = ({ children }: { children: ReactNode }) => {

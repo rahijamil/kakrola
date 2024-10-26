@@ -3,6 +3,7 @@ import axios from "axios";
 import { TeamType } from "@/types/team";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/Spinner";
+import { Link } from "lucide-react";
 
 const InviteLink = ({ team_id }: { team_id: TeamType["id"] }) => {
   const [inviteLink, setInviteLink] = useState("");
@@ -40,12 +41,13 @@ const InviteLink = ({ team_id }: { team_id: TeamType["id"] }) => {
         onClick={handleCopyInviteLink}
         disabled={loading}
         fullWidth
-        variant="ghost"
+        variant="secondary"
+        icon={Link}
       >
         {loading ? <Spinner /> : "Copy Invite Link"}
       </Button>
 
-      {error && <p>{error}</p>}
+      {error && <p className="text-red-500 text-xs">{error}</p>}
       {inviteLink && (
         <p>
           Share this link: <a className="text-primary-500" href={inviteLink}>{inviteLink}</a>

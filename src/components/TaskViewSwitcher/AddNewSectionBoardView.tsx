@@ -44,7 +44,7 @@ const AddNewSectionBoardView = ({
   const handleAddSection = async (ev: FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
 
-    if (!profile?.id || !newSectionName.trim()) {
+    if (!profile?.id || !profile.metadata?.current_workspace_id || !newSectionName.trim()) {
       return;
     }
 
@@ -84,6 +84,7 @@ const AddNewSectionBoardView = ({
       is_archived: false,
       order: newOrder,
       updated_at: new Date().toISOString(),
+      workspace_id: profile.metadata?.current_workspace_id
     };
 
     // Optimistically update the state

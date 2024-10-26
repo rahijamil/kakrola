@@ -60,13 +60,14 @@ export const usePaddleCheckout = ({
           },
         },
       }).then(async (paddle) => {
-        if (paddle && priceId) {
+        if (paddle && priceId && profile.metadata?.current_workspace_id) {
           setPaddle(paddle);
           paddle.Checkout.open({
             ...(profile.email && { customer: { email: profile.email } }),
             items: [{ priceId, quantity }],
             customData: {
               profile_id: profile.id,
+              workspace_id: profile.metadata.current_workspace_id,
             },
           });
         }

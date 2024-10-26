@@ -18,6 +18,7 @@ import {
 } from "./team";
 import { PersonalRoleType } from "./role";
 import { PageType } from "./pageTypes";
+import { WorkspaceType } from "./workspace";
 
 // Base template interface for common properties
 export interface BaseTemplate {
@@ -212,6 +213,7 @@ export const templateService = {
     template: ProjectTemplate,
     params: {
       team_id: ProjectType["team_id"];
+      workspace_id: WorkspaceType["id"];
       profile_id: ProjectType["profile_id"];
       projectsLength: number;
     }
@@ -234,6 +236,7 @@ export const templateService = {
           _selected_views: [],
           _is_favorite: false,
           _order: params.projectsLength + 1,
+          _workspace_id: params.workspace_id,
         });
 
       if (projectError || !insertedProjectData) {
@@ -334,6 +337,7 @@ export const templateService = {
         is_archived: false,
         profile_id: params.profile_id,
         updated_at: new Date().toISOString(),
+        workspace_id: params.workspace_id,
       };
 
       const member: PersonalMemberForProjectType = {
@@ -358,6 +362,7 @@ export const templateService = {
   async createPageFromTemplate(
     template: PageTemplate,
     params: {
+      workspace_id: WorkspaceType["id"];
       team_id: PageType["team_id"];
       profile_id: string;
       pagesLength: number;
@@ -377,6 +382,7 @@ export const templateService = {
           _color: template.settings.color || "gray-500",
           _is_favorite: false,
           _order: params.pagesLength + 1,
+          _workspace_id: params.workspace_id,
         }
       );
 
@@ -402,6 +408,7 @@ export const templateService = {
         is_archived: false,
         profile_id: params.profile_id,
         content: template.content,
+        workspace_id: params.workspace_id,
       };
 
       const member: PersonalMemberForPageType = {
