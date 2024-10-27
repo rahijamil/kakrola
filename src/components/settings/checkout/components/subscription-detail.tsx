@@ -1,31 +1,36 @@
-'use client';
+"use client";
 
-import { getSubscription } from '@/utils/paddle/get-subscription';
-import { getTransactions } from '@/utils/paddle/get-transactions';
-import { useEffect, useState } from 'react';
-import { SubscriptionDetailResponse, TransactionResponse } from '@/lib/api.types';
-import { LoadingScreen } from '../ui/loading-screen';
-import { SubscriptionHeader } from './subscription-header';
-import { Separator } from '../ui/separator';
-import { SubscriptionNextPaymentCard } from './subscription-next-payment-card';
-import { SubscriptionPastPaymentsCard } from './subscription-past-payments-card';
-import { SubscriptionLineItems } from './subscription-line-items';
-import { ErrorContent } from '../ui/error-content';
+import { getSubscription } from "@/utils/paddle/get-subscription";
+import { getTransactions } from "@/utils/paddle/get-transactions";
+import { useEffect, useState } from "react";
+import {
+  SubscriptionDetailResponse,
+  TransactionResponse,
+} from "@/lib/api.types";
+import { LoadingScreen } from "../ui/loading-screen";
+import { SubscriptionHeader } from "./subscription-header";
+import { Separator } from "../ui/separator";
+import { SubscriptionNextPaymentCard } from "./subscription-next-payment-card";
+import { SubscriptionPastPaymentsCard } from "./subscription-past-payments-card";
+import { SubscriptionLineItems } from "./subscription-line-items";
+import { ErrorContent } from "../ui/error-content";
+import { Subscription } from "@/types/subscription";
 
 interface Props {
-  subscriptionId: string;
+  subscriptionId: Subscription["id"];
 }
 
 export function SubscriptionDetail({ subscriptionId }: Props) {
   const [loading, setLoading] = useState(true);
-  const [subscription, setSubscription] = useState<SubscriptionDetailResponse>();
+  const [subscription, setSubscription] =
+    useState<SubscriptionDetailResponse>();
   const [transactions, setTransactions] = useState<TransactionResponse>();
 
   useEffect(() => {
     (async () => {
       const [subscriptionResponse, transactionsResponse] = await Promise.all([
         getSubscription(subscriptionId),
-        getTransactions(subscriptionId, ''),
+        getTransactions(subscriptionId, ""),
       ]);
 
       if (subscriptionResponse) {
@@ -46,14 +51,22 @@ export function SubscriptionDetail({ subscriptionId }: Props) {
       <>
         <div>
           <SubscriptionHeader subscription={subscription.data} />
-          <Separator className={'relative bg-border mb-8 dashboard-header-highlight'} />
+          <Separator
+            className={"relative bg-border mb-8 dashboard-header-highlight"}
+          />
         </div>
-        <div className={'grid gap-6 grid-cols-1 xl:grid-cols-6'}>
-          <div className={'grid auto-rows-max gap-6 grid-cols-1 xl:col-span-2'}>
-            <SubscriptionNextPaymentCard transactions={transactions.data} subscription={subscription.data} />
-            <SubscriptionPastPaymentsCard transactions={transactions.data} subscriptionId={subscriptionId} />
+        <div className={"grid gap-6 grid-cols-1 xl:grid-cols-6"}>
+          <div className={"grid auto-rows-max gap-6 grid-cols-1 xl:col-span-2"}>
+            <SubscriptionNextPaymentCard
+              transactions={transactions.data}
+              subscription={subscription.data}
+            />
+            <SubscriptionPastPaymentsCard
+              transactions={transactions.data}
+              subscriptionId={subscriptionId}
+            />
           </div>
-          <div className={'grid auto-rows-max gap-6 grid-cols-1 xl:col-span-4'}>
+          <div className={"grid auto-rows-max gap-6 grid-cols-1 xl:col-span-4"}>
             <SubscriptionLineItems subscription={subscription.data} />
           </div>
         </div>

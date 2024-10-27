@@ -103,9 +103,7 @@ const WorkspaceButton = memo(
     showCheck: boolean;
   }) => (
     <button
-      className={`w-full text-left px-4 py-1.5 text-sm text-text-700 hover:bg-primary-50 border-l-4 border-transparent hover:border-primary-200 transition flex items-center justify-between ${
-        isActive ? "bg-primary-50 border-primary-200" : ""
-      }`}
+      className={`w-full text-left px-4 py-1.5 text-sm text-text-700 hover:bg-primary-50 border-l-4 border-transparent hover:border-primary-200 transition flex items-center justify-between`}
       onClick={onClick}
     >
       <div className="flex items-center gap-2">
@@ -157,20 +155,13 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
   sidebarWidth,
 }) => {
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
-  const { profile } = useAuthProvider();
+  const { profile, workspacesWithMembers } = useAuthProvider();
   const { sidebarLoading } = useSidebarDataProvider();
   const pathname = usePathname();
   const router = useRouter();
   const queryClient = useQueryClient();
   const triggerRef = useRef(null);
   const { screenWidth } = useScreen();
-
-  const { data: workspacesWithMembers = [] } = useQuery({
-    queryKey: ["workspaces", profile?.id],
-    queryFn: async () => await fetchWorkspaces(profile?.id),
-    enabled: !!profile?.id,
-    staleTime: 1000 * 60 * 15,
-  });
 
   // Memoize menu items
   const menuItems: MenuGroup[] = useMemo(
@@ -193,7 +184,8 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
           {
             icon: Plus,
             label: "Add workspace",
-            onClick: () => router.push("/app/onboarding"),
+            onClick: () =>
+              window.history.pushState(null, "", "/app/onboarding"),
           },
         ],
       },
@@ -360,11 +352,11 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
             </div>
           )}
 
-          <div className="h-[1px] bg-text-100 my-1"></div>
+          <div className="h-[1px] bg-text-100 mt-1"></div>
 
           {workspacesWithMembers.length > 0 && (
-            <div>
-              <h3 className="font-medium text-xs transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis mb-1 text-text-500 px-2">
+            <div className="bg-text-50">
+              <h3 className="font-medium text-xs transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis py-1 text-text-500 px-4">
                 {profile?.email}
               </h3>
               {workspacesWithMembers.map((item) => (

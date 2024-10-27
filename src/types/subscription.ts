@@ -1,7 +1,7 @@
 import { WorkspaceType } from "./workspace";
 
 export interface Subscription {
-  id: number;
+  id: number | string;
   created_at?: string;
   subscription_id: string;
   subscription_status: string;

@@ -27,7 +27,7 @@ export function PaymentMethodSection({ transactions, updatePaymentMethodUrl }: P
           <PaymentMethodDetails type={type} card={card} />
         </div>
       </div>
-      {updatePaymentMethodUrl && (
+      {/* {updatePaymentMethodUrl && (
         <div>
           <Button size={'sm'} className={'text-sm rounded-sm border-text-100'} variant={'outline'}>
             <Link target={'_blank'} href={updatePaymentMethodUrl}>
@@ -35,7 +35,7 @@ export function PaymentMethodSection({ transactions, updatePaymentMethodUrl }: P
             </Link>
           </Button>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

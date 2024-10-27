@@ -57,6 +57,7 @@ import { Tier } from "@/lib/constants/pricing-tier";
 import IntegrationsSettings from "./IntegrationsSettings";
 import ImportSettings from "./ImportSettings";
 import { Dialog, DialogContent } from "../ui/dialog";
+import BillingSettings from "./BillingSettings";
 
 const SettingsModal = () => {
   const router = useRouter();
@@ -190,14 +191,20 @@ const SettingsModal = () => {
       id: 2,
       name: "Workspace",
       items: [
+        // {
+        //   id: 1,
+        //   name: "Subscription",
+        //   param: "subscription",
+        //   icon: WalletIcon,
+        // },
         {
-          id: 1,
-          name: "Subscription",
-          param: "subscription",
+          id: 2,
+          name: "Billing",
+          param: "billing",
           icon: WalletIcon,
         },
         {
-          id: 2,
+          id: 3,
           name: "Teamspaces",
           param: "teamspaces",
           icon: Building2,
@@ -216,14 +223,15 @@ const SettingsModal = () => {
     switch (settings) {
       case "account":
         return tab == "password" ? <AddPassword /> : <AccountSettings />;
-      case "subscription":
-        return (
-          <SubscriptionSettings
-            setSelectedPlan={setSelectedPlan}
-            isShowBilling={tab === "billing"}
-            subscriptionId={subscriptionId}
-          />
-        );
+      // case "subscription":
+      //   return (
+      //     <SubscriptionSettings
+      //       setSelectedPlan={setSelectedPlan}
+      //       subscriptionId={subscriptionId}
+      //     />
+      //   );
+      case "billing":
+        return <BillingSettings subscriptionId={subscriptionId} />;
       // case "theme":
       //   return <ThemeSettingsPage />;
       case "notifications":
@@ -381,7 +389,6 @@ const SettingsModal = () => {
         <CheckoutSettings
           selectedPlan={selectedPlan}
           setSelectedPlan={setSelectedPlan}
-          tab={tab}
         />
       )}
 

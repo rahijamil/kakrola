@@ -1,24 +1,30 @@
 "use client";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import OnboardWrapper from "./OnboardWrapper";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Spinner from "@/components/ui/Spinner";
 import axios from "axios";
-import { useAuthProvider } from "@/context/AuthContext";
+import { ProfileWithWorkspaces, useAuthProvider } from "@/context/AuthContext";
 import InviteLink from "./InviteLink";
+import { OnboardingStep } from "./onboarding.types";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabaseBrowser } from "@/utils/supabase/client";
 
-const InviteMembers = () => {
+interface InviteMembersProps {
+  setStep: (step: OnboardingStep) => void;
+}
+
+const InviteMembers: React.FC<InviteMembersProps> = ({ setStep }) => {
   const searchParams = useSearchParams();
   const team_id = searchParams.get("team_id");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null); // Error state
+  const queryClient = useQueryClient();
 
   const { profile } = useAuthProvider();
-  const router = useRouter();
 
   const [invites, setInvites] = useState<{ email: string }[]>([
     { email: "" },
@@ -26,24 +32,9 @@ const InviteMembers = () => {
     { email: "" },
   ]);
 
-  const finishOnboarding = async () => {
-    try {
-      if (!profile?.id) throw new Error("Profile not found");
-
-      const { data, error } = await supabaseBrowser
-        .from("profiles")
-        .update({ is_onboarded: true })
-        .eq("id", profile.id);
-
-      if (error) throw error;
-
-      router.push("/app");
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const handleSubmit = async () => {
+    if (!profile?.metadata?.current_workspace_id) return;
+
     setLoading(true);
     setError(null);
 
@@ -81,13 +72,38 @@ const InviteMembers = () => {
         });
 
         if (response.data.success) {
-          finishOnboarding();
+          setStep("subscription");
         } else {
           setError(response.data.message);
         }
       }
 
-      finishOnboarding();
+      queryClient.setQueryData(
+        ["profile", profile?.id],
+        (oldData: ProfileWithWorkspaces) => ({
+          ...oldData,
+          _workspaces: oldData._workspaces.map((workspaceWithMember) =>
+            workspaceWithMember.workspace.id ==
+            profile?.metadata?.current_workspace_id
+              ? {
+                  ...workspaceWithMember,
+                  workspace: {
+                    ...workspaceWithMember.workspace,
+                    is_onboarded: true,
+                  },
+                }
+              : workspaceWithMember
+          ),
+        })
+      );
+
+      setStep("subscription");
+
+      const { data, error } = await supabaseBrowser
+        .from("workspaces")
+        .update({ is_onboarded: true })
+        .eq("id", profile?.metadata?.current_workspace_id);
+      if (error) throw error;
     } catch (error: any) {
       setError(
         error.response.data.message ||

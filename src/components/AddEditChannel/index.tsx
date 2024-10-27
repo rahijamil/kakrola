@@ -13,6 +13,7 @@ import { ChannelType } from "@/types/channel";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import PortalWrapper from "../PortalWrapper";
 import { TeamType } from "@/types/team";
+import { Dialog, DialogContent } from "../ui/dialog";
 
 const AddEditChannel = ({
   teamId,
@@ -21,7 +22,7 @@ const AddEditChannel = ({
   page,
   aboveBellow,
 }: {
-  teamId: TeamType['id'];
+  teamId: TeamType["id"];
   channel?: ChannelType;
   onClose: () => void;
   page?: PageType;
@@ -46,7 +47,8 @@ const AddEditChannel = ({
   const forEdit = !!channel && !aboveBellow;
 
   const handleAddChannel = async () => {
-    if (!profile?.id || !teamId || !profile.metadata?.current_workspace_id) return;
+    if (!profile?.id || !teamId || !profile.metadata?.current_workspace_id)
+      return;
 
     if (!channelName) {
       setError("Channel name is required.");
@@ -96,7 +98,7 @@ const AddEditChannel = ({
           color: "gray-500",
           order: newOrder,
         },
-        workspace_id: profile.metadata.current_workspace_id
+        workspace_id: profile.metadata.current_workspace_id,
       };
 
       if (forEdit) {
@@ -123,50 +125,27 @@ const AddEditChannel = ({
 
   return (
     <PortalWrapper>
-      <AnimatePresence>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center"
-          onClick={onClose}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.99 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.99 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="bg-surface md:rounded-lg md:shadow-xl w-full space-y-6 md:space-y-8 max-w-md md:p-8 h-full md:h-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
+      <Dialog open onOpenChange={onClose}>
+        <DialogContent className="w-full md:max-w-md h-screen md:h-auto [&>button]:hidden md:[&>button]:block p-0 md:p-6">
+          <div className="space-y-6 md:space-y-8">
             {screenWidth > 768 ? (
-              <div className="flex justify-between items-center">
-                <div>
-                  <h1 className="font-semibold text-xl">
-                    {page && !aboveBellow ? "Edit Channel" : "Create a Channel"}
-                  </h1>
-                  {currentStep == 2 && (
-                    <span className="text-text-500 flex items-center text-xs gap-0.5">
-                      {visibility == "public" ? (
-                        <Hash strokeWidth={1.5} size={12} />
-                      ) : (
-                        <Lock strokeWidth={1.5} size={12} />
-                      )}
-                      {channelName}
-                    </span>
-                  )}
-                </div>
-
-                <button
-                  onClick={onClose}
-                  className="text-text-500 hover:text-text-700 hover:bg-text-100 transition p-1 rounded-lg"
-                >
-                  <X size={20} />
-                </button>
+              <div>
+                <h1 className="font-semibold text-xl">
+                  {page && !aboveBellow ? "Edit Channel" : "Create a Channel"}
+                </h1>
+                {currentStep == 2 && (
+                  <span className="text-text-500 flex items-center text-xs gap-0.5">
+                    {visibility == "public" ? (
+                      <Hash strokeWidth={1.5} size={12} />
+                    ) : (
+                      <Lock strokeWidth={1.5} size={12} />
+                    )}
+                    {channelName}
+                  </span>
+                )}
               </div>
             ) : (
-              <div className="flex justify-between items-center px-4 py-2 border-b border-text-100">
+              <div className="flex justify-between items-center px-4 py-2 border-b border-text-100 h-[53px]">
                 <div className="flex items-center gap-3">
                   <button onClick={onClose} className="w-6 h-6">
                     <ChevronLeft strokeWidth={1.5} size={24} />
@@ -217,7 +196,7 @@ const AddEditChannel = ({
               </div>
             )}
 
-            <div className="md:space-y-8">
+            <div className="md:space-y-8 p-4 md:p-0">
               {currentStep == 1 ? (
                 <div className="md:space-y-2">
                   <Input
@@ -233,7 +212,7 @@ const AddEditChannel = ({
                     placeholder="e.g. Marketing, Design, Product"
                   />
 
-                  <div className="p-4 md:p-0 whitespace-normal text-xs">
+                  <div className="py-4 md:py-0 whitespace-normal text-xs">
                     {error ? (
                       <p className="text-red-500 text-center">{error}</p>
                     ) : screenWidth > 768 ? (
@@ -349,9 +328,9 @@ const AddEditChannel = ({
                   </div>
                 ))}
             </div>
-          </motion.div>
-        </motion.div>
-      </AnimatePresence>
+          </div>
+        </DialogContent>
+      </Dialog>
     </PortalWrapper>
   );
 };

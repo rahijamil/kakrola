@@ -1,31 +1,27 @@
 "use client";
-import React, {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+
+import React, { useCallback, useMemo, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import OnboardWrapper from "./OnboardWrapper";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useOnboard } from "@/context/OnboardContext";
 import Spinner from "@/components/ui/Spinner";
-import { OnboardingStep } from "./page";
 import { useAuthProvider } from "@/context/AuthContext";
-import { PersonalMemberForPageType, TeamType } from "@/types/team";
+import type { PersonalMemberForPageType, TeamType } from "@/types/team";
+import type { WorkspaceType } from "@/types/workspace";
+import type { ProfileType } from "@/types/user";
+import type { PageTemplate } from "@/types/templateTypes";
+import type { SidebarData } from "@/hooks/useSidebarData";
+import type { PageType } from "@/types/pageTypes";
+import type { OnboardingStep } from "./onboarding.types";
 import { createTeam } from "@/services/addteam.service";
 import { createNewWorkspace } from "@/services/workspace.service";
-import { WorkspaceType } from "@/types/workspace";
 import { supabaseBrowser } from "@/utils/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
-import { ProfileType } from "@/types/user";
-import { PageTemplate, templateService } from "@/types/templateTypes";
-import { SidebarData } from "@/hooks/useSidebarData";
-import { PageType } from "@/types/pageTypes";
+import { templateService } from "@/types/templateTypes";
 
 // Constants
-const TEMPLATE_SLUG = "getting-started-1729961731190-lhbq";
+const TEMPLATE_SLUG = "getting-started-1729961731190-lhbq" as const;
 
 // Types
 interface WorkspaceCreationResult {
@@ -34,6 +30,11 @@ interface WorkspaceCreationResult {
   template: PageTemplate;
   page: PageType;
   member: PersonalMemberForPageType;
+}
+
+interface CreateWorkspaceProps {
+  setStep: (step: OnboardingStep) => void;
+  setGettingStartedPageSlug?: (slug: string | null) => void;
 }
 
 // Utility functions
@@ -46,7 +47,7 @@ const createWorkspaceData = (
   avatar_url: null,
   profile_id: profileId,
   is_archived: false,
-  subscription_id: null,
+  is_onboarded: false,
 });
 
 const createTeamData = (
@@ -63,96 +64,116 @@ const createTeamData = (
   workspace_id: workspaceId,
 });
 
-// Async operations
-const createWorkspaceOperations = async (
-  workspaceName: string,
-  profile: ProfileType
-): Promise<WorkspaceCreationResult> => {
-  // Run these operations in parallel
-  const [workspace, templateData] = await Promise.all([
-    createNewWorkspace({
-      workspaceData: createWorkspaceData(workspaceName, profile.id),
-      profile,
-    }),
-    supabaseBrowser
-      .from("templates")
-      .select("*")
-      .eq("slug", TEMPLATE_SLUG)
-      .single()
-      .then(({ data }) => {
-        if (!data) throw new Error("Template not found");
-        return data;
-      }),
-  ]);
-
-  // After workspace is created, run these operations in parallel
-  const [team, templateResult] = await Promise.all([
-    createTeam({
-      teamData: createTeamData(workspaceName, profile.id, workspace.id),
-      profile,
-    }),
-    templateService.createPageFromTemplate(templateData, {
-      workspace_id: workspace.id,
-      team_id: null,
-      profile_id: profile.id,
-      pagesLength: 0,
-    }),
-  ]);
-
-  return {
-    workspace: workspace as WorkspaceType,
-    team: team as TeamType,
-    template: templateData,
-    page: templateResult.page,
-    member: templateResult.member,
-  };
-};
-
-const updateCacheAndProfile = async (
+// Update profile's current workspace
+const updateProfileCurrentWorkspace = async (
   queryClient: ReturnType<typeof useQueryClient>,
   profile: ProfileType,
-  results: WorkspaceCreationResult
+  workspaceId: string
 ) => {
   const updatedMetadata = {
     ...profile.metadata,
-    current_workspace_id: results.workspace.id,
+    current_workspace_id: workspaceId,
   };
 
-  await Promise.all([
-    // Update sidebar data
-    queryClient.setQueryData(
-      ["sidebar_data", profile.id, results.workspace.id],
-      (oldData: SidebarData) => ({
-        ...oldData,
-        pages: [...(oldData?.pages || []), results.page],
-        personal_members: [
-          ...(oldData?.personal_members || []),
-          results.member,
-        ],
-      })
-    ),
-    // Update profile data
-    queryClient.setQueryData(
-      ["profile", profile.id],
-      (oldProfile: ProfileType) => ({
-        ...oldProfile,
-        metadata: updatedMetadata,
-      })
-    ),
-    // Update profile in database
-    supabaseBrowser
-      .from("profiles")
-      .update({ metadata: updatedMetadata })
-      .eq("id", profile.id),
-  ]);
+  // Update profile in cache immediately
+  queryClient.setQueryData(
+    ["profile", profile.id],
+    (oldProfile: ProfileType) => ({
+      ...oldProfile,
+      metadata: updatedMetadata,
+    })
+  );
+
+  // Update profile in database
+  await supabaseBrowser
+    .from("profiles")
+    .update({ metadata: updatedMetadata })
+    .eq("id", profile.id);
+
+  return updatedMetadata;
 };
 
-const CreateWorkspace = ({
+// Custom hook for workspace creation logic
+const useWorkspaceCreation = (
+  queryClient: ReturnType<typeof useQueryClient>,
+  profile: ProfileType | null,
+  workspaceName: string
+) => {
+  const createWorkspace =
+    useCallback(async (): Promise<WorkspaceCreationResult> => {
+      if (!profile) throw new Error("Profile not found");
+
+      // Use AbortController for cleanup
+      const abortController = new AbortController();
+
+      try {
+        // Create workspace first
+        const workspace = await createNewWorkspace({
+          workspaceData: createWorkspaceData(workspaceName, profile.id),
+          profile,
+        });
+
+        // Update profile's current workspace immediately after creation
+        await updateProfileCurrentWorkspace(queryClient, profile, workspace.id);
+
+        // Fetch template in parallel with other operations
+        const [templateData, team, templateResult] = await Promise.all([
+          supabaseBrowser
+            .from("templates")
+            .select("*")
+            .eq("slug", TEMPLATE_SLUG)
+            .single()
+            .then(({ data }) => {
+              if (!data) throw new Error("Template not found");
+              return data;
+            }),
+          createTeam({
+            teamData: createTeamData(workspaceName, profile.id, workspace.id),
+            profile,
+          }),
+          templateService.createPageFromTemplate(
+            await supabaseBrowser
+              .from("templates")
+              .select("*")
+              .eq("slug", TEMPLATE_SLUG)
+              .single()
+              .then(({ data }) => {
+                if (!data) throw new Error("Template not found");
+                return data;
+              }),
+            {
+              workspace_id: workspace.id,
+              team_id: null,
+              profile_id: profile.id,
+              pagesLength: 0,
+            }
+          ),
+        ]);
+
+        return {
+          workspace: workspace as WorkspaceType,
+          team: team as TeamType,
+          template: templateData,
+          page: templateResult.page,
+          member: templateResult.member,
+        };
+      } catch (error) {
+        throw error;
+      } finally {
+        abortController.abort();
+      }
+    }, [queryClient, profile, workspaceName]);
+
+  return { createWorkspace };
+};
+
+// Main component
+const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({
   setStep,
-}: {
-  setStep: Dispatch<SetStateAction<OnboardingStep>>;
+  setGettingStartedPageSlug,
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const submitAttempted = useRef(false);
   const queryClient = useQueryClient();
   const { profile } = useAuthProvider();
   const {
@@ -160,6 +181,13 @@ const CreateWorkspace = ({
     state: { workspace_name },
   } = useOnboard();
 
+  const { createWorkspace } = useWorkspaceCreation(
+    queryClient,
+    profile,
+    workspace_name
+  );
+
+  // Memoized values
   const isSubmitDisabled = useMemo(
     () => !workspace_name.trim() || !profile || isLoading,
     [workspace_name, profile, isLoading]
@@ -171,30 +199,63 @@ const CreateWorkspace = ({
         type: "SET_WORKSPACE_NAME",
         payload: e.target.value,
       });
+      submitAttempted.current = false;
     },
     [dispatch]
   );
 
+  const updateSidebarCache = useCallback(
+    (results: WorkspaceCreationResult) => {
+      queryClient.setQueryData(
+        ["sidebar_data", profile?.id, results.workspace.id],
+        (oldData: SidebarData) => ({
+          ...oldData,
+          pages: [...(oldData?.pages || []), results.page],
+          personal_members: [
+            ...(oldData?.personal_members || []),
+            results.member,
+          ],
+        })
+      );
+    },
+    [queryClient, profile]
+  );
+
   const handleSubmit = useCallback(async () => {
-    if (isSubmitDisabled || !profile) return;
+    if (isSubmitDisabled) {
+      submitAttempted.current = true;
+      return;
+    }
 
     try {
       setIsLoading(true);
-
-      // Create workspace and related resources
-      const results = await createWorkspaceOperations(workspace_name, profile);
-
-      // Update cache and profile
-      await updateCacheAndProfile(queryClient, profile, results);
+      const results = await createWorkspace();
+      updateSidebarCache(results);
 
       setStep("invite-members");
+      setGettingStartedPageSlug?.(results.page.slug);
     } catch (error) {
       console.error("Failed to create workspace:", error);
-      // Add proper error handling here - could use a toast or error message
+      // TODO: Implement error handling (e.g., toast notification)
     } finally {
       setIsLoading(false);
     }
-  }, [workspace_name, profile, queryClient, setStep, isSubmitDisabled]);
+  }, [
+    isSubmitDisabled,
+    createWorkspace,
+    updateSidebarCache,
+    setStep,
+    setGettingStartedPageSlug,
+  ]);
+
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        handleSubmit();
+      }
+    },
+    [handleSubmit]
+  );
 
   return (
     <OnboardWrapper>
@@ -215,14 +276,28 @@ const CreateWorkspace = ({
             placeholder="e.g, Awesome Inc."
             value={workspace_name}
             onChange={handleWorkspaceNameChange}
+            onKeyPress={handleKeyPress}
             disabled={isLoading}
+            autoFocus
+            aria-invalid={submitAttempted.current && !workspace_name.trim()}
+            aria-describedby="workspace-name-error"
           />
           <p className="text-xs text-text-500">
             The name of your company or organization
           </p>
+          {submitAttempted.current && !workspace_name.trim() && (
+            <p id="workspace-name-error" className="text-xs text-red-500">
+              Workspace name is required
+            </p>
+          )}
         </div>
 
-        <Button onClick={handleSubmit} disabled={isSubmitDisabled} fullWidth>
+        <Button
+          onClick={handleSubmit}
+          disabled={isSubmitDisabled}
+          className="w-full"
+          aria-busy={isLoading}
+        >
           {isLoading ? <Spinner color="white" /> : "Continue"}
         </Button>
       </div>

@@ -12,8 +12,8 @@ interface StatusInfo {
 const StatusInfo: StatusInfo = {
   active: { color: 'text-[#25F497]', icon: <Check size={16} />, text: 'Active' },
   paid: { color: 'text-[#25F497]', icon: <Check size={16} />, text: 'Paid' },
-  completed: { color: 'text-[#25F497]', icon: <Check size={16} />, text: 'Completed' },
-  trialing: { color: 'text-[#E0E0EB]', icon: <Clock4 size={16} />, text: 'Trialing' },
+  completed: { color: 'text-green-500', icon: <Check size={16} />, text: 'Completed' },
+  trialing: { color: 'text-text-500', icon: <Clock4 size={16} />, text: 'Trialing' },
   draft: { color: 'text-[#797C7C]', icon: <SquarePen size={16} />, text: 'Draft' },
   ready: { color: 'text-[#797C7C]', icon: <SquarePen size={16} />, text: 'Ready' },
   canceled: { color: 'text-[#797C7C]', icon: <CircleMinus size={16} />, text: 'Canceled' },

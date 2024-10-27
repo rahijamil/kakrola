@@ -18,13 +18,13 @@ import {
   createActivityLog,
   EntityType,
 } from "@/types/activitylog";
-import { OnboardingStep } from "./page";
+import { OnboardingStep } from "./onboarding.types";
 
-const CreateProfile = ({
-  setStep,
-}: {
-  setStep: Dispatch<SetStateAction<OnboardingStep>>;
-}) => {
+interface CreateProfileProps {
+  setStep: (step: OnboardingStep) => void;
+}
+
+const CreateProfile: React.FC<CreateProfileProps> = ({ setStep }) => {
   const { profile } = useAuthProvider();
   const [name, setName] = useState(profile?.full_name || "");
   const [fileUrl, setFileUrl] = useState<string | null>(

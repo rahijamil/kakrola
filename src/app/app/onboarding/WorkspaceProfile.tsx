@@ -18,7 +18,7 @@ import Spinner from "@/components/ui/Spinner";
 import { useAuthProvider } from "@/context/AuthContext";
 
 import { createTeam } from "@/services/addteam.service";
-import { OnboardingStep } from "./page";
+import { OnboardingStep } from "./onboarding.types";
 
 const WorkspaceProfile = ({
   setStep,

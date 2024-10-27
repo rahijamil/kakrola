@@ -18,7 +18,7 @@ export function SubscriptionNextPaymentCard({
   return (
     <Card className={"border-text-100 p-6"}>
       <div className={"flex gap-6 flex-col border-text-100 border-b pb-6"}>
-        <div className={"text-lg font-semibold text-text-900"}>Next payment</div>
+        <div className={"text-base font-semibold text-text-900"}>Next payment</div>
         <div className={"flex gap-1 items-end @16xs:flex-wrap"}>
           <span className={"text-xl leading-5 font-medium text-primary"}>
             {parseMoney(

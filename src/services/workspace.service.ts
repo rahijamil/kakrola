@@ -84,20 +84,36 @@ export const fetchWorkspaces = async (
     const { data, error } = await supabaseBrowser
       .from("workspace_members")
       .select(
-        "id, workspace_role, workspaces (id, name, avatar_url, is_archived, subscriptions (id, product_id))"
+        "id, workspace_role, workspaces (id, name, avatar_url, is_archived, is_onboarded, subscriptions!subscriptions_workspace_id_fkey (id, product_id))"
       )
       .eq("profile_id", profile_id);
 
     if (error) throw error;
 
-    const returnData = data.map((item) => ({
-      workspace_members: {
-        id: item.id,
-        workspace_role: item.workspace_role,
-        profile_id,
-      },
-      workspace: item.workspaces,
-    }));
+    const returnData = data.map((item) => {
+      const { subscriptions, ...restWorkspace } = item.workspaces as any as {
+        id: any;
+        name: any;
+        avatar_url: any;
+        is_archived: any;
+        subscriptions: {
+          id: any;
+          product_id: any;
+        }[];
+      };
+
+      return {
+        workspace_members: {
+          id: item.id,
+          workspace_role: item.workspace_role,
+          profile_id,
+        },
+        workspace: {
+          ...restWorkspace,
+          subscription: subscriptions.length > 0 ? subscriptions[0] : null,
+        },
+      };
+    });
 
     return returnData as any;
   } catch (error) {

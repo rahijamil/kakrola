@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import React, { Suspense } from "react";
 import AppLayoutWrapper from "./AppLayoutWrapper";
-import { FeedbackDialog } from "@/components/feedback/FeedbackDialog";
 import KakrolaLogo from "../kakrolaLogo";
 
 export const metadata: Metadata = {
@@ -22,10 +21,7 @@ export default function AppLayout({
         </div>
       }
     >
-      <AppLayoutWrapper>
-        {children}
-        <FeedbackDialog />
-      </AppLayoutWrapper>
+      <AppLayoutWrapper>{children}</AppLayoutWrapper>
     </Suspense>
   );
 }

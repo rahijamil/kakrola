@@ -13,11 +13,13 @@ export const usePaddleCheckout = ({
   priceId,
   quantity,
   paddleFrameRef,
+  successUrl,
 }: {
   priceId: string;
   quantity: number;
   id: "plus" | "business";
   paddleFrameRef: React.RefObject<HTMLDivElement>;
+  successUrl?: string;
 }) => {
   const [paddle, setPaddle] = useState<Paddle | null>(null);
   const [checkoutData, setCheckoutData] = useState<CheckoutEventsData | null>(
@@ -35,7 +37,8 @@ export const usePaddleCheckout = ({
       !paddle?.Initialized &&
       process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN &&
       process.env.NEXT_PUBLIC_PADDLE_ENV &&
-      profile
+      profile &&
+      profile.metadata?.current_workspace_id
     ) {
       initializePaddle({
         token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
@@ -56,7 +59,8 @@ export const usePaddleCheckout = ({
             frameInitialHeight: 450,
             frameStyle:
               "width: 100%; background-color: transparent; border: none",
-            successUrl: `${pathname}?settings=subscription&tab=checkout-success`,
+            // successUrl: `${pathname}?settings=subscription&tab=checkout-success`,
+            successUrl: successUrl ? successUrl : "/app",
           },
         },
       }).then(async (paddle) => {
@@ -77,7 +81,7 @@ export const usePaddleCheckout = ({
 
   useEffect(() => {
     if (paddle && priceId && paddle.Initialized) {
-      paddle.Checkout.updateItems([{ priceId: priceId, quantity: quantity }]);
+      paddle.Checkout.updateItems([{ priceId, quantity }]);
     }
   }, [paddle, priceId, quantity]);
 

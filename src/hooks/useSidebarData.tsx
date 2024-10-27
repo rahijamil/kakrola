@@ -10,6 +10,9 @@ import {
 import { PageType } from "@/types/pageTypes";
 import { ChannelType } from "@/types/channel";
 import { fetchSidebarData } from "@/lib/queries";
+import { fetchWorkspaces } from "@/services/workspace.service";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export interface SidebarData {
   personal_members: PersonalMemberForProjectType[];
@@ -26,8 +29,13 @@ const useSidebarData = () => {
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["sidebar_data", profile?.id, profile?.metadata?.current_workspace_id],
-    queryFn: () => fetchSidebarData(profile?.id, profile?.metadata?.current_workspace_id),
+    queryKey: [
+      "sidebar_data",
+      profile?.id,
+      profile?.metadata?.current_workspace_id,
+    ],
+    queryFn: () =>
+      fetchSidebarData(profile?.id, profile?.metadata?.current_workspace_id),
     staleTime: 1800000, // 30 minutes
     refetchOnWindowFocus: false,
     enabled: !!profile?.id || !!profile?.metadata?.current_workspace_id,

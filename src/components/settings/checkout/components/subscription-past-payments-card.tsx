@@ -6,9 +6,10 @@ import { parseMoney } from '@/utils/paddle/parse-money';
 import { getPaymentReason } from '@/utils/paddle/data-helpers';
 import { Card, CardContent, CardTitle } from '../ui/card';
 import { Status } from '../ui/status';
+import { Subscription } from '@/types/subscription';
 
 interface Props {
-  subscriptionId: string;
+  subscriptionId: Subscription['id'];
   transactions?: Transaction[];
 }
 
@@ -16,13 +17,13 @@ export function SubscriptionPastPaymentsCard({ subscriptionId, transactions }: P
   return (
     <Card className={'border-text-100 p-6'}>
       <CardTitle className="flex justify-between items-center pb-6 border-text-100 border-b flex-wrap">
-        <span className={'text-xl font-medium'}>Payments</span>
-        <Button size={'sm'} variant={'outline'} className={'text-sm rounded-sm border-text-100'}>
+        <span className={'text-base font-medium'}>Payments</span>
+        {/* <Button size={'sm'} variant={'outline'} className={'text-sm rounded-sm border-text-100'}>
           <Link href={`/dashboard/payments/${subscriptionId}`}>View all</Link>
-        </Button>
+        </Button> */}
       </CardTitle>
       <CardContent className={'p-0'}>
-        {transactions?.slice(0, 3).map((transaction) => {
+        {transactions?.map((transaction) => {
           const formattedPrice = parseMoney(transaction.details?.totals?.total, transaction.currencyCode);
           return (
             <div key={transaction.id} className={'flex flex-col gap-4 border-text-100 border-b py-6'}>

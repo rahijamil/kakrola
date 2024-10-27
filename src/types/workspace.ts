@@ -1,5 +1,4 @@
 import { WorkspaceRoleType } from "./role";
-import { Subscription } from "./subscription";
 import { ProfileType } from "./user";
 
 export interface WorkspaceType {
@@ -11,7 +10,7 @@ export interface WorkspaceType {
   is_archived: boolean;
   updated_at: string;
   created_at?: string;
-  subscription_id: Subscription["id"] | null;
+  is_onboarded: boolean;
 }
 
 // Team member type

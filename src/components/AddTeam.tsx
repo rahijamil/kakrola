@@ -166,7 +166,7 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
   return (
     <PortalWrapper>
       <Dialog open onOpenChange={onClose}>
-        <DialogContent className="p-0">
+        <DialogContent className="p-0 max-w-md">
           <div className="space-y-6 md:p-6 relative">
             <div>
               <div className="flex gap-3 items-center text-text-700 px-4 py-2 md:px-0 md:py-0 border-b md:border-none border-text-100">

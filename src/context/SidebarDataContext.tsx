@@ -1,12 +1,6 @@
 "use client";
 import { ProjectType, SectionType } from "@/types/project";
-import React, {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { createContext, ReactNode, useContext, useState } from "react";
 import {
   TeamType,
   TeamMemberType,
@@ -16,13 +10,7 @@ import {
 import { PageType } from "@/types/pageTypes";
 import useSidebarData from "@/hooks/useSidebarData";
 import { ChannelType } from "@/types/channel";
-import {
-  QueryObserverResult,
-  RefetchOptions,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { usePathname } from "next/navigation";
-import { fetchSectionsAndTasksByProjectId } from "@/utils/fetchSectionsAndTasksByProjectId";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 
 const SidebarDataContext = createContext<{
   projects: ProjectType[];
@@ -49,6 +37,7 @@ const SidebarDataContext = createContext<{
   ) => void;
   isShowViewModal: boolean;
   setIsShowViewModal: React.Dispatch<React.SetStateAction<boolean>>;
+
   isError: boolean;
   channels: ChannelType[];
   setChannels: (channels: ChannelType[]) => void;
