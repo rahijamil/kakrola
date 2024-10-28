@@ -72,7 +72,7 @@ export const taskStatus: {
   },
   {
     status: TaskStatus.OFF_TRACK,
-    label: "On track",
+    label: "Off track",
     color: TaskStatusColor.OFF_TRACK,
   },
   {

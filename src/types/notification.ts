@@ -21,6 +21,7 @@ export enum RelatedEntityTypeEnum {
   COMMENT = "comment",
   LABEL = "label",
   TEAM = "team",
+  WORKSPACE = "workspace",
 }
 
 // Notification templates for each type

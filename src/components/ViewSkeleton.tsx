@@ -38,7 +38,7 @@ const ViewSkeleton = ({
             }`}
           />
           {projectData ? (
-            <h1 className="text-3xl font-bold p-1.5 h-8">
+            <h1 className="text-3xl font-bold p-1.5 h-8 flex items-center">
               {projectData.name}
             </h1>
           ) : (

@@ -33,6 +33,7 @@ import DmSidebar from "@/app/app/dms/DmSidebar";
 import DmDropdown from "./DmDropdown";
 import KakrolaLogo from "@/app/kakrolaLogo";
 import SidebarTour from "./SidebarTour";
+import InviteWorkspaceMember from "./InviteWorkspaceMember";
 
 const Sidebar = ({
   sidebarWidth,
@@ -77,6 +78,8 @@ const Sidebar = ({
   const [addTeam, setAddTeam] = useState(false);
 
   const [isProfileMoreOpen, setIsProfileOpen] = useState(false);
+  const [showWorkspaceInviteDialog, setShowWorkspaceInviteDialog] =
+    useState(false);
 
   const menuItems: {
     id: number;
@@ -114,6 +117,7 @@ const Sidebar = ({
               isOpen={isProfileMoreOpen}
               setIsOpen={setIsProfileOpen}
               sidebarWidth={sidebarWidth}
+              setShowWorkspaceInviteDialog={setShowWorkspaceInviteDialog}
             />
           ) : (
             <>
@@ -391,6 +395,12 @@ const Sidebar = ({
       </aside>
 
       {!profile?.metadata?.is_toured && <SidebarTour />}
+
+      {showWorkspaceInviteDialog && (
+        <InviteWorkspaceMember
+          onClose={() => setShowWorkspaceInviteDialog(false)}
+        />
+      )}
     </>
   );
 };

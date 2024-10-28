@@ -53,7 +53,7 @@ export default function HeroSection() {
         <div className="relative z-10">
           {/* Top Stats Bar */}
           <div className="flex justify-center flex-wrap gap-8 mb-16 whitespace-nowrap">
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <Users className="w-5 h-5 min-h-5 min-w-5 text-primary-600" />
               <span className="text-sm">1,234+ Active Teams</span>
             </div>
@@ -64,7 +64,7 @@ export default function HeroSection() {
             <div className="flex items-center gap-2">
               <Zap className="w-5 h-5 min-h-5 min-w-5 text-primary-600" />
               <span className="text-sm">2h Support Response</span>
-            </div>
+            </div> */}
           </div>
 
           {/* Main Content */}

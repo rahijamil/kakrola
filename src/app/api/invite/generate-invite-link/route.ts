@@ -1,12 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { v4 as uuidv4 } from "uuid";
-import { InviteStatus, PageInviteType, ProjectInviteType } from "@/types/team";
-import { PersonalRoleType } from "@/types/role";
+import {
+  InviteStatus,
+  PageInviteType,
+  ProjectInviteType,
+  TeamType,
+  WorkspaceInviteType,
+} from "@/types/team";
+import {
+  PersonalRoleType,
+  TeamRoleType,
+  WorkspaceRoleType,
+} from "@/types/role";
+import { WorkspaceType } from "@/types/workspace";
 
 export async function POST(req: NextRequest) {
   const supabase = createClient();
-  const { team_id } = (await req.json()) as { team_id: number };
+  const { team_id, workspace_id } = (await req.json()) as {
+    team_id: TeamType["id"] | null;
+    workspace_id: WorkspaceType["id"] | null;
+  };
 
   if (!team_id) {
     return NextResponse.json(
@@ -19,12 +33,20 @@ export async function POST(req: NextRequest) {
   const token = uuidv4();
 
   try {
-    const inviteData: Omit<ProjectInviteType | PageInviteType, "id"> = {
+    const inviteData: Omit<
+      ProjectInviteType | PageInviteType | WorkspaceInviteType,
+      "id"
+    > = {
       team_id,
       email: null,
-      role: PersonalRoleType["MEMBER"],
+      role: workspace_id
+        ? WorkspaceRoleType.WORKSPACE_MEMBER
+        : team_id
+        ? TeamRoleType.TEAM_MEMBER
+        : PersonalRoleType["MEMBER"],
       status: InviteStatus.PENDING,
       token,
+      workspace_id,
     };
 
     // Insert a new invite into the database with the status as 'pending'

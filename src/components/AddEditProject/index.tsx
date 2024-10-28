@@ -34,6 +34,7 @@ import useScreen from "@/hooks/useScreen";
 import { motion } from "framer-motion";
 import { createPortal } from "react-dom";
 import { canEditContent } from "@/utils/permissionUtils";
+import { useRouter } from "next/navigation";
 
 const AddEditProject = ({
   team_id,
@@ -41,7 +42,7 @@ const AddEditProject = ({
   project,
   aboveBellow,
 }: {
-  team_id?: TeamType['id'] | null;
+  team_id?: TeamType["id"] | null;
   onClose: () => void;
   project?: ProjectType;
   aboveBellow?: "above" | "below" | null;
@@ -90,7 +91,7 @@ const AddEditProject = ({
       findProjectMember(project?.id) || {
         profile_id: profile?.id || "",
         project_id: project?.id || 0,
-        role: PersonalRoleType.MEMBER,
+        role: PersonalRoleType.ADMIN,
         settings: {
           is_favorite: false,
           order: 0,
@@ -106,6 +107,7 @@ const AddEditProject = ({
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const teamspaces = useMemo(() => {
     const initialWorkspaces = [
@@ -312,6 +314,7 @@ const AddEditProject = ({
         }
       }
 
+      router.push("/app/project/" + projectData.slug);
       onClose();
     } catch (error) {
       console.error(error);
@@ -326,7 +329,7 @@ const AddEditProject = ({
   ) => {
     ev.preventDefault();
 
-    if(!profile?.metadata?.current_workspace_id) return;
+    if (!profile?.metadata?.current_workspace_id) return;
 
     if (!projectData.name) {
       setError("Project name is required.");
@@ -407,6 +410,7 @@ const AddEditProject = ({
     }
 
     setLoading(false);
+    router.push("/app/project/" + projectData.slug);
     onClose();
   };
 

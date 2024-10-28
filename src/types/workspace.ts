@@ -1,4 +1,5 @@
 import { WorkspaceRoleType } from "./role";
+import { InviteBaseType } from "./team";
 import { ProfileType } from "./user";
 
 export interface WorkspaceType {

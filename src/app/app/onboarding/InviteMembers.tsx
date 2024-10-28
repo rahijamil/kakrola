@@ -12,6 +12,7 @@ import InviteLink from "./InviteLink";
 import { OnboardingStep } from "./onboarding.types";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import { WorkspaceRoleType } from "@/types/role";
 
 interface InviteMembersProps {
   setStep: (step: OnboardingStep) => void;
@@ -53,23 +54,26 @@ const InviteMembers: React.FC<InviteMembersProps> = ({ setStep }) => {
 
     try {
       if (validEmails.length > 0) {
-        if (!profile || !team_id) {
+        if (!profile || !profile.metadata.current_workspace_id) {
           setLoading(false);
-          setError("Profile or Team ID is missing.");
+          setError("Profile or Workspace ID is missing.");
           return;
         }
 
-        // Send all invites in one request to the server
-        const response = await axios.post("/api/invite/invite-members", {
-          emails: validEmails,
-          team_id,
-          inviter: {
-            id: profile.id,
-            first_name: profile.full_name.split(" ")[0] || "User",
-            email: profile.email,
-            avatar_url: profile.avatar_url,
-          },
-        });
+        const response = await axios.post(
+          "/api/invite/invite-workspace-members",
+          {
+            emails: validEmails,
+            workspace_id: profile.metadata.current_workspace_id,
+            inviter: {
+              id: profile.id,
+              first_name: profile.full_name.split(" ")[0] || "User",
+              email: profile.email,
+              avatar_url: profile.avatar_url,
+            },
+            role: WorkspaceRoleType.WORKSPACE_MEMBER, // optional
+          }
+        );
 
         if (response.data.success) {
           setStep("subscription");
@@ -159,7 +163,7 @@ const InviteMembers: React.FC<InviteMembersProps> = ({ setStep }) => {
         </div>
 
         <div className="space-y-4">
-          <InviteLink team_id={parseInt(team_id!)} />
+          <InviteLink workspace_id={profile?.metadata?.current_workspace_id} />
           <Button onClick={handleSubmit} disabled={loading} fullWidth>
             {loading ? <Spinner color="current" /> : "Take me to Kakrola"}
           </Button>

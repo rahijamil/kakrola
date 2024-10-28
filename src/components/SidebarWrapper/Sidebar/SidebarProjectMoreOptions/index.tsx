@@ -19,7 +19,6 @@ import useFavorite from "@/hooks/useFavorite";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { useRole } from "@/context/RoleContext";
 import { PersonalRoleType, TeamRoleType } from "@/types/role";
-import { channel } from "diagnostics_channel";
 import {
   canCreateContent,
   canDeleteContent,

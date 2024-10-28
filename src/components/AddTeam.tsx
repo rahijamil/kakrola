@@ -81,6 +81,7 @@ const AddTeam = ({ onClose }: { onClose: () => void }) => {
     profile_id: profile?.id || "",
     updated_at: new Date().toISOString(),
     is_archived: false,
+    is_private: false,
   });
   const [step, setStep] = useState<1 | 2>(1);
   const queryClient = useQueryClient();

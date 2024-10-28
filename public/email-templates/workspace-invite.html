@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        color: #333333;
+        background-color: #f6f6f6;
+      }
+
+      .container {
+        width: 85%;
+        max-width: 600px;
+        margin: 2rem auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .logo_svg {
+        height: 50px;
+        width: 50px;
+      }
+
+      .logo_title {
+        font-weight: bold;
+        color: #005c83;
+        font-size: 22px;
+      }
+
+      .content {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .content h2 {
+        color: #111827;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
+      .content p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        color: #4b5563;
+        line-height: 1.5;
+      }
+
+      .button {
+        display: inline-block;
+        padding: 14px 28px;
+        font-size: 1rem;
+        color: #ffffff;
+        background: linear-gradient(to right, #004d6e, #005c83);
+        text-decoration: none;
+        border-radius: 24px;
+        font-weight: 600;
+        transition: background 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .button:hover {
+        background: linear-gradient(to right, #003b4f, #004d6e);
+      }
+
+      .footer {
+        text-align: center;
+        font-size: 0.875rem;
+        color: #999999;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e1eff5;
+      }
+
+      .footer p {
+        margin: 0;
+      }
+
+      .footer a {
+        color: #005c83;
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        text-decoration: underline;
+      }
+
+      .illustration {
+        text-align: center;
+        margin-top: 2rem;
+      }
+
+      .workspace-info {
+        text-align: center;
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background-color: #eaf4f8;
+        border-radius: 8px;
+      }
+
+      .workspace-info h3 {
+        color: #005c83;
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+      }
+
+      .workspace-info p {
+        font-size: 1rem;
+        color: #4b5563;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+      }
+
+      .workspace-benefits {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+        flex-wrap: wrap;
+      }
+
+      .benefit-item {
+        flex: 1;
+        min-width: 150px;
+        padding: 1rem;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .benefit-item h4 {
+        color: #005c83;
+        margin: 0.5rem 0;
+        font-size: 1rem;
+      }
+
+      .benefit-item p {
+        font-size: 0.875rem;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Logo section -->
+      <div class="logo">
+        <div class="logo_svg">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+            <!-- White Background -->
+            <rect width="200" height="200" fill="#ffffff" />
+
+            <!-- Hashtag Symbol with Gradient and Shadow -->
+            <defs>
+              <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop
+                  offset="0%"
+                  style="stop-color: #005c83; stop-opacity: 1"
+                />
+                <stop
+                  offset="100%"
+                  style="stop-color: #004d6e; stop-opacity: 1"
+                />
+              </linearGradient>
+              <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop
+                  offset="0%"
+                  style="stop-color: #0076a3; stop-opacity: 1"
+                />
+                <stop
+                  offset="100%"
+                  style="stop-color: #005a8e; stop-opacity: 1"
+                />
+              </linearGradient>
+              <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop
+                  offset="0%"
+                  style="stop-color: #69afcd; stop-opacity: 1"
+                />
+                <stop
+                  offset="100%"
+                  style="stop-color: #4a8fb1; stop-opacity: 1"
+                />
+              </linearGradient>
+              <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow
+                  dx="4"
+                  dy="4"
+                  stdDeviation="4"
+                  flood-color="#000000"
+                  flood-opacity="0.2"
+                />
+              </filter>
+            </defs>
+
+            <!-- Hashtag Symbol -->
+            <g filter="url(#shadow)">
+              <rect
+                x="40"
+                y="40"
+                width="20"
+                height="120"
+                rx="10"
+                fill="url(#grad1)"
+              />
+              <rect
+                x="80"
+                y="40"
+                width="20"
+                height="120"
+                rx="10"
+                fill="url(#grad2)"
+              />
+              <rect
+                x="30"
+                y="70"
+                width="140"
+                height="20"
+                rx="10"
+                fill="url(#grad3)"
+              />
+              <rect
+                x="30"
+                y="110"
+                width="140"
+                height="20"
+                rx="10"
+                fill="url(#grad1)"
+              />
+            </g>
+          </svg>
+        </div>
+        <div class="logo_title">Kakrola</div>
+      </div>
+
+      <!-- Main content -->
+      <div class="content">
+        <h2>Welcome to the "{{workspace_name}}" workspace!</h2>
+        <p>
+          {{inviter_first_name}} has invited you to join their workspace on
+          Kakrola.
+        </p>
+        <a href="{{invite_link}}" class="button">Join Workspace</a>
+        <p>
+          Questions about this workspace? Contact {{inviter_first_name}} at
+          <a
+            href="mailto:{{inviter_email}}"
+            style="color: #005c83; text-decoration: underline"
+          >
+            {{inviter_email}}
+          </a>
+        </p>
+      </div>
+
+      <!-- Illustration -->
+      <div class="illustration">
+        <img
+          src="https://www.kakrola.com/images/collaboration_empty_state.png"
+          alt="Workspace Illustration"
+          style="max-width: 200px"
+        />
+      </div>
+
+      <!-- Workspace info -->
+      <div class="workspace-info">
+        <h3>What you can do in this workspace</h3>
+        <div class="workspace-benefits">
+          <div class="benefit-item">
+            <h4>Collaborate</h4>
+            <p>Work together with your team in real-time</p>
+          </div>
+          <div class="benefit-item">
+            <h4>Organize</h4>
+            <p>Manage projects, pages, and channels efficiently</p>
+          </div>
+          <div class="benefit-item">
+            <h4>Connect</h4>
+            <p>Communicate seamlessly with team members</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <p>&copy; 2024 Kakrola. All rights reserved.</p>
+        <p>
+          <a href="https://www.kakrola.com/privacy">Privacy Policy</a> |
+          <a href="https://www.kakrola.com/terms">Terms of Service</a>
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

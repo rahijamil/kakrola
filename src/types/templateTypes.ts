@@ -248,16 +248,18 @@ export const templateService = {
       const sectionIdMap = new Map<string, string>();
 
       if (template.sections && template.sections.length > 0) {
-        const sectionData = template.sections.map((section) => ({
-          name: section.name,
-          order: section.order,
-          color: section.color,
-          project_id: insertedProjectData[0].project_id,
-          profile_id: params.profile_id,
-          is_archived: false,
-          is_collapsed: false,
-          is_inbox: false,
-        }));
+        const sectionData: Omit<SectionType, "id" | "updated_at">[] =
+          template.sections.map((section) => ({
+            name: section.name,
+            order: section.order,
+            color: section.color,
+            project_id: insertedProjectData[0].project_id,
+            profile_id: params.profile_id,
+            is_archived: false,
+            is_collapsed: false,
+            is_inbox: false,
+            workspace_id: params.workspace_id,
+          }));
 
         const { data: insertedSections, error: sectionError } =
           await supabaseBrowser
@@ -280,7 +282,7 @@ export const templateService = {
 
       // 3. Create tasks with correct section IDs
       if (template.tasks && template.tasks.length > 0) {
-        const taskData = template.tasks.map((task) => {
+        const taskData: Omit<TaskType, "id">[] = template.tasks.map((task) => {
           // Convert section_id to string for consistent comparison
           const templateSectionId = task.section_id
             ? String(task.section_id)
@@ -301,7 +303,7 @@ export const templateService = {
             priority: task.priority,
             status: task.status,
             order: task.order,
-            section_id: mappedSectionId, // Use the mapped section ID
+            section_id: mappedSectionId || null, // Use the mapped section ID
             parent_task_id: null,
             dates,
             profile_id: params.profile_id,
@@ -310,6 +312,7 @@ export const templateService = {
             is_completed: false,
             is_inbox: false,
             completed_at: null,
+            workspace_id: params.workspace_id,
           };
         });
 
@@ -372,13 +375,14 @@ export const templateService = {
     member: PersonalMemberForPageType;
   }> {
     try {
+      const slug = generateSlug(template.name);
       const { data, error } = await supabaseBrowser.rpc(
         "insert_page_with_member",
         {
           _team_id: params.team_id || null,
           _profile_id: params.profile_id,
           _title: template.name,
-          _slug: generateSlug(template.name),
+          _slug: slug,
           _color: template.settings.color || "gray-500",
           _is_favorite: false,
           _order: params.pagesLength + 1,
@@ -399,7 +403,7 @@ export const templateService = {
       const pageResult: PageType = {
         id: data[0].page_id,
         title: template.name,
-        slug: generateSlug(template.name),
+        slug,
         team_id: params.team_id,
         settings: {
           order_in_team: params.pagesLength + 1,

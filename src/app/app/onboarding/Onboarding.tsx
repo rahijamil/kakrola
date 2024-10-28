@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import CreateProfile from "./CreateProfile";
 import CreateWorkspace from "./CreateWorkspace";
 import InviteMembers from "./InviteMembers";

@@ -9,7 +9,7 @@ import createPorfileImage from "./create_profile.png";
 import { useRouter } from "next/navigation";
 import OnboardWrapper from "./OnboardWrapper";
 import Image from "next/image";
-import { useAuthProvider } from "@/context/AuthContext";
+import { ProfileWithWorkspaces, useAuthProvider } from "@/context/AuthContext";
 import Spinner from "@/components/ui/Spinner";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { avatarUploader } from "@/utils/avatarUploader";
@@ -19,6 +19,7 @@ import {
   EntityType,
 } from "@/types/activitylog";
 import { OnboardingStep } from "./onboarding.types";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface CreateProfileProps {
   setStep: (step: OnboardingStep) => void;
@@ -30,6 +31,7 @@ const CreateProfile: React.FC<CreateProfileProps> = ({ setStep }) => {
   const [fileUrl, setFileUrl] = useState<string | null>(
     profile?.avatar_url || null
   );
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
 
   const handleFileChange = (file: File | null) => {
@@ -58,34 +60,46 @@ const CreateProfile: React.FC<CreateProfileProps> = ({ setStep }) => {
       setLoading(true);
 
       if (profile?.full_name !== name.trim()) {
+        // optimistic update
+        queryClient.setQueryData(
+          ["profile", profile.id],
+          (oldProfile: ProfileWithWorkspaces) => ({
+            ...oldProfile,
+            full_name: name.trim(),
+            is_onboarded: true,
+          })
+        );
         const { error } = await supabaseBrowser
           .from("profiles")
           .update({
             full_name: name.trim(),
+            is_onboarded: true,
           })
           .eq("id", profile?.id);
 
         if (error) {
           throw error;
         }
+      } else {
+        // optimistic update
+        queryClient.setQueryData(
+          ["profile", profile.id],
+          (oldProfile: ProfileWithWorkspaces) => ({
+            ...oldProfile,
+            is_onboarded: true,
+          })
+        );
 
-        createActivityLog({
-          actor_id: profile.id,
-          action: ActivityAction.UPDATED_PROFILE,
-          entity: {
-            type: EntityType.USER,
-            id: profile.id,
-            name: profile.full_name,
-          },
-          metadata: {
-            old_data: {
-              full_name: profile?.full_name,
-            },
-            new_data: {
-              full_name: name.trim(),
-            },
-          },
-        });
+        const { error } = await supabaseBrowser
+          .from("profiles")
+          .update({
+            is_onboarded: true,
+          })
+          .eq("id", profile?.id);
+
+        if (error) {
+          throw error;
+        }
       }
 
       setStep("create-workspace");

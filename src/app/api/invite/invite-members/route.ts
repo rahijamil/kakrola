@@ -2,22 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { sendBulkInviteEmails } from "@/utils/sendEmail";
 import { v4 as uuidv4 } from "uuid";
-import { InviteStatus } from "@/types/team";
+import { InviteStatus, TeamType } from "@/types/team";
 import { PersonalRoleType } from "@/types/role";
+import { ProjectType } from "@/types/project";
+import { PageType } from "@/types/pageTypes";
+import { ProfileType } from "@/types/user";
 
 export async function POST(req: NextRequest) {
   const supabase = createClient();
   const { emails, team_id, project_id, page_id, role, inviter } =
     (await req.json()) as {
-      emails: string[];
-      team_id: number | null;
-      project_id: number | null;
-      page_id: number | null;
+      emails: ProfileType["email"][];
+      team_id: TeamType["id"] | null;
+      project_id: ProjectType["id"] | null;
+      page_id: PageType["id"] | null;
       inviter: {
-        id: string;
-        first_name: string;
-        email: string;
-        avatar_url: string;
+        id: ProfileType["id"];
+        first_name: ProfileType["full_name"];
+        email: ProfileType["email"];
+        avatar_url: ProfileType["avatar_url"];
       };
       role?: PersonalRoleType;
     };

@@ -10,11 +10,15 @@ import {
   RelatedEntityTypeEnum,
 } from "@/types/notification";
 import { createNotification } from "@/types/notification";
+import { WorkspaceType } from "@/types/workspace";
 
 const emailTemplatesCache = new Map();
 
 async function getEmailTemplate(
-  templateName: "project-invite.html" | "team-invite.html"
+  templateName:
+    | "workspace-invite.html"
+    | "project-invite.html"
+    | "team-invite.html"
 ) {
   if (emailTemplatesCache.has(templateName)) {
     return emailTemplatesCache.get(templateName);
@@ -37,6 +41,7 @@ export async function sendBulkInviteEmails({
   projectData,
   pageData,
   teamData,
+  workspaceData,
 }: {
   invites: {
     email: string;
@@ -51,6 +56,10 @@ export async function sendBulkInviteEmails({
   projectData?: ProjectType;
   pageData?: PageType;
   teamData?: TeamType;
+  workspaceData?: {
+    id: WorkspaceType["id"];
+    name: WorkspaceType["name"];
+  };
 }) {
   const supabase = createClient();
   const transporter = nodemailer.createTransport({
@@ -65,9 +74,10 @@ export async function sendBulkInviteEmails({
   });
 
   // Fetch templates once
-  const [projectTemplate, teamTemplate] = await Promise.all([
+  const [projectTemplate, teamTemplate, workspaceTemplate] = await Promise.all([
     getEmailTemplate("project-invite.html"),
     getEmailTemplate("team-invite.html"),
+    getEmailTemplate("workspace-invite.html"),
   ]);
 
   // Fetch all recipient profiles in one query
@@ -92,14 +102,21 @@ export async function sendBulkInviteEmails({
       avatar_url: inviter.avatar_url,
     },
     type: NotificationTypeEnum.INVITE,
-    related_entity_type: projectData
+    related_entity_type: workspaceData
+      ? RelatedEntityTypeEnum.WORKSPACE
+      : projectData
       ? RelatedEntityTypeEnum.PROJECT
       : pageData
       ? RelatedEntityTypeEnum.PAGE
       : RelatedEntityTypeEnum.TEAM,
     data: {
       triggered_by: inviter.first_name,
-      entityName: projectData?.name || pageData?.title || teamData?.name || "",
+      entityName:
+        workspaceData?.name ||
+        projectData?.name ||
+        pageData?.title ||
+        teamData?.name ||
+        "",
     },
   };
 
@@ -108,7 +125,16 @@ export async function sendBulkInviteEmails({
     const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/api/invite/accept-invite?token=${invite.token}`;
     let template, subject, text;
 
-    if (projectData || pageData) {
+    if (workspaceData) {
+      template = workspaceTemplate
+        .replaceAll("{{inviter_first_name}}", inviter.first_name)
+        .replaceAll("{{inviter_email}}", inviter.email)
+        .replaceAll("{{invite_link}}", inviteLink)
+        .replaceAll("{{workspace_name}}", workspaceData.name);
+
+      subject = `${inviter.first_name} invited you to join "${workspaceData.name}" workspace in Kakrola!`;
+      text = `Join the "${workspaceData.name}" workspace and start collaborating with ${inviter.first_name}. Click here to accept your invitation: ${inviteLink}`;
+    } else if (projectData || pageData) {
       template = projectTemplate
         .replaceAll("{{inviter_first_name}}", inviter.first_name)
         .replaceAll("{{inviter_email}}", inviter.email)

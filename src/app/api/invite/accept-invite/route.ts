@@ -1,12 +1,21 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { getUser } from "@/utils/auth";
-import { ProjectInviteType, PageInviteType } from "@/types/team";
+import {
+  ProjectInviteType,
+  PageInviteType,
+  WorkspaceInviteType,
+  TeamMemberType,
+} from "@/types/team";
 import { ProfileType } from "@/types/user";
 import { differenceInDays } from "date-fns";
-import { PersonalRoleType, TeamRoleType } from "@/types/role";
+import {
+  PersonalRoleType,
+  TeamRoleType,
+  WorkspaceRoleType,
+} from "@/types/role";
 import { updateSubscription } from "@/utils/paddle/update-subscription";
-import { getSubscription } from "@/utils/paddle/get-subscription";
+import { WorkspaceMemberType } from "@/types/workspace";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -47,52 +56,154 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Invite has expired" }, { status: 400 });
   }
 
-  // Handle existing user accepting their invite
-  if (user && user?.email === invite.email) {
-    try {
-      await handleOptimizedInviteAcceptance(invite, user);
-      return NextResponse.redirect(`${origin}/app`);
-    } catch (error: any) {
-      console.error("Error while accepting invite:", error.message);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+  // If user is logged in
+  if (user) {
+    // For email invites, check if the user's email matches
+    // For link invites (where invite.email is null), allow any logged-in user
+    if (!invite.email || user.email === invite.email) {
+      try {
+        await handleOptimizedInviteAcceptance(invite, user);
+        return NextResponse.redirect(`${origin}/app`);
+      } catch (error: any) {
+        console.error("Error while accepting invite:", error.message);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+    } else {
+      // If emails don't match for an email invite, show error
+      return NextResponse.json(
+        { error: "This invite is for a different email address" },
+        { status: 403 }
+      );
     }
   }
 
-  // Check if user needs to sign up or log in
-  const { data: userProfile, error: userProfileError } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("email", invite.email)
-    .single();
-
-  console.log(
-    "User profile fetch result:",
-    userProfile,
-    "Profile fetch error:",
-    userProfileError
-  );
-
-  const redirectUrl = `${origin}/auth/${
-    userProfile ? "login" : "signup"
-  }?email=${invite.email}&token=${token}`;
-  console.log("Redirecting user to:", redirectUrl);
+  // If no user is logged in
+  const redirectUrl = invite.email
+    ? `${origin}/auth/login?email=${invite.email}&token=${token}`
+    : `${origin}/auth/login?token=${token}`;
 
   return NextResponse.redirect(redirectUrl);
 }
 
 async function handleOptimizedInviteAcceptance(
-  invite: ProjectInviteType | PageInviteType,
+  invite: ProjectInviteType | PageInviteType | WorkspaceInviteType,
   profile: ProfileType
 ) {
   const supabase = createClient();
-  const id = invite.project_id || invite.page_id;
-  const column_name = invite.project_id ? "project_id" : "page_id";
+  const operations = [];
 
   try {
-    const operations = [];
+    // First, determine the workspace_id for billing purposes
+    let relevantWorkspaceId: number | null = null;
 
-    // Handle personal member insertion
-    if (id) {
+    if (invite.workspace_id) {
+      // Direct workspace invite
+      relevantWorkspaceId = invite.workspace_id;
+    } else if (invite.team_id) {
+      // For team invites, get the workspace_id from the team
+      const { data: teamData } = await supabase
+        .from("teams")
+        .select("workspace_id")
+        .eq("id", invite.team_id)
+        .single();
+      relevantWorkspaceId = teamData?.workspace_id || null;
+    } else if (invite.project_id) {
+      // For project invites, get workspace_id through team or workspace
+      const { data: projectData } = await supabase
+        .from("projects")
+        .select("team_id, workspace_id")
+        .eq("id", invite.project_id)
+        .single();
+      relevantWorkspaceId = projectData?.workspace_id || null;
+    } else if (invite.page_id) {
+      // For page invites, get workspace_id through project/team or directly
+      const { data: pageData } = await supabase
+        .from("pages")
+        .select("project_id, team_id, workspace_id")
+        .eq("id", invite.page_id)
+        .single();
+      relevantWorkspaceId = pageData?.workspace_id || null;
+    }
+
+    if (!relevantWorkspaceId) {
+      throw new Error("Could not determine workspace for invite");
+    }
+
+    // Check if user is already a workspace member
+    const { data: existingWorkspaceMember } = await supabase
+      .from("workspace_members")
+      .select("id")
+      .eq("workspace_id", relevantWorkspaceId)
+      .eq("profile_id", profile.id)
+      .single();
+
+    // Handle workspace membership and billing if needed
+    if (!existingWorkspaceMember) {
+      // Check subscription for the workspace
+      const { data: workspaceSubscription } = await supabase
+        .from("subscriptions")
+        .select("subscription_id, price_id, seats, customer_profile_id")
+        .eq("workspace_id", relevantWorkspaceId)
+        .single();
+
+      if (workspaceSubscription) {
+        // Count current workspace members
+        const { count } = await supabase
+          .from("workspace_members")
+          .select("id", { count: "exact" })
+          .eq("workspace_id", relevantWorkspaceId);
+
+        console.log({ count, seats: workspaceSubscription.seats });
+
+        const currentMemberCount = count || 0;
+
+        // Update subscription proration if needed
+        if (currentMemberCount >= (workspaceSubscription.seats || 0)) {
+          operations.push(
+            updateSubscription(
+              workspaceSubscription.subscription_id,
+              workspaceSubscription.price_id,
+              (workspaceSubscription.seats || 0) + 1
+            )
+          );
+        }
+      }
+
+      // Add workspace member
+      const workspaceMemberData: Omit<WorkspaceMemberType, "id"> = {
+        email: profile.email,
+        workspace_id: relevantWorkspaceId,
+        profile_id: profile.id,
+        workspace_role: WorkspaceRoleType.WORKSPACE_MEMBER,
+        settings: {},
+      };
+
+      operations.push(
+        supabase.from("workspace_members").insert(workspaceMemberData)
+      );
+
+      // Update user's metadata if this is their first workspace
+      if (!profile.metadata?.current_workspace_id) {
+        operations.push(
+          supabase
+            .from("profiles")
+            .update({
+              metadata: {
+                ...profile.metadata,
+                current_workspace_id: relevantWorkspaceId,
+              },
+            })
+            .eq("id", profile.id)
+        );
+      }
+    }
+
+    // Now handle the specific invite type
+    if (invite.project_id || invite.page_id) {
+      // Handle project/page member insertion
+      const id = invite.project_id || invite.page_id;
+      const column_name = invite.project_id ? "project_id" : "page_id";
+
       const { data: memberInfo } = await supabase
         .from("personal_members")
         .select("settings->order")
@@ -112,19 +223,17 @@ async function handleOptimizedInviteAcceptance(
       };
 
       operations.push(supabase.from("personal_members").insert(memberData));
-    }
-
-    // Handle team member insertion
-    if (invite.team_id) {
-      const { data: teamMember } = await supabase
+    } else if (invite.team_id) {
+      // Handle team member insertion
+      const { data: existingTeamMember } = await supabase
         .from("team_members")
         .select("id")
         .eq("team_id", invite.team_id)
         .eq("profile_id", profile.id)
         .single();
 
-      if (!teamMember) {
-        const teamMemberData = {
+      if (!existingTeamMember) {
+        const teamMemberData: Omit<TeamMemberType, "id"> = {
           email: profile.email,
           team_id: invite.team_id,
           profile_id: profile.id,
@@ -133,42 +242,13 @@ async function handleOptimizedInviteAcceptance(
         };
 
         operations.push(supabase.from("team_members").insert(teamMemberData));
-
-        // Check current subscription for proration
-        const { data: currentSubscription } = await supabase
-          .from("subscriptions")
-          .select("subscription_id, price_id, seats")
-          .eq("customer_profile_id", profile.id)
-          .single();
-
-        if (currentSubscription) {
-          const currentSeatsCount = await supabase
-            .from("team_members")
-            .select("id")
-            .eq("team_id", invite.team_id);
-
-          const usedSeats = currentSeatsCount.data?.length || 0;
-          const totalSeats = currentSubscription.seats || 0;
-
-          // Only update subscription if no seats are available
-          if (usedSeats >= totalSeats) {
-            const newQuantity = totalSeats + 1; // Increment for the new member
-            operations.push(
-              updateSubscription(
-                currentSubscription.subscription_id,
-                currentSubscription.price_id,
-                newQuantity
-              )
-            );
-          }
-        }
       }
     }
 
     // Delete the invite
     operations.push(supabase.from("invites").delete().eq("id", invite.id));
 
-    // Execute all necessary operations in parallel
+    // Execute all operations in parallel
     await Promise.all(operations);
 
     console.log("Invite acceptance operations completed successfully.");

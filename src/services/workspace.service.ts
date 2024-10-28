@@ -30,7 +30,7 @@ export const createNewWorkspace = async ({
     const teamMemberData: Omit<WorkspaceMemberType, "id"> = {
       workspace_id: data.id,
       profile_id: profile.id,
-      workspace_role: WorkspaceRoleType.Workspace_ADMIN,
+      workspace_role: WorkspaceRoleType.WORKSPACE_ADMIN,
       email: profile.email,
       settings: {},
     };

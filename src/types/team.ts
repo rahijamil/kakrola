@@ -1,7 +1,7 @@
 import { ChannelType } from "./channel";
 import { PageType } from "./pageTypes";
 import { ProjectType } from "./project";
-import { PersonalRoleType, TeamRoleType } from "./role";
+import { PersonalRoleType, TeamRoleType, WorkspaceRoleType } from "./role";
 import { WorkspaceType } from "./workspace";
 
 // Enums for predefined options
@@ -100,12 +100,13 @@ export interface TeamType {
   updated_at: string;
   created_at?: string;
   workspace_id: WorkspaceType["id"];
+  is_private: boolean;
 }
 
 // Team member type
 export interface TeamMemberType {
   id: number;
-  team_id: number;
+  team_id: TeamType['id'];
   profile_id: string; // UUID
   email: string;
   team_role: TeamRoleType;
@@ -157,14 +158,15 @@ export enum InviteStatus {
 // Invite type
 export interface InviteBaseType {
   id: number;
-  team_id: number | null;
+  team_id: TeamType['id'] | null;
   email: string | null;
-  role: PersonalRoleType | TeamRoleType;
+  role: PersonalRoleType | TeamRoleType | WorkspaceRoleType;
   status: InviteStatus;
   token: string;
   project_id?: number;
   page_id?: number;
   created_at?: string;
+  workspace_id: number | null;
 }
 
 export interface ProjectInviteType extends InviteBaseType {
@@ -173,4 +175,10 @@ export interface ProjectInviteType extends InviteBaseType {
 
 export interface PageInviteType extends InviteBaseType {
   page_id: number;
+}
+
+export interface WorkspaceInviteType extends InviteBaseType {
+  workspace_id: number;
+  role: WorkspaceRoleType;
+  created_at: string;
 }

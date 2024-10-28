@@ -12,8 +12,8 @@ export enum TeamRoleType {
 }
 
 export enum WorkspaceRoleType {
-  Workspace_ADMIN = "Workspace_ADMIN",
-  Workspace_MEMBER = "Workspace_MEMBER",
+  WORKSPACE_ADMIN = "WORKSPACE_ADMIN",
+  WORKSPACE_MEMBER = "WORKSPACE_MEMBER",
 }
 
 enum ContentType {

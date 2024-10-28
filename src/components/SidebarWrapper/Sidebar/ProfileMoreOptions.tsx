@@ -1,4 +1,11 @@
-import React, { useRef, useState, useCallback, memo, useMemo } from "react";
+import React, {
+  useRef,
+  useState,
+  useCallback,
+  memo,
+  useMemo,
+  Dispatch,
+} from "react";
 import {
   Check,
   ChevronDown,
@@ -6,6 +13,7 @@ import {
   Settings,
   LogOut,
   Plus,
+  UserPlus,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -21,6 +29,10 @@ import { fetchWorkspaces } from "@/services/workspace.service";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ProfileType } from "@/types/user";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import { pricingTiers } from "@/lib/constants/pricing-tier";
+import { Button } from "@/components/ui/button";
+import InviteWorkspaceMember from "./InviteWorkspaceMember";
+import { SetStateAction } from "jotai";
 
 interface MenuItemProps {
   icon: IconType | (() => JSX.Element) | any;
@@ -132,6 +144,7 @@ interface ProfileMoreOptionsProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   sidebarWidth: number;
+  setShowWorkspaceInviteDialog: Dispatch<SetStateAction<boolean>>;
 }
 
 interface MenuItem {
@@ -153,6 +166,7 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
   isOpen,
   setIsOpen,
   sidebarWidth,
+  setShowWorkspaceInviteDialog,
 }) => {
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
   const { profile, workspacesWithMembers } = useAuthProvider();
@@ -170,20 +184,8 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
         type: "group",
         items: [
           {
-            icon: Settings,
-            label: "Settings",
-            onClick: () => {
-              window.history.pushState(
-                null,
-                "",
-                `${pathname}?settings=account`
-              );
-              window.dispatchEvent(new Event("popstate"));
-            },
-          },
-          {
             icon: Plus,
-            label: "Add workspace",
+            label: "Create workspace",
             onClick: () =>
               window.history.pushState(null, "", "/app/onboarding"),
           },
@@ -293,120 +295,164 @@ const ProfileMoreOptions: React.FC<ProfileMoreOptionsProps> = ({
   }
 
   return (
-    <Dropdown
-      hideHeader
-      setIsOpen={setIsOpen}
-      triggerRef={triggerRef}
-      Label={({ onClick }) => (
-        <button
-          onClick={onClick}
-          ref={triggerRef}
-          className="flex items-center gap-1 hover:bg-primary-50 p-1 pl-1.5 rounded-lg transition"
-        >
-          <div className="flex items-center gap-2">
-            <Avatar className="w-5 h-5">
-              <AvatarImage src={activeWorkspace?.avatar_url} />
-              <AvatarFallback>
-                {activeWorkspace?.name.slice(0, 1)}
-              </AvatarFallback>
-            </Avatar>
-            <p
-              className="font-semibold text-text-700 transition overflow-hidden whitespace-nowrap text-ellipsis text-[13px]"
-              style={{ maxWidth: `${sidebarWidth - 135}px` }}
-            >
-              {activeWorkspace?.name}
-            </p>
-          </div>
-          <ChevronDown
-            strokeWidth={1.5}
-            size={16}
-            className="min-w-4 min-h-4"
-          />
-        </button>
-      )}
-      isOpen={isOpen}
-      beforeItemsContent={
-        <>
-          {activeWorkspace && (
-            <div className="flex items-center gap-2 p-2 pb-0.5">
-              <Avatar className="w-8 h-8">
+    <>
+      <Dropdown
+        hideHeader
+        setIsOpen={setIsOpen}
+        triggerRef={triggerRef}
+        Label={({ onClick }) => (
+          <button
+            onClick={onClick}
+            ref={triggerRef}
+            className="flex items-center gap-1 hover:bg-primary-50 p-1 pl-1.5 rounded-lg transition"
+          >
+            <div className="flex items-center gap-2">
+              <Avatar className="w-5 h-5">
                 <AvatarImage src={activeWorkspace?.avatar_url} />
                 <AvatarFallback>
-                  {activeWorkspace.name.slice(0, 1)}
+                  {activeWorkspace?.name.slice(0, 1)}
                 </AvatarFallback>
               </Avatar>
-              <div>
-                <h2 className="font-semibold text-[13px] text-text-700">
-                  {activeWorkspace.name}
-                </h2>
-                <p className="text-xs text-text-500">
-                  <span>{activeWorkspace.subscription?.product_id}</span>
-                  {workspaceMember && (
-                    <span>
-                      {workspaceMember.length}{" "}
-                      {workspaceMember.length === 1 ? "member" : "members"}
-                    </span>
-                  )}
-                </p>
+              <p
+                className="font-semibold text-text-700 transition overflow-hidden whitespace-nowrap text-ellipsis text-[13px]"
+                style={{ maxWidth: `${sidebarWidth - 135}px` }}
+              >
+                {activeWorkspace?.name}
+              </p>
+            </div>
+            <ChevronDown
+              strokeWidth={1.5}
+              size={16}
+              className="min-w-4 min-h-4"
+            />
+          </button>
+        )}
+        isOpen={isOpen}
+        beforeItemsContent={
+          <>
+            {activeWorkspace && (
+              <div className="p-2 space-y-2 px-3">
+                <div className="flex items-center gap-2">
+                  <Avatar className="w-8 h-8">
+                    <AvatarImage src={activeWorkspace?.avatar_url} />
+                    <AvatarFallback>
+                      {activeWorkspace.name.slice(0, 1)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h2 className="font-semibold text-[13px] text-text-700">
+                      {activeWorkspace.name}
+                    </h2>
+                    <p className="text-xs text-text-500">
+                      <span>
+                        {
+                          pricingTiers.find(
+                            (tier) =>
+                              tier.product_id ==
+                              activeWorkspace.subscription?.product_id
+                          )?.name
+                        }{" "}
+                        Plan
+                      </span>
+                      {workspaceMember && (
+                        <span>
+                          {" · "}
+                          {workspaceMember.length}{" "}
+                          {workspaceMember.length === 1 ? "member" : "members"}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size={"xs"}
+                    icon={Settings}
+                    onClick={() => {
+                      window.history.pushState(
+                        null,
+                        "",
+                        `${pathname}?settings=account`
+                      );
+                      window.dispatchEvent(new Event("popstate"));
+                      onClose();
+                    }}
+                  >
+                    Settings
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size={"xs"}
+                    icon={UserPlus}
+                    onClick={() => {
+                      setShowWorkspaceInviteDialog(true);
+                      onClose();
+                    }}
+                  >
+                    Invite Members
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          <div className="h-[1px] bg-text-100 mt-1"></div>
+            <div className="h-[1px] bg-text-100 mt-1"></div>
 
-          {workspacesWithMembers.length > 0 && (
-            <div className="bg-text-50">
-              <h3 className="font-medium text-xs transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis py-1 text-text-500 px-4">
-                {profile?.email}
-              </h3>
-              {workspacesWithMembers.map((item) => (
-                <WorkspaceButton
-                  key={item.workspace.id}
-                  workspace={item.workspace}
-                  isActive={
-                    profile?.metadata?.current_workspace_id ===
-                    item.workspace.id
-                  }
-                  onClick={() => {
-                    handleWorkspaceChange(item.workspace.id);
-                    onClose();
-                  }}
-                  showCheck={activeWorkspace?.id === item.workspace.id}
-                />
-              ))}
-              <div className="h-[1px] bg-text-100 my-2"></div>
-            </div>
-          )}
-        </>
-      }
-      items={[]}
-      content={
-        <div>
-          {menuItems.map((group, groupIndex) => (
-            <React.Fragment key={groupIndex}>
-              {group.items.map((item, itemIndex) => (
-                <MenuItem
-                  key={itemIndex}
-                  icon={item.icon}
-                  label={item.label}
-                  onClick={() => {
-                    item.onClick?.();
-                    onClose();
-                  }}
-                  onMouseEnter={() => handleMenuItemHover(item)}
-                  hasSubmenu={!!item.subMenu}
-                  isActive={activeSubmenu === item.label}
-                  path={item.path}
-                />
-              ))}
-              {groupIndex < menuItems.length - 1 && (
-                <div className="h-[1px] bg-text-100 my-1"></div>
-              )}
-            </React.Fragment>
-          ))}
-        </div>
-      }
-    />
+            {workspacesWithMembers.length > 0 && (
+              <div className="bg-text-50">
+                <h3 className="font-medium text-xs transition duration-150 overflow-hidden whitespace-nowrap text-ellipsis py-1 text-text-500 px-4">
+                  {profile?.email}
+                </h3>
+                {workspacesWithMembers.map((item) => (
+                  <WorkspaceButton
+                    key={item.workspace.id}
+                    workspace={item.workspace}
+                    isActive={
+                      profile?.metadata?.current_workspace_id ===
+                      item.workspace.id
+                    }
+                    onClick={() => {
+                      handleWorkspaceChange(item.workspace.id);
+                      onClose();
+                    }}
+                    showCheck={activeWorkspace?.id === item.workspace.id}
+                  />
+                ))}
+                <div className="h-[1px] bg-text-100 mt-2 mb-1"></div>
+              </div>
+            )}
+          </>
+        }
+        items={[]}
+        content={
+          <div>
+            {menuItems.map((group, groupIndex) => (
+              <React.Fragment key={groupIndex}>
+                {group.items.map((item, itemIndex) => (
+                  <MenuItem
+                    key={itemIndex}
+                    icon={item.icon}
+                    label={item.label}
+                    onClick={() => {
+                      item.onClick?.();
+                      onClose();
+                    }}
+                    onMouseEnter={() => handleMenuItemHover(item)}
+                    hasSubmenu={!!item.subMenu}
+                    isActive={activeSubmenu === item.label}
+                    path={item.path}
+                  />
+                ))}
+                {groupIndex < menuItems.length - 1 && (
+                  <div className="h-[1px] bg-text-100 my-1"></div>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+        }
+      />
+    </>
   );
 };
 

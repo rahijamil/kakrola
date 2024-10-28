@@ -18,10 +18,12 @@ const TeamspaceModal = ({
   teamId,
   teamMembersData,
   onClose,
+  isLoading,
 }: {
   teamId: TeamType["id"];
   teamMembersData: TeamMemberData[];
   onClose: () => void;
+  isLoading: boolean;
 }) => {
   const [activeTab, setActiveTab] = useState<TabItem["id"]>("members");
   const { teams } = useSidebarDataProvider();

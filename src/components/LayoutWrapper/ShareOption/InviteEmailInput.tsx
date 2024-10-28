@@ -5,14 +5,22 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import RoleItem from "./RoleItem";
 import Spinner from "@/components/ui/Spinner";
-import { PersonalRoleType, TeamRoleType } from "@/types/role";
+import {
+  PersonalRoleType,
+  TeamRoleType,
+  WorkspaceRoleType,
+} from "@/types/role";
 import { TeamType } from "@/types/team";
 import { PageType } from "@/types/pageTypes";
 import { ProjectType } from "@/types/project";
+import { WorkspaceType } from "@/types/workspace";
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 const InviteEmailInput = ({
   projectId,
   teamId,
+  workspaceId,
   error,
   setError,
   searchQuery,
@@ -21,10 +29,12 @@ const InviteEmailInput = ({
   setEmails,
   fetchPendingUsers,
   pageId,
+  onClose,
 }: {
-  projectId?: ProjectType['id'] | null;
-  pageId?: PageType['id'] | null;
-  teamId?: TeamType['id'] | null;
+  projectId?: ProjectType["id"] | null;
+  pageId?: PageType["id"] | null;
+  teamId?: TeamType["id"] | null;
+  workspaceId?: WorkspaceType["id"] | null;
   error: string | null;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
   searchQuery: string;
@@ -32,46 +42,85 @@ const InviteEmailInput = ({
   emails: string[];
   setEmails: React.Dispatch<React.SetStateAction<string[]>>;
   fetchPendingUsers?: () => Promise<void>;
+  onClose?: () => void;
 }) => {
   const emailRegex =
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
   const domainSuggestions = ["gmail.com", "outlook.com", "yahoo.com"];
-  const [role, setRole] = React.useState<PersonalRoleType | TeamRoleType>(
-    teamId ? TeamRoleType.TEAM_ADMIN : PersonalRoleType.ADMIN
+  const [role, setRole] = React.useState<
+    PersonalRoleType | TeamRoleType | WorkspaceRoleType
+  >(
+    workspaceId
+      ? WorkspaceRoleType.WORKSPACE_ADMIN
+      : teamId
+      ? TeamRoleType.TEAM_ADMIN
+      : PersonalRoleType.ADMIN
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const { profile } = useAuthProvider();
+  const { toast } = useToast();
 
   const handleInvite = async () => {
-    if (!profile || (!projectId && !teamId && !pageId)) return;
+    if (!profile || (!projectId && !teamId && !pageId && !workspaceId)) return;
 
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await axios.post("/api/invite/invite-members", {
-        emails,
-        team_id: teamId,
-        project_id: projectId,
-        page_id: pageId,
-        inviter: {
-          id: profile.id,
-          first_name: profile.full_name.split(" ")[0] || "Unknown User",
-          email: profile.email,
-          avatar_url: profile.avatar_url,
-        },
-      });
+      if (workspaceId) {
+        const response = await axios.post(
+          "/api/invite/invite-workspace-members",
+          {
+            emails,
+            workspace_id: workspaceId,
+            inviter: {
+              id: profile.id,
+              first_name: profile.full_name.split(" ")[0] || "Unknown User",
+              email: profile.email,
+              avatar_url: profile.avatar_url,
+            },
+            role,
+          }
+        );
 
-      if (response.data.success) {
-        setSearchQuery("");
-        setSuccessMessage("Invitation sent successfully!");
-        setEmails([]);
-        if (fetchPendingUsers) fetchPendingUsers();
-        setTimeout(() => setSuccessMessage(null), 3000);
+        if (response.data.success) {
+          setSearchQuery("");
+          setSuccessMessage("Invitation sent successfully!");
+          toast({
+            title: "Invitation sent successfully!",
+            // description: "Invitation sent successfully!",
+          });
+          setEmails([]);
+          onClose && onClose();
+          setTimeout(() => setSuccessMessage(null), 3000);
+        } else {
+          throw new Error(response.data.message);
+        }
       } else {
-        throw new Error(response.data.message);
+        const response = await axios.post("/api/invite/invite-members", {
+          emails,
+          team_id: teamId,
+          project_id: projectId,
+          page_id: pageId,
+          inviter: {
+            id: profile.id,
+            first_name: profile.full_name.split(" ")[0] || "Unknown User",
+            email: profile.email,
+            avatar_url: profile.avatar_url,
+          },
+        });
+
+        if (response.data.success) {
+          setSearchQuery("");
+          setSuccessMessage("Invitation sent successfully!");
+          setEmails([]);
+          if (fetchPendingUsers) fetchPendingUsers();
+          setTimeout(() => setSuccessMessage(null), 3000);
+        } else {
+          throw new Error(response.data.message);
+        }
       }
     } catch (err: any) {
       setError(
@@ -149,11 +198,11 @@ const InviteEmailInput = ({
 
   return (
     <div className="relative px-4">
-      <div className="flex gap-2">
+      <div className={cn(teamId ? "space-y-2" : "flex gap-2")}>
         <div className="rounded-lg border border-text-300 hover:border-text-400 focus-within:border-text-400 bg-transparent focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-300 overflow-hidden w-full">
           <div className="flex flex-col p-1">
-            {emails.length > 0 && (
-              <div className="flex justify-between gap-1">
+            <div className="flex justify-between gap-1">
+              {emails.length > 0 ? (
                 <div className="space-y-1">
                   {emails.map((email) => (
                     <div
@@ -176,40 +225,68 @@ const InviteEmailInput = ({
                     </div>
                   ))}
                 </div>
-                <RoleItem
-                  value={role}
-                  onChange={(newRole) => setRole(newRole)}
-                  teamId={teamId}
+              ) : (
+                <input
+                  ref={inputRef}
+                  type="text"
+                  placeholder={
+                    (emails.length === 0 && "Add email with Enter or comma") ||
+                    ""
+                  }
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setError(null);
+                    setSearchQuery(e.target.value);
+                  }}
+                  onKeyDown={handleKeyDown}
+                  aria-label="Search or add email"
+                  className={`flex-1 bg-transparent focus:outline-none border-none placeholder-gray-500 w-full pl-1 ${
+                    emails.length > 0 ? "pt-1" : "pt-0.5"
+                  }`}
+                  autoFocus
                 />
-              </div>
-            )}
+              )}
 
-            <input
-              ref={inputRef}
-              type="text"
-              placeholder={
-                (emails.length === 0 && "Add email with Enter or comma") || ""
-              }
-              value={searchQuery}
-              onChange={(e) => {
-                setError(null);
-                setSearchQuery(e.target.value);
-              }}
-              onKeyDown={handleKeyDown}
-              aria-label="Search or add email"
-              className={`flex-1 bg-transparent focus:outline-none border-none placeholder-gray-500 w-full pl-1 ${
-                emails.length > 0 ? "pt-1" : "pt-0.5"
-              }`}
-            />
+              <RoleItem
+                value={role}
+                onChange={(newRole) => setRole(newRole)}
+                teamId={teamId}
+                workspaceId={workspaceId}
+              />
+            </div>
+
+            {emails.length > 0 && (
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder={
+                  (emails.length === 0 && "Add email with Enter or comma") || ""
+                }
+                value={searchQuery}
+                onChange={(e) => {
+                  setError(null);
+                  setSearchQuery(e.target.value);
+                }}
+                onKeyDown={handleKeyDown}
+                aria-label="Search or add email"
+                className={`flex-1 bg-transparent focus:outline-none border-none placeholder-gray-500 w-full pl-1 ${
+                  emails.length > 0 ? "pt-1" : "pt-0.5"
+                }`}
+                autoFocus
+              />
+            )}
           </div>
         </div>
-        <Button
-          size="sm"
-          onClick={handleInvite}
-          disabled={emails.length === 0 || isLoading}
-        >
-          {isLoading ? <Spinner color="white" /> : "Invite"}
-        </Button>
+
+        <div className={cn(teamId && "flex items-center justify-end")}>
+          <Button
+            size="sm"
+            onClick={handleInvite}
+            disabled={emails.length === 0 || isLoading}
+          >
+            {isLoading ? <Spinner color="white" /> : "Invite"}
+          </Button>
+        </div>
       </div>
       {successMessage && (
         <p className="mt-2 p-2 text-green-500 text-xs">{successMessage}</p>

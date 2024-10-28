@@ -20,6 +20,7 @@ import {
 import { useRole } from "@/context/RoleContext";
 import { PersonalRoleType } from "@/types/role";
 import { canCreateContent, canEditContent } from "@/utils/permissionUtils";
+import StatusSelector from "./StatusSelector";
 
 const AddTaskFormForProject = ({
   onClose,
@@ -279,10 +280,8 @@ const AddTaskFormForProject = ({
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="w-full">
       {profile?.metadata?.current_workspace_id && (
-        <div className="border-b border-text-100 bg-transparent flex items-center font-medium h-10 overflow-hidden text-xs divide-x divide-text-200 pl-7 whitespace-nowrap">
-          <div
-            className={`w-[30%] md:w-[40%] flex items-center gap-2 py-2 pr-4`}
-          >
+        <div className="border-b border-text-100 bg-transparent flex items-center font-medium h-10 overflow-hidden text-xs divide-x divide-text-200 whitespace-nowrap">
+          <div className={`w-64 md:w-[40%] flex items-center gap-2 py-2 pr-4 pl-7`}>
             <AnimatedCircleCheck
               handleCheckSubmit={() => {}}
               priority={taskData.priority}
@@ -302,7 +301,7 @@ const AddTaskFormForProject = ({
             />
           </div>
 
-          <div className="w-[15%]">
+          <div className="w-32 md:w-[15%]">
             <AssigneeSelector
               task={{
                 ...taskData,
@@ -316,7 +315,7 @@ const AddTaskFormForProject = ({
             />
           </div>
 
-          <div className="w-[15%]">
+          <div className="w-32 md:w-[15%]">
             <DateSelector
               task={{
                 ...taskData,
@@ -328,7 +327,7 @@ const AddTaskFormForProject = ({
             />
           </div>
 
-          <div className="w-[15%]">
+          <div className="w-32 md:w-[15%]">
             <Priorities
               taskData={{
                 ...taskData,
@@ -341,7 +340,19 @@ const AddTaskFormForProject = ({
             />
           </div>
 
-          <div className="w-[15%]">
+          <div className="w-32 md:w-[15%]">
+            <StatusSelector
+              taskData={{
+                ...taskData,
+                workspace_id: profile.metadata.current_workspace_id,
+              }}
+              setTaskData={setTaskData as any}
+              forListView
+              dataFromElement
+            />
+          </div>
+
+          <div className="w-32 md:w-[15%]">
             <LabelSelector
               task={{
                 ...taskData,

@@ -4,8 +4,15 @@ import { TeamType } from "@/types/team";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/Spinner";
 import { Link } from "lucide-react";
+import { WorkspaceType } from "@/types/workspace";
 
-const InviteLink = ({ team_id }: { team_id: TeamType["id"] }) => {
+const InviteLink = ({
+  team_id,
+  workspace_id,
+}: {
+  team_id?: TeamType["id"];
+  workspace_id?: WorkspaceType["id"];
+}) => {
   const [inviteLink, setInviteLink] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -17,6 +24,7 @@ const InviteLink = ({ team_id }: { team_id: TeamType["id"] }) => {
     try {
       // Request the server to generate an invite link
       const response = await axios.post("/api/invite/generate-invite-link", {
+        workspace_id,
         team_id,
       });
 
@@ -50,7 +58,10 @@ const InviteLink = ({ team_id }: { team_id: TeamType["id"] }) => {
       {error && <p className="text-red-500 text-xs">{error}</p>}
       {inviteLink && (
         <p>
-          Share this link: <a className="text-primary-500" href={inviteLink}>{inviteLink}</a>
+          Share this link:{" "}
+          <a className="text-primary-500" href={inviteLink}>
+            {inviteLink}
+          </a>
         </p>
       )}
     </div>

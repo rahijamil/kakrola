@@ -202,6 +202,7 @@ const TeamspaceRow = ({ team }: { team: TeamType }) => {
           teamId={team.id}
           onClose={() => setShowTeamSpace(false)}
           teamMembersData={teamMembersData}
+          isLoading={isLoading}
         />
       )}
 

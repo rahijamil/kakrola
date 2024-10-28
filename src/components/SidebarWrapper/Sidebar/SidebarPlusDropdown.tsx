@@ -18,7 +18,7 @@ const SidebarPlusDropdown = ({
   isOpen,
   setIsOpen,
 }: {
-  teamId?: TeamType['id'];
+  teamId?: TeamType["id"];
   modalStates: {
     showAddProjectModal: boolean;
     setShowAddProjectModal: Dispatch<SetStateAction<boolean>>;
@@ -34,15 +34,15 @@ const SidebarPlusDropdown = ({
   return (
     <>
       <Dropdown
-        title="Add"
+        title="Create"
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         triggerRef={triggerRef}
         Label={({ onClick }) => (
           <button
             ref={triggerRef}
-            className={`p-1 rounded-lg transition ${
-              isOpen ? "md:bg-primary-100" : "md:hover:bg-primary-100"
+            className={`p-1 rounded-lg transition md:hover:bg-primary-100 ${
+              isOpen ? "md:bg-primary-50" : ""
             }`}
             onClick={onClick}
           >
@@ -84,15 +84,6 @@ const SidebarPlusDropdown = ({
                     setShowAddChannel(true);
                   },
                   summary: "Set up team channels.",
-                },
-                {
-                  id: 4,
-                  label: "Invite Members",
-                  icon: <UserPlus strokeWidth={1.5} size={20} />,
-                  onClick: () => {
-                    // setShowAddChannel(true);
-                  },
-                  summary: "Add team members to collaborate.",
                 },
               ]
             : []),

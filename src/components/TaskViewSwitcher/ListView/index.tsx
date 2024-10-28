@@ -327,7 +327,12 @@ const ListView: React.FC<ListViewProps> = ({
   ) => {
     ev.preventDefault();
 
-    if (!profile?.id || !newSectionName.trim() || !project?.id || !profile.metadata?.current_workspace_id) {
+    if (
+      !profile?.id ||
+      !newSectionName.trim() ||
+      !project?.id ||
+      !profile.metadata?.current_workspace_id
+    ) {
       return;
     }
 
@@ -378,7 +383,7 @@ const ListView: React.FC<ListViewProps> = ({
       is_archived: false,
       order: newOrder,
       updated_at: new Date().toISOString(),
-      workspace_id: profile.metadata.current_workspace_id
+      workspace_id: profile.metadata.current_workspace_id,
     };
 
     // Optimistically update the state
@@ -392,20 +397,12 @@ const ListView: React.FC<ListViewProps> = ({
     setSectionAddLoading(false);
     setShowAddSection(null);
 
+    const { id, ...restSection } = newSection;
+
     try {
       const { data, error } = await supabaseBrowser
         .from("sections")
-        .insert([
-          {
-            name: newSection.name,
-            project_id: newSection.project_id,
-            profile_id: newSection.profile_id,
-            is_collapsed: newSection.is_collapsed,
-            is_inbox: newSection.is_inbox,
-            order: newOrder,
-            updated_at: newSection.updated_at,
-          },
-        ])
+        .insert([restSection])
         .select()
         .single();
 

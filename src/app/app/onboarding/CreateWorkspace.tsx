@@ -11,7 +11,7 @@ import { useAuthProvider } from "@/context/AuthContext";
 import type { PersonalMemberForPageType, TeamType } from "@/types/team";
 import type { WorkspaceType } from "@/types/workspace";
 import type { ProfileType } from "@/types/user";
-import type { PageTemplate } from "@/types/templateTypes";
+import type { PageTemplate, ProjectTemplate } from "@/types/templateTypes";
 import type { SidebarData } from "@/hooks/useSidebarData";
 import type { PageType } from "@/types/pageTypes";
 import type { OnboardingStep } from "./onboarding.types";
@@ -19,17 +19,23 @@ import { createTeam } from "@/services/addteam.service";
 import { createNewWorkspace } from "@/services/workspace.service";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { templateService } from "@/types/templateTypes";
+import type { ProjectType } from "@/types/project";
+import type { PersonalMemberForProjectType } from "@/types/team";
 
 // Constants
 const TEMPLATE_SLUG = "getting-started-1729961731190-lhbq" as const;
+const TEAMSPACE_PROJECT_TEMPLATE_SLUG = "tasks-1730123332739-wgz0" as const;
 
 // Types
 interface WorkspaceCreationResult {
   workspace: WorkspaceType;
   team: TeamType;
-  template: PageTemplate;
-  page: PageType;
-  member: PersonalMemberForPageType;
+  gettingStartedTemplate: PageTemplate;
+  gettingStartedPage: PageType;
+  gettingStartedMember: PersonalMemberForPageType;
+  teamspaceTemplate: ProjectTemplate;
+  teamspaceProject: ProjectType;
+  teamspaceMember: PersonalMemberForProjectType;
 }
 
 interface CreateWorkspaceProps {
@@ -62,6 +68,7 @@ const createTeamData = (
   updated_at: new Date().toISOString(),
   is_archived: false,
   workspace_id: workspaceId,
+  is_private: false,
 });
 
 // Update profile's current workspace
@@ -116,46 +123,61 @@ const useWorkspaceCreation = (
         // Update profile's current workspace immediately after creation
         await updateProfileCurrentWorkspace(queryClient, profile, workspace.id);
 
-        // Fetch template in parallel with other operations
-        const [templateData, team, templateResult] = await Promise.all([
-          supabaseBrowser
-            .from("templates")
-            .select("*")
-            .eq("slug", TEMPLATE_SLUG)
-            .single()
-            .then(({ data }) => {
-              if (!data) throw new Error("Template not found");
-              return data;
-            }),
-          createTeam({
-            teamData: createTeamData(workspaceName, profile.id, workspace.id),
-            profile,
-          }),
-          templateService.createPageFromTemplate(
-            await supabaseBrowser
+        // Create team
+        const team = await createTeam({
+          teamData: createTeamData(workspaceName, profile.id, workspace.id),
+          profile,
+        });
+
+        // Fetch both templates in parallel
+        const [gettingStartedTemplateData, teamspaceTemplateData] =
+          await Promise.all([
+            supabaseBrowser
               .from("templates")
               .select("*")
               .eq("slug", TEMPLATE_SLUG)
               .single()
               .then(({ data }) => {
-                if (!data) throw new Error("Template not found");
+                if (!data)
+                  throw new Error("Getting Started template not found");
                 return data;
               }),
-            {
-              workspace_id: workspace.id,
-              team_id: null,
-              profile_id: profile.id,
-              pagesLength: 0,
-            }
-          ),
+            supabaseBrowser
+              .from("templates")
+              .select("*")
+              .eq("slug", TEAMSPACE_PROJECT_TEMPLATE_SLUG)
+              .single()
+              .then(({ data }) => {
+                if (!data) throw new Error("Teamspace template not found");
+                return data;
+              }),
+          ]);
+
+        // Create both templates in parallel
+        const [gettingStartedResult, teamspaceResult] = await Promise.all([
+          templateService.createPageFromTemplate(gettingStartedTemplateData, {
+            workspace_id: workspace.id,
+            team_id: null,
+            profile_id: profile.id,
+            pagesLength: 0,
+          }),
+          templateService.createProjectFromTemplate(teamspaceTemplateData, {
+            team_id: team.id,
+            workspace_id: workspace.id,
+            profile_id: profile.id,
+            projectsLength: 0,
+          }),
         ]);
 
         return {
           workspace: workspace as WorkspaceType,
           team: team as TeamType,
-          template: templateData,
-          page: templateResult.page,
-          member: templateResult.member,
+          gettingStartedTemplate: gettingStartedTemplateData,
+          gettingStartedPage: gettingStartedResult.page,
+          gettingStartedMember: gettingStartedResult.member,
+          teamspaceTemplate: teamspaceTemplateData,
+          teamspaceProject: teamspaceResult.project,
+          teamspaceMember: teamspaceResult.member,
         };
       } catch (error) {
         throw error;
@@ -210,10 +232,12 @@ const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({
         ["sidebar_data", profile?.id, results.workspace.id],
         (oldData: SidebarData) => ({
           ...oldData,
-          pages: [...(oldData?.pages || []), results.page],
+          pages: [...(oldData?.pages || []), results.gettingStartedPage],
+          projects: [...(oldData?.projects || []), results.teamspaceProject],
           personal_members: [
             ...(oldData?.personal_members || []),
-            results.member,
+            results.gettingStartedMember,
+            results.teamspaceMember,
           ],
         })
       );
@@ -233,7 +257,7 @@ const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({
       updateSidebarCache(results);
 
       setStep("invite-members");
-      setGettingStartedPageSlug?.(results.page.slug);
+      setGettingStartedPageSlug?.(results.gettingStartedPage.slug);
     } catch (error) {
       console.error("Failed to create workspace:", error);
       // TODO: Implement error handling (e.g., toast notification)
