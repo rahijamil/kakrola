@@ -37,7 +37,7 @@ export const metadata: Metadata = {
       "Join Kakrola and give your team a better way to work together. Free plan available, no credit card required. Set up in minutes and see the difference.",
     images: [
       {
-        url: "/signup-og-image.jpg",
+        url: "/images/og-image-1200x630.jpg",
         width: 1200,
         height: 630,
         alt: "Start organizing your team's work with Kakrola",
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     title: "Join Kakrola Free - Get Your Team Organized",
     description:
       "Start fresh with a better way to organize your team's work. Free forever plan, no credit card needed.",
-    images: ["/signup-twitter-card.jpg"],
+    images: ["/images/twitter-card-800x418.jpg"],
   },
   alternates: {
     canonical: "https://www.kakrola.com/signup",

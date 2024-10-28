@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     siteName: "Kakrola",
     images: [
       {
-        url: "/login-og-image.jpg",
+        url: "/images/og-image-1200x630.jpg",
         width: 1200,
         height: 630,
         alt: "Log in to your Kakrola workspace",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     title: "Welcome Back to Kakrola",
     description:
       "Log in and get back to what matters - moving your team's work forward.",
-    images: ["/login-twitter-card.jpg"],
+    images: ["/images/twitter-card-800x418.jpg"],
   },
   alternates: {
     canonical: "https://www.kakrola.com/login",

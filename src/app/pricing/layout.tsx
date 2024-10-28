@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/pricing-overview.jpg",
+        url: "/images/og-image-1200x630.jpg",
         width: 1200,
         height: 630,
         alt: "Professional team workspace plans with 7-day trial",
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     title: "Professional Team Workspace Plans | Kakrola",
     description:
       "Two powerful plans for serious teams. Try Plus or Business free for 14 days. All the tools you need to work better together.",
-    images: ["/pricing-twitter.jpg"],
+    images: ["/images/twitter-card-800x418.jpg"],
     creator: "@kakrola",
   },
   alternates: {
@@ -75,11 +75,11 @@ export const metadata: Metadata = {
     },
   },
   manifest: "/manifest.json",
-  other: {
-    "og:price:amount": ["120", "180"],
-    "og:price:currency": "USD",
-    "og:availability": "in stock",
-  },
+  // other: {
+  //   "og:price:amount": ["120", "180"],
+  //   "og:price:currency": "USD",
+  //   "og:availability": "in stock",
+  // },
   verification: {
     google: "google-site-verification-code",
     yandex: "yandex-verification-code",
