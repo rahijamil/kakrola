@@ -2,8 +2,10 @@ import React from "react";
 import { ScrollText } from "lucide-react";
 import LandingPageHeader from "../LandingPageHeader";
 import LandingPageFooter from "../LandingPageFooter";
+import { notFound } from "next/navigation";
 
 const TermsPage = () => {
+  return notFound();
   return (
     <div className="relative overflow-hidden bg-gradient-to-br from-white via-primary-50 to-white min-h-screen">
       <LandingPageHeader />
@@ -74,7 +76,7 @@ const TermsPage = () => {
       <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 blur-3xl opacity-20">
         <div className="aspect-square h-96 rounded-full bg-gradient-to-br from-primary-400 to-purple-400" />
       </div>
-      
+
       <LandingPageFooter />
     </div>
   );

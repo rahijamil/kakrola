@@ -38,7 +38,11 @@ const CtaSection = () => {
               </Button>
             </Link>
             <Link href="/pricing" className="w-full sm:w-fit">
-              <Button size="lg" className="text-lg px-8 w-full sm:w-fit" variant="outline">
+              <Button
+                size="lg"
+                className="text-lg px-8 w-full sm:w-fit"
+                variant="outline"
+              >
                 Explore Pricing
               </Button>
             </Link>
@@ -78,23 +82,6 @@ const CtaSection = () => {
                   </TooltipContent>
                 </Tooltip>
                 <span>Cancel anytime</span>
-              </motion.div>
-
-              <motion.div
-                className="flex items-center gap-2"
-                whileHover={{ scale: 1.05 }}
-              >
-                <Tooltip>
-                  <TooltipTrigger>
-                    <div className="p-2 rounded-full bg-primary-50">
-                      <Shield className="h-4 w-4 text-primary-600" />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Enterprise-grade security for all plans</p>
-                  </TooltipContent>
-                </Tooltip>
-                <span>Enterprise security</span>
               </motion.div>
             </TooltipProvider>
           </div>

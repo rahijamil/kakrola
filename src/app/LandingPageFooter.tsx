@@ -5,32 +5,17 @@ import KakrolaLogo from "./kakrolaLogo";
 
 const footerLinks = {
   product: [
-    { label: "Features", href: "/features" },
-    { label: "Solutions", href: "/solutions" },
     { label: "Pricing", href: "/pricing" },
-    { label: "Security", href: "/security" },
-    { label: "What's New", href: "/updates" },
+    // { label: "What's New", href: "/updates" },
   ],
-  resources: [
-    // { label: "Documentation", href: "/docs" },
-    // { label: "API Reference", href: "/api" },
-    { label: "Community", href: "/community" },
-    { label: "Templates", href: "/templates" },
-    // { label: "Training", href: "/training" },
-    // { label: "Success Stories", href: "/case-studies" },
-  ],
-  company: [
-    { label: "About Us", href: "/about" },
-    // { label: "Careers", href: "/careers" },
-    { label: "Blog", href: "/blog" },
-    // { label: "Press Kit", href: "/press" },
-    // { label: "Contact", href: "/contact" },
-  ],
+  // company: [
+  //   { label: "About Us", href: "/about" },
+  //   { label: "Blog", href: "/blog" },
+  //   // { label: "Contact", href: "/contact" },
+  // ],
   legal: [
     { label: "Terms", href: "/terms" },
     { label: "Privacy", href: "/privacy" },
-    { label: "Cookie Settings", href: "/cookies" },
-    { label: "Status", href: "/status" },
   ],
 };
 
@@ -70,9 +55,8 @@ const LandingPageFooter = () => {
               <div className="space-y-6">
                 <KakrolaLogo size="lg" isTitle />
                 <p className="text-gray-600 leading-relaxed">
-                  Remember when work felt organized and actually got done? We're
-                  bringing that back. Join thousands of teams who got their time
-                  back.
+                  Join growing teams who've simplified their workflow, reduced
+                  meetings, and gotten more done with our all-in-one solution.
                 </p>
                 <div className="flex items-center space-x-5">
                   {socialLinks.map((social) => (
@@ -93,7 +77,7 @@ const LandingPageFooter = () => {
             <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8">
               <div>
                 <h3 className="text-sm font-semibold text-gray-900 tracking-wide uppercase mb-4">
-                  Product
+                  Links
                 </h3>
                 <ul className="space-y-3">
                   {footerLinks.product.map((link) => (
@@ -109,7 +93,7 @@ const LandingPageFooter = () => {
                 </ul>
               </div>
 
-              <div>
+              {/* <div>
                 <h3 className="text-sm font-semibold text-gray-900 tracking-wide uppercase mb-4">
                   Resources
                 </h3>
@@ -143,7 +127,7 @@ const LandingPageFooter = () => {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </div> */}
 
               <div>
                 <h3 className="text-sm font-semibold text-gray-900 tracking-wide uppercase mb-4">
@@ -171,12 +155,18 @@ const LandingPageFooter = () => {
               <p className="text-gray-500 text-sm">
                 © {new Date().getFullYear()} Kakrola, Inc. All rights reserved.
               </p>
-              {/* <Link
-                href="/careers"
-                className="text-gray-500 hover:text-primary-600 text-sm transition-colors"
-              >
-                We're hiring!
-              </Link> */}
+
+              <p className="text-gray-500 text-sm transition-colors">
+                Feel free to follow my work on{" "}
+                <Link
+                  className="text-primary-500 underline"
+                  href="https://twitter.com/rahijamil_"
+                  target="_blank"
+                >
+                  Twitter
+                </Link>{" "}
+                if you'd like to stay connected.
+              </p>
             </div>
           </div>
         </div>

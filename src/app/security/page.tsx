@@ -11,8 +11,11 @@ import {
 } from "lucide-react";
 import LandingPageHeader from "../LandingPageHeader";
 import LandingPageFooter from "../LandingPageFooter";
+import { notFound } from "next/navigation";
 
 const SecurityPage = () => {
+  return notFound();
+
   return (
     <div className="relative overflow-hidden min-h-screen">
       <LandingPageHeader />

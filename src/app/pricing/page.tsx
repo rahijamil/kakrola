@@ -18,26 +18,26 @@ const faqItems = [
     content:
       "Unlike other tools that force you to juggle multiple apps, Kakrola brings your projects, docs, and team communication into one cohesive workspace. The platform is intentionally designed to be simple yet powerful, focusing on the features teams actually need.",
   },
-  {
-    title: "Can I migrate data from my current tools?",
-    content:
-      "Yes! Kakrola supports importing from popular platforms like Asana, Trello, and Notion. The built-in migration tool helps transfer your projects, tasks, and documents while preserving their structure and relationships.",
-  },
-  {
-    title: "How do you handle data security?",
-    content:
-      "Your data security is a top priority. Kakrola uses industry-standard encryption, secure AWS infrastructure, and automated backups. All data is encrypted in transit and at rest, and you maintain full control over your workspace data.",
-  },
+  // {
+  //   title: "Can I migrate data from my current tools?",
+  //   content:
+  //     "Yes! Kakrola supports importing from popular platforms like Asana, Trello, and Notion. The built-in migration tool helps transfer your projects, tasks, and documents while preserving their structure and relationships.",
+  // },
+  // {
+  //   title: "How do you handle data security?",
+  //   content:
+  //     "Your data security is a top priority. Kakrola uses industry-standard encryption, secure AWS infrastructure, and automated backups. All data is encrypted in transit and at rest, and you maintain full control over your workspace data.",
+  // },
   {
     title: "Do you offer refunds?",
     content:
       "Yes! If you're not satisfied with Kakrola, I offer a 30-day money-back guarantee, no questions asked. You can try the platform risk-free and see if it's the right fit for your team.",
   },
-  {
-    title: "Can Kakrola scale with my team?",
-    content:
-      "Absolutely. The platform is built to grow with you, supporting teams from 5 to 100+ members. As your team grows, you can easily adjust your plan and seats. The infrastructure automatically scales to maintain fast performance regardless of team size.",
-  },
+  // {
+  //   title: "Can Kakrola scale with my team?",
+  //   content:
+  //     "Absolutely. The platform is built to grow with you, supporting teams from 5 to 100+ members. As your team grows, you can easily adjust your plan and seats. The infrastructure automatically scales to maintain fast performance regardless of team size.",
+  // },
 ];
 
 const PricingPage = () => {
@@ -48,12 +48,12 @@ const PricingPage = () => {
         <div className="wrapper py-20 sm:pt-32 space-y-20">
           <div className="text-center space-y-6">
             <h1 className="font-bold text-4xl sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
-              Everything Your Team <br /> Needs to Work Better Together
+              Where great teams <br /> get work done
             </h1>
-            <p className="mt-4 text-lg sm:text-xl lg:text-2xl text-gray-600 max-w-2xl mx-auto">
+            {/* <p className="mt-4 text-lg sm:text-xl lg:text-2xl text-gray-600 max-w-2xl mx-auto">
               Join growing teams who've simplified their workflow, reduced
               meetings, and gotten more done with Kakrola.
-            </p>
+            </p> */}
             <div className="flex items-center justify-center gap-4 text-sm text-gray-500">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-green-400" />

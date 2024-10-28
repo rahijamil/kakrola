@@ -2,8 +2,10 @@ import React from "react";
 import { Shield } from "lucide-react";
 import LandingPageHeader from "../LandingPageHeader";
 import LandingPageFooter from "../LandingPageFooter";
+import { notFound } from "next/navigation";
 
 const PrivacyPage = () => {
+  return notFound();
   return (
     <div className="relative overflow-hidden bg-gradient-to-br from-white via-primary-50 to-white min-h-screen">
       <LandingPageHeader />

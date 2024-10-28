@@ -67,7 +67,7 @@ const BuiltInPublicSection = () => {
             <div className="bg-white/50 backdrop-blur-sm rounded-lg p-6 border border-gray-100">
               <h3 className="font-semibold text-lg mb-4">Join the Journey</h3>
               <div className="space-y-4">
-                <Link
+                {/* <Link
                   href="https://github.com/rahijamil/kakrola-public"
                   className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-primary hover:bg-primary/5 transition-colors"
                   target="_blank"
@@ -80,7 +80,7 @@ const BuiltInPublicSection = () => {
                     </div>
                   </div>
                   <ArrowUpRight className="w-4 h-4" />
-                </Link>
+                </Link> */}
 
                 <Link
                   href="https://x.com/rahijamil_"
@@ -101,7 +101,7 @@ const BuiltInPublicSection = () => {
               </div>
             </div>
 
-            <div className="bg-primary/5 rounded-lg p-6">
+            {/* <div className="bg-primary/5 rounded-lg p-6">
               <h3 className="font-semibold mb-2">Latest Numbers</h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
@@ -121,7 +121,7 @@ const BuiltInPublicSection = () => {
                   <p className="font-bold text-xl">12</p>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
