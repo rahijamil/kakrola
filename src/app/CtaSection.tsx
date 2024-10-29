@@ -28,7 +28,7 @@ const CtaSection = () => {
             <Link href="/auth/signup" className="w-full sm:w-fit">
               <Button size="lg" className="shadow-lg w-full sm:w-fit">
                 <Rocket className="w-5 h-5 mr-2" />
-                Start 7-Day Trial
+                Start Free Trial
               </Button>
             </Link>
             <Link href="/pricing" className="w-full sm:w-fit">

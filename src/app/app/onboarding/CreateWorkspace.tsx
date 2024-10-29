@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import OnboardWrapper from "./OnboardWrapper";
 import { Button } from "@/components/ui/button";
@@ -104,7 +104,10 @@ const updateProfileCurrentWorkspace = async (
 const useWorkspaceCreation = (
   queryClient: ReturnType<typeof useQueryClient>,
   profile: ProfileType | null,
-  workspaceName: string
+  workspaceName: string,
+  setCreationStatus: (
+    status: "idle" | "creating" | "fetching" | "finalizing"
+  ) => void
 ) => {
   const createWorkspace =
     useCallback(async (): Promise<WorkspaceCreationResult> => {
@@ -114,7 +117,8 @@ const useWorkspaceCreation = (
       const abortController = new AbortController();
 
       try {
-        // Create workspace first
+        // Create workspace
+        setCreationStatus("creating");
         const workspace = await createNewWorkspace({
           workspaceData: createWorkspaceData(workspaceName, profile.id),
           profile,
@@ -128,6 +132,9 @@ const useWorkspaceCreation = (
           teamData: createTeamData(workspaceName, profile.id, workspace.id),
           profile,
         });
+
+        // Update status before template fetching
+        setCreationStatus("fetching");
 
         // Fetch both templates in parallel
         const [gettingStartedTemplateData, teamspaceTemplateData] =
@@ -153,6 +160,7 @@ const useWorkspaceCreation = (
               }),
           ]);
 
+        setCreationStatus("finalizing");
         // Create both templates in parallel
         const [gettingStartedResult, teamspaceResult] = await Promise.all([
           templateService.createPageFromTemplate(gettingStartedTemplateData, {
@@ -194,6 +202,9 @@ const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({
   setStep,
   setGettingStartedPageSlug,
 }) => {
+  const [creationStatus, setCreationStatus] = useState<
+    "idle" | "creating" | "fetching" | "finalizing"
+  >("idle");
   const [isLoading, setIsLoading] = React.useState(false);
   const submitAttempted = useRef(false);
   const queryClient = useQueryClient();
@@ -206,7 +217,8 @@ const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({
   const { createWorkspace } = useWorkspaceCreation(
     queryClient,
     profile,
-    workspace_name
+    workspace_name,
+    setCreationStatus
   );
 
   // Memoized values
@@ -262,6 +274,7 @@ const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({
       console.error("Failed to create workspace:", error);
       // TODO: Implement error handling (e.g., toast notification)
     } finally {
+      setCreationStatus("idle");
       setIsLoading(false);
     }
   }, [
@@ -320,9 +333,15 @@ const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({
           onClick={handleSubmit}
           disabled={isSubmitDisabled}
           className="w-full"
-          aria-busy={isLoading}
+          aria-busy={creationStatus !== "idle"}
         >
-          {isLoading ? <Spinner color="white" /> : "Continue"}
+          {creationStatus === "creating"
+            ? "Creating your workspace..."
+            : creationStatus === "fetching"
+            ? "Setting up your workspace templates..."
+            : creationStatus === "finalizing"
+            ? "Almost done..."
+            : "Continue"}
         </Button>
       </div>
     </OnboardWrapper>

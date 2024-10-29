@@ -87,7 +87,7 @@ export default function HeroSection() {
                   src="/images/hero_image.png"
                   fill
                   alt="Kakrola Hero"
-                  objectFit="cover"
+                  className="object-cover"
                   priority
                 />
               </div>

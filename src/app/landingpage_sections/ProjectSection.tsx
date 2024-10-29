@@ -235,7 +235,13 @@ const Feature = ({
       </div>
 
       <div className="relative aspect-video rounded-lg overflow-hidden">
-        <Image src={image} alt={imageAlt} fill priority objectFit="cover" />
+        <Image
+          src={image}
+          alt={imageAlt}
+          fill
+          priority
+          className="object-cover"
+        />
       </div>
 
       <ul className="flex md:hidden flex-col gap-2">
