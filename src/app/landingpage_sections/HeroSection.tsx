@@ -39,12 +39,12 @@ export default function HeroSection() {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left Column */}
             <div className="space-y-8 text-center lg:text-left">
-              <div className="inline-flex items-center px-4 py-2 bg-primary-100 rounded-full">
+              {/* <div className="inline-flex items-center px-4 py-2 bg-primary-100 rounded-full">
                 <span className="text-primary-700 text-sm font-medium">
                   30-Day Money-Back Guarantee
                 </span>
                 <ArrowRight className="w-4 h-4 ml-2 text-primary-700" />
-              </div>
+              </div> */}
 
               <h1 className="text-5xl sm:text-6xl font-bold text-gray-900 leading-tight">
                 The Complete
