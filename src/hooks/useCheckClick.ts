@@ -35,7 +35,7 @@ const useCheckClick = ({
         if (
           !canEditContent(
             role({
-              project: projects.find((pro) => pro.id == task.id) || null,
+              project: projects.find((pro) => pro.id == task.project_id) || null,
               page: null,
             }),
             !!projects.find((pro) => pro.id == task.id)?.team_id

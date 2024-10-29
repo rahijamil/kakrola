@@ -42,7 +42,7 @@ interface DashboardViewProps {
 }
 
 const COLORS = {
-  primary: "#796eff",
+  primary: "#005d85",
   secondary: "#00c7e6",
   accent: "#ffa800",
   danger: "#ff5263",
@@ -86,8 +86,8 @@ const DashboardView: React.FC<DashboardViewProps> = ({
         }),
         completed: tasks.filter(
           (task) =>
-            task.is_completed &&
-            new Date(task.completed_at!).toDateString() === date.toDateString()
+            task.is_completed 
+          && new Date(task.completed_at!).toDateString() === date.toDateString()
         ).length,
       };
     }).reverse();

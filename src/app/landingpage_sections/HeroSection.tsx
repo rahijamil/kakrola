@@ -87,6 +87,7 @@ export default function HeroSection() {
                 fill
                 alt="Kakrola Hero"
                 objectFit="cover"
+                priority
               />
             </div>
           </div>

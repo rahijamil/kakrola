@@ -50,7 +50,7 @@ const features: FeatureInterface[] = [
     title: "Work that flows",
     description:
       "Track projects, hit deadlines, and keep everyone aligned—without the chaos.",
-    image: "/images/board_view.png",
+    image: "/images/projects.png",
     imageAlt: "Project management dashboard",
     gradient: "from-tangerine-200 to-kakrola-200",
     category: "Project Management",
@@ -82,10 +82,10 @@ const features: FeatureInterface[] = [
         ),
         text: "Flexible views",
       },
-      {
-        icon: <Wand2 className="w-5 h-5 text-primary-500" strokeWidth={1.5} />,
-        text: "Smart automation",
-      },
+      // {
+      //   icon: <Wand2 className="w-5 h-5 text-primary-500" strokeWidth={1.5} />,
+      //   text: "Smart automation",
+      // },
       {
         icon: <Bell className="w-5 h-5 text-primary-500" strokeWidth={1.5} />,
         text: "Stay updated",
@@ -95,7 +95,7 @@ const features: FeatureInterface[] = [
   {
     title: "Team knowledge, organized",
     description: "Your team's docs, decisions, and processes—all in one place.",
-    image: "/images/docs.png",
+    image: "/images/pages.png",
     imageAlt: "Document management interface",
     gradient: "from-moonstone-200 to-kakrola-200",
     category: "Documentation",
@@ -120,10 +120,10 @@ const features: FeatureInterface[] = [
         ),
         text: "Rich documents",
       },
-      {
-        icon: <Search className="w-5 h-5 text-primary-500" strokeWidth={1.5} />,
-        text: "Quick search",
-      },
+      // {
+      //   icon: <Search className="w-5 h-5 text-primary-500" strokeWidth={1.5} />,
+      //   text: "Quick search",
+      // },
       {
         icon: <Shapes className="w-5 h-5 text-primary-500" strokeWidth={1.5} />,
         text: "Ready-made templates",
@@ -135,7 +135,7 @@ const features: FeatureInterface[] = [
     ],
   },
   {
-    title: "Discussions that drive work forward",
+    title: "Connected conversations",
     description:
       "Organized conversations that keep your team in sync, not buried in DMs. A focused alternative to scattered communication tools.",
     image: "/images/channel.png",
@@ -180,10 +180,10 @@ const features: FeatureInterface[] = [
         ),
         text: "Quick DMs when needed",
       },
-      {
-        icon: <Rocket className="w-6 h-6 text-primary-500" strokeWidth={1.5} />,
-        text: "Everything searchable",
-      },
+      // {
+      //   icon: <Rocket className="w-6 h-6 text-primary-500" strokeWidth={1.5} />,
+      //   text: "Everything searchable",
+      // },
     ],
   },
 ];
@@ -203,75 +203,61 @@ const Feature = ({
   feature: FeatureInterface;
 }) => (
   <div className="relative">
-    <div className="wrapper">
-      <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-        <div className="space-y-8">
-          <div className="space-y-4">
+    <div className="wrapper space-y-8">
+      <div className="flex items-center gap-12">
+        <div className="flex-1">
+          <div className="max-w-md">
             <Badge variant="secondary" className="mb-4">
               {category}
             </Badge>
-            <h2 className="font-bold text-gray-900 text-4xl leading-tight">
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight">
               {title}
             </h2>
             <p className="text-lg text-gray-600">{description}</p>
           </div>
-
-          <div className="relative lg:hidden">
-            <div
-              className={`absolute inset-0 bg-gradient-to-r ${gradient} rounded-3xl transform rotate-3 opacity-80`}
-            />
-            <div className="relative">
-              <Image
-                src={image}
-                alt={imageAlt}
-                width={600}
-                height={400}
-                className="rounded-2xl shadow-xl relative z-10"
-                priority
-              />
-            </div>
-          </div>
-
-          <ul className="grid sm:grid-cols-2 gap-4">
-            {features.map((item, idx) => (
-              <li key={idx} className="flex items-center gap-4 sm:p-3">
-                <div className="p-2 rounded-lg bg-primary-50">{item.icon}</div>
-                <span className="text-gray-700">{item.text}</span>
-              </li>
-            ))}
-          </ul>
-
-          {/* Subtle alternatives section */}
-          <div className="pt-8 border-t border-gray-100">
-            <div className="text-sm text-gray-500 mb-4">Alternative to</div>
-            <div className="flex flex-wrap gap-6 items-center">
-              {alternatives.map((alt, idx) => (
-                <div
-                  key={idx}
-                  className="opacity-40 hover:opacity-60 transition-opacity grayscale flex items-center gap-2"
-                >
-                  {alt.logo}
-                  {alt.name}
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
 
-        <div className="relative hidden lg:block">
-          <div
-            className={`absolute inset-0 bg-gradient-to-r ${gradient} rounded-3xl transform rotate-3 opacity-80`}
-          />
-          <div className="relative">
-            <Image
-              src={image}
-              alt={imageAlt}
-              width={600}
-              height={400}
-              className="rounded-2xl shadow-xl relative z-10"
-              priority
-            />
-          </div>
+        <ul className="hidden md:flex items-center whitespace-nowrap gap-8">
+          {features.map((item, idx) => (
+            <li key={idx} className="flex flex-col justify-center gap-4">
+              <div className="p-2 rounded-lg bg-primary-50 w-fit">
+                {item.icon}
+              </div>
+              <span className="text-gray-700">{item.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="relative aspect-video rounded-lg overflow-hidden">
+        <Image src={image} alt={imageAlt} fill priority objectFit="cover" />
+      </div>
+
+      <ul className="flex md:hidden flex-col gap-2">
+        {features.map((item, idx) => (
+          <li key={idx} className="flex items-center gap-4">
+            <div className="p-2 rounded-lg bg-primary-50 w-fit">
+              {item.icon}
+            </div>
+            <span className="text-gray-700">{item.text}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="h-px w-full bg-text-100 md:hidden"></div>
+
+      <div className="flex flex-col md:flex-row md:items-center gap-4">
+        <div className="text-sm text-gray-500">Alternative to</div>
+        <div className="flex flex-wrap gap-6 items-center">
+          {alternatives.map((alt, idx) => (
+            <div
+              key={idx}
+              className="opacity-40 hover:opacity-60 transition-opacity grayscale flex items-center gap-2"
+            >
+              {alt.logo}
+              {alt.name}
+            </div>
+          ))}
         </div>
       </div>
     </div>

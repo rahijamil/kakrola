@@ -15,8 +15,8 @@ export const priorities: {
 }[] = [
   { value: TaskPriority.P1, label: "Priority 1", color: "text-red-500" },
   { value: TaskPriority.P2, label: "Priority 2", color: "text-orange-500" },
-  { value: TaskPriority.P3, label: "Priority 4", color: "text-text-500" },
-  { value: TaskPriority.Priority, label: "Priority 3", color: "text-primary-600" },
+  { value: TaskPriority.P3, label: "Priority 3", color: "text-text-500" },
+  { value: TaskPriority.Priority, label: "Priority 4", color: "text-primary-600" },
 ];
 
 export const PriorityIcon = ({
