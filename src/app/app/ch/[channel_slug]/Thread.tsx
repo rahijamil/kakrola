@@ -64,9 +64,10 @@ const Thread = ({
         profile_id: profile.id,
         is_edited: false,
         thread_id: thread.id,
+        created_at: new Date().toISOString(),
       };
 
-      const tempReplies = [...replies, { ...replyData, id: tempId }];
+      const tempReplies = [...replies, { ...replyData, id: tempId, }];
       //   optimistic update
       setReplies(tempReplies);
       setReplyContent(null);

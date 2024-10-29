@@ -1,15 +1,6 @@
-export enum FeedbackEnum {
-  BUG = "BUG",
-  FEATURE = "FEATURE",
-  FEEDBACK = "FEEDBACK",
-}
-
 export interface FeedbackItem {
   id: string;
-  type: FeedbackEnum;
-  title: string;
-  description: string;
-  priority: "LOW" | "MEDIUM" | "HIGH";
+  feedback: string;
   status: "OPEN" | "IN_PROGRESS" | "CLOSED";
   created_at: string;
   updated_at: string;

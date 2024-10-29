@@ -1,10 +1,7 @@
 import { z } from "zod";
 
 export const feedbackSchema = z.object({
-  type: z.enum(["BUG", "FEATURE", "FEEDBACK"]),
-  title: z.string().min(5, "Title must be at least 5 characters").max(100),
-  description: z.string().min(10, "Please provide more details").max(1000),
-  priority: z.enum(["LOW", "MEDIUM", "HIGH"]).default("MEDIUM"),
+  feedback: z.string().min(10, "Please provide more details").max(1000),
   metadata: z
     .object({
       browser: z.string().optional(),

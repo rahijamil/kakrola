@@ -45,10 +45,7 @@ export function FeedbackDialog() {
   const form = useForm({
     resolver: zodResolver(feedbackSchema),
     defaultValues: {
-      type: "FEEDBACK",
-      title: "",
-      description: "",
-      priority: "MEDIUM",
+      feedback: "",
       metadata: {
         browser: navigator?.userAgent,
         url: window?.location.href,
@@ -153,86 +150,16 @@ export function FeedbackDialog() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="type"
+              name="feedback"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Type</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select feedback type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="BUG">Bug Report</SelectItem>
-                      <SelectItem value="FEATURE">Feature Request</SelectItem>
-                      <SelectItem value="FEEDBACK">General Feedback</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Brief summary of your feedback"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Please provide more details..."
+                      placeholder="If you see something, say something..."
                       className="h-24"
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="priority"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Priority</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select priority" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="LOW">Low</SelectItem>
-                      <SelectItem value="MEDIUM">Medium</SelectItem>
-                      <SelectItem value="HIGH">High</SelectItem>
-                    </SelectContent>
-                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -300,7 +227,7 @@ export function FeedbackDialog() {
 
             <DialogFooter>
               <Button type="submit" disabled={imageUploading || isSubmiting}>
-                {isSubmiting ? "Sending..." : "Send Feedback"}
+                {isSubmiting ? "Sending..." : "Send"}
               </Button>
             </DialogFooter>
           </form>

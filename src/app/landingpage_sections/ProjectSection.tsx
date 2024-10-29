@@ -1,7 +1,6 @@
 "use client";
 import React, { ReactNode } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import {
   Gauge,
   LayoutDashboard,
@@ -63,12 +62,7 @@ const Feature = ({
   <div className="relative">
     <div className="wrapper">
       <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-        <motion.div
-          className="space-y-8"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
+        <div className="space-y-8">
           <div className="space-y-4">
             <Badge variant="secondary" className="mb-4">
               {category}
@@ -79,13 +73,7 @@ const Feature = ({
             <p className="text-lg text-gray-600">{description}</p>
           </div>
 
-          <motion.div
-            className="relative lg:hidden"
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
+          <div className="relative lg:hidden">
             <div
               className={`absolute inset-0 bg-gradient-to-r ${gradient} rounded-3xl transform rotate-3 opacity-80`}
             />
@@ -99,21 +87,14 @@ const Feature = ({
                 priority
               />
             </div>
-          </motion.div>
+          </div>
 
           <ul className="grid sm:grid-cols-2 gap-4">
             {features.map((item, idx) => (
-              <motion.li
-                key={idx}
-                className="flex items-center gap-4 p-3"
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-              >
+              <li key={idx} className="flex items-center gap-4 p-3">
                 <div className="p-2 rounded-lg bg-primary-50">{item.icon}</div>
                 <span className="text-gray-700">{item.text}</span>
-              </motion.li>
+              </li>
             ))}
           </ul>
 
@@ -132,15 +113,9 @@ const Feature = ({
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          className="relative hidden lg:block"
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-        >
+        <div className="relative hidden lg:block">
           <div
             className={`absolute inset-0 bg-gradient-to-r ${gradient} rounded-3xl transform rotate-3 opacity-80`}
           />
@@ -154,7 +129,7 @@ const Feature = ({
               priority
             />
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   </div>
@@ -166,7 +141,7 @@ const ProjectSection = () => {
       title: "Work that flows",
       description:
         "Track projects, hit deadlines, and keep everyone aligned—without the chaos.",
-      image: "/images/feature1.png",
+      image: "/images/board_view.png",
       imageAlt: "Project management dashboard",
       gradient: "from-tangerine-200 to-kakrola-200",
       category: "Project Management",
@@ -216,7 +191,7 @@ const ProjectSection = () => {
       title: "Team knowledge, organized",
       description:
         "Your team's docs, decisions, and processes—all in one place.",
-      image: "/images/feature2.png",
+      image: "/images/docs.png",
       imageAlt: "Document management interface",
       gradient: "from-moonstone-200 to-kakrola-200",
       category: "Documentation",
@@ -268,7 +243,7 @@ const ProjectSection = () => {
       title: "Discussions that drive work forward",
       description:
         "Organized conversations that keep your team in sync, not buried in DMs. A focused alternative to scattered communication tools.",
-      image: "/images/feature3.png",
+      image: "/images/channel.png",
       imageAlt:
         "Team communication interface showing channels and thread discussions",
       gradient: "from-kale-200 to-kakrola-200",

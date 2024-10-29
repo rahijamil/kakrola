@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,40 +12,39 @@ import {
   Users,
   Zap,
 } from "lucide-react";
+import Image from "next/image";
 
-const features = [
-  {
-    id: "project",
-    title: "Project Management",
-    description:
-      "Track projects with multiple views, custom fields, and automated workflows",
-    icon: <CheckCircle2 className="w-6 h-6" />,
-    stat: "50% fewer meetings",
-    color: "bg-blue-500",
-  },
-  {
-    id: "docs",
-    title: "Document Collaboration",
-    description:
-      "Real-time collaboration with rich-text editing and version history",
-    icon: <FileText className="w-6 h-6" />,
-    stat: "30% faster documentation",
-    color: "bg-purple-500",
-  },
-  {
-    id: "chat",
-    title: "Team Communication",
-    description:
-      "Organized discussions with threads, channels, and file sharing",
-    icon: <Hash className="w-6 h-6" />,
-    stat: "40% less context switching",
-    color: "bg-green-500",
-  },
-];
+// const features = [
+//   {
+//     id: "project",
+//     title: "Project Management",
+//     description:
+//       "Track projects with multiple views, custom fields, and automated workflows",
+//     icon: <CheckCircle2 className="w-6 h-6" />,
+//     stat: "50% fewer meetings",
+//     color: "bg-blue-500",
+//   },
+//   {
+//     id: "docs",
+//     title: "Document Collaboration",
+//     description:
+//       "Real-time collaboration with rich-text editing and version history",
+//     icon: <FileText className="w-6 h-6" />,
+//     stat: "30% faster documentation",
+//     color: "bg-purple-500",
+//   },
+//   {
+//     id: "chat",
+//     title: "Team Communication",
+//     description:
+//       "Organized discussions with threads, channels, and file sharing",
+//     icon: <Hash className="w-6 h-6" />,
+//     stat: "40% less context switching",
+//     color: "bg-green-500",
+//   },
+// ];
 
 export default function HeroSection() {
-  const [activeFeature, setActiveFeature] = useState(features[0]);
-
   return (
     <div className="relative overflow-hidden bg-gradient-to-b from-white via-primary-50 to-white">
       <div className="wrapper py-20 md:pb-32">
@@ -83,11 +81,11 @@ export default function HeroSection() {
                 <br />
                 <span className="relative inline-block">
                   Workspace
-                  <motion.div
+                  <div
                     className="absolute -bottom-2 left-0 w-full h-3 bg-primary-200 -z-10"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 0.8 }}
+                    // initial={{ scaleX: 0 }}
+                    // animate={{ scaleX: 1 }}
+                    // transition={{ duration: 0.8 }}
                   />
                 </span>
                 <br />
@@ -113,42 +111,13 @@ export default function HeroSection() {
             </div>
 
             {/* Right Column - Feature Showcase */}
-            <div className="relative hidden lg:block">
-              <div className="bg-white rounded-xl shadow-xl p-8">
-                <div className="space-y-6">
-                  {features.map((feature) => (
-                    <motion.div
-                      key={feature.id}
-                      className={`p-6 rounded-lg cursor-pointer transition-all ${
-                        activeFeature.id === feature.id
-                          ? "bg-primary-50 border border-primary-200"
-                          : "hover:bg-gray-50"
-                      }`}
-                      onClick={() => setActiveFeature(feature)}
-                    >
-                      <div className="flex items-start gap-4">
-                        <div
-                          className={`p-3 rounded-lg ${feature.color} bg-opacity-10`}
-                        >
-                          {feature.icon}
-                        </div>
-                        <div className="space-y-2">
-                          <h3 className="font-semibold text-lg">
-                            {feature.title}
-                          </h3>
-                          <p className="text-gray-600">{feature.description}</p>
-                          <div className="inline-flex items-center gap-2 bg-green-100 px-3 py-1 rounded-full">
-                            <CheckCircle2 className="w-4 h-4 text-green-600" />
-                            <span className="text-sm font-medium text-green-700">
-                              {feature.stat}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
+            <div className="relative aspect-video rounded-lg overflow-hidden">
+              <Image
+                src="/images/hero_image.png"
+                fill
+                alt="Kakrola Hero"
+                objectFit="cover"
+              />
             </div>
           </div>
         </div>

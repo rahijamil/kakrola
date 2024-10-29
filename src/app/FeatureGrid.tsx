@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {
@@ -82,36 +81,10 @@ const pricingHighlights = [
 ];
 
 export const FeatureGrid = () => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-      },
-    },
-  };
-
   return (
     <section className="py-20 relative overflow-hidden">
       <div className="relative z-10 wrapper">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">
             Everything you need to succeed
           </h2>
@@ -119,21 +92,11 @@ export const FeatureGrid = () => {
             Powerful features designed to help your team collaborate,
             communicate, and deliver results.
           </p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-8 lg:gap-y-12"
-        >
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-8 lg:gap-y-12">
           {features.map((feature) => (
-            <motion.div
-              key={feature.title}
-              variants={itemVariants}
-              className="group relative"
-            >
+            <div key={feature.title} className="group relative">
               <div className="relative p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100">
                 <div className="flex items-start space-x-5">
                   <div className={`${feature.bgColor} p-3 rounded-xl`}>
@@ -152,9 +115,9 @@ export const FeatureGrid = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
 
       {/* Background decoration */}
