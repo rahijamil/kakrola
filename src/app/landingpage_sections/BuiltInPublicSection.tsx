@@ -48,6 +48,7 @@ const RecentUpdates = () => (
 );
 
 const BuiltInPublicSection = () => {
+  return null;
   return (
     <section className="space-y-20 md:py-20 wrapper">
       <div className="max-w-4xl mx-auto">

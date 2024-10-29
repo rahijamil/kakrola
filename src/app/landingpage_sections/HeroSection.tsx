@@ -81,14 +81,16 @@ export default function HeroSection() {
             </div>
 
             {/* Right Column - Feature Showcase */}
-            <div className="relative aspect-video rounded-lg overflow-hidden">
-              <Image
-                src="/images/hero_image.png"
-                fill
-                alt="Kakrola Hero"
-                objectFit="cover"
-                priority
-              />
+            <div className="bg-primary-100 p-4 md:p-8 rounded-lg">
+              <div className="relative aspect-video rounded-lg overflow-hidden border border-primary-500">
+                <Image
+                  src="/images/hero_image.png"
+                  fill
+                  alt="Kakrola Hero"
+                  objectFit="cover"
+                  priority
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -136,8 +136,10 @@ const features: FeatureInterface[] = [
   },
   {
     title: "Connected conversations",
+    // description:
+    //   "Organized conversations that keep your team in sync, not buried in DMs. A focused alternative to scattered communication tools.",
     description:
-      "Organized conversations that keep your team in sync, not buried in DMs. A focused alternative to scattered communication tools.",
+      "Organized conversations that keep your team in sync, not buried in DMs.",
     image: "/images/channel.png",
     imageAlt:
       "Team communication interface showing channels and thread discussions",
@@ -210,14 +212,17 @@ const Feature = ({
             <Badge variant="secondary" className="mb-4">
               {category}
             </Badge>
-            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight">
-              {title}
-            </h2>
-            <p className="text-lg text-gray-600">{description}</p>
+
+            <div className="space-y-4">
+              <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight">
+                {title}
+              </h2>
+              <p className="text-lg text-gray-600">{description}</p>
+            </div>
           </div>
         </div>
 
-        <ul className="hidden md:flex items-center whitespace-nowrap gap-8">
+        <ul className="hidden md:flex items-center gap-8 max-w-lg">
           {features.map((item, idx) => (
             <li key={idx} className="flex flex-col justify-center gap-4">
               <div className="p-2 rounded-lg bg-primary-50 w-fit">

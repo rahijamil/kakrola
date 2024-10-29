@@ -84,8 +84,8 @@ export const FeatureGrid = () => {
   return (
     <section className="py-20 relative overflow-hidden">
       <div className="relative z-10 wrapper">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">
+        <div className="text-center mb-16 space-y-4">
+          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight">
             Everything you need to succeed
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
