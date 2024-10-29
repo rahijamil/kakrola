@@ -2,12 +2,10 @@ import React from "react";
 import { Users, Building2, Rocket } from "lucide-react";
 import LandingPageHeader from "../LandingPageHeader";
 import LandingPageFooter from "../LandingPageFooter";
-import { notFound } from "next/navigation";
 
 const AboutPage = () => {
-  return notFound();
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-white via-primary-25 to-white min-h-screen">
+    <>
       <LandingPageHeader />
       <div className="wrapper py-32">
         <div className="max-w-4xl mx-auto">
@@ -74,12 +72,9 @@ const AboutPage = () => {
           </div>
         </div>
       </div>
-      {/* Background Decoration */}
-      <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 blur-3xl opacity-20">
-        <div className="aspect-square h-96 rounded-full bg-gradient-to-br from-primary-400 to-purple-400" />
-      </div>
+
       <LandingPageFooter />
-    </div>
+    </>
   );
 };
 

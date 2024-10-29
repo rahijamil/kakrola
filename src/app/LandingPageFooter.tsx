@@ -5,17 +5,18 @@ import KakrolaLogo from "./kakrolaLogo";
 
 const footerLinks = {
   product: [
+    { label: "About Us", href: "/about" },
     { label: "Pricing", href: "/pricing" },
     // { label: "What's New", href: "/updates" },
   ],
-  // company: [
-  //   { label: "About Us", href: "/about" },
-  //   { label: "Blog", href: "/blog" },
-  //   // { label: "Contact", href: "/contact" },
-  // ],
+  company: [
+    // { label: "Blog", href: "/blog" },
+    // { label: "Contact", href: "/contact" },
+  ],
   legal: [
     { label: "Terms", href: "/terms" },
     { label: "Privacy", href: "/privacy" },
+    { label: "Refund", href: "/refund" },
   ],
 };
 
@@ -99,24 +100,6 @@ const LandingPageFooter = () => {
                 </h3>
                 <ul className="space-y-3">
                   {footerLinks.resources.map((link) => (
-                    <li key={link.label}>
-                      <Link
-                        href={link.href}
-                        className="text-gray-500 hover:text-primary-600 transition-colors"
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-semibold text-gray-900 tracking-wide uppercase mb-4">
-                  Company
-                </h3>
-                <ul className="space-y-3">
-                  {footerLinks.company.map((link) => (
                     <li key={link.label}>
                       <Link
                         href={link.href}
