@@ -14,36 +14,6 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
-// const features = [
-//   {
-//     id: "project",
-//     title: "Project Management",
-//     description:
-//       "Track projects with multiple views, custom fields, and automated workflows",
-//     icon: <CheckCircle2 className="w-6 h-6" />,
-//     stat: "50% fewer meetings",
-//     color: "bg-blue-500",
-//   },
-//   {
-//     id: "docs",
-//     title: "Document Collaboration",
-//     description:
-//       "Real-time collaboration with rich-text editing and version history",
-//     icon: <FileText className="w-6 h-6" />,
-//     stat: "30% faster documentation",
-//     color: "bg-purple-500",
-//   },
-//   {
-//     id: "chat",
-//     title: "Team Communication",
-//     description:
-//       "Organized discussions with threads, channels, and file sharing",
-//     icon: <Hash className="w-6 h-6" />,
-//     stat: "40% less context switching",
-//     color: "bg-green-500",
-//   },
-// ];
-
 export default function HeroSection() {
   return (
     <div className="relative overflow-hidden bg-gradient-to-b from-white via-primary-50 to-white">
@@ -68,7 +38,7 @@ export default function HeroSection() {
           {/* Main Content */}
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left Column */}
-            <div className="space-y-8">
+            <div className="space-y-8 text-center lg:text-left">
               <div className="inline-flex items-center px-4 py-2 bg-primary-100 rounded-full">
                 <span className="text-primary-700 text-sm font-medium">
                   30-Day Money-Back Guarantee
@@ -101,7 +71,7 @@ export default function HeroSection() {
                 <Link href="/auth/signup" className="w-full sm:w-fit">
                   <Button size="lg" className="shadow-lg w-full sm:w-fit">
                     <Rocket className="w-5 h-5 mr-2" />
-                    Start 7-Day Trial
+                    Start Free Trial
                   </Button>
                 </Link>
                 {/* <span className="text-sm text-gray-500">

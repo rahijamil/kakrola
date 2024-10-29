@@ -94,10 +94,10 @@ export const FeatureGrid = () => {
           </p>
         </div>
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-8 lg:gap-y-12">
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 lg:gap-y-12">
           {features.map((feature) => (
             <div key={feature.title} className="group relative">
-              <div className="relative p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100">
+              <div className="relative p-4 md:p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100">
                 <div className="flex items-start space-x-5">
                   <div className={`${feature.bgColor} p-3 rounded-xl`}>
                     <feature.icon

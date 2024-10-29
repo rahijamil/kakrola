@@ -106,7 +106,7 @@ export default function LandingPageHeader({ forAuth }: { forAuth?: boolean }) {
                       <Button className="relative group overflow-hidden shadow-lg hover:shadow-xl transition-all">
                         <span className="relative z-10 flex items-center gap-2">
                           <Rocket className="w-4 h-4" strokeWidth={1.5} />
-                          Start 7-Day Trial
+                          Start Free Trial
                         </span>
                         <motion.div
                           className="absolute inset-0 bg-primary-600"
@@ -166,7 +166,7 @@ export default function LandingPageHeader({ forAuth }: { forAuth?: boolean }) {
                     <Link href="/auth/signup" className="block">
                       <Button size="sm" className="w-full">
                         <Rocket className="w-4 h-4 mr-2" strokeWidth={1.5} />
-                        Start 7-Day Trial
+                        Start Free Trial
                       </Button>
                     </Link>
                   </div>

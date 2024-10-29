@@ -45,6 +45,149 @@ interface FeatureInterface {
   }[];
 }
 
+const features: FeatureInterface[] = [
+  {
+    title: "Work that flows",
+    description:
+      "Track projects, hit deadlines, and keep everyone aligned—without the chaos.",
+    image: "/images/board_view.png",
+    imageAlt: "Project management dashboard",
+    gradient: "from-tangerine-200 to-kakrola-200",
+    category: "Project Management",
+    alternatives: [
+      {
+        name: "Trello",
+        logo: <SiTrello className="w-5 h-5" />,
+      },
+      {
+        name: "Asana",
+        logo: <SiAsana className="w-5 h-5" />,
+      },
+      {
+        name: "Monday",
+        logo: <CgMonday className="w-5 h-5" />,
+      },
+    ],
+    features: [
+      {
+        icon: <Gauge className="w-5 h-5 text-primary-500" strokeWidth={1.5} />,
+        text: "Everything at a glance",
+      },
+      {
+        icon: (
+          <LayoutDashboard
+            className="w-5 h-5 text-primary-500"
+            strokeWidth={1.5}
+          />
+        ),
+        text: "Flexible views",
+      },
+      {
+        icon: <Wand2 className="w-5 h-5 text-primary-500" strokeWidth={1.5} />,
+        text: "Smart automation",
+      },
+      {
+        icon: <Bell className="w-5 h-5 text-primary-500" strokeWidth={1.5} />,
+        text: "Stay updated",
+      },
+    ],
+  },
+  {
+    title: "Team knowledge, organized",
+    description: "Your team's docs, decisions, and processes—all in one place.",
+    image: "/images/docs.png",
+    imageAlt: "Document management interface",
+    gradient: "from-moonstone-200 to-kakrola-200",
+    category: "Documentation",
+    alternatives: [
+      {
+        name: "Notion",
+        logo: <SiNotion className="w-5 h-5" />,
+      },
+      {
+        name: "Confluence",
+        logo: <SiConfluence className="w-5 h-5" />,
+      },
+      {
+        name: "GitBook",
+        logo: <SiGitbook className="w-5 h-5" />,
+      },
+    ],
+    features: [
+      {
+        icon: (
+          <ScrollText className="w-5 h-5 text-primary-500" strokeWidth={1.5} />
+        ),
+        text: "Rich documents",
+      },
+      {
+        icon: <Search className="w-5 h-5 text-primary-500" strokeWidth={1.5} />,
+        text: "Quick search",
+      },
+      {
+        icon: <Shapes className="w-5 h-5 text-primary-500" strokeWidth={1.5} />,
+        text: "Ready-made templates",
+      },
+      {
+        icon: <Clock className="w-5 h-5 text-primary-500" strokeWidth={1.5} />,
+        text: "Real-time collaboration",
+      },
+    ],
+  },
+  {
+    title: "Discussions that drive work forward",
+    description:
+      "Organized conversations that keep your team in sync, not buried in DMs. A focused alternative to scattered communication tools.",
+    image: "/images/channel.png",
+    imageAlt:
+      "Team communication interface showing channels and thread discussions",
+    gradient: "from-kale-200 to-kakrola-200",
+    category: "Team Communication",
+    alternatives: [
+      {
+        name: "Slack",
+        logo: <SiSlack className="w-5 h-5" />,
+      },
+      {
+        name: "Microsoft Teams",
+        logo: <BsMicrosoftTeams className="w-5 h-5" />,
+      },
+      {
+        name: "Discord",
+        logo: <SiDiscord className="w-5 h-5" />,
+      },
+    ],
+    features: [
+      {
+        icon: <Hash className="w-6 h-6 text-primary-500" strokeWidth={1.5} />,
+        text: "Channels that match your workflow",
+      },
+      {
+        icon: (
+          <MessageSquareMore
+            className="w-6 h-6 text-primary-500"
+            strokeWidth={1.5}
+          />
+        ),
+        text: "Rich threads for deeper discussions",
+      },
+      {
+        icon: (
+          <MessagesSquare
+            className="w-6 h-6 text-primary-500"
+            strokeWidth={1.5}
+          />
+        ),
+        text: "Quick DMs when needed",
+      },
+      {
+        icon: <Rocket className="w-6 h-6 text-primary-500" strokeWidth={1.5} />,
+        text: "Everything searchable",
+      },
+    ],
+  },
+];
+
 const Feature = ({
   feature: {
     title,
@@ -91,7 +234,7 @@ const Feature = ({
 
           <ul className="grid sm:grid-cols-2 gap-4">
             {features.map((item, idx) => (
-              <li key={idx} className="flex items-center gap-4 p-3">
+              <li key={idx} className="flex items-center gap-4 sm:p-3">
                 <div className="p-2 rounded-lg bg-primary-50">{item.icon}</div>
                 <span className="text-gray-700">{item.text}</span>
               </li>
@@ -136,167 +279,8 @@ const Feature = ({
 );
 
 const ProjectSection = () => {
-  const features: FeatureInterface[] = [
-    {
-      title: "Work that flows",
-      description:
-        "Track projects, hit deadlines, and keep everyone aligned—without the chaos.",
-      image: "/images/board_view.png",
-      imageAlt: "Project management dashboard",
-      gradient: "from-tangerine-200 to-kakrola-200",
-      category: "Project Management",
-      alternatives: [
-        {
-          name: "Trello",
-          logo: <SiTrello className="w-5 h-5" />,
-        },
-        {
-          name: "Asana",
-          logo: <SiAsana className="w-5 h-5" />,
-        },
-        {
-          name: "Monday",
-          logo: <CgMonday className="w-5 h-5" />,
-        },
-      ],
-      features: [
-        {
-          icon: (
-            <Gauge className="w-5 h-5 text-primary-500" strokeWidth={1.5} />
-          ),
-          text: "Everything at a glance",
-        },
-        {
-          icon: (
-            <LayoutDashboard
-              className="w-5 h-5 text-primary-500"
-              strokeWidth={1.5}
-            />
-          ),
-          text: "Flexible views",
-        },
-        {
-          icon: (
-            <Wand2 className="w-5 h-5 text-primary-500" strokeWidth={1.5} />
-          ),
-          text: "Smart automation",
-        },
-        {
-          icon: <Bell className="w-5 h-5 text-primary-500" strokeWidth={1.5} />,
-          text: "Stay updated",
-        },
-      ],
-    },
-    {
-      title: "Team knowledge, organized",
-      description:
-        "Your team's docs, decisions, and processes—all in one place.",
-      image: "/images/docs.png",
-      imageAlt: "Document management interface",
-      gradient: "from-moonstone-200 to-kakrola-200",
-      category: "Documentation",
-      alternatives: [
-        {
-          name: "Notion",
-          logo: <SiNotion className="w-5 h-5" />,
-        },
-        {
-          name: "Confluence",
-          logo: <SiConfluence className="w-5 h-5" />,
-        },
-        {
-          name: "GitBook",
-          logo: <SiGitbook className="w-5 h-5" />,
-        },
-      ],
-      features: [
-        {
-          icon: (
-            <ScrollText
-              className="w-5 h-5 text-primary-500"
-              strokeWidth={1.5}
-            />
-          ),
-          text: "Rich documents",
-        },
-        {
-          icon: (
-            <Search className="w-5 h-5 text-primary-500" strokeWidth={1.5} />
-          ),
-          text: "Quick search",
-        },
-        {
-          icon: (
-            <Shapes className="w-5 h-5 text-primary-500" strokeWidth={1.5} />
-          ),
-          text: "Ready-made templates",
-        },
-        {
-          icon: (
-            <Clock className="w-5 h-5 text-primary-500" strokeWidth={1.5} />
-          ),
-          text: "Real-time collaboration",
-        },
-      ],
-    },
-    {
-      title: "Discussions that drive work forward",
-      description:
-        "Organized conversations that keep your team in sync, not buried in DMs. A focused alternative to scattered communication tools.",
-      image: "/images/channel.png",
-      imageAlt:
-        "Team communication interface showing channels and thread discussions",
-      gradient: "from-kale-200 to-kakrola-200",
-      category: "Team Communication",
-      alternatives: [
-        {
-          name: "Slack",
-          logo: <SiSlack className="w-5 h-5" />,
-        },
-        {
-          name: "Microsoft Teams",
-          logo: <BsMicrosoftTeams className="w-5 h-5" />,
-        },
-        {
-          name: "Discord",
-          logo: <SiDiscord className="w-5 h-5" />,
-        },
-      ],
-      features: [
-        {
-          icon: <Hash className="w-6 h-6 text-primary-500" strokeWidth={1.5} />,
-          text: "Channels that match your workflow",
-        },
-        {
-          icon: (
-            <MessageSquareMore
-              className="w-6 h-6 text-primary-500"
-              strokeWidth={1.5}
-            />
-          ),
-          text: "Rich threads for deeper discussions",
-        },
-        {
-          icon: (
-            <MessagesSquare
-              className="w-6 h-6 text-primary-500"
-              strokeWidth={1.5}
-            />
-          ),
-          text: "Quick DMs when needed",
-        },
-        {
-          icon: (
-            <Rocket className="w-6 h-6 text-primary-500" strokeWidth={1.5} />
-          ),
-          text: "Everything searchable",
-        },
-      ],
-    },
-  ];
-
   return (
-    <section className="bg-white space-y-40 py-20">
+    <section className="bg-white space-y-20 md:space-y-40 md:py-20">
       {features.map((feature, index) => (
         <Feature key={index} feature={feature} />
       ))}
