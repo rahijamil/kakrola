@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://www.kakrola.com",
     siteName: "Kakrola",
-    title: "Keep Your Team Organized Without the Chaos | Kakrola",
+    title: "The Complete Workspace for Teams | Kakrola",
     description:
       "Tired of your team's work being scattered across different apps? Kakrola keeps everything in one place: tasks, docs, and team chat. It's simple, fast, and actually helps you get things done. Start free and see the difference.",
     images: [
@@ -87,7 +87,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@kakrola",
     creator: "@kakrola",
-    title: "Finally, a Simple Way to Keep Your Team Organized | Kakrola",
+    title: "The Complete Workspace for Teams | Kakrola",
     description:
       "No more juggling multiple apps or losing track of important work. Get your team on the same page with one simple, fast workspace. Try it free.",
     images: ["/images/twitter-card-800x418.jpg"],
