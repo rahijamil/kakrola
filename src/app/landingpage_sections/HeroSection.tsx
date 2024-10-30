@@ -36,7 +36,7 @@ export default function HeroSection() {
           </div>
 
           {/* Main Content */}
-          <div className="space-y-4 sm:space-y-8">
+          <div className="space-y-8">
             <div className="gird lg:grid-cols-2 gap-16 items-center">
               {/* <div className="inline-flex items-center px-4 py-2 bg-primary-100 rounded-full">
                 <span className="text-primary-700 text-sm font-medium">
@@ -45,11 +45,12 @@ export default function HeroSection() {
                 <ArrowRight className="w-4 h-4 ml-2 text-primary-700" />
               </div> */}
 
-              <Link
-                href="https://www.producthunt.com/products/kakrola?utm_source=badge-follow&utm_medium=badge&utm_souce=badge-kakrola"
-                target="_blank"
-              >
-                {/* <Image
+              <div className="flex items-center justify-center md:justify-start">
+                <Link
+                  href="https://www.producthunt.com/products/kakrola?utm_source=badge-follow&utm_medium=badge&utm_souce=badge-kakrola"
+                  target="_blank"
+                >
+                  {/* <Image
                   src="https://api.producthunt.com/widgets/embed-image/v1/follow.svg?product_id=670035&theme=light"
                   alt="Kakrola - The&#0032;all&#0045;in&#0045;one&#0032;workspace&#0032;for&#0032;teams | Product Hunt"
                   width={250}
@@ -57,9 +58,9 @@ export default function HeroSection() {
                   className="min-w-[250px] min-h-[54px]"
                 /> */}
 
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="250" height="54" viewBox="0 0 250 54" version="1.1">
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="250" height="54" viewBox="0 0 250 54" version="1.1">
   <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
     <g transform="translate(-130.000000, -73.000000)">
       <g transform="translate(130.000000, 73.000000)">
@@ -76,21 +77,22 @@ export default function HeroSection() {
     </g>
   </g>
 </svg>`,
-                  }}
-                ></span>
-              </Link>
+                    }}
+                  ></span>
+                </Link>
+              </div>
             </div>
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               {/* Left Column */}
               <div className="space-y-8 text-center lg:text-left">
-                <h1 className="space-y-2 lg:space-y-3 text-left">
+                <h1 className="space-y-2 lg:space-y-3">
                   <span className="block text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 tracking-tight">
                     One space for
                   </span>
                   <span className="block text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 tracking-tight">
                     <span className="relative inline-block">
                       your team
-                      <div className="absolute -bottom-2 left-0 w-full border-b-[12px] border-primary-200 border-dashed -z-10 transform origin-left transition-transform duration-500 ease-out" />
+                      <div className="absolute -bottom-2 left-0 w-full border-b-8 lg:border-b-[12px] border-primary-200 border-dashed -z-10 transform origin-left transition-transform duration-500 ease-out" />
                     </span>
                   </span>
                   <span className="block text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 tracking-tight">
