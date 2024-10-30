@@ -7,7 +7,7 @@ import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { supabaseBrowser } from "@/utils/supabase/client";
 
 const useDms = () => {
-  const { profile } = useAuthProvider();
+  const { profile, workspacesWithMembers } = useAuthProvider();
   const { pages, projects } = useSidebarDataProvider();
   const queryClient = useQueryClient();
 
@@ -24,6 +24,7 @@ const useDms = () => {
       getDmContacts({
         pages,
         projects,
+        workspacesWithMembers,
         profileId: profile?.id,
       }),
     enabled: (pages.length > 0 || projects.length > 0) && !!profile?.id,

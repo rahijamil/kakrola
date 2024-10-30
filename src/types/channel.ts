@@ -1,9 +1,10 @@
 import { TaskCommentType } from "./comment";
 import { TeamType } from "./team";
+import { ProfileType } from "./user";
 import { WorkspaceType } from "./workspace";
 
 export interface ChannelType {
-  id: number;
+  id: number | string;
   created_at?: string;
   updated_at?: string;
   profile_id: string;
@@ -49,8 +50,8 @@ export interface ThreadType {
   id: number;
   created_at?: string;
   updated_at?: string;
-  profile_id: string;
-  channel_id: number;
+  profile_id: ProfileType['id'];
+  channel_id: ChannelType['id'];
   title: string;
   slug: string;
   content: string;

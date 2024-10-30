@@ -1,5 +1,8 @@
 import { useAuthProvider } from "@/context/AuthContext";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
+import { ChannelType } from "@/types/channel";
+import { PageType } from "@/types/pageTypes";
+import { ProjectType } from "@/types/project";
 import {
   PersonalMemberForPageType,
   PersonalMemberForProjectType,
@@ -13,7 +16,7 @@ const useFavorite = ({
   column_name,
   team_id,
 }: {
-  column_value: number;
+  column_value: PageType["id"] | ProjectType["id"] | ChannelType["id"];
   column_name: "page_id" | "project_id" | "channel_id";
   team_id?: TeamType["id"];
 }) => {
@@ -54,7 +57,7 @@ const useFavorite = ({
               )
             : [
                 ...findTeamMemberSettings.projects,
-                { id: column_value, is_favorite: true, },
+                { id: column_value, is_favorite: true },
               ],
         };
       } else if (column_name == "page_id") {
@@ -72,7 +75,7 @@ const useFavorite = ({
               )
             : [
                 ...findTeamMemberSettings.pages,
-                { id: column_value, is_favorite: true, },
+                { id: column_value, is_favorite: true },
               ],
         };
       } else if (column_name == "channel_id") {
@@ -90,7 +93,7 @@ const useFavorite = ({
               )
             : [
                 ...findTeamMemberSettings.channels,
-                { id: column_value, is_favorite: true, },
+                { id: column_value, is_favorite: true },
               ],
         };
       }

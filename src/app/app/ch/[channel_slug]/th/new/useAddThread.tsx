@@ -2,9 +2,11 @@ import { useAuthProvider } from "@/context/AuthContext";
 import { ChannelType, ThreadType } from "@/types/channel";
 import { generateSlug } from "@/utils/generateSlug";
 import { supabaseBrowser } from "@/utils/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { JSONContent } from "novel";
 import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 const useAddThread = ({ channel }: { channel: ChannelType }) => {
   const { profile } = useAuthProvider();
@@ -16,6 +18,7 @@ const useAddThread = ({ channel }: { channel: ChannelType }) => {
   const [error, setError] = useState<string | null>(null);
 
   const [charsCount, setCharsCount] = useState(0);
+  const queryClient = useQueryClient();
 
   const handleAddThread = async () => {
     if (!profile?.id || !channel) return;
@@ -30,6 +33,7 @@ const useAddThread = ({ channel }: { channel: ChannelType }) => {
       return;
     }
 
+    const tempId = uuidv4();
     try {
       setLoading(true);
       setError(null);
@@ -43,20 +47,57 @@ const useAddThread = ({ channel }: { channel: ChannelType }) => {
         is_edited: false,
       };
 
+      // optimistic update
+      queryClient.setQueryData(
+        ["channelDetails", channel.id, profile.id],
+        (oldData: {
+          channel: ChannelType | null;
+          threads: ThreadType[] | null;
+        }) => ({
+          ...oldData,
+          threads: [...(oldData.threads || []), { ...threadData, id: tempId }],
+        })
+      );
+
       const { data, error } = await supabaseBrowser
         .from("threads")
         .insert(threadData)
-        .select("slug")
+        .select("id, slug")
         .single();
 
       if (error) throw error;
 
       if (data) {
+        queryClient.setQueryData(
+          ["channelDetails", channel.id, profile.id],
+          (oldData: {
+            channel: ChannelType | null;
+            threads: ThreadType[] | null;
+          }) => ({
+            ...oldData,
+            threads: (oldData.threads || []).map((item) =>
+              item.id.toString() == tempId ? { ...item, ...data } : item
+            ),
+          })
+        );
         router.replace(`/app/ch/${channel.slug}/th/${data.slug}`);
       }
     } catch (error: any) {
       console.error(error);
       error.message && setError(error.message);
+
+      queryClient.setQueryData(
+        ["channelDetails", channel.id, profile.id],
+        (oldData: {
+          channel: ChannelType | null;
+          threads: ThreadType[] | null;
+        }) => ({
+          ...oldData,
+          threads: (oldData.threads || []).filter(
+            (item) => item.id.toString() != tempId
+          ),
+        })
+      );
     } finally {
       setLoading(false);
     }

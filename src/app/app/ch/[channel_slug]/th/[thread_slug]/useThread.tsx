@@ -1,5 +1,5 @@
 import { getProfileById } from "@/lib/queries";
-import { ThreadReplyType, ThreadType } from "@/types/channel";
+import { ChannelType, ThreadReplyType, ThreadType } from "@/types/channel";
 import { ProfileType } from "@/types/user";
 import { supabaseBrowser } from "@/utils/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -7,7 +7,7 @@ import { isSameDay } from "date-fns";
 import React, { useEffect, useState } from "react";
 
 const getThread = async (
-  channel_id?: number,
+  channel_id?: ChannelType['id'],
   thread_slug?: string | null
 ): Promise<{
   thread: ThreadType | null;
@@ -52,7 +52,10 @@ interface GroupedReply {
   }[];
 }
 
-const useThread = (channel_id?: number, thread_slug?: string | null) => {
+const useThread = (
+  channel_id?: ChannelType["id"],
+  thread_slug?: string | null
+) => {
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({

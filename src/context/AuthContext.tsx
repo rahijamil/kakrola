@@ -35,7 +35,7 @@ interface Workspace {
   } | null;
 }
 
-interface WorkspaceWithMember {
+export interface WorkspaceWithMember {
   workspace_member: WorkspaceMember;
   workspace: Workspace;
 }

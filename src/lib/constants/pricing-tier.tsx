@@ -21,7 +21,7 @@ export interface Tier {
   idealFor?: string;
 }
 
-export const pricingTiersForFure: Tier[] = [
+export const pricingTiersForFuture: Tier[] = [
   {
     name: "Plus",
     id: "plus",

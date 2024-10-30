@@ -9,7 +9,7 @@ import { ThreadType } from "@/types/channel";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import useScreen from "@/hooks/useScreen";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { ProfileType } from "@/types/user";

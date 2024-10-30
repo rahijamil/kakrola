@@ -3,6 +3,8 @@ import { supabaseBrowser } from "@/utils/supabase/client";
 import { PageType } from "@/types/pageTypes";
 import { ProjectType } from "@/types/project";
 import { ProfileType } from "@/types/user";
+import { WorkspaceType } from "@/types/workspace";
+import { WorkspaceWithMember } from "@/context/AuthContext";
 
 export const getDmContacts = async ({
   pages,
@@ -11,6 +13,7 @@ export const getDmContacts = async ({
 }: {
   pages: PageType[];
   projects: ProjectType[];
+  workspacesWithMembers: WorkspaceWithMember[];
   profileId?: ProfileType["id"];
 }): Promise<DmContactType[]> => {
   if (!profileId) return [];

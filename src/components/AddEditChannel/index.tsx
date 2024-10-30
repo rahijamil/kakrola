@@ -14,6 +14,7 @@ import { useSidebarDataProvider } from "@/context/SidebarDataContext";
 import PortalWrapper from "../PortalWrapper";
 import { TeamType } from "@/types/team";
 import { Dialog, DialogContent } from "../ui/dialog";
+import { v4 as uuidv4 } from "uuid";
 
 const AddEditChannel = ({
   teamId,
@@ -54,6 +55,8 @@ const AddEditChannel = ({
       setError("Channel name is required.");
       return;
     }
+
+    const tempId = uuidv4();
 
     try {
       setLoading(true);
@@ -105,6 +108,7 @@ const AddEditChannel = ({
         // optimistic udpate
       } else {
         // optimistic udpate
+        setChannels([...channels, { ...channelData, id: tempId }]);
 
         const { data, error } = await supabaseBrowser
           .from("channels")
@@ -113,10 +117,19 @@ const AddEditChannel = ({
           .single();
 
         if (error) throw error;
+
+        if (data.id) {
+          setChannels(
+            channels.map((ch) =>
+              ch.id == tempId ? { ...ch, id: data.id } : ch
+            )
+          );
+        }
       }
     } catch (error: any) {
       console.error(error);
       error.message && setError(error.message);
+      setChannels(channels.filter((ch) => ch.id !== tempId));
     } finally {
       setLoading(false);
       onClose();

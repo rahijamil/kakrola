@@ -14,6 +14,7 @@ import { PageType } from "@/types/pageTypes";
 import { ChannelType, ThreadType } from "@/types/channel";
 import { TeamType } from "@/types/team";
 import { canEditContent } from "@/utils/permissionUtils";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ArchiveConfirm = ({
   project,
@@ -32,9 +33,11 @@ const ArchiveConfirm = ({
   team?: TeamType;
   handleArchive?: () => void;
 }) => {
-  const { projects, setProjects, pages, setPages } = useSidebarDataProvider();
+  const { projects, setProjects, pages, setPages, channels, setChannels } =
+    useSidebarDataProvider();
   const { profile } = useAuthProvider();
   const { role } = useRole();
+  const queryClient = useQueryClient();
 
   const table = project
     ? "projects"
@@ -61,12 +64,26 @@ const ArchiveConfirm = ({
 
     if (
       !canEditContent(
-        role({ project: project || null, page: null }),
-        !!project?.team_id
+        role({
+          project: project || null,
+          page: page || null,
+          team_id:
+            channel?.team_id ||
+            (thread
+              ? channels.find((ch) => ch.id == thread?.channel_id)?.team_id
+              : undefined),
+        }),
+        !!project?.team_id ||
+          !!page?.team_id ||
+          !!channel?.team_id ||
+          (thread && channels.find((ch) => ch.id == thread.channel_id)?.team_id)
+          ? true
+          : false
       )
     )
       return;
 
+    // Update the state for the deleted item
     if (project) {
       const updatedProjects = projects.map((p) => {
         if (p.id === project.id) {
@@ -83,6 +100,24 @@ const ArchiveConfirm = ({
         return p;
       });
       setPages(updatedPages);
+    } else if (channel) {
+      const updatedChannels = channels.map((ch) =>
+        ch.id == channel.id ? { ...ch, is_archived: true } : ch
+      );
+      setChannels(updatedChannels);
+    } else if (thread) {
+      queryClient.setQueryData(
+        ["channelDetails", thread.channel_id, profile.id],
+        (oldData: {
+          channel: ChannelType | null;
+          threads: ThreadType[] | null;
+        }) => ({
+          ...oldData,
+          threads: oldData.threads?.map((th) =>
+            th.id == thread.id ? { ...th, is_archived: true } : th
+          ),
+        })
+      );
     }
 
     const { error } = await supabaseBrowser

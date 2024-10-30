@@ -22,9 +22,11 @@ const poppins = Poppins({
 // const nunito = Nunito({ subsets: ["latin"], fallback: ["Helvetica", "Arial"] });
 
 export const metadata: Metadata = {
-  title: "Kakrola: The Complete Workspace for Teams",
+  title: "Kakrola: One space for your team to thrive",
+  // description:
+  //   "Say goodbye to scattered tools and endless app switching. Kakrola brings your team's tasks, docs, and conversations into one clean, fast workspace. Perfect for busy teams who need to stay organized without the hassle. Try it free—no credit card needed.",
   description:
-    "Say goodbye to scattered tools and endless app switching. Kakrola brings your team's tasks, docs, and conversations into one clean, fast workspace. Perfect for busy teams who need to stay organized without the hassle. Try it free—no credit card needed.",
+    "Finally, a workspace that feels natural. Kakrola combines your team's tasks, docs, and chats in one lightning-fast home - no more tab jungle. Built for teams who believe great work should feel effortless.",
   keywords: [
     "team organization",
     "work management",

@@ -11,6 +11,22 @@ export enum ActivityAction {
   DELETED_PAGE = "deleted_page",
   LEAVED_PAGE = "leaved_page",
 
+  // Thread actions
+  CREATED_THREAD = "created_thread",
+  UPDATED_THREAD = "updated_thread",
+  ARCHIVED_THREAD = "archived_thread",
+  UNARCHIVED_THREAD = "unarchived_thread",
+  DELETED_THREAD = "deleted_thread",
+  LEAVED_THREAD = "leaved_thread",
+
+  // Channel actions
+  CREATED_CHANNEL = "created_channel",
+  UPDATED_CHANNEL = "updated_channel",
+  ARCHIVED_CHANNEL = "archived_channel",
+  UNARCHIVED_CHANNEL = "unarchived_channel",
+  DELETED_CHANNEL = "deleted_channel",
+  LEAVED_CHANNEL = "leaved_channel",
+
   // Project actions
   CREATED_PROJECT = "created_project",
   UPDATED_PROJECT = "updated_project",
@@ -91,6 +107,8 @@ export enum ActivityAction {
 
 // Enum for all possible entity types
 export enum EntityType {
+  CHANNEL = "channel",
+  THREAD = "thread",
   PAGE = "page",
   PROJECT = "project",
   SECTION = "section",
@@ -136,7 +154,7 @@ export async function createActivityLog({
   action,
   entity,
   metadata,
-}: Omit<ActivityLogType, 'id'>) {
+}: Omit<ActivityLogType, "id">) {
   const activityLog: ActivityLogType = {
     actor_id,
     action,

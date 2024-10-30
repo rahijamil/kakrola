@@ -5,7 +5,7 @@ import { WorkspaceType } from "./workspace";
 
 // Project types
 export interface ProjectType {
-  id: number;
+  id: number | string;
   team_id: TeamType["id"] | null;
   profile_id: string; // UUID
   name: string;

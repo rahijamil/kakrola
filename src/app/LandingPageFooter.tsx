@@ -29,12 +29,12 @@ const socialLinks: {
 }[] = [
   // {
   //   icon: Twitter,
-  //   href: "https://twitter.com/kakrola",
+  //   href: "https://twitter.com/rahijamil_",
   //   label: "Follow us on Twitter",
   // },
   // {
   //   icon: Github,
-  //   href: "https://github.com/kakrola",
+  //   href: "https://github.com/rahijamil",
   //   label: "Star us on GitHub",
   // },
   // {

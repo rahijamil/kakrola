@@ -23,6 +23,13 @@ const nextConfig = {
         port: "",
         pathname: "/**",
       },
+      // product hunt
+      {
+        protocol: "https",
+        hostname: "api.producthunt.com",
+        port: "",
+        pathname: "/**",
+      }
     ],
   },
 };
