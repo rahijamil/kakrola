@@ -1,8 +1,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchSectionsAndTasksByProjectId } from "@/utils/fetchSectionsAndTasksByProjectId";
-import { SectionType, TaskType } from "@/types/project";
+import { ProjectType, SectionType, TaskType } from "@/types/project";
 
-const useProjectDetails = (projectId: number | null) => {
+const useProjectDetails = (projectId: ProjectType['id'] | null) => {
   const queryClient = useQueryClient();
 
   const { data, error, isLoading, isError } = useQuery({

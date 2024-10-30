@@ -2,6 +2,7 @@ import { JSONContent } from "novel";
 import { ViewTypes } from "./viewTypes";
 import { TeamType } from "./team";
 import { WorkspaceType } from "./workspace";
+import { ProfileType } from "./user";
 
 // Project types
 export interface ProjectType {
@@ -24,8 +25,8 @@ export interface ProjectType {
 // Section types
 export interface SectionType {
   id: string | number;
-  project_id: number | null;
-  profile_id: string;
+  project_id: ProjectType['id'] | null;
+  profile_id: ProfileType['id'];
   name: string;
   order: number;
   is_collapsed: boolean;
@@ -75,7 +76,7 @@ export enum TaskStatus {
 // Task types
 export interface TaskType {
   id: string | number;
-  project_id: number | null;
+  project_id: ProjectType['id'] | null;
   section_id: string | number | null;
   parent_task_id: string | number | null; // For subtasks
   profile_id: string; // UUID of the profile who created the task

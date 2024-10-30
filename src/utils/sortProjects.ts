@@ -8,7 +8,7 @@ export const sortProjects = (
   // Create a map from user settings for quick lookup
   const members = personalMembers.filter((member) => member.project_id != null);
 
-  const settingsMap = new Map<number, PersonalMemberForProjectType>(
+  const settingsMap = new Map<ProjectType['id'], PersonalMemberForProjectType>(
     members.map((member) => [member.project_id!, member])
   );
 

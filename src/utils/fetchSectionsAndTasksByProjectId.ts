@@ -1,7 +1,7 @@
-import { SectionType, TaskType } from "@/types/project";
+import { ProjectType, SectionType, TaskType } from "@/types/project";
 import { supabaseBrowser } from "./supabase/client";
 
-export const fetchSectionsAndTasksByProjectId = async (_project_id: number) => {
+export const fetchSectionsAndTasksByProjectId = async (_project_id: ProjectType['id']) => {
   const { data, error } = await supabaseBrowser
     .rpc("fetch_project_sections_and_tasks", { _project_id })
     .single();
