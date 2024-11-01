@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080">
+  <!-- Background with subtle gradient -->
+  <defs>
+    <linearGradient id="bgGradMobile" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f5f9fb;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad1Mobile" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#005c83;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#004d6e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad2Mobile" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0076a3;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#005a8e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad3Mobile" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#69afcd;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4a8fb1;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1080" height="1080" fill="url(#bgGradMobile)"/>
+  
+  <!-- Scattered "tabs" in the background -->
+  <g opacity="0.1">
+    <rect x="100" y="200" width="180" height="140" rx="10" fill="#004d6e"/>
+    <rect x="800" y="150" width="160" height="130" rx="10" fill="#005c83"/>
+    <rect x="500" y="100" width="200" height="150" rx="10" fill="#0076a3"/>
+    <rect x="200" y="300" width="170" height="135" rx="10" fill="#69afcd"/>
+    <rect x="700" y="250" width="190" height="145" rx="10" fill="#4a8fb1"/>
+  </g>
+  
+  <!-- Center logo, larger scale -->
+  <g transform="translate(290,390) scale(2.5)">
+    <rect width="200" height="200" rx="16" ry="16" fill="#ffffff"/>
+    <g>
+      <rect x="40" y="40" width="20" height="120" rx="10" fill="url(#grad1Mobile)" />
+      <rect x="80" y="40" width="20" height="120" rx="10" fill="url(#grad2Mobile)" />
+      <rect x="30" y="70" width="140" height="20" rx="10" fill="url(#grad3Mobile)" />
+      <rect x="30" y="110" width="140" height="20" rx="10" fill="url(#grad1Mobile)" />
+    </g>
+  </g>
+  
+  <!-- Decorative elements -->
+  <g opacity="0.15">
+    <circle cx="200" y="800" r="80" fill="#005c83"/>
+    <circle cx="880" y="850" r="60" fill="#0076a3"/>
+    <circle cx="540" y="900" r="40" fill="#69afcd"/>
+  </g>
+</svg>

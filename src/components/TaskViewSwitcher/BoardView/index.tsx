@@ -684,7 +684,7 @@ const BoardView: React.FC<{
                 {showArchiveConfirm.tasks.filter((t) => !t.is_completed)
                   .length > 0 && (
                   <>
-                    with its{" "}
+                    {" "}with its{" "}
                     <span className="font-semibold">
                       {showArchiveConfirm.tasks.length}
                     </span>{" "}

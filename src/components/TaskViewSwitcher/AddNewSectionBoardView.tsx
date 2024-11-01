@@ -44,7 +44,11 @@ const AddNewSectionBoardView = ({
   const handleAddSection = async (ev: FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
 
-    if (!profile?.id || !profile.metadata?.current_workspace_id || !newSectionName.trim()) {
+    if (
+      !profile?.id ||
+      !profile.metadata?.current_workspace_id ||
+      !newSectionName.trim()
+    ) {
       return;
     }
 
@@ -84,7 +88,7 @@ const AddNewSectionBoardView = ({
       is_archived: false,
       order: newOrder,
       updated_at: new Date().toISOString(),
-      workspace_id: profile.metadata?.current_workspace_id
+      workspace_id: profile.metadata?.current_workspace_id,
     };
 
     // Optimistically update the state
@@ -99,19 +103,10 @@ const AddNewSectionBoardView = ({
     setShowAddSection(null);
 
     try {
+      const { id, ...restSection } = newSection;
       const { data, error } = await supabaseBrowser
         .from("sections")
-        .insert([
-          {
-            name: newSection.name,
-            project_id: newSection.project_id,
-            profile_id: newSection.profile_id,
-            is_collapsed: newSection.is_collapsed,
-            is_inbox: newSection.is_inbox,
-            order: newOrder,
-            updated_at: newSection.updated_at,
-          },
-        ])
+        .insert(restSection)
         .select()
         .single();
 

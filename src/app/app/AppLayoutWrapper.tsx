@@ -56,7 +56,10 @@ const AppLayoutWrapper = ({ children }: { children: ReactNode }) => {
       <MainContent isCollapsed={isCollapsed}>{children}</MainContent>
       {showSettings && <SettingsModal />}
       {showTemplates && <TemplatesModal />}
-      <FeedbackDialog />
+
+      <div className="hidden md:block">
+        <FeedbackDialog />
+      </div>
     </main>
   );
 };

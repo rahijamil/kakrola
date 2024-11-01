@@ -134,7 +134,7 @@ const TemplateCard = ({
           )}
         </CardContent>
 
-        <CardFooter className="p-4 pt-0">
+        {/* <CardFooter className="p-4 pt-0">
           <div className="flex items-center justify-between w-full text-sm text-gray-500">
             <div className="flex items-center gap-4">
               <span className="flex items-center">
@@ -152,7 +152,7 @@ const TemplateCard = ({
               )}
             />
           </div>
-        </CardFooter>
+        </CardFooter> */}
       </Card>
     </motion.div>
   );

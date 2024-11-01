@@ -19,10 +19,10 @@ export const projectViewsToSelect: {
     icon: <SquareKanban size={24} strokeWidth={1.5} />,
     visible: true,
   },
-  {
-    id: 3,
-    name: "Calendar",
-    icon: <CalendarDays size={24} strokeWidth={1.5} />,
-    visible: true,
-  },
+  // {
+  //   id: 3,
+  //   name: "Calendar",
+  //   icon: <CalendarDays size={24} strokeWidth={1.5} />,
+  //   visible: true,
+  // },
 ];
