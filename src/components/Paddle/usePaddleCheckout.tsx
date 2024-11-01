@@ -52,7 +52,7 @@ export const usePaddleCheckout = ({
             variant: "one-page",
             theme: "light",
             allowLogout: !profile.email,
-            showAddDiscounts: false,
+            // showAddDiscounts: false,
             showAddTaxId: id === "business",
             frameTarget: "paddle-checkout-frame",
             frameInitialHeight: 450,

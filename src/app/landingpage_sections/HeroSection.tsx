@@ -45,19 +45,11 @@ export default function HeroSection() {
                 <ArrowRight className="w-4 h-4 ml-2 text-primary-700" />
               </div> */}
 
-              <div className="flex items-center justify-center md:justify-start">
+              {/* <div className="flex items-center justify-center md:justify-start">
                 <Link
                   href="https://www.producthunt.com/products/kakrola?utm_source=badge-follow&utm_medium=badge&utm_souce=badge-kakrola"
                   target="_blank"
                 >
-                  {/* <Image
-                  src="https://api.producthunt.com/widgets/embed-image/v1/follow.svg?product_id=670035&theme=light"
-                  alt="Kakrola - The&#0032;all&#0045;in&#0045;one&#0032;workspace&#0032;for&#0032;teams | Product Hunt"
-                  width={250}
-                  height={54}
-                  className="min-w-[250px] min-h-[54px]"
-                /> */}
-
                   <span
                     dangerouslySetInnerHTML={{
                       __html: `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="250" height="54" viewBox="0 0 250 54" version="1.1">
@@ -80,7 +72,7 @@ export default function HeroSection() {
                     }}
                   ></span>
                 </Link>
-              </div>
+              </div> */}
             </div>
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               {/* Left Column */}
