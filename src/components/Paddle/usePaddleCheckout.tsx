@@ -44,7 +44,6 @@ export const usePaddleCheckout = ({
         eventCallback: (event) => {
           if (event.data && event.name) {
             handleCheckoutEvents(event.data);
-            console.log({ event });
           }
         },
         checkout: {
