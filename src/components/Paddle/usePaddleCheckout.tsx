@@ -5,7 +5,6 @@ import {
   Environments,
   CheckoutEventsData,
 } from "@paddle/paddle-js";
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export const usePaddleCheckout = ({
@@ -26,7 +25,6 @@ export const usePaddleCheckout = ({
     null
   );
   const { profile } = useAuthProvider();
-  const pathname = usePathname();
 
   const handleCheckoutEvents = (event: CheckoutEventsData) => {
     setCheckoutData(event);
@@ -42,15 +40,17 @@ export const usePaddleCheckout = ({
     ) {
       initializePaddle({
         token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
-        environment: process.env.NEXT_PUBLIC_PADDLE_ENV as Environments,
+        // environment: process.env.NEXT_PUBLIC_PADDLE_ENV as Environments,
         eventCallback: (event) => {
           if (event.data && event.name) {
             handleCheckoutEvents(event.data);
+            console.log({ event });
           }
         },
         checkout: {
           settings: {
             displayMode: "inline",
+            variant: "one-page",
             theme: "light",
             allowLogout: !profile.email,
             showAddDiscounts: false,
@@ -62,6 +62,9 @@ export const usePaddleCheckout = ({
             // successUrl: `${pathname}?settings=subscription&tab=checkout-success`,
             successUrl: successUrl ? successUrl : "/app",
           },
+        },
+        pwCustomer: {
+          email: profile.email,
         },
       }).then(async (paddle) => {
         if (paddle && priceId && profile.metadata?.current_workspace_id) {

@@ -150,6 +150,6 @@ export const pricingTiers: Tier[] = [
     price: "$8",
     period: "per member/month",
     cta: "Start 7-day trial",
-    priceId: "pri_01j8wqntqppsyw4ce6z65yc9ry",
+    priceId: process.env.NEXT_PUBLIC_PADDLE_PLUS_PLAN_YEARLY_PRICE_ID!,
   },
 ];

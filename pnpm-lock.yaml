@@ -45,8 +45,8 @@ importers:
         specifier: ^2.2.15
         version: 2.2.15
       '@paddle/paddle-js':
-        specifier: ^1.2.2
-        version: 1.2.2
+        specifier: ^1.3.1
+        version: 1.3.1
       '@paddle/paddle-node-sdk':
         specifier: ^1.7.0
         version: 1.7.0
@@ -2099,8 +2099,8 @@ packages:
     resolution: {integrity: sha512-XhdSY/4B1D34tSco/GION+23GMjaS9S2zszcqYkMHo8RcWInymF6L1x+Gk7EmHdrSxNFva2WM8orhC4BwQCwgw==}
     engines: {node: '>=12'}
 
-  '@paddle/paddle-js@1.2.2':
-    resolution: {integrity: sha512-eI+lIcw8hlkaqg3mEj+wSTmJUdWUYIRErYqirVNG3w4Y0anzxbWoRcwxNQq2OM6NAfZTmh6PYS+chsHYLNjuJA==}
+  '@paddle/paddle-js@1.3.1':
+    resolution: {integrity: sha512-q2b2aO0dlEPnqiF3dovFIL3QIOwYNbTTPARU9qds9BAnVeUFC9YaKWobfPJaMlKHknPViT0SrAcw+KzA44FNtg==}
 
   '@paddle/paddle-node-sdk@1.7.0':
     resolution: {integrity: sha512-ta6GkY5HxHV/dJ7H7C7wS9s878fb51yRCCLyMGaTW8BprJRbQ0+58oGakTGHbhL4O0z8PAvIBl+4cPsm6utrLg==}
@@ -11354,7 +11354,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@paddle/paddle-js@1.2.2': {}
+  '@paddle/paddle-js@1.3.1': {}
 
   '@paddle/paddle-node-sdk@1.7.0':
     dependencies:
