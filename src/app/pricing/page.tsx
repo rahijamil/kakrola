@@ -31,7 +31,7 @@ const faqItems = [
   {
     title: "Do you offer refunds?",
     content:
-      "Yes! If you're not satisfied with Kakrola, I offer a 30-day money-back guarantee, no questions asked. You can try the platform risk-free and see if it's the right fit for your team.",
+      "Yes! If you're not satisfied with Kakrola, I offer a 14-day money-back guarantee, no questions asked. You can try the platform risk-free and see if it's the right fit for your team.",
   },
   // {
   //   title: "Can Kakrola scale with my team?",
@@ -61,7 +61,7 @@ const PricingPage = () => {
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-blue-400" />
-                30-Day Guarantee
+                14-Day Guarantee
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-purple-400" />

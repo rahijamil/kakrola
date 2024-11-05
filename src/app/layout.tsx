@@ -10,6 +10,7 @@ import RoleProvider from "@/context/RoleContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import OneTapComponent from "@/components/OneTapComponent";
+import { Toaster } from "@/components/ui/toaster";
 
 // const inter = Inter({ subsets: ["latin"], fallback: ["Helvetica", "Arial"] });
 const poppins = Poppins({
@@ -143,6 +144,8 @@ export default function RootLayout({
             </SidebarDataProvider>
           </AuthProvider>
         </ClientProviderWrapper>
+
+        <Toaster />
       </body>
     </html>
   );

@@ -24,6 +24,11 @@ const GoogleAnalytics = () => {
         t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "oq9jwkfixk");`}</Script>
+
+      <Script type="text/javascript">
+      {
+        `window.$crisp=[];window.CRISP_WEBSITE_ID="9ddba37e-69e0-4dcd-9b81-4807cd522132";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();`
+      }</Script>
     </>
   );
 };

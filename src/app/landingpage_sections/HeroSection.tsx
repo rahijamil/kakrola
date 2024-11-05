@@ -45,8 +45,8 @@ export default function HeroSection() {
                 <ArrowRight className="w-4 h-4 ml-2 text-primary-700" />
               </div> */}
 
-              {/* <div className="flex items-center justify-center md:justify-start">
-                <Link
+              <div className="flex items-center justify-center md:justify-start">
+                {/* <Link
                   href="https://www.producthunt.com/products/kakrola?utm_source=badge-follow&utm_medium=badge&utm_souce=badge-kakrola"
                   target="_blank"
                 >
@@ -71,9 +71,23 @@ export default function HeroSection() {
 </svg>`,
                     }}
                   ></span>
+                </Link> */}
+
+                <Link
+                  href="https://www.producthunt.com/posts/kakrola?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-kakrola"
+                  target="_blank"
+                >
+                  <img
+                    src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=556589&theme=light"
+                    alt="Kakrola - Kill&#0032;the&#0032;tab&#0032;circus | Product Hunt"
+                    style={{ width: "250px", height: "54px" }}
+                    width="250"
+                    height="54"
+                  />
                 </Link>
-              </div> */}
+              </div>
             </div>
+
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               {/* Left Column */}
               <div className="space-y-8 text-center lg:text-left">

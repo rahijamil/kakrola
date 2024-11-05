@@ -201,12 +201,12 @@ const RoleItem = ({
                     playSound={false}
                     handleCheckSubmit={() => onChange(PersonalRoleType.MEMBER)}
                     is_completed={value === PersonalRoleType.MEMBER}
-                    disabled
+                    // disabled
                   />
                 ),
                 divide: true,
-                disabled: true,
-                badge: "Plus",
+                // disabled: true,
+                // badge: "Plus",
               },
               {
                 id: 3,
